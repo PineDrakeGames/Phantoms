@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
-public class FancyText : BaseMeshEffect {
+public class FancyText : MonoBehaviour
+{
 
 
     // Bools that say if we are active and if we are currently revealing stuff
@@ -15,7 +17,7 @@ public class FancyText : BaseMeshEffect {
     ////  These are things the script needs  ////
 
     //Reveal text strings and things 
-    Text textComponent;
+    TMP_Text m_TextComponent;
     string textInputString;
     string textOutputString;
     int charIndex = 0;
@@ -61,9 +63,9 @@ public class FancyText : BaseMeshEffect {
     AudioSource audio;
     bool hasAudio = false;
 
-    protected override void Start()
+    private void Start()
     {
-        textComponent = GetComponent<Text>();
+        m_TextComponent = GetComponent<TMP_Text>();
         if (GetComponent<AudioSource>() != null)
         {
             audio = GetComponent<AudioSource>();
@@ -72,73 +74,72 @@ public class FancyText : BaseMeshEffect {
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
         //tell the mesh that the verts must be redrawn
         if (active)
         {
-            graphic.SetAllDirty();
+            ModifyMesh();
         }
     }
 
-    public override void ModifyMesh(VertexHelper vh)
+    private void ModifyMesh()
     {
-        if (!active)
-        {
-            return;
-        }
+        m_TextComponent.ForceMeshUpdate();
 
-        // get the amount of verts
-        int count = vh.currentVertCount;
+        TMP_TextInfo textInfo = m_TextComponent.textInfo;
+
+        Matrix4x4 matrix;
+
+
+        // Cache the vertex data of the text object as the Jitter FX is applied to the original position of the characters.
+        TMP_MeshInfo[] cachedMeshInfo = textInfo.CopyMeshInfoVertexData();
+        int characterCount = textInfo.characterCount;
+
+        Color32[] newVertexColors;
 
         // Apply the effects to letters first, in case they are overridden by later changes
-        foreach(TextEffect effect in effects)
+        foreach (TextEffect effect in effects)
         {
-            // make sure that the letter is actually displayed
-            if (effect.index * 4 < count)
-            {
-                UIVertex uiVertex1 = new UIVertex();
-                UIVertex uiVertex2 = new UIVertex();
-                UIVertex uiVertex3 = new UIVertex();
-                UIVertex uiVertex4 = new UIVertex();
-                vh.PopulateUIVertex(ref uiVertex1, effect.index * 4 + 0);
-                vh.PopulateUIVertex(ref uiVertex2, effect.index * 4 + 1);
-                vh.PopulateUIVertex(ref uiVertex3, effect.index * 4 + 2);
-                vh.PopulateUIVertex(ref uiVertex4, effect.index * 4 + 3);
-                effect.Apply(Time.time, ref uiVertex1, ref uiVertex2, ref uiVertex3, ref uiVertex4);
-                vh.SetUIVertex(uiVertex1, effect.index * 4 + 0);
-                vh.SetUIVertex(uiVertex2, effect.index * 4 + 1);
-                vh.SetUIVertex(uiVertex3, effect.index * 4 + 2);
-                vh.SetUIVertex(uiVertex4, effect.index * 4 + 3);
-            }
+            TMP_CharacterInfo charInfo = textInfo.characterInfo[effect.index];
+
+            // Skip characters that are not visible and thus have no geometry to manipulate.
+            if (!charInfo.isVisible)
+                continue;
+
+            int materialIndex = textInfo.characterInfo[effect.index].materialReferenceIndex;
+            int vertexIndex = textInfo.characterInfo[effect.index].vertexIndex;
+            Vector3[] sourceVertices = cachedMeshInfo[materialIndex].vertices;
+            Vector3[] destinationVertices = textInfo.meshInfo[materialIndex].vertices;
+            newVertexColors = textInfo.meshInfo[materialIndex].colors32;
+
+            effect.Apply(Time.time, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
         }
 
         // Next we do the animations for characters that are currently being put in
         foreach (TextCreator creator in creators)
         {
-            if (creator.index * 4 < count)
-            {
-                UIVertex uiVertex1 = new UIVertex();
-                UIVertex uiVertex2 = new UIVertex();
-                UIVertex uiVertex3 = new UIVertex();
-                UIVertex uiVertex4 = new UIVertex();
-                vh.PopulateUIVertex(ref uiVertex1, creator.index * 4 + 0);
-                vh.PopulateUIVertex(ref uiVertex2, creator.index * 4 + 1);
-                vh.PopulateUIVertex(ref uiVertex3, creator.index * 4 + 2);
-                vh.PopulateUIVertex(ref uiVertex4, creator.index * 4 + 3);
-                creator.Apply(Time.time, ref uiVertex1, ref uiVertex2, ref uiVertex3, ref uiVertex4);
-                vh.SetUIVertex(uiVertex1, creator.index * 4 + 0);
-                vh.SetUIVertex(uiVertex2, creator.index * 4 + 1);
-                vh.SetUIVertex(uiVertex3, creator.index * 4 + 2);
-                vh.SetUIVertex(uiVertex4, creator.index * 4 + 3);
-            }
+            TMP_CharacterInfo charInfo = textInfo.characterInfo[creator.index];
+
+            // Skip characters that are not visible and thus have no geometry to manipulate.
+            if (!charInfo.isVisible)
+                continue;
+
+            int materialIndex = textInfo.characterInfo[creator.index].materialReferenceIndex;
+            int vertexIndex = textInfo.characterInfo[creator.index].vertexIndex;
+            Vector3[] sourceVertices = cachedMeshInfo[materialIndex].vertices;
+            Vector3[] destinationVertices = textInfo.meshInfo[materialIndex].vertices;
+            newVertexColors = textInfo.meshInfo[materialIndex].colors32;
+
+            creator.Apply(Time.time, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
         }
         // destroy any creators we no longer need to do
         while (true)
         {
             bool done = true;
-            foreach(TextCreator creator in creators)
+            foreach (TextCreator creator in creators)
             {
-                if(creator.Progress(Time.time) >= 1f)
+                if (creator.Progress(Time.time) >= 1f)
                 {
                     done = false;
                     creators.Remove(creator);
@@ -152,17 +153,31 @@ public class FancyText : BaseMeshEffect {
         }
 
         //finally, set everything that hasn't appeared yet to an invisible color
-        for (int i = charIndex * 4; i < count; i += 4)
+        for (int i = charIndex; i < characterCount; i += 1)
         {
-            for (int j = 0; j < 4; j++)
-            {
-                UIVertex uiVertex = new UIVertex();
-                vh.PopulateUIVertex(ref uiVertex, i + j);
-                uiVertex.color = new Color32((byte)0, (byte)0, (byte)0, 0);
-                vh.SetUIVertex(uiVertex, i + j);
-            }
+                int materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
+                newVertexColors = textInfo.meshInfo[materialIndex].colors32;
+                int vertexIndex = textInfo.characterInfo[i].vertexIndex;
+
+                // Only change the vertex color if the text element is visible.
+                if (textInfo.characterInfo[i].isVisible)
+                {
+                    Color32 c0 = new Color32(0, 0, 0, 0);
+
+                    newVertexColors[vertexIndex + 0] = c0;
+                    newVertexColors[vertexIndex + 1] = c0;
+                    newVertexColors[vertexIndex + 2] = c0;
+                    newVertexColors[vertexIndex + 3] = c0;
+                }
         }
 
+        for (int i = 0; i < textInfo.meshInfo.Length; i++)
+        {
+            textInfo.meshInfo[i].mesh.vertices = textInfo.meshInfo[i].vertices;
+            m_TextComponent.UpdateGeometry(textInfo.meshInfo[i].mesh, i);
+        }
+
+        m_TextComponent.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
     }
 
     private void ParseText()
@@ -198,7 +213,8 @@ public class FancyText : BaseMeshEffect {
                     if (option.Length > 3)
                     {
                         temp.time = float.Parse(option.Substring(3));
-                    } else
+                    }
+                    else
                     {
                         temp.time = -1;
                     }
@@ -247,7 +263,7 @@ public class FancyText : BaseMeshEffect {
                         textOutputString += letter;
                     }
                 }
-                
+
                 else if ((option.Substring(0, 5)).ToLower() == "pulse")
                 {
                     string input = option.Substring(5);
@@ -269,7 +285,7 @@ public class FancyText : BaseMeshEffect {
                         textOutputString += letter;
                     }
                 }
-                
+
                 else if ((option.Substring(0, 5)).ToLower() == "speed")
                 {
                     SpeedOption temp = new SpeedOption();
@@ -321,7 +337,8 @@ public class FancyText : BaseMeshEffect {
                         if (splitString.Length == 2)
                         {
                             effect.strength = float.Parse(splitString[1]);
-                        } else
+                        }
+                        else
                         {
                             effect.strength = 1f;
                         }
@@ -389,7 +406,7 @@ public class FancyText : BaseMeshEffect {
             {
                 SpeedOption temp = new SpeedOption();
                 temp.type = "nl";
-                temp.index = textOutputString.Length;;
+                temp.index = textOutputString.Length; ;
                 speeds.Add(temp);
                 numSpeeds += 1;
                 textOutputString += textInputString[i];
@@ -462,7 +479,8 @@ public class FancyText : BaseMeshEffect {
                     yield return new WaitForSeconds(speeds[speedIndex].pauseTime);
                 }
                 speedIndex += 1;
-            } else if (creatorsIndex < numCreators && creatorIndexes[creatorsIndex].index == charIndex)
+            }
+            else if (creatorsIndex < numCreators && creatorIndexes[creatorsIndex].index == charIndex)
             {
                 if (creatorIndexes[creatorsIndex].name == "instant")
                 {
@@ -560,17 +578,18 @@ public class FancyText : BaseMeshEffect {
     public void SetText(string text)
     {
         if (!active) { active = true; }
-        if (revealing) {
+        if (revealing)
+        {
             StopCoroutine("DisplayText");
         }
         else { revealing = true; }
 
         // Resetting all variables
-        if (textComponent == null)
+        if (m_TextComponent == null)
         {
-            textComponent = GetComponent<Text>();
+            m_TextComponent = GetComponent<TMP_Text>();
         }
-        startColor = textComponent.color;
+        startColor = m_TextComponent.color;
         charIndex = 0;
         speeds.Clear();
         numSpeeds = 0;
@@ -581,8 +600,8 @@ public class FancyText : BaseMeshEffect {
 
         textInputString = text;
         ParseText();
-        textComponent.text = textOutputString;
-        startColor = textComponent.color;
+        m_TextComponent.text = textOutputString;
+        startColor = m_TextComponent.color;
         StartCoroutine("DisplayText");
     }
 
