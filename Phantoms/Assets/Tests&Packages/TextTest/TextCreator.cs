@@ -5,7 +5,7 @@ using UnityEngine;
 struct Creator
 {
     public int index; 
-    public string name;
+    public FancyText.CreateType CreateType;
     public float time;
 }
 

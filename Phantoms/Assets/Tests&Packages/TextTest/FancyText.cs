@@ -6,7 +6,32 @@ using TMPro;
 
 public class FancyText : MonoBehaviour
 {
+    /// Enums ///
+    public enum EffectType
+    {
+        NONE,
+        WAVY,
+        JITTER,
+        PULSE,
+        SWIVEL,
+        RAINBOW
+    };
 
+    public enum CreateType
+    {
+        INSTANT,
+        FADEIN,
+        POP,
+        FLIP
+    };
+
+    public enum SpeedModifiers
+    {
+        SPEED,
+        PAUSE,
+        NEWLINEPAUSE,
+        NEWLINE
+    };
 
     // Bools that say if we are active and if we are currently revealing stuff
     [HideInInspector]
@@ -33,31 +58,15 @@ public class FancyText : MonoBehaviour
     //Text Effects stuff
     List<TextEffect> effects = new List<TextEffect>();
     string[] seperator = { ">>" };
-    public enum EffectType
-    {
-        NONE,
-        WAVY,
-        JITTER,
-        PULSE,
-        SWIVEL,
-        RAINBOW
-    };
     public EffectType effectType = EffectType.NONE;
     public float effectStrength = 1f;
-
     //Text Creation stuff
     List<TextCreator> creators = new List<TextCreator>();
     List<Creator> creatorIndexes = new List<Creator>();
-    public enum CreateType
-    {
-        INSTANT,
-        FADEIN,
-        POP,
-        FLIP
-    };
+    
     public CreateType createtype = CreateType.INSTANT;
     public float createTime = 0.5f;
-    float numCreators = 0;
+    private float numCreators = 0;
 
     // Audio Stuff
     AudioSource audio;
@@ -218,7 +227,7 @@ public class FancyText : MonoBehaviour
                 {
                     Creator temp = new Creator();
                     temp.index = textOutputString.Length;
-                    temp.name = "pop";
+                    temp.CreateType = CreateType.POP;
                     if (option.Length > 3)
                     {
                         temp.time = float.Parse(option.Substring(3));
@@ -239,7 +248,7 @@ public class FancyText : MonoBehaviour
                 {
                     Creator temp = new Creator();
                     temp.index = textOutputString.Length;
-                    temp.name = "flip";
+                    temp.CreateType = CreateType.FLIP;
                     if (option.Length > 3)
                     {
                         temp.time = float.Parse(option.Substring(4));
@@ -359,7 +368,7 @@ public class FancyText : MonoBehaviour
                 {
                     Creator temp = new Creator();
                     temp.index = textOutputString.Length;
-                    temp.name = "fadein";
+                    temp.CreateType = CreateType.FADEIN;
                     if (option.Length > 6)
                     {
                         temp.time = float.Parse(option.Substring(6));
@@ -396,7 +405,7 @@ public class FancyText : MonoBehaviour
                 {
                     Creator temp = new Creator();
                     temp.index = textOutputString.Length;
-                    temp.name = "instant";
+                    temp.CreateType = CreateType.INSTANT;
                     temp.time = -1;
                     numCreators += 1;
                     creatorIndexes.Add(temp);
@@ -491,11 +500,11 @@ public class FancyText : MonoBehaviour
             }
             else if (creatorsIndex < numCreators && creatorIndexes[creatorsIndex].index == charIndex)
             {
-                if (creatorIndexes[creatorsIndex].name == "instant")
+                if (creatorIndexes[creatorsIndex].CreateType == CreateType.INSTANT)
                 {
                     createtype = CreateType.INSTANT;
                 }
-                if (creatorIndexes[creatorsIndex].name == "fadein")
+                if (creatorIndexes[creatorsIndex].CreateType == CreateType.FADEIN)
                 {
                     createtype = CreateType.FADEIN;
                     if (creatorIndexes[creatorsIndex].time != -1f)
@@ -503,7 +512,7 @@ public class FancyText : MonoBehaviour
                         createTime = creatorIndexes[creatorsIndex].time;
                     }
                 }
-                if (creatorIndexes[creatorsIndex].name == "pop")
+                if (creatorIndexes[creatorsIndex].CreateType == CreateType.POP)
                 {
                     createtype = CreateType.POP;
                     if (creatorIndexes[creatorsIndex].time != -1f)
@@ -511,7 +520,7 @@ public class FancyText : MonoBehaviour
                         createTime = creatorIndexes[creatorsIndex].time;
                     }
                 }
-                if (creatorIndexes[creatorsIndex].name == "flip")
+                if (creatorIndexes[creatorsIndex].CreateType == CreateType.FLIP)
                 {
                     createtype = CreateType.FLIP;
                     if (creatorIndexes[creatorsIndex].time != -1f)
