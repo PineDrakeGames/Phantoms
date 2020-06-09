@@ -46,6 +46,7 @@ public class FancyText : MonoBehaviour
     string textInputString;
     string textOutputString;
     int charIndex = 0;
+    int displayedCharIndex = 0;
     public float charDelay = 0.05f;
     Color32 startColor;
     float progress;
@@ -162,7 +163,7 @@ public class FancyText : MonoBehaviour
         }
 
         //finally, set everything that hasn't appeared yet to an invisible color
-        for (int i = charIndex; i < characterCount; i += 1)
+        for (int i = displayedCharIndex; i < characterCount; i += 1)
         {
             int materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
             newVertexColors = textInfo.meshInfo[materialIndex].colors32;
@@ -192,17 +193,21 @@ public class FancyText : MonoBehaviour
     private void ParseText()
     {
         textOutputString = "";
+        int index = 0;
         for (int i = 0; i < textInputString.Length; i++)
         {
             // This is meant to ignore any rich text used, such as for color or font size.
             // TODO: More error checking.
             if (textInputString[i] == '<')
             {
+                textOutputString += textInputString[i];
                 i += 1;
                 while (textInputString[i] != '>')
                 {
+                    textOutputString += textInputString[i];
                     i += 1;
                 }
+                textOutputString += textInputString[i];
                 i += 1;
             }
             // If we detect a bracket, that means what follows should be a text effect option.
@@ -232,102 +237,102 @@ public class FancyText : MonoBehaviour
                         i += 1;
                     }
                 }
-                
+
                 option.ToLower();
 
-                switch(option)
+                switch (option)
                 {
                     case "[":
                         textOutputString += '[';
+                        index += 1;
                         break;
                     // Create types
                     case "pop":
-                        ParseTextCreator(CreateType.POP, textOutputString.Length, value);
+                        ParseTextCreator(CreateType.POP, index, value);
                         break;
                     case "flip":
-                        ParseTextCreator(CreateType.FLIP, textOutputString.Length, value);
+                        ParseTextCreator(CreateType.FLIP, index, value);
                         break;
                     case "fadein":
-                        ParseTextCreator(CreateType.FADEIN, textOutputString.Length, value);
+                        ParseTextCreator(CreateType.FADEIN, index, value);
                         break;
                     case "instant":
-                        ParseTextCreator(CreateType.INSTANT, textOutputString.Length, value);
+                        ParseTextCreator(CreateType.INSTANT, index, value);
                         break;
                     // Effect types
                     case "wavy":
-                        ParseTextEffect(EffectType.WAVY, ref textOutputString, value);
+                        ParseTextEffect(EffectType.WAVY, ref textOutputString, ref index, value);
                         break;
                     case "pulse":
-                        ParseTextEffect(EffectType.PULSE, ref textOutputString, value);
+                        ParseTextEffect(EffectType.PULSE, ref textOutputString, ref index, value);
                         break;
                     case "swivel":
-                        ParseTextEffect(EffectType.SWIVEL, ref textOutputString, value);
+                        ParseTextEffect(EffectType.SWIVEL, ref textOutputString, ref index, value);
                         break;
                     case "jitter":
-                        ParseTextEffect(EffectType.JITTER, ref textOutputString, value);
+                        ParseTextEffect(EffectType.JITTER, ref textOutputString, ref index, value);
                         break;
                     case "rainbow":
-                        ParseTextEffect(EffectType.RAINBOW, ref textOutputString, value);
+                        ParseTextEffect(EffectType.RAINBOW, ref textOutputString, ref index, value);
                         break;
                     // Speed modifiers
                     case "speed":
-                        ParseSpeedModifier(SpeedModifier.SPEED, textOutputString.Length, value);
+                        ParseSpeedModifier(SpeedModifier.SPEED, index, value);
                         break;
                     case "pause":
-                        ParseSpeedModifier(SpeedModifier.PAUSE, textOutputString.Length, value);
+                        ParseSpeedModifier(SpeedModifier.PAUSE, index, value);
                         break;
                     case "nlpause":
-                        ParseSpeedModifier(SpeedModifier.NEWLINEPAUSE, textOutputString.Length, value);
+                        ParseSpeedModifier(SpeedModifier.NEWLINEPAUSE, index, value);
                         break;
                 }
             }
             else if (textInputString[i] == '\n')
             {
-                ParseSpeedModifier(SpeedModifier.NEWLINE, textOutputString.Length, "");
+                ParseSpeedModifier(SpeedModifier.NEWLINE, index, "");
                 textOutputString += textInputString[i];
+                index += 1;
             }
             else
             {
-                TextEffect effect;
-                switch (effectType)
+                if (effectType != EffectType.NONE)
                 {
-                    case EffectType.JITTER:
-                        effect = new Jitter();
-                        effect.index = textOutputString.Length;
-                        effect.strength = effectStrength;
-                        effects.Add(effect);
-                        break;
-                    case EffectType.WAVY:
-                        effect = new Wavy();
-                        effect.index = textOutputString.Length;
-                        effect.strength = effectStrength;
-                        effects.Add(effect);
-                        break;
-                    case EffectType.PULSE:
-                        effect = new Pulse();
-                        effect.index = textOutputString.Length;
-                        effect.strength = effectStrength;
-                        effects.Add(effect);
-                        break;
-                    case EffectType.SWIVEL:
-                        effect = new Swivel();
-                        effect.index = textOutputString.Length;
-                        effect.strength = effectStrength;
-                        effects.Add(effect);
-                        break;
-                    case EffectType.RAINBOW:
-                        effect = new Rainbow();
-                        effect.index = textOutputString.Length;
-                        effect.strength = effectStrength;
-                        effects.Add(effect);
-                        break;
+                    TextEffect effect;
+                    switch (effectType)
+                    {
+                        case EffectType.JITTER:
+                            effect = new Jitter();
+                            break;
+                        case EffectType.WAVY:
+                            effect = new Wavy();
+                            break;
+                        case EffectType.PULSE:
+                            effect = new Pulse();
+                            break;
+                        case EffectType.SWIVEL:
+                            effect = new Swivel();
+                            break;
+                        case EffectType.RAINBOW:
+                            effect = new Rainbow();
+                            break;
+                        case EffectType.NONE:
+                        default:
+                            // Should not be here - just default to rainbow?
+                            Debug.LogError("Effect type not set up for default!");
+                            effect = new Rainbow();
+                            break;
+                    }
+                    effect.index = textOutputString.Length;
+                    effect.strength = effectStrength;
+                    effects.Add(effect);
                 }
                 textOutputString += textInputString[i];
+                index += 1;
             }
         }
     }
 
-    private void ParseTextEffect(EffectType type, ref string textOutputString, string value)
+    private void ParseTextEffect(EffectType type, ref string textOutputString, ref int index, string value)
     {
         string[] splitString = value.Split(seperator, System.StringSplitOptions.RemoveEmptyEntries);
         string word = splitString[0];
@@ -354,7 +359,7 @@ public class FancyText : MonoBehaviour
                     break;
             }
 
-            effect.index = textOutputString.Length;
+            effect.index = index;
             if (splitString.Length == 2)
             {
                 effect.strength = float.Parse(splitString[1]);
@@ -365,6 +370,7 @@ public class FancyText : MonoBehaviour
             }
             effects.Add(effect);
             textOutputString += letter;
+            index += 1;
         }
     }
 
@@ -372,6 +378,7 @@ public class FancyText : MonoBehaviour
     {
         Creator temp = new Creator();
         temp.index = index;
+        Debug.Log("Creator:" + type + ", " + index);
         temp.CreateType = type;
         if (!string.IsNullOrEmpty(value) && type != CreateType.INSTANT)
         {
@@ -402,11 +409,12 @@ public class FancyText : MonoBehaviour
     IEnumerator DisplayText()
     {
         charIndex = 0;
+        displayedCharIndex = 0;
         int speedIndex = 0;
         int creatorsIndex = 0;
         while (charIndex < textOutputString.Length)
         {
-            if (speedIndex < numSpeeds && speeds[speedIndex].index == charIndex)
+            if (speedIndex < numSpeeds && speeds[speedIndex].index == displayedCharIndex)
             {
                 if (speeds[speedIndex].type == SpeedModifier.SPEED)
                 {
@@ -426,7 +434,7 @@ public class FancyText : MonoBehaviour
                 }
                 speedIndex += 1;
             }
-            else if (creatorsIndex < numCreators && creatorIndexes[creatorsIndex].index == charIndex)
+            else if (creatorsIndex < numCreators && creatorIndexes[creatorsIndex].index == displayedCharIndex)
             {
                 if (creatorIndexes[creatorsIndex].CreateType == CreateType.INSTANT)
                 {
@@ -464,6 +472,7 @@ public class FancyText : MonoBehaviour
                 if (letter == ' ' || letter == '\n')
                 {
                     charIndex += 1;
+                    displayedCharIndex += 1;
                 }
                 else if (letter == '<')
                 {
@@ -472,42 +481,49 @@ public class FancyText : MonoBehaviour
                         charIndex += 1;
                         letter = textOutputString[charIndex];
                     }
+                    charIndex += 1;
+                    letter = textOutputString[charIndex];
                 }
 
                 else
                 {
+                    Debug.Log(letter + ", " + charIndex + ", " + displayedCharIndex);
                     TextCreator temp;
                     switch (createtype)
                     {
                         case CreateType.INSTANT:
                             charIndex += 1;
+                            displayedCharIndex += 1;
                             break;
                         case CreateType.FADEIN:
                             temp = new FadeIn();
-                            temp.index = charIndex;
+                            temp.index = displayedCharIndex;
                             temp.startTime = Time.time;
                             temp.duration = createTime;
                             temp.endColor = startColor;
                             creators.Add(temp);
                             charIndex += 1;
+                            displayedCharIndex += 1;
                             break;
                         case CreateType.POP:
                             temp = new Pop();
-                            temp.index = charIndex;
+                            temp.index = displayedCharIndex;
                             temp.startTime = Time.time;
                             temp.duration = createTime;
                             temp.endColor = startColor;
                             creators.Add(temp);
                             charIndex += 1;
+                            displayedCharIndex += 1;
                             break;
                         case CreateType.FLIP:
                             temp = new Flip();
-                            temp.index = charIndex;
+                            temp.index = displayedCharIndex;
                             temp.startTime = Time.time;
                             temp.duration = createTime;
                             temp.endColor = startColor;
                             creators.Add(temp);
                             charIndex += 1;
+                            displayedCharIndex += 1;
                             break;
                     }
                     if (charDelay != 0f)
@@ -559,6 +575,7 @@ public class FancyText : MonoBehaviour
             numSpeeds = 0;
             numCreators = 0;
             charIndex = textOutputString.Length;
+            displayedCharIndex = m_TextComponent.textInfo.characterCount;
             creators.Clear();
             creatorIndexes.Clear();
             speeds.Clear();
