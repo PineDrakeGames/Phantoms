@@ -52,7 +52,8 @@ public class Pulse : TextEffect
         float stretch = Mathf.Sin(5f * time + index / 5f) * 0.1f * strength;
         for (int i = 0; i < 4; i++)
         {
-            destinationVertices[vertexIndex + i] = (sourceVertices[vertexIndex + i] - center) * stretch;
+            Vector3 dir = sourceVertices[vertexIndex + i] - center;
+            destinationVertices[vertexIndex + i] = sourceVertices[vertexIndex + i] + (dir * stretch);
         }
     }
 }
