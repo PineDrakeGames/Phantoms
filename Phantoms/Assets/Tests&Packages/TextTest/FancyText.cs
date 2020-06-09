@@ -185,6 +185,15 @@ public class FancyText : MonoBehaviour
         textOutputString = "";
         for (int i = 0; i < textInputString.Length; i++)
         {
+            if (textInputString[i] == '<')
+            {
+                i += 1;
+                while (textInputString[i] != '>')
+                {
+                    i += 1;
+                }
+                i += 1;
+            }
             if (textInputString[i] == '[')
             {
                 i += 1;
