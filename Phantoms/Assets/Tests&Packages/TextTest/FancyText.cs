@@ -25,7 +25,7 @@ public class FancyText : MonoBehaviour
         FLIP
     };
 
-    public enum SpeedModifiers
+    public enum SpeedModifier
     {
         SPEED,
         PAUSE,
@@ -63,7 +63,7 @@ public class FancyText : MonoBehaviour
     //Text Creation stuff
     List<TextCreator> creators = new List<TextCreator>();
     List<Creator> creatorIndexes = new List<Creator>();
-    
+
     public CreateType createtype = CreateType.INSTANT;
     public float createTime = 0.5f;
     private float numCreators = 0;
@@ -164,20 +164,20 @@ public class FancyText : MonoBehaviour
         //finally, set everything that hasn't appeared yet to an invisible color
         for (int i = charIndex; i < characterCount; i += 1)
         {
-                int materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
-                newVertexColors = textInfo.meshInfo[materialIndex].colors32;
-                int vertexIndex = textInfo.characterInfo[i].vertexIndex;
+            int materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
+            newVertexColors = textInfo.meshInfo[materialIndex].colors32;
+            int vertexIndex = textInfo.characterInfo[i].vertexIndex;
 
-                // Only change the vertex color if the text element is visible.
-                if (textInfo.characterInfo[i].isVisible)
-                {
-                    Color32 c0 = new Color32(0, 0, 0, 0);
+            // Only change the vertex color if the text element is visible.
+            if (textInfo.characterInfo[i].isVisible)
+            {
+                Color32 c0 = new Color32(0, 0, 0, 0);
 
-                    newVertexColors[vertexIndex + 0] = c0;
-                    newVertexColors[vertexIndex + 1] = c0;
-                    newVertexColors[vertexIndex + 2] = c0;
-                    newVertexColors[vertexIndex + 3] = c0;
-                }
+                newVertexColors[vertexIndex + 0] = c0;
+                newVertexColors[vertexIndex + 1] = c0;
+                newVertexColors[vertexIndex + 2] = c0;
+                newVertexColors[vertexIndex + 3] = c0;
+            }
         }
 
         for (int i = 0; i < textInfo.meshInfo.Length; i++)
@@ -194,6 +194,8 @@ public class FancyText : MonoBehaviour
         textOutputString = "";
         for (int i = 0; i < textInputString.Length; i++)
         {
+            // This is meant to ignore any rich text used, such as for color or font size.
+            // TODO: More error checking.
             if (textInputString[i] == '<')
             {
                 i += 1;
@@ -203,15 +205,22 @@ public class FancyText : MonoBehaviour
                 }
                 i += 1;
             }
+            // If we detect a bracket, that means what follows should be a text effect option.
             if (textInputString[i] == '[')
             {
                 i += 1;
                 string option = "";
+                string value = "";
                 while (textInputString[i] != ']')
                 {
                     if (textInputString[i] == '=')
                     {
                         i += 1;
+                        while (textInputString[i] != ']')
+                        {
+                            value += textInputString[i];
+                            i += 1;
+                        }
                     }
                     else
                     {
@@ -223,210 +232,61 @@ public class FancyText : MonoBehaviour
                 {
                     textOutputString += '[';
                 }
-                else if ((option.Substring(0, 3)).ToLower() == "pop")
+                // Create types
+                else if (option.ToLower() == "pop")
                 {
-                    Creator temp = new Creator();
-                    temp.index = textOutputString.Length;
-                    temp.CreateType = CreateType.POP;
-                    if (option.Length > 3)
-                    {
-                        temp.time = float.Parse(option.Substring(3));
-                    }
-                    else
-                    {
-                        temp.time = -1;
-                    }
-                    numCreators += 1;
-                    creatorIndexes.Add(temp);
+                    ParseTextCreator(CreateType.POP, textOutputString.Length, value);
                 }
-                else if ((option.Substring(0, 4)).ToLower() == "none")
+                else if (option.ToLower() == "flip")
                 {
-                    string word = option.Substring(4);
-                    textOutputString += word;
+                    ParseTextCreator(CreateType.FLIP, textOutputString.Length, value);
                 }
-                else if ((option.Substring(0, 4)).ToLower() == "flip")
+                else if (option.ToLower() == "fadein")
                 {
-                    Creator temp = new Creator();
-                    temp.index = textOutputString.Length;
-                    temp.CreateType = CreateType.FLIP;
-                    if (option.Length > 3)
-                    {
-                        temp.time = float.Parse(option.Substring(4));
-                    }
-                    else
-                    {
-                        temp.time = -1;
-                    }
-                    numCreators += 1;
-                    creatorIndexes.Add(temp);
+                    ParseTextCreator(CreateType.FADEIN, textOutputString.Length, value);
                 }
-                else if ((option.Substring(0, 4)).ToLower() == "wavy")
+                else if (option.ToLower() == "instant")
                 {
-                    string input = option.Substring(4);
-                    string[] splitString = input.Split(seperator, System.StringSplitOptions.RemoveEmptyEntries);
-                    string word = splitString[0];
-                    foreach (char letter in word)
-                    {
-                        TextEffect effect = new Wavy();
-                        effect.index = textOutputString.Length;
-                        if (splitString.Length == 2)
-                        {
-                            effect.strength = float.Parse(splitString[1]);
-                        }
-                        else
-                        {
-                            effect.strength = 1f;
-                        }
-                        effects.Add(effect);
-                        textOutputString += letter;
-                    }
+                    ParseTextCreator(CreateType.INSTANT, textOutputString.Length, value);
                 }
-
-                else if ((option.Substring(0, 5)).ToLower() == "pulse")
+                // Effect types
+                else if (option.ToLower() == "wavy")
                 {
-                    string input = option.Substring(5);
-                    string[] splitString = input.Split(seperator, System.StringSplitOptions.RemoveEmptyEntries);
-                    string word = splitString[0];
-                    foreach (char letter in word)
-                    {
-                        TextEffect effect = new Pulse();
-                        effect.index = textOutputString.Length;
-                        if (splitString.Length == 2)
-                        {
-                            effect.strength = float.Parse(splitString[1]);
-                        }
-                        else
-                        {
-                            effect.strength = 1f;
-                        }
-                        effects.Add(effect);
-                        textOutputString += letter;
-                    }
+                    ParseTextEffect(EffectType.WAVY, ref textOutputString, value);
                 }
-
-                else if ((option.Substring(0, 5)).ToLower() == "speed")
+                else if (option.ToLower() == "pulse")
                 {
-                    SpeedOption temp = new SpeedOption();
-                    temp.type = "speed";
-                    temp.index = textOutputString.Length;
-                    temp.speedNewTime = float.Parse(option.Substring(5));
-                    speeds.Add(temp);
-                    numSpeeds += 1;
+                    ParseTextEffect(EffectType.PULSE, ref textOutputString, value);
                 }
-                else if ((option.Substring(0, 5)).ToLower() == "pause")
+                else if (option.ToLower() == "swivel")
                 {
-                    SpeedOption temp = new SpeedOption();
-                    temp.type = "pause";
-                    temp.index = textOutputString.Length;
-                    temp.pauseTime = float.Parse(option.Substring(5));
-                    speeds.Add(temp);
-                    numSpeeds += 1;
+                    ParseTextEffect(EffectType.SWIVEL, ref textOutputString, value);
                 }
-                else if ((option.Substring(0, 6)).ToLower() == "swivel")
+                else if (option.ToLower() == "jitter")
                 {
-                    string input = option.Substring(6);
-                    string[] splitString = input.Split(seperator, System.StringSplitOptions.RemoveEmptyEntries);
-                    string word = splitString[0];
-                    foreach (char letter in word)
-                    {
-                        TextEffect effect = new Swivel();
-                        effect.index = textOutputString.Length;
-                        if (splitString.Length == 2)
-                        {
-                            effect.strength = float.Parse(splitString[1]);
-                        }
-                        else
-                        {
-                            effect.strength = 1f;
-                        }
-                        effects.Add(effect);
-                        textOutputString += letter;
-                    }
+                    ParseTextEffect(EffectType.JITTER, ref textOutputString, value);
                 }
-                else if ((option.Substring(0, 6)).ToLower() == "jitter")
+                else if (option.ToLower() == "rainbow")
                 {
-                    string input = option.Substring(6);
-                    string[] splitString = input.Split(seperator, System.StringSplitOptions.RemoveEmptyEntries);
-                    string word = splitString[0];
-                    foreach (char letter in word)
-                    {
-                        TextEffect effect = new Jitter();
-                        effect.index = textOutputString.Length;
-                        if (splitString.Length == 2)
-                        {
-                            effect.strength = float.Parse(splitString[1]);
-                        }
-                        else
-                        {
-                            effect.strength = 1f;
-                        }
-                        effects.Add(effect);
-                        textOutputString += letter;
-                    }
+                    ParseTextEffect(EffectType.RAINBOW, ref textOutputString, value);
                 }
-                else if ((option.Substring(0, 6)).ToLower() == "fadein")
+                // Speed modifiers
+                else if (option.ToLower() == "speed")
                 {
-                    Creator temp = new Creator();
-                    temp.index = textOutputString.Length;
-                    temp.CreateType = CreateType.FADEIN;
-                    if (option.Length > 6)
-                    {
-                        temp.time = float.Parse(option.Substring(6));
-                    }
-                    else
-                    {
-                        temp.time = -1;
-                    }
-                    numCreators += 1;
-                    creatorIndexes.Add(temp);
+                    ParseSpeedModifier(SpeedModifier.SPEED, textOutputString.Length, value);
                 }
-                else if ((option.Substring(0, 7)).ToLower() == "rainbow")
+                else if (option.ToLower() == "pause")
                 {
-                    string input = option.Substring(7);
-                    string[] splitString = input.Split(seperator, System.StringSplitOptions.RemoveEmptyEntries);
-                    string word = splitString[0];
-                    foreach (char letter in word)
-                    {
-                        TextEffect effect = new Rainbow();
-                        effect.index = textOutputString.Length;
-                        if (splitString.Length == 2)
-                        {
-                            effect.strength = float.Parse(splitString[1]);
-                        }
-                        else
-                        {
-                            effect.strength = 1f;
-                        }
-                        effects.Add(effect);
-                        textOutputString += letter;
-                    }
+                    ParseSpeedModifier(SpeedModifier.PAUSE, textOutputString.Length, value);
                 }
-                else if ((option.Substring(0, 7)).ToLower() == "instant")
+                else if (option.ToLower() == "nlpause")
                 {
-                    Creator temp = new Creator();
-                    temp.index = textOutputString.Length;
-                    temp.CreateType = CreateType.INSTANT;
-                    temp.time = -1;
-                    numCreators += 1;
-                    creatorIndexes.Add(temp);
-                }
-                else if ((option.Substring(0, 7)).ToLower() == "nlpause")
-                {
-                    SpeedOption temp = new SpeedOption();
-                    temp.type = "nlpause";
-                    temp.index = textOutputString.Length;
-                    temp.pauseTime = float.Parse(option.Substring(7));
-                    speeds.Add(temp);
-                    numSpeeds += 1;
+                    ParseSpeedModifier(SpeedModifier.NEWLINEPAUSE, textOutputString.Length, value);
                 }
             }
             else if (textInputString[i] == '\n')
             {
-                SpeedOption temp = new SpeedOption();
-                temp.type = "nl";
-                temp.index = textOutputString.Length; ;
-                speeds.Add(temp);
-                numSpeeds += 1;
+                ParseSpeedModifier(SpeedModifier.NEWLINE, textOutputString.Length, "");
                 textOutputString += textInputString[i];
             }
             else
@@ -470,6 +330,77 @@ public class FancyText : MonoBehaviour
         }
     }
 
+    private void ParseTextEffect(EffectType type, ref string textOutputString, string value)
+    {
+        string[] splitString = value.Split(seperator, System.StringSplitOptions.RemoveEmptyEntries);
+        string word = splitString[0];
+        foreach (char letter in word)
+        {
+            TextEffect effect;
+            switch (type)
+            {
+                case EffectType.WAVY:
+                    effect = new Wavy();
+                    break;
+                case EffectType.PULSE:
+                    effect = new Pulse();
+                    break;
+                case EffectType.SWIVEL:
+                    effect = new Swivel();
+                    break;
+                case EffectType.JITTER:
+                    effect = new Jitter();
+                    break;
+                case EffectType.RAINBOW:
+                default:
+                    effect = new Rainbow();
+                    break;
+            }
+
+            effect.index = textOutputString.Length;
+            if (splitString.Length == 2)
+            {
+                effect.strength = float.Parse(splitString[1]);
+            }
+            else
+            {
+                effect.strength = 1f;
+            }
+            effects.Add(effect);
+            textOutputString += letter;
+        }
+    }
+
+    private void ParseTextCreator(CreateType type, int index, string value)
+    {
+        Creator temp = new Creator();
+        temp.index = index;
+        temp.CreateType = type;
+        if (!string.IsNullOrEmpty(value) && type != CreateType.INSTANT)
+        {
+            temp.time = float.Parse(value);
+        }
+        else
+        {
+            temp.time = -1;
+        }
+        numCreators += 1;
+        creatorIndexes.Add(temp);
+    }
+
+    private void ParseSpeedModifier(SpeedModifier type, int index, string value)
+    {
+        SpeedOption temp = new SpeedOption();
+        temp.type = type;
+        temp.index = index;
+        if (!string.IsNullOrEmpty(value))
+        {
+            temp.value = float.Parse(value);
+        }
+        speeds.Add(temp);
+        numSpeeds += 1;
+    }
+
 
     IEnumerator DisplayText()
     {
@@ -480,21 +411,21 @@ public class FancyText : MonoBehaviour
         {
             if (speedIndex < numSpeeds && speeds[speedIndex].index == charIndex)
             {
-                if (speeds[speedIndex].type == "speed")
+                if (speeds[speedIndex].type == SpeedModifier.SPEED)
                 {
-                    charDelay = speeds[speedIndex].speedNewTime;
+                    charDelay = speeds[speedIndex].value;
                 }
-                if (speeds[speedIndex].type == "nlpause")
+                if (speeds[speedIndex].type == SpeedModifier.NEWLINEPAUSE)
                 {
-                    newLinePause = speeds[speedIndex].pauseTime;
+                    newLinePause = speeds[speedIndex].value;
                 }
-                if (speeds[speedIndex].type == "nl")
+                if (speeds[speedIndex].type == SpeedModifier.NEWLINE)
                 {
                     yield return new WaitForSeconds(newLinePause);
                 }
-                if (speeds[speedIndex].type == "pause")
+                if (speeds[speedIndex].type == SpeedModifier.PAUSE)
                 {
-                    yield return new WaitForSeconds(speeds[speedIndex].pauseTime);
+                    yield return new WaitForSeconds(speeds[speedIndex].value);
                 }
                 speedIndex += 1;
             }

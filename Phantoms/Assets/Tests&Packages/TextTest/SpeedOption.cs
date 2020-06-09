@@ -5,11 +5,8 @@ using UnityEngine;
 public class SpeedOption
 {
     public int index;
-    public string type;
+    public FancyText.SpeedModifier type;
 
     // if speed
-    public float speedNewTime;
-
-    // if pause
-    public float pauseTime;
+    public float value;
 }
