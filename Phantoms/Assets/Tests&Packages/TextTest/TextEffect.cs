@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class TextEffect {
+public abstract class TextEffect
+{
 
     public int index;
     public float strength;
@@ -18,7 +19,7 @@ public class Wavy : TextEffect
         Vector3 pos3 = sourceVertices[vertexIndex + 2];
         float size = (pos1 - pos3).magnitude;
         size = (size / 6f) * strength;
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             destinationVertices[vertexIndex + i].y += Mathf.Sin(5f * time + index / 5f) * size;
         }
@@ -35,7 +36,7 @@ public class Jitter : TextEffect
         size = (size / 14f) * strength;
         float randx = Random.Range(-1, 1) * size;
         float randy = Random.Range(-1, 1) * size;
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             destinationVertices[vertexIndex + i].x += randx;
             destinationVertices[vertexIndex + i].y += randy;
@@ -49,7 +50,7 @@ public class Pulse : TextEffect
     {
         Vector3 center = (sourceVertices[vertexIndex + 0] + sourceVertices[vertexIndex + 2]) / 2f;
         float stretch = Mathf.Sin(5f * time + index / 5f) * 0.1f * strength;
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             destinationVertices[vertexIndex + i] = (sourceVertices[vertexIndex + i] - center) * stretch;
         }
@@ -61,14 +62,11 @@ public class Swivel : TextEffect
     public override void Apply(float time, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
     {
         Vector3 center = (sourceVertices[vertexIndex + 0] + sourceVertices[vertexIndex + 2]) / 2f;
-        float rotation = (Mathf.Sin(5f * time + index / 5f) * .3f * strength - Mathf.PI/2f);
-
-        for(int i = 0; i < 4; i++)
+        float rotation = (Mathf.Sin(5f * time + index / 5f) * .3f * strength) * Mathf.Rad2Deg;
+        for (int i = 0; i < 4; i++)
         {
             Vector3 dir = sourceVertices[vertexIndex + i] - center;
-            float mag = dir.magnitude;
-            float ang = Mathf.Atan(dir.y / dir.x) + rotation + Mathf.PI;
-            destinationVertices[vertexIndex + i] = center + (new Vector3(mag * Mathf.Sin(ang), mag * Mathf.Cos(ang), 0f));
+            destinationVertices[vertexIndex + i] = center + (Quaternion.Euler(0f, 0f, rotation) * dir);
         }
     }
 }
@@ -85,14 +83,17 @@ public class Rainbow : TextEffect
         if (temp < 1f || temp > 5f)
         {
             r = 255;
-        } else if (temp > 2f && temp < 4f)
+        }
+        else if (temp > 2f && temp < 4f)
         {
             r = 0;
-        } else if (temp >= 1f && temp <= 2f)
+        }
+        else if (temp >= 1f && temp <= 2f)
         {
             float prog = 1f - (temp - 1f);
             r = (int)(255 * prog);
-        } else
+        }
+        else
         {
             float prog = temp - 4f;
             r = (int)(255 * prog);
@@ -139,7 +140,7 @@ public class Rainbow : TextEffect
         }
 
         Color32 col = new Color32((byte)r, (byte)g, (byte)b, (byte)255);
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             newVertexColors[vertexIndex + i] = col;
         }
