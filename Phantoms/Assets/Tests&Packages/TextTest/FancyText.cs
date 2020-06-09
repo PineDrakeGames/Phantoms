@@ -208,11 +208,15 @@ public class FancyText : MonoBehaviour
             // If we detect a bracket, that means what follows should be a text effect option.
             if (textInputString[i] == '[')
             {
-                i += 1;
+                i += 1; // skip over the bracket
                 string option = "";
                 string value = "";
+                // iterate over string, stopping when we find an end bracket.
+                // If there is an equals sign, split the strings so the first part is the option and
+                // the second part is the value.
                 while (textInputString[i] != ']')
                 {
+                    // Once we fine an =, continue iterating the same way but adding to the value instead.
                     if (textInputString[i] == '=')
                     {
                         i += 1;
@@ -228,60 +232,53 @@ public class FancyText : MonoBehaviour
                         i += 1;
                     }
                 }
-                if (option == "[")
+                
+                option.ToLower();
+
+                switch(option)
                 {
-                    textOutputString += '[';
-                }
-                // Create types
-                else if (option.ToLower() == "pop")
-                {
-                    ParseTextCreator(CreateType.POP, textOutputString.Length, value);
-                }
-                else if (option.ToLower() == "flip")
-                {
-                    ParseTextCreator(CreateType.FLIP, textOutputString.Length, value);
-                }
-                else if (option.ToLower() == "fadein")
-                {
-                    ParseTextCreator(CreateType.FADEIN, textOutputString.Length, value);
-                }
-                else if (option.ToLower() == "instant")
-                {
-                    ParseTextCreator(CreateType.INSTANT, textOutputString.Length, value);
-                }
-                // Effect types
-                else if (option.ToLower() == "wavy")
-                {
-                    ParseTextEffect(EffectType.WAVY, ref textOutputString, value);
-                }
-                else if (option.ToLower() == "pulse")
-                {
-                    ParseTextEffect(EffectType.PULSE, ref textOutputString, value);
-                }
-                else if (option.ToLower() == "swivel")
-                {
-                    ParseTextEffect(EffectType.SWIVEL, ref textOutputString, value);
-                }
-                else if (option.ToLower() == "jitter")
-                {
-                    ParseTextEffect(EffectType.JITTER, ref textOutputString, value);
-                }
-                else if (option.ToLower() == "rainbow")
-                {
-                    ParseTextEffect(EffectType.RAINBOW, ref textOutputString, value);
-                }
-                // Speed modifiers
-                else if (option.ToLower() == "speed")
-                {
-                    ParseSpeedModifier(SpeedModifier.SPEED, textOutputString.Length, value);
-                }
-                else if (option.ToLower() == "pause")
-                {
-                    ParseSpeedModifier(SpeedModifier.PAUSE, textOutputString.Length, value);
-                }
-                else if (option.ToLower() == "nlpause")
-                {
-                    ParseSpeedModifier(SpeedModifier.NEWLINEPAUSE, textOutputString.Length, value);
+                    case "[":
+                        textOutputString += '[';
+                        break;
+                    // Create types
+                    case "pop":
+                        ParseTextCreator(CreateType.POP, textOutputString.Length, value);
+                        break;
+                    case "flip":
+                        ParseTextCreator(CreateType.FLIP, textOutputString.Length, value);
+                        break;
+                    case "fadein":
+                        ParseTextCreator(CreateType.FADEIN, textOutputString.Length, value);
+                        break;
+                    case "instant":
+                        ParseTextCreator(CreateType.INSTANT, textOutputString.Length, value);
+                        break;
+                    // Effect types
+                    case "wavy":
+                        ParseTextEffect(EffectType.WAVY, ref textOutputString, value);
+                        break;
+                    case "pulse":
+                        ParseTextEffect(EffectType.PULSE, ref textOutputString, value);
+                        break;
+                    case "swivel":
+                        ParseTextEffect(EffectType.SWIVEL, ref textOutputString, value);
+                        break;
+                    case "jitter":
+                        ParseTextEffect(EffectType.JITTER, ref textOutputString, value);
+                        break;
+                    case "rainbow":
+                        ParseTextEffect(EffectType.RAINBOW, ref textOutputString, value);
+                        break;
+                    // Speed modifiers
+                    case "speed":
+                        ParseSpeedModifier(SpeedModifier.SPEED, textOutputString.Length, value);
+                        break;
+                    case "pause":
+                        ParseSpeedModifier(SpeedModifier.PAUSE, textOutputString.Length, value);
+                        break;
+                    case "nlpause":
+                        ParseSpeedModifier(SpeedModifier.NEWLINEPAUSE, textOutputString.Length, value);
+                        break;
                 }
             }
             else if (textInputString[i] == '\n')
