@@ -4,7 +4,6 @@ using UnityEngine;
 
 public abstract class TextEffect
 {
-
     public int index;
     public float strength;
 
