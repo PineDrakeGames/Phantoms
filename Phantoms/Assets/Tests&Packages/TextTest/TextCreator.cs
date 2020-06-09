@@ -72,31 +72,12 @@ public class Flip : TextCreator
     public override void Apply(float time, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
     {
         float progress = Mathf.Clamp01(Progress(time));
-        if (progress < 0.8f)
-        {
-            progress = (progress / 0.8f) * 1.2f;
-        } else
-        {
-            progress = 1.2f - ((progress - 0.8f) * 5f * 0.2f);
-        }
+
         Vector3 center = (sourceVertices[vertexIndex + 0] + sourceVertices[vertexIndex + 2]) / 2f;
 
         for (int i = 0; i < 4; i++)
         {
-            destinationVertices[vertexIndex + i] = center + (sourceVertices[vertexIndex + i] - center) * progress;
+            destinationVertices[vertexIndex + i].x = center.x + (sourceVertices[vertexIndex + i].x - center.x) * progress;
         }
-        /*
-        float progress = Mathf.Clamp01(Progress(time));
-        Vector3 center1 = (uiVertex1.position + uiVertex2.position) / 2f;
-        Vector3 center2 = (uiVertex4.position + uiVertex3.position) / 2f;
-        Vector3 dir1 = uiVertex1.position - center1;
-        uiVertex1.position = center1 + dir1 * progress;
-        Vector3 dir2 = uiVertex2.position - center1;
-        uiVertex2.position = center1 + dir2 * progress;
-        Vector3 dir3 = uiVertex3.position - center2;
-        uiVertex3.position = center2 + dir3 * progress;
-        Vector3 dir4 = uiVertex4.position - center2;
-        uiVertex4.position = center2 + dir4 * progress;
-        */
     }
 }
