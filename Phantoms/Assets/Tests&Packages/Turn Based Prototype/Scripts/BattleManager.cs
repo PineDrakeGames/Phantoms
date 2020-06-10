@@ -1,150 +1,173 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿/* A basic template for a manager script to set up and manage
+ * a battle. It is entirely possible to split this script
+ * up into multiple ones, seperating battle and actor creation, UI, etc.
+ */
+
 using UnityEngine;
+using UnityEngine.UI;
 
-public enum BattleState
-{
-    START,
-    PLAYERTURN,
-    ENEMYTURN,
-    WIN,
-    LOSE
-}
+namespace Ares.Examples {
+	public class BattleManager : MonoBehaviour {
+		[SerializeField, Header("Battle")] BattleRules rules; // The rules and settings that the battle will adhere to.
 
-public class BattleManager : MonoBehaviour
-{
-    [SerializeField]
-    private BattleUI m_battleUI = null;
+		[Header("Actors")]
+		[SerializeField]
+		private Actor player;
+		[SerializeField]
+		private Actor enemy;
 
-    [SerializeField]
-    private PlayerTurnManager m_playerTurnManager = null;
+		[Header("Player options")]
+		[SerializeField]
+		private Button[] playerButtons;
 
-    /// Serialize fields ///
-    [SerializeField]
-    private BattleCharacter m_player = null;
-    public BattleCharacter Player
-    {
-        get { return m_player; }
-    }
+		Battle battle; // A reference to the actual Battle object
 
-    [SerializeField]
-    private BattleCharacter m_enemy = null;
-    public BattleCharacter Enemy
-    {
-        get { return m_enemy; }
-    }
+		void Awake(){
+			// Spawn all dynamic actors and set up their Actor* components here.
+		}
 
-    /// Private Variables ///
-    private BattleState m_state = BattleState.START;
-    public BattleState State
-    {
-        get { return m_state; }
-    }
+		void Start(){
+			// Set up battle
+			battle = new Battle(rules);
 
-    public bool m_playerTurnComplete = false;
-    public bool m_enemyTurnComplete = false;
+			// Set up the required battle delegates and events
+			battle.OnActorNeedsActionInput.AddListener(ShowActionInput);
+			battle.OnActorNeedsSingleTargetInput.AddListener(ShowTargetInput);
+			battle.OnActorNeedsActorsTargetInput.AddListener(ShowTargetInput);
+			battle.OnActorNeedsGroupTargetInput.AddListener(ShowTargetInput);
+			battle.OnActorHasGivenAllNeededInput.AddListener(HideInput);
+			battle.OnBattleEnd.AddListener(OnBattleEnd);
 
+			// Set up groups and win conditions
+			BattleGroup group1 = battle.AddGroup("Player");
+			BattleGroup group2 = battle.AddGroup("Enemies");
 
-    /// Initialization ///
-    private void Start()
-    {
-        // Set up UI
-        m_battleUI.SetPlayerHealth(m_player.CurrentHealth, m_player.MaxHealth);
-        m_battleUI.SetEnemyHealth(m_enemy.CurrentHealth, m_enemy.MaxHealth);
+			group1.OnDefeat.AddListener(() => EndBattle(false));
+			group2.OnDefeat.AddListener(() => EndBattle(true));
 
-        SetState(BattleState.START);
-    }
+			// Add all actors to their respective groups
+			group1.AddActor(player, true);
+			group2.AddActor(enemy, true);
 
-    private void Update()
-    {
-        switch (m_state)
-        {
-            case BattleState.START:
-                // Wait until any initialization is complete - probably intro animation?
-                // Once complete, set state to player turn and call any functions to initialize that.
-                SetState(BattleState.PLAYERTURN);
-                m_playerTurnComplete = false;
-                break;
-            case BattleState.PLAYERTURN:
-                // Call to update player turn. Involves picking options, and executing attacks
-                // Once player turn is done, set to enemy turn
-                if (m_playerTurnComplete)
-                {
-                    m_battleUI.SetPlayerHealth(m_player.CurrentHealth, m_player.MaxHealth);
-                    m_battleUI.SetEnemyHealth(m_enemy.CurrentHealth, m_enemy.MaxHealth);
-                    if (!CheckForBattleComplete())
-                    {
-                        SetState(BattleState.ENEMYTURN);
-                        m_enemyTurnComplete = false;
-                        StartCoroutine(TestEnemyTurn());
-                    }
-                }
-                break;
-            case BattleState.ENEMYTURN:
-                if (m_playerTurnComplete)
-                {
-                    if (!CheckForBattleComplete())
-                    {
-                        SetState(BattleState.PLAYERTURN);
-                        m_playerTurnComplete = false;
-                    }
-                }
-                break;
-            case BattleState.WIN:
-                break;
-            case BattleState.LOSE:
-                break;
-        }
-    }
+			// Start the battle and get it initialized
+			battle.Start(true);
 
-    private void SetState(BattleState state)
-    {
-        switch (state)
-        {
-            case BattleState.START:
-                break;
-            case BattleState.PLAYERTURN:
-                m_playerTurnManager.StartTurn();
-                break;
-            case BattleState.ENEMYTURN:
-                break;
-            case BattleState.WIN:
-                break;
-            case BattleState.LOSE:
-                break;
-        }
+			// If we'd started the battle with `progressAutomatically = false`, we could wait a while here to open menus etc.
+			// before manually progressing to the first round by calling `battle.ProgressBattle()`.
+		}
+			
+		void ShowActionInput(Actor actor, ActionInput actionInput){
+			// Set up and show the UI for selecting an actor's item or ability.
 
-        m_state = state;
-    }
+			// `actionInput.ValidAbilities` and `.ValidItems` are filtered lists of all abilities and items that can be used
+			// given the current state of the battle.
 
-    public void UpdateUI()
-    {
-        m_battleUI.SetPlayerHealth(m_player.CurrentHealth);
-        m_battleUI.SetEnemyHealth(m_enemy.CurrentHealth);
-    }
+			// `actor.Abilities` can be used to access all abilities.
 
-    public bool CheckForBattleComplete()
-    {
-        if (m_player.CurrentHealth <= 0)
-        {
-            SetState(BattleState.LOSE);
-            return true;
-        }
-        else if (m_enemy.CurrentHealth <= 0)
-        {
-            SetState(BattleState.WIN);
-            return true;
-        }
-        return false;
-    }
+			// The actor's full inventory can be accessed from either `actor.inventory`, `actor.Group.Inventory`
+			// or both, depending on how your game works and which items you wish to show when.
+			// These inventories can be filtered based on the `rules.ItemComsumptionMoment`.
+			// Typically `OnRoundStart` and `OnTurn` moments would use the `Inventory.Filter.All` filter,
+			// and `OnTurnButMarkPendingOnSelect` would use `Inventory.Filter.ExcludePending`.
 
-    private IEnumerator TestEnemyTurn()
-    {
-        yield return new WaitForSeconds(1f);
-        m_player.Damage(5);
-        UpdateUI();
-        m_enemyTurnComplete = true;
-    }
+			// To select an item or ability, call the respective callback method inside `actionInput`.
+			// These callbacks will return a `success` bool.
 
+			int numOptions = Mathf.Min(actionInput.ValidAbilities.Length, playerButtons.Length);
+			int index = 0;
 
+			for (index = 0; index < numOptions; index++)
+			{
+				Ability ability = actionInput.ValidAbilities[index];
+				Button button = playerButtons[index];
+
+				button.gameObject.SetActive(true);
+
+				button.GetComponentInChildren<Text>().text = ability.Data.DisplayName + "\n" + ability.Data.Description;
+				button.onClick.AddListener(() => {
+					actionInput.AbilitySelectCallback(ability);
+					for (int j = 0; j < playerButtons.Length; j++)
+					{
+						playerButtons[j].onClick.RemoveAllListeners();
+						playerButtons[j].gameObject.SetActive(false);
+					}
+				});
+			}
+
+			for (index = actionInput.ValidAbilities.Length; index < playerButtons.Length; index++)
+			{
+				Button button = playerButtons[index];
+
+				button.gameObject.SetActive(false);
+			}
+		}
+
+		void ShowItemInput(Actor actor, StackedItem[] items, ActionInput actionInput){
+			// Set up and show the UI for selecting an item for the current actor to use.
+			// When a target is selected, call `actionInput.ItemSelectCallback(chosenItem)`
+		}
+
+		void ShowTargetInput(Actor actor, TargetInputSingleActor targetInput){
+			// Set up and show the UI for selecting the chosen action's target actor.
+			// When a target is selected, call `actionInput.TargetSelectCallback(chosenActor)`.
+			// This callback will return a `success` bool.
+
+			int numOptions = Mathf.Min(targetInput.ValidTargets.Length, playerButtons.Length);
+			int index = 0;
+
+			for (index = 0; index < numOptions; index++)
+			{
+				Actor target = targetInput.ValidTargets[index];
+				Button button = playerButtons[index];
+
+				button.gameObject.SetActive(true);
+
+				button.GetComponentInChildren<Text>().text = target.DisplayName;
+				button.onClick.AddListener(() => {
+					targetInput.TargetSelectCallback(target);
+					for (int j = 0; j < playerButtons.Length; j++)
+					{
+						playerButtons[j].onClick.RemoveAllListeners();
+						playerButtons[j].gameObject.SetActive(false);
+					}
+				});
+			}
+
+			for (index = targetInput.ValidTargets.Length; index < playerButtons.Length; index++)
+			{
+				Button button = playerButtons[index];
+
+				button.gameObject.SetActive(false);
+			}
+		}
+
+		void ShowTargetInput(Actor actor, TargetInputNumActors targetInput){
+			// Set up and show the UI for selecting the chosen action's target actors.
+			// When a target is selected, call `actionInput.TargetSelectCallback(chosenActors)`.
+			// This callback will return a `success` bool.
+		}
+
+		void ShowTargetInput(Actor actor, TargetInputGroup targetInput){
+			// Set up and show the UI for selecting the chosen action's target group.
+			// When a target is selected, call `actionInput.TargetSelectCallback(chosenBattleGroup)`.
+			// This callback will return a `success` bool.
+		}
+
+		void HideInput(Actor actor){
+			// Hide the UI now that the actor has received all needed input.
+		}
+			
+		void EndBattle(bool playerWon){
+			// A win condition has been met; end the battle.
+			battle.EndBattle(Battle.EndReason.WinLoseConditionMet);
+
+			// Show victory/ defeat animations and UI
+		}
+
+		void OnBattleEnd(Battle.EndReason endReason){
+			if(endReason == Battle.EndReason.OutOfTurns){
+				// Show tie screen or determine winner
+			}
+		}
+	}
 }
