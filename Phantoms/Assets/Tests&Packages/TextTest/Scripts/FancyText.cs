@@ -319,7 +319,7 @@ public class FancyText : MonoBehaviour
                             effect = new Rainbow();
                             break;
                     }
-                    effect.index = textOutputString.Length;
+                    effect.index = index;
                     effect.strength = effectStrength;
                     effects.Add(effect);
                 }
