@@ -52,7 +52,7 @@ public class Dialogue : MonoBehaviour {
             SetVariables();
         }
 
-        if (fancyText.revealing)
+        if (fancyText.Revealing)
         {
             fancyText.FinishLine();
         }
@@ -71,7 +71,7 @@ public class Dialogue : MonoBehaviour {
         fancyText.createtype = createType;
         fancyText.createTime = createTime;
         fancyText.effectType = effectType;
-        fancyText.charDelay = charDelay;
+        fancyText.CharacterDelay = charDelay;
         fancyText.newLinePause = newLinePause;     
     }
 }

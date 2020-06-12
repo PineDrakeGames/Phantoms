@@ -32,45 +32,64 @@ public class FancyText : MonoBehaviour
         NEWLINE
     };
 
-    // Bools that say if we are active and if we are currently revealing stuff
-    [HideInInspector]
-    public bool active = false;
-    [HideInInspector]
-    public bool revealing = false;
 
-    ////  These are things the script needs  ////
+    ////  Serialized items  ////
+    [Header("Text Effect Variables")]
+    [Tooltip("The default effect type to use if no specific effect type is assigned for a character")]
+    public EffectType effectType = EffectType.NONE;
 
-    //Reveal text strings and things 
+    [Tooltip("The default effect strength for an animation")]
+    public float effectStrength = 1f;
+
+
+    [Header("Character Creation Variables")]
+    [Tooltip("The delay between when each character is revealed.")]
+    public CreateType createtype = CreateType.INSTANT;
+
+    [Tooltip("The delay between when each character is revealed.")]
+    public float createTime = 0.5f;
+
+    [Tooltip("The delay between when each character is revealed.")]
+    public float CharacterDelay = 0.05f;
+
+
+    [Header("Current Status")]
+    [ShowOnly]
+    public bool Active = false;
+
+    [ShowOnly]
+    public bool Revealing = false;
+
+
+    /// Private variables ///
+    // Reveal text strings and things 
     TMP_Text m_TextComponent;
     string textInputString;
     string textOutputString;
     string textDisplayString;
     int charIndex = 0;
-    public float charDelay = 0.05f;
     float progress;
 
-    //things related to text display speed and pauses
+    // Things related to text display speed and pauses
     List<SpeedOption> speeds = new List<SpeedOption>();
     int numSpeeds = 0;
     public float newLinePause = 0.8f;
 
-    //Text Effects stuff
+    // Text Effects stuff
     List<TextEffect> effects = new List<TextEffect>();
     string[] seperator = { ">>" };
-    public EffectType effectType = EffectType.NONE;
-    public float effectStrength = 1f;
-    //Text Creation stuff
+
+    // Text Creation stuff
     List<TextCreator> creators = new List<TextCreator>();
     List<Creator> creatorIndexes = new List<Creator>();
-
-    public CreateType createtype = CreateType.INSTANT;
-    public float createTime = 0.5f;
     private float numCreators = 0;
 
     // Audio Stuff
     AudioSource audioSource;
     bool hasAudio = false;
 
+    /// Initialization ///
+    // Get references to any components needed in start
     private void Start()
     {
         m_TextComponent = GetComponent<TMP_Text>();
@@ -82,10 +101,10 @@ public class FancyText : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         //tell the mesh that the verts must be redrawn
-        if (active)
+        if (Active)
         {
             ModifyMesh();
         }
@@ -94,15 +113,16 @@ public class FancyText : MonoBehaviour
     private void ModifyMesh()
     {
         m_TextComponent.ForceMeshUpdate();
-
         TMP_TextInfo textInfo = m_TextComponent.textInfo;
 
-
-        // Cache the vertex data of the text object as the Jitter FX is applied to the original position of the characters.
+        // Declare all the variables needed for mesh modification first
         TMP_MeshInfo[] cachedMeshInfo = textInfo.CopyMeshInfoVertexData();
         int characterCount = textInfo.characterCount;
-
         Color32[] newVertexColors;
+        int materialIndex = 0;
+        int vertexIndex = 0;
+        Vector3[] sourceVertices = null;
+        Vector3[] destinationVertices = null;
 
         // Apply the effects to letters first, in case they are overridden by later changes
         foreach (TextEffect effect in effects)
@@ -113,47 +133,39 @@ public class FancyText : MonoBehaviour
             if (!charInfo.isVisible)
                 continue;
 
-            int materialIndex = textInfo.characterInfo[effect.index].materialReferenceIndex;
-            int vertexIndex = textInfo.characterInfo[effect.index].vertexIndex;
-            Vector3[] sourceVertices = cachedMeshInfo[materialIndex].vertices;
-            Vector3[] destinationVertices = textInfo.meshInfo[materialIndex].vertices;
+            materialIndex = textInfo.characterInfo[effect.index].materialReferenceIndex;
+            vertexIndex = textInfo.characterInfo[effect.index].vertexIndex;
+            sourceVertices = cachedMeshInfo[materialIndex].vertices;
+            destinationVertices = textInfo.meshInfo[materialIndex].vertices;
             newVertexColors = textInfo.meshInfo[materialIndex].colors32;
 
             effect.Apply(Time.time, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
         }
 
-        // Next we do the animations for characters that are currently being put in
-        foreach (TextCreator creator in creators)
+        // Next we do the animations for characters that are currently being put in.
+        // Iterate through it backwards, so we can remove finished creators from the list as we go.
+        for (int i = creators.Count - 1; i >= 0; i--)
         {
+            TextCreator creator = creators[i];
+
             TMP_CharacterInfo charInfo = textInfo.characterInfo[creator.index];
 
             // Skip characters that are not visible and thus have no geometry to manipulate.
             if (!charInfo.isVisible)
                 continue;
 
-            int materialIndex = textInfo.characterInfo[creator.index].materialReferenceIndex;
-            int vertexIndex = textInfo.characterInfo[creator.index].vertexIndex;
-            Vector3[] sourceVertices = cachedMeshInfo[materialIndex].vertices;
-            Vector3[] destinationVertices = textInfo.meshInfo[materialIndex].vertices;
+            materialIndex = textInfo.characterInfo[creator.index].materialReferenceIndex;
+            vertexIndex = textInfo.characterInfo[creator.index].vertexIndex;
+            sourceVertices = cachedMeshInfo[materialIndex].vertices;
+            destinationVertices = textInfo.meshInfo[materialIndex].vertices;
             newVertexColors = textInfo.meshInfo[materialIndex].colors32;
 
             creator.Apply(Time.time, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
-        }
-        // destroy any creators we no longer need to do
-        while (true)
-        {
-            bool done = true;
-            foreach (TextCreator creator in creators)
+
+            // destroy any creators that are finished
+            if (creator.Progress(Time.time) >= 1f)
             {
-                if (creator.Progress(Time.time) >= 1f)
-                {
-                    done = false;
-                    creators.Remove(creator);
-                    break;
-                }
-            }
-            if (done)
-            {
+                creators.Remove(creator);
                 break;
             }
         }
@@ -161,9 +173,9 @@ public class FancyText : MonoBehaviour
         //finally, set everything that hasn't appeared yet to an invisible color
         for (int i = charIndex; i < characterCount; i += 1)
         {
-            int materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
+            materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
             newVertexColors = textInfo.meshInfo[materialIndex].colors32;
-            int vertexIndex = textInfo.characterInfo[i].vertexIndex;
+            vertexIndex = textInfo.characterInfo[i].vertexIndex;
 
             // Only change the vertex color if the text element is visible.
             if (textInfo.characterInfo[i].isVisible)
@@ -417,7 +429,7 @@ public class FancyText : MonoBehaviour
             {
                 if (speeds[speedIndex].type == SpeedModifier.SPEED)
                 {
-                    charDelay = speeds[speedIndex].value;
+                    CharacterDelay = speeds[speedIndex].value;
                 }
                 if (speeds[speedIndex].type == SpeedModifier.NEWLINEPAUSE)
                 {
@@ -506,25 +518,25 @@ public class FancyText : MonoBehaviour
                             charIndex += 1;
                             break;
                     }
-                    if (charDelay != 0f)
+                    if (CharacterDelay != 0f)
                     {
                         if (hasAudio) { audioSource.Play(); }
-                        yield return new WaitForSeconds(charDelay);
+                        yield return new WaitForSeconds(CharacterDelay);
                     }
                 }
             }
         }
-        revealing = false;
+        Revealing = false;
     }
 
     public void SetText(string text)
     {
-        if (!active) { active = true; }
-        if (revealing)
+        if (!Active) { Active = true; }
+        if (Revealing)
         {
             StopCoroutine("DisplayText");
         }
-        else { revealing = true; }
+        else { Revealing = true; }
 
         // Resetting all variables
         if (m_TextComponent == null)
@@ -547,7 +559,7 @@ public class FancyText : MonoBehaviour
 
     public void FinishLine()
     {
-        if (revealing)
+        if (Revealing)
         {
             StopCoroutine("DisplayText");
             numSpeeds = 0;
@@ -556,7 +568,7 @@ public class FancyText : MonoBehaviour
             creators.Clear();
             creatorIndexes.Clear();
             speeds.Clear();
-            revealing = false;
+            Revealing = false;
         }
     }
 }
