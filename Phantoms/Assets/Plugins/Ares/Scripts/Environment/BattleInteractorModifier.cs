@@ -11,13 +11,13 @@ namespace Ares {
 
 		public ChainEvaluator.ActionType Type {get{return type;}}
 
-		[SerializeField] ChainEvaluator.ActionType type;
-		[SerializeField] ModifierTarget target;
-		[SerializeField] string modificationFormula;
-		[SerializeField] bool affectsAbilities;
-		[SerializeField] bool affectsItems;
-		[SerializeField] bool affectsAfflictions;
-		[SerializeField] BlockCondition blockCondition;
+		[SerializeField] ChainEvaluator.ActionType type = ChainEvaluator.ActionType.Damage;
+		[SerializeField] ModifierTarget target = ModifierTarget.Setter;
+		[SerializeField] string modificationFormula = null;
+		[SerializeField] bool affectsAbilities = false;
+		[SerializeField] bool affectsItems = false;
+		[SerializeField] bool affectsAfflictions = false;
+		[SerializeField] BlockCondition blockCondition = BlockCondition.Never;
 
 		bool AppliesToGroup(Actor actor, Actor setter){
 			switch(target){

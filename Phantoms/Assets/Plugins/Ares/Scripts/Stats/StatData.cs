@@ -27,7 +27,7 @@ namespace Ares {
 			return GetScaledPowerFloat(baseValue, stage, true);
 		}
 
-		[SerializeField] string displayName;
+		[SerializeField] string displayName = null;
 	}
 
 	[System.Serializable]
@@ -38,7 +38,7 @@ namespace Ares {
 
 		public int baseValue = 50;
 
-		[SerializeField] StatData data;
+		[SerializeField] StatData data = null;
 		[SerializeField] int stage = 0;
 
 		public Stat(StatData data){

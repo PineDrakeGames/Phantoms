@@ -4,8 +4,8 @@ using UnityEngine;
 using Ares;
 
 public class MindBurstEffect : InstantiationEffectInstance {
-	[SerializeField] Vector3 moveSpeed;
-	[SerializeField] float scaleSpeed;
+	[SerializeField] Vector3 moveSpeed = Vector3.zero;
+	[SerializeField] float scaleSpeed = 0f;
 
 	public override void OnSpawned<T>(Actor caster, Actor[] targets, T origin){
 		base.OnSpawned(caster, targets, origin);

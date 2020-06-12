@@ -13,19 +13,19 @@ namespace Ares {
 		public enum SelectionLimit {None, MinimumAmount, MaximumAmount, Range}
 		public enum SampleMode {Random, Sequential}
 
-		[SerializeField] GuaranteedItemData[] guaranteedItems;
-		[SerializeField] ChanceItemData[] chanceItems;
-		[SerializeField] GroupItemData[] itemGroups;
-		[SerializeField] int minChanceItems;
-		[SerializeField] int maxChanceItems;
-		[SerializeField] int minGroupPicks;
-		[SerializeField] int maxGroupPicks;
-		[SerializeField] SelectionLimit chanceSelection;
-		[SerializeField] SampleMode chanceSampling;
-		[SerializeField] bool allowChanceDuplicates;
+		[SerializeField] GuaranteedItemData[] guaranteedItems = null;
+		[SerializeField] ChanceItemData[] chanceItems = null;
+		[SerializeField] GroupItemData[] itemGroups = null;
+		[SerializeField] int minChanceItems = 0;
+		[SerializeField] int maxChanceItems = 0;
+		[SerializeField] int minGroupPicks = 0;
+		[SerializeField] int maxGroupPicks = 0;
+		[SerializeField] SelectionLimit chanceSelection = SelectionLimit.None;
+		// [SerializeField] SampleMode chanceSampling = SampleMode.Random; Does not appear to be used, only commenting out just in case
+		[SerializeField] bool allowChanceDuplicates = false;
 		[SerializeField] GroupSelectMode groupSelectMode = GroupSelectMode.EntireGroup;
-		[SerializeField] SelectionLimit groupSelection;
-		[SerializeField] bool allowGroupDuplicates;
+		[SerializeField] SelectionLimit groupSelection = SelectionLimit.None;
+		[SerializeField] bool allowGroupDuplicates = false;
 
 		public T GenerateInventory<T>() where T : Inventory, new(){
 			T inventory = new T();

@@ -7,6 +7,6 @@ namespace Ares {
 
 		public TargetType TargetMode {get{return targetType;}}
 
-		[SerializeField] TargetType targetType;
+		[SerializeField] TargetType targetType = TargetType.ChosenTarget;
 	}
 }

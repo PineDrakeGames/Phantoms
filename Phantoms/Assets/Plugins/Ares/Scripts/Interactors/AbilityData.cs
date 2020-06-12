@@ -8,8 +8,8 @@ namespace Ares {
 		public override string FullCategoryPath {get{ return InteractorCategories.GetCategoryForId(InteractorCategories.CategoryType.Ability, category);}}
 		public int Priority {get{return priority;}}
 
-		[SerializeField, InteractorCategoryAttribute(InteractorCategories.CategoryType.Ability)] int category;
-		[SerializeField, Tooltip("Determines whether an ability holds priority over others. Higher priority abilities get evaluated before lower ones.")] int priority;
+		[SerializeField, InteractorCategoryAttribute(InteractorCategories.CategoryType.Ability)] int category = 0;
+		[SerializeField, Tooltip("Determines whether an ability holds priority over others. Higher priority abilities get evaluated before lower ones.")] int priority = 0;
 	}
 
 	[System.Serializable] //Gets serialized on Actors

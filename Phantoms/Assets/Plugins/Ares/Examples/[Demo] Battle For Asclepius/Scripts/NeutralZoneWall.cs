@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace Ares.Examples {
 	public class NeutralZoneWall : InstantiationEffectInstance {
-		[SerializeField] float spawnOffsetFromTarget;
-		[SerializeField] float expandTime;
-		[SerializeField] float cooldownTime;
-		[SerializeField] float cooldownSpeed;
-		[SerializeField] float emissionRateStart;
+		[SerializeField] float spawnOffsetFromTarget = 0f;
+		[SerializeField] float expandTime = 0f;
+		[SerializeField] float cooldownTime = 0f;
+		[SerializeField] float cooldownSpeed = 0f;
+		[SerializeField] float emissionRateStart = 0f;
 
 		public override void OnSpawned<T>(Actor caster, Actor[] targets, T origin){
 			StartCoroutine(CROnSpawned());

@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Ares.Examples {
 	public class PotionEffect : InstantiationEffectInstance {
-		[SerializeField] Vector3 tossForce;
-		[SerializeField] float growTime;
-		[SerializeField] float shrinkTime;
+		[SerializeField] Vector3 tossForce = Vector3.zero;
+		[SerializeField] float growTime = 0f;
+		[SerializeField] float shrinkTime = 0f;
 
 		float spawnTime;
 		Vector3 startScale;

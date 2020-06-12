@@ -6,7 +6,7 @@ namespace Ares.Examples {
 		[SerializeField] float rollSpeed = 1f;
 		[SerializeField] float flipSpeed = 1f;
 		[SerializeField] float falloffSpeed = 1f;
-		[SerializeField] AnimationCurve flipCurve;
+		[SerializeField] AnimationCurve flipCurve = null;
 
 		Material material;
 

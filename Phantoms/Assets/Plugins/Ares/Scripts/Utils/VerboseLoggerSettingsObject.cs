@@ -9,11 +9,11 @@ namespace Ares.Development {
 		public Color ActionColor {get{return actionColor;}}
 		public Color UnimportantColor {get{return unimportantColor;}}
 
-		[SerializeField] Color regularColor;
-		[SerializeField] Color state1Color;
-		[SerializeField] Color state2Color;
-		[SerializeField] Color actionColor;
-		[SerializeField] Color unimportantColor;
+		[SerializeField] Color regularColor = Color.white;
+		[SerializeField] Color state1Color = Color.white;
+		[SerializeField] Color state2Color = Color.white;
+		[SerializeField] Color actionColor = Color.white;
+		[SerializeField] Color unimportantColor = Color.white;
 	}
 
 	public static class VerboseLoggerSettings {

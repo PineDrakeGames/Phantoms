@@ -77,7 +77,7 @@ namespace Ares {
 		}
 		
 		[SerializeField, Tooltip("The number of round before the battle automatically ends.")] int maxRounds = 10;
-		[SerializeField, Tooltip("The maximum time allowed for a player to select their actions. A value of 0 disables timeouts alltogether.")] float turnTimeout;
+		[SerializeField, Tooltip("The maximum time allowed for a player to select their actions. A value of 0 disables timeouts alltogether.")] float turnTimeout = 0f;
 		[SerializeField, Tooltip("Automatically progress the battle between rounds and turns. Disable to progress the battle manually instead.")]bool progressAutomatically = true;
 		[SerializeField, Tooltip("Allow UI delay requests to delay automatic battle progression.")] bool waitForUIEvents = true;
 		[SerializeField, Tooltip("Allow animation delay requests to delay automatic battle progression.")] bool waitForAnimationEvents = true;
@@ -91,24 +91,24 @@ namespace Ares {
 		[SerializeField] float timeBetweenEnvironmentVariableDurationAdjustments = .5f;
 		[SerializeField, Tooltip("Allow abilities to be cast even when there are no valid targets for it at the time of casting.")] bool canCastAbilitiesWithNoValidTargets = true;
 		[SerializeField, Tooltip("Allow items to be used even when there are no valid targets for it at the time.")] bool canUseItemsWithNoValidTargets = true;
-		[SerializeField, Tooltip("Action to take when an actor has no valid actions to select from.")] AbilityFallbackType noValidActionsAction;
-		[SerializeField, Tooltip("Action to take when the cast ability has no valid targets for it at the time of processing.")] TargetFallbackType invalidAbilityTargetAction;
-		[SerializeField, Tooltip("Action to take when the used item has no valid targets for it at the time of processing.")] TargetFallbackType invalidItemTargetAction;
-		[SerializeField, Tooltip("Action to take when the time to select actions has run out.")] ActionFallbackType turnTimeoutAction;
+		[SerializeField, Tooltip("Action to take when an actor has no valid actions to select from.")] AbilityFallbackType noValidActionsAction = AbilityFallbackType.ContinueAsNormal;
+		[SerializeField, Tooltip("Action to take when the cast ability has no valid targets for it at the time of processing.")] TargetFallbackType invalidAbilityTargetAction = TargetFallbackType.SelectRandomTarget;
+		[SerializeField, Tooltip("Action to take when the used item has no valid targets for it at the time of processing.")] TargetFallbackType invalidItemTargetAction = TargetFallbackType.SelectRandomTarget;
+		[SerializeField, Tooltip("Action to take when the time to select actions has run out.")] ActionFallbackType turnTimeoutAction = ActionFallbackType.CastRandomAbility;
 //		[SerializeField, Tooltip("Action to take when the queued action is no longer valid at the time of processing.")] ActionFallbackType invalidActionFallback; //V2
-		[SerializeField, Tooltip("The default fallback ability for actors to cast. Can be overridden per actor.")] AbilityData defaultAbility;
-		[SerializeField, Tooltip("The circumstances under which an actor is allowed to face its target if an item or ability requests it.")] ActorFacingMoment actorCanFaceTarget;
-		[SerializeField, Tooltip("The moment at which moment to have players and AI select their next action.")] SelectActionMoment selectActorAction;
-		[SerializeField, Tooltip("The moment at which moment item uses should be processed.")] RoundStartModeItemComsumptionMoment itemComsumptionMoment;
+		[SerializeField, Tooltip("The default fallback ability for actors to cast. Can be overridden per actor.")] AbilityData defaultAbility = null;
+		[SerializeField, Tooltip("The circumstances under which an actor is allowed to face its target if an item or ability requests it.")] ActorFacingMoment actorCanFaceTarget = ActorFacingMoment.Always;
+		[SerializeField, Tooltip("The moment at which moment to have players and AI select their next action.")] SelectActionMoment selectActorAction = SelectActionMoment.OnRoundStart;
+		[SerializeField, Tooltip("The moment at which moment item uses should be processed.")] RoundStartModeItemComsumptionMoment itemComsumptionMoment = RoundStartModeItemComsumptionMoment.OnRoundStart;
 		[SerializeField, Tooltip("Automatically select available ability target when there is only one option.")] bool autoSelectSingleOptionTargetForAbility = false;
 		[SerializeField, Tooltip("Automatically select all available ability targets when there are [target options] <= [requested targets].")] bool autoSelectNoChoiceMultiTargetsForAbility = false;
 		[SerializeField, Tooltip("Automatically select available item target when there is only one option.")] bool autoSelectSingleOptionTargetForItem = false;
 		[SerializeField, Tooltip("Automatically select all available item targets when there are [target options] <= [requested targets].")] bool autoSelectNoChoiceMultiTargetsForItem = false;
 		[SerializeField, Tooltip("The speed at which actors rotate to face their targets (in degrees/second).")] float faceTargetSpeed = 360f;
-		[SerializeField, Tooltip("The order in which to process events scheduled for the same moment.")] TimedProcess[] timedProcessesOrder;
-		[SerializeField, Tooltip("The method by which to sort actors' turns within a round.")] ActorSort actorSort;
-		[SerializeField, EnumFlagsAttribute, Tooltip("The objects to cleanup after the battle is over.")] CleanupProperty cleanupProperties;
-		[SerializeField, Tooltip("The amount of time to wait before cleaning up after the battle is over.")] float cleanupDelay;
+		[SerializeField, Tooltip("The order in which to process events scheduled for the same moment.")] TimedProcess[] timedProcessesOrder = null;
+		[SerializeField, Tooltip("The method by which to sort actors' turns within a round.")] ActorSort actorSort = ActorSort.BySpeed;
+		[SerializeField, EnumFlagsAttribute, Tooltip("The objects to cleanup after the battle is over.")] CleanupProperty cleanupProperties = CleanupProperty.HelperMonoBehaviour;
+		[SerializeField, Tooltip("The amount of time to wait before cleaning up after the battle is over.")] float cleanupDelay = 0f;
 
 		public bool AllowWaitingFor(DelayRequestReason reason){
 			return (reason == DelayRequestReason.UIEvent && waitForUIEvents) ||

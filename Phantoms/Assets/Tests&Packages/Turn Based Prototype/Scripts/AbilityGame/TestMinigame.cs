@@ -6,7 +6,7 @@ public class TestMinigame : AbilityMinigame
 {
     [Header("UI References")]
     [SerializeField]
-    private Animator m_minigameAnim;
+    private Animator m_minigameAnim = null;
 
     [Header("Minigame Variables")]
     [SerializeField]

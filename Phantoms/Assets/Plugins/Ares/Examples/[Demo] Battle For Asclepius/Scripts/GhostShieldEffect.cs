@@ -8,7 +8,7 @@ namespace Arex.Examples {
 		[SerializeField] float endScale = 50f;
 		[SerializeField] float endOffset = 1f;
 		[SerializeField] float animationTime = 1f;
-		[SerializeField] AnimationCurve animationProgression;
+		[SerializeField] AnimationCurve animationProgression = null;
 
 		Vector3 startScaleV3;
 		Vector3 endScaleV3;

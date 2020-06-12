@@ -8,7 +8,7 @@ namespace Ares {
 
 		public float Lifetime {get{return lifetime;}}
 
-		[SerializeField, Tooltip("Values <= 0 will not schedule destruction")] float lifetime;
+		[SerializeField, Tooltip("Values <= 0 will not schedule destruction")] float lifetime = 0f;
 
 		static InstantiationEffectInstance(){
 			ActiveEffects = new List<InstantiationEffectInstance>();

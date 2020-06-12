@@ -43,7 +43,7 @@ namespace Ares {
 	public class InventoryBuilder : MonoBehaviour {
 		[SerializeField] InventoryGenerator.InventoryType inventoryType = InventoryGenerator.InventoryType.Stacked;
 		[SerializeField] bool assignToActorOnAwake = true;
-		[SerializeField] InventoryGenerator generator;
+		[SerializeField] InventoryGenerator generator = null;
 
 		void Awake(){
 			if(assignToActorOnAwake){

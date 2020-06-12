@@ -6,18 +6,18 @@ namespace Ares.Examples {
 	enum ShieldState {Attached, FlyingTowardsTarget, Returning, Dropped}
 
 	public class ShadowAresCustomCallbacks : BattleDelayElement {
-		[SerializeField, Header("References")] Transform shieldDeformBone;
-		[SerializeField] Transform shieldHandleBone;
-		[SerializeField] Transform spearBone;
-		[SerializeField] Transform heldItemBone;
-		[SerializeField] Transform dropTarget;
-		[SerializeField, Header("Shield throw parameters")] AbilityData shieldThrowData;
+		[SerializeField, Header("References")] Transform shieldDeformBone = null;
+		[SerializeField] Transform shieldHandleBone = null;
+		[SerializeField] Transform spearBone = null;
+		[SerializeField] Transform heldItemBone = null;
+		[SerializeField] Transform dropTarget = null;
+		[SerializeField, Header("Shield throw parameters")] AbilityData shieldThrowData = null;
 		[SerializeField] Vector3 dropRotation = new Vector3(15f, 90f, 20f);
-		[SerializeField] float flyMoveSpeed;
-		[SerializeField] float flyRotateSpeed;
-		[SerializeField] float dropMoveSpeed;
-		[SerializeField] float dropRotateSpeed;
-		[SerializeField] float postShieldThrowDelay;
+		[SerializeField] float flyMoveSpeed = 0f;
+		[SerializeField] float flyRotateSpeed = 0f;
+		[SerializeField] float dropMoveSpeed = 0f;
+		[SerializeField] float dropRotateSpeed = 0f;
+		[SerializeField] float postShieldThrowDelay = 0f;
 
 		Transform shieldParent;
 		ShieldState shieldState;

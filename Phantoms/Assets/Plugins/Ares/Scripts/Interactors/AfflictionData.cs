@@ -40,15 +40,15 @@ namespace Ares {
 		public AudioEffect EndAudio {get{return endAudio;}}
 		
 		[SerializeField, Header("Info")] string displayName = "New Affliction";
-		[SerializeField, Multiline(3)] string description;
-		[SerializeField, Tooltip("The base duration of this ability, before any effects are executed."), Header("Timing")] float baseDuration;
-		[SerializeField] int power;
-		[SerializeField, Header("Curing")] Cure cureCondition;
-		[SerializeField] int duration1;
-		[SerializeField] int duration2;
-		[SerializeField, Range(0f, 1f)] float cureChance;
-		[SerializeField, Tooltip("Remove the affliction when the afflicted actor dies.")] bool cureOnAfflictedDeath;
-		[SerializeField, Tooltip("Remove the affliction when the actor who caused it dies.")] bool cureOnAfflicterDeath;
+		[SerializeField, Multiline(3)] string description = null;
+		[SerializeField, Tooltip("The base duration of this ability, before any effects are executed."), Header("Timing")] float baseDuration = 0f;
+		[SerializeField] int power = 0;
+		[SerializeField, Header("Curing")] Cure cureCondition = Cure.ConstantNumberOfTurns;
+		[SerializeField] int duration1 = 0;
+		[SerializeField] int duration2 = 0;
+		[SerializeField, Range(0f, 1f)] float cureChance = 0f;
+		[SerializeField, Tooltip("Remove the affliction when the afflicted actor dies.")] bool cureOnAfflictedDeath = false;
+		[SerializeField, Tooltip("Remove the affliction when the actor who caused it dies.")] bool cureOnAfflicterDeath = false;
 		[SerializeField, Header("Afflicting"), Tooltip("Allow actors who have already been defeated to obtain this affliction.")] bool canAfflictDefeatedActors = false;
 
 		[SerializeField, Tooltip("The moment at which to process the effect and evaluate the action chain.")]
@@ -58,27 +58,27 @@ namespace Ares {
 		ProcessingMoment durationProcessingMoment = ProcessingMoment.EndOfAfflictedActorTurn;
 
 		[SerializeField, Tooltip("The adjustment to make to the affliction's stage if an already-afflicted actor tries to get afflicted by it again.")]
-		DoubleSetStageAction doubleSetStageBehaviour;
+		DoubleSetStageAction doubleSetStageBehaviour = DoubleSetStageAction.Ignore;
 
 		[SerializeField, Tooltip("The adjustment to make to the affliction's remaining duration if an already-afflicted actor tries to get afflicted by it again.")]
-		DoubleSetDurationAction doubleSetDurationBehaviour;
+		DoubleSetDurationAction doubleSetDurationBehaviour = DoubleSetDurationAction.Ignore;
 
-		[SerializeField] List<AfflictionAction> actions;
-		[SerializeField] AnimationEffect obtainAnimation;
-		[SerializeField] AnimationEffect triggerAnimation;
-		[SerializeField] AnimationEffect stageIncreaseAnimation;
-		[SerializeField] AnimationEffect stageDecreaseAnimation;
-		[SerializeField] AnimationEffect endAnimation;
-		[SerializeField] InstantiationEffect obtainInstantiation;
-		[SerializeField] InstantiationEffect triggerInstantiation;
-		[SerializeField] InstantiationEffect stageIncreaseInstantiation;
-		[SerializeField] InstantiationEffect stageDecreaseInstantiation;
-		[SerializeField] InstantiationEffect endInstantiation;
-		[SerializeField] AudioEffect obtainAudio;
-		[SerializeField] AudioEffect triggerAudio;
-		[SerializeField] AudioEffect stageIncreaseAudio;
-		[SerializeField] AudioEffect stageDecreaseAudio;
-		[SerializeField] AudioEffect endAudio;
+		[SerializeField] List<AfflictionAction> actions = null;
+		[SerializeField] AnimationEffect obtainAnimation = null;
+		[SerializeField] AnimationEffect triggerAnimation = null;
+		[SerializeField] AnimationEffect stageIncreaseAnimation = null;
+		[SerializeField] AnimationEffect stageDecreaseAnimation = null;
+		[SerializeField] AnimationEffect endAnimation = null;
+		[SerializeField] InstantiationEffect obtainInstantiation = null;
+		[SerializeField] InstantiationEffect triggerInstantiation = null;
+		[SerializeField] InstantiationEffect stageIncreaseInstantiation = null;
+		[SerializeField] InstantiationEffect stageDecreaseInstantiation = null;
+		[SerializeField] InstantiationEffect endInstantiation = null;
+		[SerializeField] AudioEffect obtainAudio = null;
+		[SerializeField] AudioEffect triggerAudio = null;
+		[SerializeField] AudioEffect stageIncreaseAudio = null;
+		[SerializeField] AudioEffect stageDecreaseAudio = null;
+		[SerializeField] AudioEffect endAudio = null;
 
 		void OnEnable(){
 			if(actions == null){

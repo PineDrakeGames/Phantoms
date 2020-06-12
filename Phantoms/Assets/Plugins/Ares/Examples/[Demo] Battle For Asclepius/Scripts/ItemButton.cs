@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 namespace Ares.Examples {
 	public class ItemButton : Button {
-		[SerializeField] Text label;
-		[SerializeField] Text amountLabel;
+		[SerializeField] Text label = null;
+		[SerializeField] Text amountLabel = null;
 
 		public void SetLabels(StackedItem item){
 			if(item != null){

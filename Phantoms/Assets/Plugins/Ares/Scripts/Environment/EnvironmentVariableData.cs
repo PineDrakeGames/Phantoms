@@ -28,25 +28,25 @@ namespace Ares {
 		public AudioEffect FilterAudio {get{return filterAudio;}}
 		public AudioEffect UnsetAudio {get{return unsetAudio;}}
 
-		[SerializeField] string displayName;
-		[SerializeField] DoubleSetStageAction doubleSetStageBehaviour;
-		[SerializeField] DoubleSetDurationAction doubleSetDurationBehaviour;
-		[SerializeField] DurationType durationMode;
-		[SerializeField] ProcessingMoment durationProcessingMoment;
-		[SerializeField] ProcessingMoment effectProcessingMoment;
+		[SerializeField] string displayName = null;
+		[SerializeField] DoubleSetStageAction doubleSetStageBehaviour = DoubleSetStageAction.Ignore;
+		[SerializeField] DoubleSetDurationAction doubleSetDurationBehaviour = DoubleSetDurationAction.Ignore;
+		[SerializeField] DurationType durationMode = DurationType.Permanent;
+		[SerializeField] ProcessingMoment durationProcessingMoment = ProcessingMoment.Never;
+		[SerializeField] ProcessingMoment effectProcessingMoment = ProcessingMoment.Never;
 		[SerializeField] int minStage = 0;
 		[SerializeField] int maxStage = 5;
 		[SerializeField] int minDuration = 1;
 		[SerializeField] int maxDuration = 5;
-		[SerializeField] BattleInteractorModifier[] filters;
-		[SerializeField] InstantiationEffect setInstantiation;
-		[SerializeField] InstantiationEffect processInstantiation;
-		[SerializeField] InstantiationEffect filterInstantiation;
-		[SerializeField] InstantiationEffect unsetInstantiation;
-		[SerializeField] AudioEffect setAudio;
-		[SerializeField] AudioEffect processAudio;
-		[SerializeField] AudioEffect filterAudio;
-		[SerializeField] AudioEffect unsetAudio;
+		[SerializeField] BattleInteractorModifier[] filters = null;
+		[SerializeField] InstantiationEffect setInstantiation = null;
+		[SerializeField] InstantiationEffect processInstantiation = null;
+		[SerializeField] InstantiationEffect filterInstantiation = null;
+		[SerializeField] InstantiationEffect unsetInstantiation = null;
+		[SerializeField] AudioEffect setAudio = null;
+		[SerializeField] AudioEffect processAudio = null;
+		[SerializeField] AudioEffect filterAudio = null;
+		[SerializeField] AudioEffect unsetAudio = null;
 
 		public virtual void OnSet(Battle battle, Actor setter){}
 		public virtual void OnUnset(Battle battle, Actor setter){}

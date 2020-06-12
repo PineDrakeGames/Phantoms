@@ -6,13 +6,13 @@ public class HealthIndicator : MonoBehaviour
 {
     [Header("Reference to actor to show HP for.")]
     [SerializeField]
-    private Ares.Actor m_actor;
+    private Ares.Actor m_actor = null;
     
     [Header("References to UI Elements")]
     [SerializeField]
-    private TMP_Text m_maxHP;
+    private TMP_Text m_maxHP = null;
     [SerializeField]
-    private TMP_Text m_currentHP;
+    private TMP_Text m_currentHP = null;
 
     // Start is called before the first frame update
     void Start()

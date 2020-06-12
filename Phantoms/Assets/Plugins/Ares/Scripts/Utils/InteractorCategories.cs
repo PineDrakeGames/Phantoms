@@ -12,9 +12,9 @@ namespace Ares.Development {
 		public CategoryType Type {get{return categoryType;}}
 		public int MaxId {get{return maxId;}}
 
-		[SerializeField] CategoryType categoryType;
-		[SerializeField] int maxId;
-		[SerializeField] List<InteractorCategory> categories;
+		[SerializeField] CategoryType categoryType = CategoryType.Ability;
+		[SerializeField] int maxId = 0;
+		[SerializeField] List<InteractorCategory> categories = null;
 
 		public InteractorCategoriesData GetAll(){
 			return new InteractorCategoriesData(categories.Select(c => c.path).ToArray(), categories.Select(c => c.id).ToArray());

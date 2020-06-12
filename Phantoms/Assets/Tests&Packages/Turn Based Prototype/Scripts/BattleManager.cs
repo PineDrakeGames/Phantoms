@@ -8,17 +8,17 @@ using UnityEngine.UI;
 
 namespace Ares.Examples {
 	public class BattleManager : MonoBehaviour {
-		[SerializeField, Header("Battle")] BattleRules rules; // The rules and settings that the battle will adhere to.
+		[SerializeField, Header("Battle")] BattleRules rules = null; // The rules and settings that the battle will adhere to.
 
 		[Header("Actors")]
 		[SerializeField]
-		private Actor player;
+		private Actor player = null;
 		[SerializeField]
-		private Actor enemy;
+		private Actor enemy = null;
 
 		[Header("Player options")]
 		[SerializeField]
-		private Button[] playerButtons;
+		private Button[] playerButtons = null;
 
 		Battle battle; // A reference to the actual Battle object
 

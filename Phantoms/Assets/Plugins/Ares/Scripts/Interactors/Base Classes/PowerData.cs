@@ -11,8 +11,8 @@ namespace Ares {
 
 		[SerializeField] float powerIncrement = 1f;
 		[SerializeField] float powerMultiplier = 1f;
-		[SerializeField] string powerFormula;
-		[SerializeField] PowerScaling powerScalingMode;
+		[SerializeField] string powerFormula = null;
+		[SerializeField] PowerScaling powerScalingMode = PowerScaling.Linear;
 		[SerializeField] int minStage = -5;
 		[SerializeField] int maxStage = 5;
 

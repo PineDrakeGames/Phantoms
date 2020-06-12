@@ -10,7 +10,7 @@ namespace Ares.ActorComponents {
 
 		public bool Enabled {get{return effect.enabled;} set{effect.enabled = value;}}// Convenience wrapper for Effect.Enabled
 
-		[SerializeField] protected AnimationEffect effect;
+		[SerializeField] protected AnimationEffect effect = null;
 
 		public ActorAnimationAbilityElement(){
 			effect = new AnimationEffect();
@@ -23,7 +23,7 @@ namespace Ares.ActorComponents {
 
 		[EnumFlagsAttribute] public EventIgnoreFlags ignoreEvents;
 
-		[SerializeField] EventCallbackType type;
+		[SerializeField] EventCallbackType type = EventCallbackType.TakeDamage;
 
 		public ActorAnimationEventElement(EventCallbackType type){
 			this.type = type;
@@ -35,8 +35,8 @@ namespace Ares.ActorComponents {
 		public AfflictionData Affliction {get{return affliction;}}
 		public AfflictionCallbackType Type {get{return type;}}
 
-		[SerializeField] AfflictionData affliction;
-		[SerializeField] AfflictionCallbackType type;
+		[SerializeField] AfflictionData affliction = null;
+		[SerializeField] AfflictionCallbackType type = AfflictionCallbackType.Obtain;
 
 		public ActorAnimationAfflictionElement(AfflictionData data, bool enabled){
 			affliction = data;
@@ -48,7 +48,7 @@ namespace Ares.ActorComponents {
 	public class ActorAnimationItemElement : ActorAnimationAbilityElement {
 		public ItemData Item {get{return item;}}
 
-		[SerializeField] ItemData item;
+		[SerializeField] ItemData item = null;
 
 		public ActorAnimationItemElement(ItemData data, bool enabled){
 			item = data;
@@ -65,24 +65,26 @@ namespace Ares.ActorComponents {
 		public List<ActorAnimationAfflictionElement> AfflictionCallbacks {get{return afflictionCallbacks;}}
 		public List<ActorAnimationItemElement> ItemCallbacks {get{return itemCallbacks;}}
 
-		[SerializeField] Animator animator;
-		[SerializeField] bool resetParametersAfterSet;
-		[SerializeField] ParamaterResetType intParameterResetType;
+		[SerializeField] Animator animator = null;
+		[SerializeField] bool resetParametersAfterSet = false;
+		[SerializeField] ParamaterResetType intParameterResetType = ParamaterResetType.PreviousValue;
 		[SerializeField] int intParameterResetValue = 0;
-		[SerializeField] ParamaterResetType floatParameterResetType;
+		[SerializeField] ParamaterResetType floatParameterResetType = ParamaterResetType.PreviousValue;
 		[SerializeField] float floatParameterResetValue = 0f;
-		[SerializeField] ParamaterResetType boolParameterResetType;
+		[SerializeField] ParamaterResetType boolParameterResetType = ParamaterResetType.PreviousValue;
 		[SerializeField] bool boolParameterResetValue = false;
 		[SerializeField, Space()] bool allowDefaultAbilityAnimation = true;
 		[SerializeField] bool allowDefaultItemAnimation = true;
 		[SerializeField] bool allowDefaultAfflictionAnimation = true;
-		[SerializeField, HideInInspector] ActorAnimationEventElement[] eventCallbacks;
-		[SerializeField, HideInInspector] ActorAnimationAbilityElement[] abilityCallbacks;
-		[SerializeField, HideInInspector] List<ActorAnimationAfflictionElement> afflictionCallbacks;
-		[SerializeField, HideInInspector] List<ActorAnimationItemElement> itemCallbacks;
-		[SerializeField] ActorAnimationAbilityElement defaultAbilityCallback;
-		[SerializeField] ActorAnimationItemElement defaultItemCallback;
-		[SerializeField] ActorAnimationAfflictionElement defaultAfflictionCallback;
+		[SerializeField, HideInInspector] ActorAnimationEventElement[] eventCallbacks = null;
+		[SerializeField, HideInInspector] ActorAnimationAbilityElement[] abilityCallbacks = null;
+		[SerializeField, HideInInspector] List<ActorAnimationAfflictionElement> afflictionCallbacks = null;
+		[SerializeField, HideInInspector] List<ActorAnimationItemElement> itemCallbacks = null;
+		
+		// Does not appear to be used, only commenting out just in case
+		// [SerializeField] ActorAnimationAbilityElement defaultAbilityCallback = null;
+		// [SerializeField] ActorAnimationItemElement defaultItemCallback = null;
+		// [SerializeField] ActorAnimationAfflictionElement defaultAfflictionCallback = null;
 
 		int delayLockCoroutines = 0;
 		BattleDelayElement delayer;

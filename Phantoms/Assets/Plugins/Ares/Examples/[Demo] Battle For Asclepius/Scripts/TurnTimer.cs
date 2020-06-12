@@ -4,12 +4,12 @@ using UnityEngine.UI;
 
 namespace Ares.Examples {
 	public class TurnTimer : MonoBehaviour {
-		[SerializeField] RectTransform graphics;
-		[SerializeField] Image border;
-		[SerializeField] Image inner;
-		[SerializeField] Text label;
-		[SerializeField] Gradient colors1;
-		[SerializeField] Gradient colors2;
+		[SerializeField] RectTransform graphics = null;
+		[SerializeField] Image border = null;
+		[SerializeField] Image inner = null;
+		[SerializeField] Text label = null;
+		[SerializeField] Gradient colors1 = null;
+		[SerializeField] Gradient colors2 = null;
 
 		IEnumerator Start(){
 			yield return null;

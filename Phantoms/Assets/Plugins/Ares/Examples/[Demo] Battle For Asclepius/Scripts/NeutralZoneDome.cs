@@ -4,12 +4,12 @@ using Ares.Extensions;
 
 namespace Ares.Examples {
 	public class NeutralZoneDome : InstantiationEffectInstance {
-		[SerializeField] AnimationCurve initRotationAndEmission;
-		[SerializeField] AnimationCurve initTransparency;
-		[SerializeField] float metallicAndSmoothnessLerpTime;
-		[SerializeField] float rotationSpeedMultiplier;
-		[SerializeField] float maxEmissionValue;
-		[SerializeField] float initTime;
+		[SerializeField] AnimationCurve initRotationAndEmission = null;
+		[SerializeField] AnimationCurve initTransparency = null;
+		[SerializeField] float metallicAndSmoothnessLerpTime = 0f;
+		[SerializeField] float rotationSpeedMultiplier = 0f;
+		[SerializeField] float maxEmissionValue = 0f;
+		[SerializeField] float initTime = 0f;
 
 		float spawnTime;
 		Material material;

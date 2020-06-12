@@ -7,7 +7,7 @@ namespace Ares {
 		public string DisplayName {get{return displayName;}}
 		public ItemData[] ItemData {get{return itemData;}}
 
-		[SerializeField, Header("Info")] string displayName;
-		[SerializeField, Header("Items")] ItemData[] itemData;
+		[SerializeField, Header("Info")] string displayName = null;
+		[SerializeField, Header("Items")] ItemData[] itemData = null;
 	}
 }

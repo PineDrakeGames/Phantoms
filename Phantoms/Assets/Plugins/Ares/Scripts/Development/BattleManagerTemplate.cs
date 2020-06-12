@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Ares.Examples {
 	public class BattleManagerTemplate : MonoBehaviour {
-		[SerializeField, Header("Battle")] BattleRules rules; // The rules and settings that the battle will adhere to.
+		[SerializeField, Header("Battle")] BattleRules rules = null; // The rules and settings that the battle will adhere to.
 
 		Battle battle; // A reference to the actual Battle object
 

@@ -6,10 +6,10 @@ using Ares;
 
 namespace Ares.Examples {
 	public class OwlCustomCallbacks : MonoBehaviour {
-		[SerializeField] SkinnedMeshRenderer eyesRenderer;
-		[SerializeField] AbilityData mindBurst;
-		[SerializeField] Color chargedEyeColor;
-		[SerializeField] Color[] chargedColors;
+		[SerializeField] SkinnedMeshRenderer eyesRenderer = null;
+		[SerializeField] AbilityData mindBurst = null;
+		[SerializeField] Color chargedEyeColor = Color.white;
+		[SerializeField] Color[] chargedColors = null;
 
 		Material eyeMaterial;
 		Material[] glowMaterials;

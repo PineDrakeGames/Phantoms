@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace Ares.UI {
 	[RequireComponent(typeof(Text))]
 	public class NameDisplay : MonoBehaviour {
-		[SerializeField] Actor actor;
+		[SerializeField] Actor actor = null;
 
 		Text text;
 

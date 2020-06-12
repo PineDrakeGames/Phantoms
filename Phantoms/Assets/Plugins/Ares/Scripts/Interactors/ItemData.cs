@@ -11,10 +11,10 @@ namespace Ares {
 		public int Uses {get{return uses;}}
 		public bool MockUserAsTarget {get{return mockUserAsTarget;}}
 
-		[SerializeField, InteractorCategoryAttribute(InteractorCategories.CategoryType.Item)] int category;
+		[SerializeField, InteractorCategoryAttribute(InteractorCategories.CategoryType.Item)] int category = 0;
 		[SerializeField] int uses = 1;
 		[SerializeField, Tooltip("When checked, the item's user will always be set to the target, even if it was used by another actor on the other actor's turn.")]
-		bool mockUserAsTarget;
+		bool mockUserAsTarget = false;
 	}
 
 	public class Item : BattleInteractor<ItemData, ItemAction>, System.ICloneable {

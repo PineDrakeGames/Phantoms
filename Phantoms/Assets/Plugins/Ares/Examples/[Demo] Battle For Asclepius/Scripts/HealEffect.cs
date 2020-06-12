@@ -9,8 +9,8 @@ namespace Ares.Examples {
 		[SerializeField] float endScale = 10f;
 		[SerializeField] float endRotationY = 10f;
 		[SerializeField] float animationTime = 4f;
-		[SerializeField] AnimationCurve animationProgression;
-		[SerializeField] AnimationCurve softFactorOverTime;
+		[SerializeField] AnimationCurve animationProgression = null;
+		[SerializeField] AnimationCurve softFactorOverTime = null;
 
 		Vector3 startScaleV3;
 		Vector3 endScaleV3;

@@ -3,10 +3,10 @@ using UnityEngine.UI;
 
 [ExecuteInEditMode]
 public class RelativeTextSize : MonoBehaviour {
-	[SerializeField, Range(.01f, .2f)] float size;
+	[SerializeField, Range(.01f, .2f)] float size = 0.01f;
 
 	#if UNITY_EDITOR
-	[SerializeField] bool updateInEditor;
+	[SerializeField] bool updateInEditor = false;
 	#endif
 
 	void Awake(){

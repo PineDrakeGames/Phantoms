@@ -25,11 +25,11 @@ namespace Ares {
 			public AudioEffect[] Audios {get{return audios;}}
 			public InstantiationEffect[] Instantiations {get{return instantiations;}}
 			
-			[SerializeField] int turns;
-			[SerializeField] string[] texts;
-			[SerializeField] AnimationEffect[] animations;
-			[SerializeField] AudioEffect[] audios;
-			[SerializeField] InstantiationEffect[] instantiations;
+			[SerializeField] int turns = 0;
+			[SerializeField] string[] texts = null;
+			[SerializeField] AnimationEffect[] animations = null;
+			[SerializeField] AudioEffect[] audios = null;
+			[SerializeField] InstantiationEffect[] instantiations = null;
 			
 			public string GetMessage(int turnsRemaining, Actor user){
 				string message = texts[turns - turnsRemaining];
@@ -69,7 +69,7 @@ namespace Ares {
 		public class RecoveryData : BlockingInteractorData{
 			public RecoveryInterrupt Interrupt {get{return interrupt;}}
 
-			[SerializeField, EnumFlagsAttribute] RecoveryInterrupt interrupt;
+			[SerializeField, EnumFlagsAttribute] RecoveryInterrupt interrupt = RecoveryInterrupt.OnTargetMiss;
 		}
 	}
 
@@ -94,26 +94,26 @@ namespace Ares {
 		public InstantiationEffect Instantiation {get{return instantiation;}}
 		public AudioEffect Audio {get{return audio;}}
 
-		[SerializeField, Header("Info")] string displayName;
-		[SerializeField, Multiline(3)] string description;
+		[SerializeField, Header("Info")] string displayName = null;
+		[SerializeField, Multiline(3)] string description = null;
 
-		[SerializeField, Tooltip("The base duration of this ability, before any effects are executed."), Header("Timing")] float baseDuration;
-		[SerializeField, Tooltip("Number of turns needed to charge before this interactor evaluates its action chain.")] BattleInteractorData.PreparationData preparation;
-		[SerializeField, Tooltip("Number of turns needed to charge before this interactor evaluates its action chain.")] BattleInteractorData.RecoveryData recovery;
+		[SerializeField, Tooltip("The base duration of this ability, before any effects are executed."), Header("Timing")] float baseDuration = 0f;
+		[SerializeField, Tooltip("Number of turns needed to charge before this interactor evaluates its action chain.")] BattleInteractorData.PreparationData preparation = null;
+		[SerializeField, Tooltip("Number of turns needed to charge before this interactor evaluates its action chain.")] BattleInteractorData.RecoveryData recovery = null;
 //		[SerializeField, Header("Preparation and Recovery")] string[] preparationTexts;
 //		[SerializeField] string[] recoveryTexts;
-		[SerializeField, Tooltip("The type of targets this interactor requires."), Header("Targeting")] BattleInteractorData.TargetType targetType;
+		[SerializeField, Tooltip("The type of targets this interactor requires."), Header("Targeting")] BattleInteractorData.TargetType targetType = BattleInteractorData.TargetType.SingleActor;
 		[SerializeField, Tooltip("The maximum number of actors this interactor can target.")] int numberOfTargets = 1;
-		[SerializeField, Tooltip("The type of actors this interactor can target.")] BattleInteractorData.TargetGroupActors validTargets;
+		[SerializeField, Tooltip("The type of actors this interactor can target.")] BattleInteractorData.TargetGroupActors validTargets = BattleInteractorData.TargetGroupActors.All;
 		[SerializeField, Tooltip("Allows the actor to choose the target actors for this interactor.")] bool isTargetable = true;
-		[SerializeField, Tooltip("The type of actors this interactor can target.")] BattleInteractorData.TargetGroupGroups validTargetGroups;
-		[SerializeField, Tooltip("The liveness of the actors this interactor can target.")] BattleInteractorData.TargetAliveState validTargetStates;
-		[SerializeField, Tooltip("The participation status of the actors this interactor can target.")] BattleInteractorData.TargetParticipationState validTargetParticipants;
-		[SerializeField, Tooltip("Let the user of this interactor to turn towards the chosen target(s) if the rules allow it.")] bool turnTowardsTarget;
-		[SerializeField] List<T> actions;
-		[SerializeField] AnimationEffect animation;
-		[SerializeField] InstantiationEffect instantiation;
-		[SerializeField] AudioEffect audio;
+		[SerializeField, Tooltip("The type of actors this interactor can target.")] BattleInteractorData.TargetGroupGroups validTargetGroups = BattleInteractorData.TargetGroupGroups.Allies;
+		[SerializeField, Tooltip("The liveness of the actors this interactor can target.")] BattleInteractorData.TargetAliveState validTargetStates = BattleInteractorData.TargetAliveState.Alive;
+		[SerializeField, Tooltip("The participation status of the actors this interactor can target.")] BattleInteractorData.TargetParticipationState validTargetParticipants = BattleInteractorData.TargetParticipationState.Participating;
+		[SerializeField, Tooltip("Let the user of this interactor to turn towards the chosen target(s) if the rules allow it.")] bool turnTowardsTarget = false;
+		[SerializeField] List<T> actions = null;
+		[SerializeField] AnimationEffect animation = null;
+		[SerializeField] InstantiationEffect instantiation = null;
+		[SerializeField] AudioEffect audio = null;
 
 		void Reset(){
 			actions = new List<T>();

@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace Ares.Examples {
 	public class DeclarationParticles : MonoBehaviour {
-		[SerializeField] float cooldownDelay;
-		[SerializeField] float cooldownTime;
+		[SerializeField] float cooldownDelay = 0f;
+		[SerializeField] float cooldownTime = 0f;
 
 		IEnumerator Start(){
 			ParticleSystem.EmissionModule emission = GetComponent<ParticleSystem>().emission;

@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class FancyText : MonoBehaviour
@@ -70,7 +69,7 @@ public class FancyText : MonoBehaviour
     private float numCreators = 0;
 
     // Audio Stuff
-    AudioSource audio;
+    AudioSource audioSource;
     bool hasAudio = false;
 
     private void Start()
@@ -78,7 +77,7 @@ public class FancyText : MonoBehaviour
         m_TextComponent = GetComponent<TMP_Text>();
         if (GetComponent<AudioSource>() != null)
         {
-            audio = GetComponent<AudioSource>();
+            audioSource = GetComponent<AudioSource>();
             hasAudio = true;
         }
     }
@@ -98,8 +97,6 @@ public class FancyText : MonoBehaviour
         m_TextComponent.ForceMeshUpdate();
 
         TMP_TextInfo textInfo = m_TextComponent.textInfo;
-
-        Matrix4x4 matrix;
 
 
         // Cache the vertex data of the text object as the Jitter FX is applied to the original position of the characters.
@@ -528,7 +525,7 @@ public class FancyText : MonoBehaviour
                     }
                     if (charDelay != 0f)
                     {
-                        if (hasAudio) { audio.Play(); }
+                        if (hasAudio) { audioSource.Play(); }
                         yield return new WaitForSeconds(charDelay);
                     }
                 }
