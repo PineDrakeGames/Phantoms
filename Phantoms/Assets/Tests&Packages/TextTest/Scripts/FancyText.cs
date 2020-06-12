@@ -423,106 +423,90 @@ public class FancyText : MonoBehaviour
         charIndex = 0;
         int speedIndex = 0;
         int creatorsIndex = 0;
+
+        bool playedSound = false;
+
         while (charIndex < textDisplayString.Length)
         {
-            if (speedIndex < numSpeeds && speeds[speedIndex].index == charIndex)
+            // Check if there is any speed changes at this index, and set up all of them if so.
+            while (speedIndex < numSpeeds && speeds[speedIndex].index == charIndex)
             {
-                if (speeds[speedIndex].type == SpeedModifier.SPEED)
+                switch (speeds[speedIndex].type)
                 {
-                    CharacterDelay = speeds[speedIndex].value;
-                }
-                if (speeds[speedIndex].type == SpeedModifier.NEWLINEPAUSE)
-                {
-                    newLinePause = speeds[speedIndex].value;
-                }
-                if (speeds[speedIndex].type == SpeedModifier.NEWLINE)
-                {
-                    yield return new WaitForSeconds(newLinePause);
-                }
-                if (speeds[speedIndex].type == SpeedModifier.PAUSE)
-                {
-                    yield return new WaitForSeconds(speeds[speedIndex].value);
+                    case SpeedModifier.SPEED:
+                        CharacterDelay = speeds[speedIndex].value;
+                        break;
+                    case SpeedModifier.NEWLINEPAUSE:
+                        newLinePause = speeds[speedIndex].value;
+                        break;
+                    case SpeedModifier.NEWLINE:
+                        yield return new WaitForSeconds(newLinePause);
+                        break;
+                    case SpeedModifier.PAUSE:
+                        yield return new WaitForSeconds(speeds[speedIndex].value);
+                        break;
                 }
                 speedIndex += 1;
             }
-            else if (creatorsIndex < numCreators && creatorIndexes[creatorsIndex].index == charIndex)
+
+            // Check if there is a change in the creators at this index, and set it up if so.
+            // NOTE(CJ): Should in theory only ever be 1 creator per index, as only the last one would ever be used - 
+            //   but using a while loop just in case.
+            while (creatorsIndex < numCreators && creatorIndexes[creatorsIndex].index == charIndex)
             {
-                if (creatorIndexes[creatorsIndex].CreateType == CreateType.INSTANT)
+                Creator creator = creatorIndexes[creatorsIndex];
+                createtype = creator.CreateType;
+                if (creator.time != -1f)
                 {
-                    createtype = CreateType.INSTANT;
-                }
-                if (creatorIndexes[creatorsIndex].CreateType == CreateType.FADEIN)
-                {
-                    createtype = CreateType.FADEIN;
-                    if (creatorIndexes[creatorsIndex].time != -1f)
-                    {
-                        createTime = creatorIndexes[creatorsIndex].time;
-                    }
-                }
-                if (creatorIndexes[creatorsIndex].CreateType == CreateType.POP)
-                {
-                    createtype = CreateType.POP;
-                    if (creatorIndexes[creatorsIndex].time != -1f)
-                    {
-                        createTime = creatorIndexes[creatorsIndex].time;
-                    }
-                }
-                if (creatorIndexes[creatorsIndex].CreateType == CreateType.FLIP)
-                {
-                    createtype = CreateType.FLIP;
-                    if (creatorIndexes[creatorsIndex].time != -1f)
-                    {
-                        createTime = creatorIndexes[creatorsIndex].time;
-                    }
+                    createTime = creator.time;
                 }
                 creatorsIndex += 1;
             }
+
+            // Get the current letter
+            char letter = textDisplayString[charIndex];
+
+            // If the current letter is not visible, skip it.
+            if (letter == ' ' || letter == '\n')
+            {
+                charIndex += 1;
+            }
             else
             {
-                char letter = textDisplayString[charIndex];
-                if (letter == ' ' || letter == '\n')
+                TextCreator temp = null;
+                switch (createtype)
                 {
-                    charIndex += 1;
+                    case CreateType.INSTANT:
+                        // leave it as null
+                        break;
+                    case CreateType.FADEIN:
+                        temp = new FadeIn();
+                        break;
+                    case CreateType.POP:
+                        temp = new Pop();
+                        break;
+                    case CreateType.FLIP:
+                        temp = new Flip();
+                        break;
                 }
-
-                else
+                if (temp != null)
                 {
-                    TextCreator temp;
-                    switch (createtype)
-                    {
-                        case CreateType.INSTANT:
-                            charIndex += 1;
-                            break;
-                        case CreateType.FADEIN:
-                            temp = new FadeIn();
-                            temp.index = charIndex;
-                            temp.startTime = Time.time;
-                            temp.duration = createTime;
-                            creators.Add(temp);
-                            charIndex += 1;
-                            break;
-                        case CreateType.POP:
-                            temp = new Pop();
-                            temp.index = charIndex;
-                            temp.startTime = Time.time;
-                            temp.duration = createTime;
-                            creators.Add(temp);
-                            charIndex += 1;
-                            break;
-                        case CreateType.FLIP:
-                            temp = new Flip();
-                            temp.index = charIndex;
-                            temp.startTime = Time.time;
-                            temp.duration = createTime;
-                            creators.Add(temp);
-                            charIndex += 1;
-                            break;
-                    }
-                    if (CharacterDelay != 0f)
-                    {
-                        if (hasAudio) { audioSource.Play(); }
-                        yield return new WaitForSeconds(CharacterDelay);
-                    }
+                    temp.index = charIndex;
+                    temp.startTime = Time.time;
+                    temp.duration = createTime;
+                    creators.Add(temp);
+                }
+                charIndex += 1;
+                
+                if (!playedSound)
+                {
+                    if (hasAudio) { audioSource.Play(); }
+                    playedSound = true;
+                }
+                if (CharacterDelay != 0f)
+                {
+                    playedSound = false;
+                    yield return new WaitForSeconds(CharacterDelay);
                 }
             }
         }
