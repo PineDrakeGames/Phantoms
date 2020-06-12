@@ -11,8 +11,6 @@ struct Creator
 
 public abstract class TextCreator {
 
-    public Color32 endColor;
-
     public int index;
 
     public float duration;

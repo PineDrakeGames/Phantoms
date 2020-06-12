@@ -44,10 +44,9 @@ public class FancyText : MonoBehaviour
     TMP_Text m_TextComponent;
     string textInputString;
     string textOutputString;
+    string textDisplayString;
     int charIndex = 0;
-    int displayedCharIndex = 0;
     public float charDelay = 0.05f;
-    Color32 startColor;
     float progress;
 
     //things related to text display speed and pauses
@@ -160,7 +159,7 @@ public class FancyText : MonoBehaviour
         }
 
         //finally, set everything that hasn't appeared yet to an invisible color
-        for (int i = displayedCharIndex; i < characterCount; i += 1)
+        for (int i = charIndex; i < characterCount; i += 1)
         {
             int materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
             newVertexColors = textInfo.meshInfo[materialIndex].colors32;
@@ -190,6 +189,7 @@ public class FancyText : MonoBehaviour
     private void ParseText()
     {
         textOutputString = "";
+        textDisplayString = "";
         int index = 0;
         for (int i = 0; i < textInputString.Length; i++)
         {
@@ -241,6 +241,7 @@ public class FancyText : MonoBehaviour
                 {
                     case "[":
                         textOutputString += '[';
+                        textDisplayString += '[';
                         index += 1;
                         break;
                     // Create types
@@ -258,19 +259,19 @@ public class FancyText : MonoBehaviour
                         break;
                     // Effect types
                     case "wavy":
-                        ParseTextEffect(EffectType.WAVY, ref textOutputString, ref index, value);
+                        ParseTextEffect(EffectType.WAVY, ref textOutputString, ref textDisplayString, ref index, value);
                         break;
                     case "pulse":
-                        ParseTextEffect(EffectType.PULSE, ref textOutputString, ref index, value);
+                        ParseTextEffect(EffectType.PULSE, ref textOutputString, ref textDisplayString, ref index, value);
                         break;
                     case "swivel":
-                        ParseTextEffect(EffectType.SWIVEL, ref textOutputString, ref index, value);
+                        ParseTextEffect(EffectType.SWIVEL, ref textOutputString, ref textDisplayString, ref index, value);
                         break;
                     case "jitter":
-                        ParseTextEffect(EffectType.JITTER, ref textOutputString, ref index, value);
+                        ParseTextEffect(EffectType.JITTER, ref textOutputString, ref textDisplayString, ref index, value);
                         break;
                     case "rainbow":
-                        ParseTextEffect(EffectType.RAINBOW, ref textOutputString, ref index, value);
+                        ParseTextEffect(EffectType.RAINBOW, ref textOutputString, ref textDisplayString, ref index, value);
                         break;
                     // Speed modifiers
                     case "speed":
@@ -288,6 +289,7 @@ public class FancyText : MonoBehaviour
             {
                 ParseSpeedModifier(SpeedModifier.NEWLINE, index, "");
                 textOutputString += textInputString[i];
+                textDisplayString += textInputString[i];
                 index += 1;
             }
             else
@@ -324,12 +326,13 @@ public class FancyText : MonoBehaviour
                     effects.Add(effect);
                 }
                 textOutputString += textInputString[i];
+                textDisplayString += textInputString[i];
                 index += 1;
             }
         }
     }
 
-    private void ParseTextEffect(EffectType type, ref string textOutputString, ref int index, string value)
+    private void ParseTextEffect(EffectType type, ref string textOutputString, ref string textDisplayString, ref int index, string value)
     {
         string[] splitString = value.Split(seperator, System.StringSplitOptions.RemoveEmptyEntries);
         string word = splitString[0];
@@ -367,6 +370,7 @@ public class FancyText : MonoBehaviour
             }
             effects.Add(effect);
             textOutputString += letter;
+            textDisplayString += letter;
             index += 1;
         }
     }
@@ -375,7 +379,6 @@ public class FancyText : MonoBehaviour
     {
         Creator temp = new Creator();
         temp.index = index;
-        Debug.Log("Creator:" + type + ", " + index);
         temp.CreateType = type;
         if (!string.IsNullOrEmpty(value) && type != CreateType.INSTANT)
         {
@@ -406,12 +409,11 @@ public class FancyText : MonoBehaviour
     IEnumerator DisplayText()
     {
         charIndex = 0;
-        displayedCharIndex = 0;
         int speedIndex = 0;
         int creatorsIndex = 0;
-        while (charIndex < textOutputString.Length)
+        while (charIndex < textDisplayString.Length)
         {
-            if (speedIndex < numSpeeds && speeds[speedIndex].index == displayedCharIndex)
+            if (speedIndex < numSpeeds && speeds[speedIndex].index == charIndex)
             {
                 if (speeds[speedIndex].type == SpeedModifier.SPEED)
                 {
@@ -431,7 +433,7 @@ public class FancyText : MonoBehaviour
                 }
                 speedIndex += 1;
             }
-            else if (creatorsIndex < numCreators && creatorIndexes[creatorsIndex].index == displayedCharIndex)
+            else if (creatorsIndex < numCreators && creatorIndexes[creatorsIndex].index == charIndex)
             {
                 if (creatorIndexes[creatorsIndex].CreateType == CreateType.INSTANT)
                 {
@@ -465,62 +467,43 @@ public class FancyText : MonoBehaviour
             }
             else
             {
-                char letter = textOutputString[charIndex];
+                char letter = textDisplayString[charIndex];
                 if (letter == ' ' || letter == '\n')
                 {
                     charIndex += 1;
-                    displayedCharIndex += 1;
-                }
-                else if (letter == '<')
-                {
-                    while (letter != '>')
-                    {
-                        charIndex += 1;
-                        letter = textOutputString[charIndex];
-                    }
-                    charIndex += 1;
-                    letter = textOutputString[charIndex];
                 }
 
                 else
                 {
-                    Debug.Log(letter + ", " + charIndex + ", " + displayedCharIndex);
                     TextCreator temp;
                     switch (createtype)
                     {
                         case CreateType.INSTANT:
                             charIndex += 1;
-                            displayedCharIndex += 1;
                             break;
                         case CreateType.FADEIN:
                             temp = new FadeIn();
-                            temp.index = displayedCharIndex;
+                            temp.index = charIndex;
                             temp.startTime = Time.time;
                             temp.duration = createTime;
-                            temp.endColor = startColor;
                             creators.Add(temp);
                             charIndex += 1;
-                            displayedCharIndex += 1;
                             break;
                         case CreateType.POP:
                             temp = new Pop();
-                            temp.index = displayedCharIndex;
+                            temp.index = charIndex;
                             temp.startTime = Time.time;
                             temp.duration = createTime;
-                            temp.endColor = startColor;
                             creators.Add(temp);
                             charIndex += 1;
-                            displayedCharIndex += 1;
                             break;
                         case CreateType.FLIP:
                             temp = new Flip();
-                            temp.index = displayedCharIndex;
+                            temp.index = charIndex;
                             temp.startTime = Time.time;
                             temp.duration = createTime;
-                            temp.endColor = startColor;
                             creators.Add(temp);
                             charIndex += 1;
-                            displayedCharIndex += 1;
                             break;
                     }
                     if (charDelay != 0f)
@@ -548,7 +531,6 @@ public class FancyText : MonoBehaviour
         {
             m_TextComponent = GetComponent<TMP_Text>();
         }
-        startColor = m_TextComponent.color;
         charIndex = 0;
         speeds.Clear();
         numSpeeds = 0;
@@ -560,7 +542,6 @@ public class FancyText : MonoBehaviour
         textInputString = text;
         ParseText();
         m_TextComponent.text = textOutputString;
-        startColor = m_TextComponent.color;
         StartCoroutine("DisplayText");
     }
 
@@ -571,8 +552,7 @@ public class FancyText : MonoBehaviour
             StopCoroutine("DisplayText");
             numSpeeds = 0;
             numCreators = 0;
-            charIndex = textOutputString.Length;
-            displayedCharIndex = m_TextComponent.textInfo.characterCount;
+            charIndex = textDisplayString.Length;
             creators.Clear();
             creatorIndexes.Clear();
             speeds.Clear();
