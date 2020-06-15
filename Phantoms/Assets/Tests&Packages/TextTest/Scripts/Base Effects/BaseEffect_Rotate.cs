@@ -34,11 +34,13 @@ public class BaseEffect_Rotate : BaseEffect
         float characterTime = (Mathf.Abs(time - (m_characterDelay * characterIndex)) % m_effectPeriod);
         float rotation = m_rotationValue.Evaluate(characterTime / m_effectPeriod) * 360f;
 
-        for (int i = 0; i < 4; i++)
+        int[] vertices = m_vertices.Vertices();
+        for (int i = 0; i < vertices.Length; i++)
         {
-            Vector3 dir = sourceVertices[vertexIndex + i] - center;
+            int vert = vertices[i];
+            Vector3 dir = sourceVertices[vertexIndex + vert] - center;
             Vector3 targetDir = Quaternion.Euler(m_axisOfRotation.normalized * rotation) * dir;
-            destinationVertices[vertexIndex + i] = center + targetDir;
+            destinationVertices[vertexIndex + vert] = center + targetDir;
         }
     }
 }

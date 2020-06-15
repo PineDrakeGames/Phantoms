@@ -24,9 +24,11 @@ public class BaseEffect_Color : BaseEffect
 
         Color32 displayColor = color;
 
-        for (int i = 0; i < 4; i++)
+        int[] vertices = m_vertices.Vertices();
+        for (int i = 0; i < vertices.Length; i++)
         {
-            newVertexColors[vertexIndex + i] = displayColor;
+            int vert = vertices[i];
+            newVertexColors[vertexIndex + vert] = displayColor;
         }
     }
 }

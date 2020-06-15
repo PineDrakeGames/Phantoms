@@ -29,9 +29,11 @@ public class BaseEffect_Position : BaseEffect
 
         Vector3 offset = Vector3.Scale(dimensions, new Vector3(m_xPosition.Evaluate(characterTime / m_effectPeriod), m_yPosition.Evaluate(characterTime / m_effectPeriod), 0f));
 
-        for (int i = 0; i < 4; i++)
+        int[] vertices = m_vertices.Vertices();
+        for (int i = 0; i < vertices.Length; i++)
         {
-            destinationVertices[vertexIndex + i] = sourceVertices[vertexIndex + i] + offset;
+            int vert = vertices[i];
+            destinationVertices[vertexIndex + vert] = sourceVertices[vertexIndex + vert] + offset;
         }
     }
 }

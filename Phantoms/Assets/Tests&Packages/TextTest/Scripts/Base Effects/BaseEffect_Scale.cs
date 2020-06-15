@@ -30,10 +30,12 @@ public class BaseEffect_Scale : BaseEffect
 
         float scale = m_scaleValue.Evaluate(characterTime / m_effectPeriod);
 
-        for (int i = 0; i < 4; i++)
+        int[] vertices = m_vertices.Vertices();
+        for (int i = 0; i < vertices.Length; i++)
         {
-            Vector3 dir = sourceVertices[vertexIndex + i] - center;
-            destinationVertices[vertexIndex + i] = center + (dir * scale);
+            int vert = vertices[i];
+            Vector3 dir = sourceVertices[vertexIndex + vert] - center;
+            destinationVertices[vertexIndex + vert] = center + (dir * scale);
         }
     }
 }

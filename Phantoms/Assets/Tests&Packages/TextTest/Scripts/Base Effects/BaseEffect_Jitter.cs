@@ -21,10 +21,12 @@ public class BaseEffect_Jitter : BaseEffect
         float randx = Random.Range(-1, 1) * size;
         float randy = Random.Range(-1, 1) * size;
 
-        for (int i = 0; i < 4; i++)
+        int[] vertices = m_vertices.Vertices();
+        for (int i = 0; i < vertices.Length; i++)
         {
-            destinationVertices[vertexIndex + i].x += randx;
-            destinationVertices[vertexIndex + i].y += randy;
+            int vert = vertices[i];
+            destinationVertices[vertexIndex + vert].x += randx;
+            destinationVertices[vertexIndex + vert].y += randy;
         }
     }
 }
