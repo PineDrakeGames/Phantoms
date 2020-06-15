@@ -12,8 +12,6 @@ public class Dialogue : MonoBehaviour {
     public bool active = false;
 
     public FancyText.CreateType createType = FancyText.CreateType.INSTANT;
-    public FancyText.EffectType effectType = FancyText.EffectType.NONE;
-    public float effectStrength = 1f;
     [Range(0, 1f)]
     public float charDelay = 0.05f;
     [Range(0, 3f)]
@@ -70,7 +68,6 @@ public class Dialogue : MonoBehaviour {
     {
         fancyText.createtype = createType;
         fancyText.createTime = createTime;
-        fancyText.effectType = effectType;
         fancyText.CharacterDelay = charDelay;
         fancyText.newLinePause = newLinePause;     
     }

@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class TextEffect
+public class TextEffect
 {
     public int index;
-    public float strength;
+    public FancyTextEffect Effect;
 
-    public abstract void Apply(float time, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors);
+    public void Apply(float time, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    {
+        Effect.ApplyEffect(time, index, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
+    }
 }
-
+/*
 public class Wavy : TextEffect
 {
     public override void Apply(float time, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
@@ -146,3 +149,4 @@ public class Rainbow : TextEffect
         }
     }
 }
+*/

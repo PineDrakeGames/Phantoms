@@ -6,16 +6,6 @@ using TMPro;
 public class FancyText : MonoBehaviour
 {
     /// Enums ///
-    public enum EffectType
-    {
-        NONE,
-        WAVY,
-        JITTER,
-        PULSE,
-        SWIVEL,
-        RAINBOW
-    };
-
     public enum CreateType
     {
         INSTANT,
@@ -35,8 +25,12 @@ public class FancyText : MonoBehaviour
 
     ////  Serialized items  ////
     [Header("Text Effect Variables")]
+    [SerializeField]
+    private FancyTextEffectTable m_effectTable = null;
+
+
     [Tooltip("The default effect type to use if no specific effect type is assigned for a character")]
-    public EffectType effectType = EffectType.NONE;
+    public FancyTextEffect defaultEffect = null;
 
     [Tooltip("The default effect strength for an animation")]
     public float effectStrength = 1f;
@@ -93,6 +87,7 @@ public class FancyText : MonoBehaviour
     private void Start()
     {
         m_TextComponent = GetComponent<TMP_Text>();
+        m_TextComponent.enableVertexGradient = true;
         if (GetComponent<AudioSource>() != null)
         {
             audioSource = GetComponent<AudioSource>();
@@ -165,6 +160,7 @@ public class FancyText : MonoBehaviour
             // destroy any creators that are finished
             if (creator.Progress(Time.time) >= 1f)
             {
+                //Debug.LogFormat("Vertices for character {0} located at:\n1: {1}\n2: {2}\n1: {3}\n4: {4}", creator.index, sourceVertices[vertexIndex + 0], sourceVertices[vertexIndex + 1], sourceVertices[vertexIndex + 2], sourceVertices[vertexIndex + 3]);
                 creators.Remove(creator);
                 break;
             }
@@ -248,53 +244,44 @@ public class FancyText : MonoBehaviour
                 }
 
                 option.ToLower();
-
-                switch (option)
+                FancyTextEffect textEffect = m_effectTable.GetTextEffect(option);
+                if (textEffect != null)
                 {
-                    case "[":
-                        textOutputString += '[';
-                        textDisplayString += '[';
-                        index += 1;
-                        break;
-                    // Create types
-                    case "pop":
-                        ParseTextCreator(CreateType.POP, index, value);
-                        break;
-                    case "flip":
-                        ParseTextCreator(CreateType.FLIP, index, value);
-                        break;
-                    case "fadein":
-                        ParseTextCreator(CreateType.FADEIN, index, value);
-                        break;
-                    case "instant":
-                        ParseTextCreator(CreateType.INSTANT, index, value);
-                        break;
-                    // Effect types
-                    case "wavy":
-                        ParseTextEffect(EffectType.WAVY, ref textOutputString, ref textDisplayString, ref index, value);
-                        break;
-                    case "pulse":
-                        ParseTextEffect(EffectType.PULSE, ref textOutputString, ref textDisplayString, ref index, value);
-                        break;
-                    case "swivel":
-                        ParseTextEffect(EffectType.SWIVEL, ref textOutputString, ref textDisplayString, ref index, value);
-                        break;
-                    case "jitter":
-                        ParseTextEffect(EffectType.JITTER, ref textOutputString, ref textDisplayString, ref index, value);
-                        break;
-                    case "rainbow":
-                        ParseTextEffect(EffectType.RAINBOW, ref textOutputString, ref textDisplayString, ref index, value);
-                        break;
-                    // Speed modifiers
-                    case "speed":
-                        ParseSpeedModifier(SpeedModifier.SPEED, index, value);
-                        break;
-                    case "pause":
-                        ParseSpeedModifier(SpeedModifier.PAUSE, index, value);
-                        break;
-                    case "nlpause":
-                        ParseSpeedModifier(SpeedModifier.NEWLINEPAUSE, index, value);
-                        break;
+                    ParseTextEffect(textEffect, ref textOutputString, ref textDisplayString, ref index, value);
+                }
+                else
+                {
+                    switch (option)
+                    {
+                        case "[":
+                            textOutputString += '[';
+                            textDisplayString += '[';
+                            index += 1;
+                            break;
+                        // Create types
+                        case "pop":
+                            ParseTextCreator(CreateType.POP, index, value);
+                            break;
+                        case "flip":
+                            ParseTextCreator(CreateType.FLIP, index, value);
+                            break;
+                        case "fadein":
+                            ParseTextCreator(CreateType.FADEIN, index, value);
+                            break;
+                        case "instant":
+                            ParseTextCreator(CreateType.INSTANT, index, value);
+                            break;
+                        // Speed modifiers
+                        case "speed":
+                            ParseSpeedModifier(SpeedModifier.SPEED, index, value);
+                            break;
+                        case "pause":
+                            ParseSpeedModifier(SpeedModifier.PAUSE, index, value);
+                            break;
+                        case "nlpause":
+                            ParseSpeedModifier(SpeedModifier.NEWLINEPAUSE, index, value);
+                            break;
+                    }
                 }
             }
             else if (textInputString[i] == '\n')
@@ -306,35 +293,12 @@ public class FancyText : MonoBehaviour
             }
             else
             {
-                if (effectType != EffectType.NONE)
+                if (defaultEffect != null)
                 {
-                    TextEffect effect;
-                    switch (effectType)
-                    {
-                        case EffectType.JITTER:
-                            effect = new Jitter();
-                            break;
-                        case EffectType.WAVY:
-                            effect = new Wavy();
-                            break;
-                        case EffectType.PULSE:
-                            effect = new Pulse();
-                            break;
-                        case EffectType.SWIVEL:
-                            effect = new Swivel();
-                            break;
-                        case EffectType.RAINBOW:
-                            effect = new Rainbow();
-                            break;
-                        case EffectType.NONE:
-                        default:
-                            // Should not be here - just default to rainbow?
-                            Debug.LogError("Effect type not set up for default!");
-                            effect = new Rainbow();
-                            break;
-                    }
+                    TextEffect effect = new TextEffect();
+                    effect.Effect = defaultEffect;
+
                     effect.index = index;
-                    effect.strength = effectStrength;
                     effects.Add(effect);
                 }
                 textOutputString += textInputString[i];
@@ -344,42 +308,14 @@ public class FancyText : MonoBehaviour
         }
     }
 
-    private void ParseTextEffect(EffectType type, ref string textOutputString, ref string textDisplayString, ref int index, string value)
+    private void ParseTextEffect(FancyTextEffect textEffect, ref string textOutputString, ref string textDisplayString, ref int index, string value)
     {
-        string[] splitString = value.Split(seperator, System.StringSplitOptions.RemoveEmptyEntries);
-        string word = splitString[0];
-        foreach (char letter in word)
+        foreach (char letter in value)
         {
-            TextEffect effect;
-            switch (type)
-            {
-                case EffectType.WAVY:
-                    effect = new Wavy();
-                    break;
-                case EffectType.PULSE:
-                    effect = new Pulse();
-                    break;
-                case EffectType.SWIVEL:
-                    effect = new Swivel();
-                    break;
-                case EffectType.JITTER:
-                    effect = new Jitter();
-                    break;
-                case EffectType.RAINBOW:
-                default:
-                    effect = new Rainbow();
-                    break;
-            }
+            TextEffect effect = new TextEffect();
+            effect.Effect = textEffect;
 
             effect.index = index;
-            if (splitString.Length == 2)
-            {
-                effect.strength = float.Parse(splitString[1]);
-            }
-            else
-            {
-                effect.strength = 1f;
-            }
             effects.Add(effect);
             textOutputString += letter;
             textDisplayString += letter;
@@ -497,7 +433,7 @@ public class FancyText : MonoBehaviour
                     creators.Add(temp);
                 }
                 charIndex += 1;
-                
+
                 if (!playedSound)
                 {
                     if (hasAudio) { audioSource.Play(); }
