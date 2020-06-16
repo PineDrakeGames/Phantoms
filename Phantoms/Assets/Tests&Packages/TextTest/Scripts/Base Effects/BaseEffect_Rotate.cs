@@ -18,13 +18,12 @@ public class BaseEffect_Rotate : BaseEffect
     [Tooltip("A value of 0 is no rotation, with -1 and 1 being completely flipped.")]
     private AnimationCurve m_rotationValue = AnimationCurve.Constant(0f, 1f, 0f);
 
-    public override void ApplyEffect(float time, int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    public override void ApplyEffect(int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
     {
         Vector3 pivot = m_centerOfRotation;
         Vector3 center = sourceVertices[vertexIndex + 2] + Vector3.Scale((sourceVertices[vertexIndex + 0] - sourceVertices[vertexIndex + 2]), pivot);
 
-        float characterTime = (Mathf.Abs(time - (m_characterDelay * characterIndex)) % m_effectPeriod);
-        float rotation = m_rotationValue.Evaluate(characterTime / m_effectPeriod) * 360f;
+        float rotation = m_rotationValue.Evaluate(GetProgress(characterIndex)) * 360f;
 
         int[] vertices = m_vertices.Vertices();
         for (int i = 0; i < vertices.Length; i++)

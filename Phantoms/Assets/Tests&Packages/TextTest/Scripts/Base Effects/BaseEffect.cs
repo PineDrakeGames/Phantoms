@@ -24,5 +24,11 @@ public abstract class BaseEffect : ScriptableObject
         }
     }
 
-    public abstract void ApplyEffect(float time, int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors);
+    public abstract void ApplyEffect(int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors);
+
+    protected float GetProgress(int characterIndex)
+    {
+        float characterTime = Mathf.Abs((Time.time - (m_characterDelay * characterIndex)) % m_effectPeriod);
+        return (characterTime / m_effectPeriod);
+    }
 }

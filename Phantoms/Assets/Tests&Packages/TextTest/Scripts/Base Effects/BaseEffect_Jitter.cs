@@ -14,7 +14,7 @@ public class BaseEffect_Jitter : BaseEffect
     [Tooltip("The time in seconds before the text is jittered again.")]
     private float m_timeBetweenJitter = .033333f; // Default value is 1/30th of a second, jittering at 30fps.
 
-    public override void ApplyEffect(float time, int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    public override void ApplyEffect(int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
     {
         float size = (sourceVertices[vertexIndex + 0] - sourceVertices[vertexIndex + 2]).magnitude;
         size *= m_maxJitterDistance;

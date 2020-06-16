@@ -23,11 +23,11 @@ public class FancyTextEffect : ScriptableObject
         get { return m_effectKeys;}
     }
 
-    public void ApplyEffect(float time, int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    public void ApplyEffect(int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
     {
         for(int i = 0; i < m_effects.Length; i++)
         {
-            m_effects[i].ApplyEffect(time, characterIndex, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
+            m_effects[i].ApplyEffect(characterIndex, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
         }
     }
 }

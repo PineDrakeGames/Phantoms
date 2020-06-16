@@ -134,7 +134,7 @@ public class FancyText : MonoBehaviour
             destinationVertices = textInfo.meshInfo[materialIndex].vertices;
             newVertexColors = textInfo.meshInfo[materialIndex].colors32;
 
-            effect.Apply(Time.time, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
+            effect.Apply(vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
         }
 
         // Next we do the animations for characters that are currently being put in.
