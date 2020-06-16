@@ -10,40 +10,51 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3499b3766fd91304bba27ad850eefadf, type: 3}
-  m_Name: Pulse
+  m_Name: Pop Creator
   m_EditorClassIdentifier: 
+  m_vertices:
+    m_vertices: 01010101
+  m_effectPeriod: 0.35
+  m_characterDelay: 0.2
   m_pivotPoint: {x: 0.5, y: 0.5}
-  m_effectPeriod: 1.5
-  m_characterDelay: 0.1
   m_scaleValue:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1.2
-      inSlope: 0.0010319422
-      outSlope: 0.0010319422
+      value: 0
+      inSlope: 2.2233486
+      outSlope: 2.2233486
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 1
+      outWeight: 0.061493512
     - serializedVersion: 3
-      time: 0.5
-      value: 0.8
-      inSlope: -0.00018978119
-      outSlope: -0.00018978119
+      time: 0.7
+      value: 1.2
+      inSlope: -0.04561829
+      outSlope: -0.04561829
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.06285097
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.95
+      value: 0.95
+      inSlope: 0.04938306
+      outSlope: 0.04938306
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.33333334
+      outWeight: 1
     - serializedVersion: 3
       time: 1
-      value: 1.2
-      inSlope: 0.000084616186
-      outSlope: 0.000084616186
+      value: 1
+      inSlope: 1.3975967
+      outSlope: 1.3975967
       tangentMode: 0
       weightedMode: 0
-      inWeight: 1
+      inWeight: 0.029994905
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2

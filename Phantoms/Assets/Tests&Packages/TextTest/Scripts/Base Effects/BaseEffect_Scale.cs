@@ -13,11 +13,11 @@ public class BaseEffect_Scale : BaseEffect
     [Tooltip("A value of 1 is default scale, with 0 being the minimum size and 2 being twice as large.")]
     private AnimationCurve m_scaleValue = AnimationCurve.Constant(0f, 1f, 1f);
 
-    public override void ApplyEffect(int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    protected override void ApplyEffect(float progress, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
     {
         Vector3 center = sourceVertices[vertexIndex + 2] + Vector3.Scale((sourceVertices[vertexIndex + 0] - sourceVertices[vertexIndex + 2]), m_pivotPoint);
 
-        float scale = m_scaleValue.Evaluate(GetProgress(characterIndex));
+        float scale = m_scaleValue.Evaluate(progress);
 
         int[] vertices = m_vertices.Vertices();
         for (int i = 0; i < vertices.Length; i++)

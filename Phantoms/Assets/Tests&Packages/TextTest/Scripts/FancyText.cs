@@ -6,14 +6,6 @@ using TMPro;
 public class FancyText : MonoBehaviour
 {
     /// Enums ///
-    public enum CreateType
-    {
-        INSTANT,
-        FADEIN,
-        POP,
-        FLIP
-    };
-
     public enum SpeedModifier
     {
         SPEED,
@@ -37,11 +29,8 @@ public class FancyText : MonoBehaviour
 
 
     [Header("Character Creation Variables")]
-    [Tooltip("The delay between when each character is revealed.")]
-    public CreateType createtype = CreateType.INSTANT;
-
-    [Tooltip("The delay between when each character is revealed.")]
-    public float createTime = 0.5f;
+    [Tooltip("The default create effect for this text.")]
+    public FancyTextEffect createtype = null;
 
     [Tooltip("The delay between when each character is revealed.")]
     public float CharacterDelay = 0.05f;
@@ -243,44 +232,28 @@ public class FancyText : MonoBehaviour
                 }
 
                 option.ToLower();
-                FancyTextEffect textEffect = m_effectTable.GetTextEffect(option);
-                if (textEffect != null)
+
+                switch (option)
                 {
-                    ParseTextEffect(textEffect, ref textOutputString, ref textDisplayString, ref index, value);
-                }
-                else
-                {
-                    switch (option)
-                    {
-                        case "[":
-                            textOutputString += '[';
-                            textDisplayString += '[';
-                            index += 1;
-                            break;
-                        // Create types
-                        case "pop":
-                            ParseTextCreator(CreateType.POP, index, value);
-                            break;
-                        case "flip":
-                            ParseTextCreator(CreateType.FLIP, index, value);
-                            break;
-                        case "fadein":
-                            ParseTextCreator(CreateType.FADEIN, index, value);
-                            break;
-                        case "instant":
-                            ParseTextCreator(CreateType.INSTANT, index, value);
-                            break;
-                        // Speed modifiers
-                        case "speed":
-                            ParseSpeedModifier(SpeedModifier.SPEED, index, value);
-                            break;
-                        case "pause":
-                            ParseSpeedModifier(SpeedModifier.PAUSE, index, value);
-                            break;
-                        case "nlpause":
-                            ParseSpeedModifier(SpeedModifier.NEWLINEPAUSE, index, value);
-                            break;
-                    }
+                    case "[":
+                        textOutputString += '[';
+                        textDisplayString += '[';
+                        index += 1;
+                        break;
+                    // Speed modifiers
+                    case "speed":
+                        ParseSpeedModifier(SpeedModifier.SPEED, index, value);
+                        break;
+                    case "pause":
+                        ParseSpeedModifier(SpeedModifier.PAUSE, index, value);
+                        break;
+                    case "nlpause":
+                        ParseSpeedModifier(SpeedModifier.NEWLINEPAUSE, index, value);
+                        break;
+                    default:
+                        FancyTextEffect textEffect = m_effectTable.GetTextEffect(option);
+                        ParseTextEffect(textEffect, ref textOutputString, ref textDisplayString, ref index, value);
+                        break;
                 }
             }
             else if (textInputString[i] == '\n')
@@ -309,34 +282,33 @@ public class FancyText : MonoBehaviour
 
     private void ParseTextEffect(FancyTextEffect textEffect, ref string textOutputString, ref string textDisplayString, ref int index, string value)
     {
-        foreach (char letter in value)
+        if (textEffect == null)
         {
-            TextEffect effect = new TextEffect();
-            effect.Effect = textEffect;
+            return;
+        }
+        switch (textEffect.EffectType)
+        {
+            case TextEffectType.CONSTANT:
+                foreach (char letter in value)
+                {
+                    TextEffect effect = new TextEffect();
+                    effect.Effect = textEffect;
 
-            effect.index = index;
-            effects.Add(effect);
-            textOutputString += letter;
-            textDisplayString += letter;
-            index += 1;
+                    effect.index = index;
+                    effects.Add(effect);
+                    textOutputString += letter;
+                    textDisplayString += letter;
+                    index += 1;
+                }
+                break;
+            case TextEffectType.CREATOR:
+                Creator temp = new Creator();
+                temp.index = index;
+                temp.CreateType = textEffect;
+                numCreators += 1;
+                creatorIndexes.Add(temp);
+                break;
         }
-    }
-
-    private void ParseTextCreator(CreateType type, int index, string value)
-    {
-        Creator temp = new Creator();
-        temp.index = index;
-        temp.CreateType = type;
-        if (!string.IsNullOrEmpty(value) && type != CreateType.INSTANT)
-        {
-            temp.time = float.Parse(value);
-        }
-        else
-        {
-            temp.time = -1;
-        }
-        numCreators += 1;
-        creatorIndexes.Add(temp);
     }
 
     private void ParseSpeedModifier(SpeedModifier type, int index, string value)
@@ -391,10 +363,6 @@ public class FancyText : MonoBehaviour
             {
                 Creator creator = creatorIndexes[creatorsIndex];
                 createtype = creator.CreateType;
-                if (creator.time != -1f)
-                {
-                    createTime = creator.time;
-                }
                 creatorsIndex += 1;
             }
 
@@ -408,29 +376,11 @@ public class FancyText : MonoBehaviour
             }
             else
             {
-                TextCreator temp = null;
-                switch (createtype)
-                {
-                    case CreateType.INSTANT:
-                        // leave it as null
-                        break;
-                    case CreateType.FADEIN:
-                        temp = new FadeIn();
-                        break;
-                    case CreateType.POP:
-                        temp = new Pop();
-                        break;
-                    case CreateType.FLIP:
-                        temp = new Flip();
-                        break;
-                }
-                if (temp != null)
-                {
-                    temp.index = charIndex;
-                    temp.startTime = Time.time;
-                    temp.duration = createTime;
-                    creators.Add(temp);
-                }
+                TextCreator temp = new TextCreator();
+                temp.Effect = createtype;
+                temp.index = charIndex;
+                temp.startTime = Time.time;
+                creators.Add(temp);
                 charIndex += 1;
 
                 if (!playedSound)

@@ -11,11 +11,8 @@ public class Dialogue : MonoBehaviour {
 
     public bool active = false;
 
-    public FancyText.CreateType createType = FancyText.CreateType.INSTANT;
     [Range(0, 1f)]
     public float charDelay = 0.05f;
-    [Range(0, 3f)]
-    public float createTime = 0.5f;
     public float newLinePause = 0.8f;
 
     public bool usingFile = false;
@@ -66,8 +63,6 @@ public class Dialogue : MonoBehaviour {
 
     private void SetVariables()
     {
-        fancyText.createtype = createType;
-        fancyText.createTime = createTime;
         fancyText.CharacterDelay = charDelay;
         fancyText.newLinePause = newLinePause;     
     }

@@ -13,11 +13,9 @@ public class BaseEffect_Position : BaseEffect
     [Tooltip("A value of 0 is base, with -1 and 1 being the height of the character")]
     private AnimationCurve m_yPosition = AnimationCurve.Constant(0f, 1f, 0f);
 
-    public override void ApplyEffect(int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    protected override void ApplyEffect(float progress, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
     {
         Vector3 dimensions = (sourceVertices[vertexIndex + 0] - sourceVertices[vertexIndex + 2]);
-
-        float progress = GetProgress(characterIndex);
         Vector3 offset = Vector3.Scale(dimensions, new Vector3(m_xPosition.Evaluate(progress), m_yPosition.Evaluate(progress), 0f));
 
         int[] vertices = m_vertices.Vertices();

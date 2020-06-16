@@ -9,8 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79d23eeae73fd6140bd9b202d93edc84, type: 3}
-  m_Name: Jitter
+  m_Script: {fileID: 11500000, guid: a26263c07eb7365489a8d7c7cc50d918, type: 3}
+  m_Name: Pop
   m_EditorClassIdentifier: 
-  m_maxJitterDistance: 0.05
-  m_timeBetweenJitter: 0.033333
+  m_effectID: Default
+  m_effectKeys:
+  - pop
+  m_effectType: 1
+  m_effects:
+  - {fileID: 11400000, guid: 758c4f71fe4bb08429ea1ef77ebdc2be, type: 2}
+  m_maxEffectTime: 0.35

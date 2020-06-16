@@ -4,26 +4,41 @@ using UnityEngine;
 
 struct Creator
 {
-    public int index; 
-    public FancyText.CreateType CreateType;
-    public float time;
+    public int index;
+    public FancyTextEffect CreateType;
 }
 
-public abstract class TextCreator {
+public class TextCreator
+{
 
     public int index;
-
-    public float duration;
     public float startTime;
+
+    public FancyTextEffect Effect;
 
     public float Progress(float time)
     {
-        return (time - startTime) / duration;
+        if (Effect != null)
+        {
+            return (time - startTime) / Effect.MaxEffectTime;
+        }
+        else
+        {
+            return 1f;
+        }
     }
 
-    public abstract void Apply(float time, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors);
+    public void Apply(float time, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    {
+        float currentTime = (time - startTime);
+        if (Effect != null)
+        {
+            Effect.ApplyEffectCreator(currentTime, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
+        }
+    }
 }
 
+/*
 public class FadeIn:TextCreator
 {
     public override void Apply(float time, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
@@ -79,3 +94,4 @@ public class Flip : TextCreator
         }
     }
 }
+*/

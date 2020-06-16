@@ -9,6 +9,6 @@ public class TextEffect
 
     public void Apply(int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
     {
-        Effect.ApplyEffect(index, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
+        Effect.ApplyEffectConstant(index, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
     }
 }

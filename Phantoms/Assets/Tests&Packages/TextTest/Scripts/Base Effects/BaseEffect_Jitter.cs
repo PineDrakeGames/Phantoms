@@ -25,7 +25,7 @@ public class BaseEffect_Jitter : BaseEffect
     public override void OnValidate()
     {
         base.OnValidate();
-        
+
         if (m_minJitterDistance <= 0f)
         {
             m_minJitterDistance = 0f;
@@ -47,11 +47,11 @@ public class BaseEffect_Jitter : BaseEffect
         SetPositions();
     }
 
-    public override void ApplyEffect(int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    protected override void ApplyEffect(float progress, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
     {
         float size = (sourceVertices[vertexIndex + 0] - sourceVertices[vertexIndex + 2]).magnitude;
 
-        int index = Mathf.FloorToInt(GetProgress(characterIndex) * (float)m_randomPositions.Length);
+        int index = Mathf.FloorToInt(progress * (float)m_randomPositions.Length);
 
         float randx = m_randomPositions[index].x * size;
         float randy = m_randomPositions[index].y * size;
@@ -71,8 +71,8 @@ public class BaseEffect_Jitter : BaseEffect
         m_randomPositions = new Vector2[numJitters];
         for (int i = 0; i < numJitters; i++)
         {
-            float x = (Random.Range(0f,2f)*2f-1f) * Random.Range(m_minJitterDistance, m_maxJitterDistance);
-            float y = (Random.Range(0f,2f)*2f-1f) * Random.Range(m_minJitterDistance, m_maxJitterDistance);
+            float x = (Random.Range(0f, 2f) * 2f - 1f) * Random.Range(m_minJitterDistance, m_maxJitterDistance);
+            float y = (Random.Range(0f, 2f) * 2f - 1f) * Random.Range(m_minJitterDistance, m_maxJitterDistance);
             m_randomPositions[i] = new Vector2(x, y);
         }
     }

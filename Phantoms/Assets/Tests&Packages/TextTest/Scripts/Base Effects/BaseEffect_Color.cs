@@ -14,11 +14,9 @@ public class BaseEffect_Color : BaseEffect
     [Tooltip("The color gradient to animate the text over")]
     private Gradient m_colorValue = null;
 
-    public override void ApplyEffect(int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    protected override void ApplyEffect(float progress, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
     {
-        
-        Color color = m_colorValue.Evaluate(GetProgress(characterIndex));
-
+        Color color = m_colorValue.Evaluate(progress);
         Color32 displayColor = color;
 
         int[] vertices = m_vertices.Vertices();

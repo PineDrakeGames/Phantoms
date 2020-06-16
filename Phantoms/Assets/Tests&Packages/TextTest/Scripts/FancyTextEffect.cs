@@ -2,9 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum TextEffectType
+{
+    CONSTANT,
+    CREATOR
+}
+
 [CreateAssetMenu(fileName = "Text Effect", menuName = "FancyText/FancyTextEffect", order = 1)]
 public class FancyTextEffect : ScriptableObject
 {
+    /// Serialized Fields ///
     [SerializeField]
     [Tooltip("The ID for this given effect - mostly used as a display name.")]
     private string m_effectID = "Default";
@@ -14,20 +21,66 @@ public class FancyTextEffect : ScriptableObject
     private string[] m_effectKeys = null;
 
     [SerializeField]
+    [Tooltip("The type of text effect that this is.")]
+    private TextEffectType m_effectType = TextEffectType.CONSTANT;
+
+    [SerializeField]
     [Tooltip("Effects that will be applied to a given character, done so in the order assigned to the array.")]
-    private BaseEffect[] m_effects;
+    private BaseEffect[] m_effects = null;
 
+    // This variable is serialized based on the other serialized items, but is not publicly editable.
+    [SerializeField]
+    [HideInInspector]
+    private float m_maxEffectTime = 0f;
 
+    /// Publicly accessible Variables ///
     public string[] EffectKeys
     {
-        get { return m_effectKeys;}
+        get { return m_effectKeys; }
     }
 
-    public void ApplyEffect(int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    public float MaxEffectTime
     {
-        for(int i = 0; i < m_effects.Length; i++)
+        get { return m_maxEffectTime; }
+    }
+
+    public TextEffectType EffectType
+    {
+        get { return m_effectType; }
+    }
+
+
+    /// Data validation when things are edited. ///
+    private void OnValidate()
+    {
+        m_maxEffectTime = 0f;
+        for (int i = 0; i < m_effects.Length; i++)
         {
-            m_effects[i].ApplyEffect(characterIndex, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
+            if (m_effects[i] != null)
+            {
+                float effectPeriod = m_effects[i].EffectPeriod;
+                if (effectPeriod > m_maxEffectTime)
+                {
+                    m_maxEffectTime = effectPeriod;
+                }
+            }
+        }
+    }
+
+    /// Public functions to apply the text effect ///
+    public void ApplyEffectConstant(int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    {
+        for (int i = 0; i < m_effects.Length; i++)
+        {
+            m_effects[i].ApplyEffectConstant(characterIndex, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
+        }
+    }
+
+    public void ApplyEffectCreator(float time, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    {
+        for (int i = 0; i < m_effects.Length; i++)
+        {
+            m_effects[i].ApplyEffectCreator(time, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
         }
     }
 }
