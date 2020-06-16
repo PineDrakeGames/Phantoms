@@ -213,10 +213,9 @@ public class FancyText : MonoBehaviour
                     i += 1;
                 }
                 textOutputString += textInputString[i];
-                i += 1;
             }
             // If we detect a bracket, that means what follows should be a text effect option.
-            if (textInputString[i] == '[')
+            else if (textInputString[i] == '[')
             {
                 i += 1; // skip over the bracket
                 string option = "";

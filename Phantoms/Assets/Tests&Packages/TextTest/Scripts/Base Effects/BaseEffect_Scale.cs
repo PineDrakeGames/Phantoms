@@ -5,32 +5,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Scale", menuName = "FancyText/BaseEffect/Scale", order = 2)]
 public class BaseEffect_Scale : BaseEffect
 {
-
     [SerializeField]
     [Tooltip("The pivot point for the scaling.")]
     private Vector2 m_pivotPoint = new Vector2(0.5f, 0.5f);
 
     [SerializeField]
-    [Tooltip("The time in seconds it takes to scrub through the animation curve of this effect.")]
-    private float m_effectPeriod = 1f;
-
-    [SerializeField]
-    [Tooltip("The time in seconds it takes to scrub through the animation curve of this effect.")]
-    private float m_characterDelay = 0.2f;
-
-    [SerializeField]
     [Tooltip("A value of 1 is default scale, with 0 being the minimum size and 2 being twice as large.")]
     private AnimationCurve m_scaleValue = AnimationCurve.Constant(0f, 1f, 1f);
-
-    // Ensure that values are within a proper range.
-    public void OnValidate()
-    {
-        // The effect period cannot be negative or 0. If you want the effect to play backwards, just flip the curves!
-        if (m_effectPeriod <= 0)
-        {
-            m_effectPeriod = 0.01f;
-        }
-    }
 
     public override void ApplyEffect(float time, int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
     {

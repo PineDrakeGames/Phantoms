@@ -667,19 +667,10 @@ MonoBehaviour:
   usingFile: 0
   inputFile: {fileID: 4900000, guid: ed25901581c6b9c4e9ecb52c408f158c, type: 3}
   inputStrings:
-  - '[instant][nlpause=0.8][speed=0.05] This is a <color=red>[swivel=few lines]</color>
-    of <b>[rotate=SAMPLE TEXT]</b>.
+  - '[blend=This is a test with the blended text.
 
-    [flip=0.2][turn=More will] be added <i>[rainbow=in
-    the future]</i>.
-
-    [pop=0.2][speed=0.0]this text should be <b>faster</b>[nlpause=1.6]
-
-    [fadein=0.5][speed=0.1]and
-    this text [speed=0.3]<i>slower</i>[nlpause=0.8]
-
-    [instant][speed=0.05][turn=Hopefully],[pause=0.3]
-    this works. '
+    Let''s see how this all works
+    out.]'
 --- !u!1 &1940731263
 GameObject:
   m_ObjectHideFlags: 0
@@ -805,7 +796,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_effectTable: {fileID: 11400000, guid: 8718aaa59b05c3a4ab72f658f9409f22, type: 2}
-  defaultEffect: {fileID: 0}
+  defaultEffect: {fileID: 11400000, guid: fc7eea44cf936b74d8a684a419c5b2ce, type: 2}
   effectStrength: 1
   createtype: 0
   createTime: 0.5

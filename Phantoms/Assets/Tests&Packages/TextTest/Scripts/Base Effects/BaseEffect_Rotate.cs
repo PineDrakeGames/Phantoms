@@ -15,26 +15,8 @@ public class BaseEffect_Rotate : BaseEffect
     private Vector3 m_axisOfRotation = new Vector3(0f, 0f, 1f);
 
     [SerializeField]
-    [Tooltip("The time in seconds it takes to scrub through the animation curve of this effect.")]
-    private float m_effectPeriod = 1f;
-
-    [SerializeField]
-    [Tooltip("The time in seconds it takes to scrub through the animation curve of this effect.")]
-    private float m_characterDelay = 0.2f;
-
-    [SerializeField]
     [Tooltip("A value of 0 is no rotation, with -1 and 1 being completely flipped.")]
     private AnimationCurve m_rotationValue = AnimationCurve.Constant(0f, 1f, 0f);
-
-    // Ensure that values are within a proper range.
-    public void OnValidate()
-    {
-        // The effect period cannot be negative or 0. If you want the effect to play backwards, just flip the curves!
-        if (m_effectPeriod <= 0)
-        {
-            m_effectPeriod = 0.01f;
-        }
-    }
 
     public override void ApplyEffect(float time, int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
     {
