@@ -26,6 +26,16 @@ public class BaseEffect_Rotate : BaseEffect
     [Tooltip("A value of 0 is no rotation, with -1 and 1 being completely flipped.")]
     private AnimationCurve m_rotationValue = AnimationCurve.Constant(0f, 1f, 0f);
 
+    // Ensure that values are within a proper range.
+    public void OnValidate()
+    {
+        // The effect period cannot be negative or 0. If you want the effect to play backwards, just flip the curves!
+        if (m_effectPeriod <= 0)
+        {
+            m_effectPeriod = 0.01f;
+        }
+    }
+
     public override void ApplyEffect(float time, int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
     {
         Vector3 pivot = m_centerOfRotation;
@@ -38,7 +48,7 @@ public class BaseEffect_Rotate : BaseEffect
         for (int i = 0; i < vertices.Length; i++)
         {
             int vert = vertices[i];
-            Vector3 dir = sourceVertices[vertexIndex + vert] - center;
+            Vector3 dir = destinationVertices[vertexIndex + vert] - center;
             Vector3 targetDir = Quaternion.Euler(m_axisOfRotation.normalized * rotation) * dir;
             destinationVertices[vertexIndex + vert] = center + targetDir;
         }

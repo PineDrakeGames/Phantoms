@@ -21,6 +21,16 @@ public class BaseEffect_Position : BaseEffect
     [Tooltip("A value of 0 is base, with -1 and 1 being the height of the character")]
     private AnimationCurve m_yPosition = AnimationCurve.Constant(0f, 1f, 0f);
 
+    // Ensure that values are within a proper range.
+    public void OnValidate()
+    {
+        // The effect period cannot be negative or 0. If you want the effect to play backwards, just flip the curves!
+        if (m_effectPeriod <= 0)
+        {
+            m_effectPeriod = 0.01f;
+        }
+    }
+
     public override void ApplyEffect(float time, int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
     {
         float characterTime = Mathf.Abs((time - (m_characterDelay * characterIndex)) % m_effectPeriod);
@@ -33,7 +43,7 @@ public class BaseEffect_Position : BaseEffect
         for (int i = 0; i < vertices.Length; i++)
         {
             int vert = vertices[i];
-            destinationVertices[vertexIndex + vert] = sourceVertices[vertexIndex + vert] + offset;
+            destinationVertices[vertexIndex + vert] = destinationVertices[vertexIndex + vert] + offset;
         }
     }
 }
