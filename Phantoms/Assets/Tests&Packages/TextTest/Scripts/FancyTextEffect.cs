@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public enum TextEffectType
 {
@@ -12,10 +10,6 @@ public enum TextEffectType
 public class FancyTextEffect : ScriptableObject
 {
     /// Serialized Fields ///
-    [SerializeField]
-    [Tooltip("The ID for this given effect - mostly used as a display name.")]
-    private string m_effectID = "Default";
-
     [SerializeField]
     [Tooltip("List of keys that will be recognized as this text effect.")]
     private string[] m_effectKeys = null;

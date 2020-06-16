@@ -20,13 +20,8 @@ public class FancyText : MonoBehaviour
     [SerializeField]
     private FancyTextEffectTable m_effectTable = null;
 
-
     [Tooltip("The default effect type to use if no specific effect type is assigned for a character")]
     public FancyTextEffect defaultEffect = null;
-
-    [Tooltip("The default effect strength for an animation")]
-    public float effectStrength = 1f;
-
 
     [Header("Character Creation Variables")]
     [Tooltip("The default create effect for this text.")]
@@ -46,7 +41,9 @@ public class FancyText : MonoBehaviour
 
     /// Private variables ///
     // Reveal text strings and things 
-    TMP_Text m_TextComponent;
+    private TMP_Text m_TextComponent;
+    private TMP_TextInfo textInfo;
+    private TMP_MeshInfo[] cachedMeshInfo;
     string textInputString;
     string textOutputString;
     string textDisplayString;
@@ -60,12 +57,10 @@ public class FancyText : MonoBehaviour
 
     // Text Effects stuff
     List<TextEffect> effects = new List<TextEffect>();
-    string[] seperator = { ">>" };
 
     // Text Creation stuff
     List<TextCreator> creators = new List<TextCreator>();
     List<Creator> creatorIndexes = new List<Creator>();
-    private float numCreators = 0;
 
     // Audio Stuff
     AudioSource audioSource;
@@ -77,6 +72,8 @@ public class FancyText : MonoBehaviour
     {
         m_TextComponent = GetComponent<TMP_Text>();
         m_TextComponent.enableVertexGradient = true;
+        textInfo = m_TextComponent.textInfo;
+
         if (GetComponent<AudioSource>() != null)
         {
             audioSource = GetComponent<AudioSource>();
@@ -97,10 +94,9 @@ public class FancyText : MonoBehaviour
     private void ModifyMesh()
     {
         m_TextComponent.ForceMeshUpdate();
-        TMP_TextInfo textInfo = m_TextComponent.textInfo;
 
         // Declare all the variables needed for mesh modification first
-        TMP_MeshInfo[] cachedMeshInfo = textInfo.CopyMeshInfoVertexData();
+        cachedMeshInfo = textInfo.CopyMeshInfoVertexData();
         int characterCount = textInfo.characterCount;
         Color32[] newVertexColors;
         int materialIndex = 0;
@@ -117,8 +113,8 @@ public class FancyText : MonoBehaviour
             if (!charInfo.isVisible)
                 continue;
 
-            materialIndex = textInfo.characterInfo[effect.index].materialReferenceIndex;
-            vertexIndex = textInfo.characterInfo[effect.index].vertexIndex;
+            materialIndex = charInfo.materialReferenceIndex;
+            vertexIndex = charInfo.vertexIndex;
             sourceVertices = cachedMeshInfo[materialIndex].vertices;
             destinationVertices = textInfo.meshInfo[materialIndex].vertices;
             newVertexColors = textInfo.meshInfo[materialIndex].colors32;
@@ -144,7 +140,7 @@ public class FancyText : MonoBehaviour
             destinationVertices = textInfo.meshInfo[materialIndex].vertices;
             newVertexColors = textInfo.meshInfo[materialIndex].colors32;
 
-            creator.Apply(Time.time, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
+            creator.Apply(vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
 
             // destroy any creators that are finished
             if (creator.Progress(Time.time) >= 1f)
@@ -305,7 +301,6 @@ public class FancyText : MonoBehaviour
                 Creator temp = new Creator();
                 temp.index = index;
                 temp.CreateType = textEffect;
-                numCreators += 1;
                 creatorIndexes.Add(temp);
                 break;
         }
@@ -359,7 +354,7 @@ public class FancyText : MonoBehaviour
             // Check if there is a change in the creators at this index, and set it up if so.
             // NOTE(CJ): Should in theory only ever be 1 creator per index, as only the last one would ever be used - 
             //   but using a while loop just in case.
-            while (creatorsIndex < numCreators && creatorIndexes[creatorsIndex].index == charIndex)
+            while (creatorsIndex < creatorIndexes.Count && creatorIndexes[creatorsIndex].index == charIndex)
             {
                 Creator creator = creatorIndexes[creatorsIndex];
                 createtype = creator.CreateType;
@@ -418,7 +413,6 @@ public class FancyText : MonoBehaviour
         effects.Clear();
         creators.Clear();
         creatorIndexes.Clear();
-        numCreators = 0;
 
         textInputString = text;
         ParseText();
@@ -432,7 +426,6 @@ public class FancyText : MonoBehaviour
         {
             StopCoroutine("DisplayText");
             numSpeeds = 0;
-            numCreators = 0;
             charIndex = textDisplayString.Length;
             creators.Clear();
             creatorIndexes.Clear();
