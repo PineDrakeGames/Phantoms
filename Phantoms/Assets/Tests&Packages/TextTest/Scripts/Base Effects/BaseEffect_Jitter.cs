@@ -11,15 +11,50 @@ public class BaseEffect_Jitter : BaseEffect
     private float m_maxJitterDistance = 0.05f;
 
     [SerializeField]
+    [Tooltip("The pivot point for the rotation.")]
+    private float m_minJitterDistance = 0f;
+
+    [SerializeField]
     [Tooltip("The time in seconds before the text is jittered again.")]
     private float m_timeBetweenJitter = .033333f; // Default value is 1/30th of a second, jittering at 30fps.
+
+    [HideInInspector]
+    [SerializeField]
+    private Vector2[] m_randomPositions = null;
+
+    public override void OnValidate()
+    {
+        base.OnValidate();
+        
+        if (m_minJitterDistance <= 0f)
+        {
+            m_minJitterDistance = 0f;
+        }
+        if (m_maxJitterDistance < m_minJitterDistance)
+        {
+            m_maxJitterDistance = m_minJitterDistance;
+        }
+
+        if (m_timeBetweenJitter <= 0f)
+        {
+            m_timeBetweenJitter = 0.001f;
+        }
+        if (m_timeBetweenJitter > m_effectPeriod)
+        {
+            m_effectPeriod = m_timeBetweenJitter;
+        }
+
+        SetPositions();
+    }
 
     public override void ApplyEffect(int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
     {
         float size = (sourceVertices[vertexIndex + 0] - sourceVertices[vertexIndex + 2]).magnitude;
-        size *= m_maxJitterDistance;
-        float randx = Random.Range(-1, 1) * size;
-        float randy = Random.Range(-1, 1) * size;
+
+        int index = Mathf.FloorToInt(GetProgress(characterIndex) * (float)m_randomPositions.Length);
+
+        float randx = m_randomPositions[index].x * size;
+        float randy = m_randomPositions[index].y * size;
 
         int[] vertices = m_vertices.Vertices();
         for (int i = 0; i < vertices.Length; i++)
@@ -27,6 +62,18 @@ public class BaseEffect_Jitter : BaseEffect
             int vert = vertices[i];
             destinationVertices[vertexIndex + vert].x += randx;
             destinationVertices[vertexIndex + vert].y += randy;
+        }
+    }
+
+    private void SetPositions()
+    {
+        int numJitters = Mathf.FloorToInt(m_effectPeriod / m_timeBetweenJitter);
+        m_randomPositions = new Vector2[numJitters];
+        for (int i = 0; i < numJitters; i++)
+        {
+            float x = (Random.Range(0f,2f)*2f-1f) * Random.Range(m_minJitterDistance, m_maxJitterDistance);
+            float y = (Random.Range(0f,2f)*2f-1f) * Random.Range(m_minJitterDistance, m_maxJitterDistance);
+            m_randomPositions[i] = new Vector2(x, y);
         }
     }
 }
