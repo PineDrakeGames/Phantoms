@@ -96,30 +96,16 @@ public class FancyText : MonoBehaviour
         m_TextComponent.ForceMeshUpdate();
 
         // Declare all the variables needed for mesh modification first
-        cachedMeshInfo = textInfo.CopyMeshInfoVertexData();
         int characterCount = textInfo.characterCount;
-        Color32[] newVertexColors;
-        int materialIndex = 0;
-        int vertexIndex = 0;
-        Vector3[] sourceVertices = null;
-        Vector3[] destinationVertices = null;
 
         // Apply the effects to letters first, in case they are overridden by later changes
         foreach (TextEffect effect in effects)
         {
-            TMP_CharacterInfo charInfo = textInfo.characterInfo[effect.index];
-
             // Skip characters that are not visible and thus have no geometry to manipulate.
-            if (!charInfo.isVisible)
+            if (!effect.Data.IsVisible)
                 continue;
 
-            materialIndex = charInfo.materialReferenceIndex;
-            vertexIndex = charInfo.vertexIndex;
-            sourceVertices = cachedMeshInfo[materialIndex].vertices;
-            destinationVertices = textInfo.meshInfo[materialIndex].vertices;
-            newVertexColors = textInfo.meshInfo[materialIndex].colors32;
-
-            effect.Apply(vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
+            effect.Apply();
         }
 
         // Next we do the animations for characters that are currently being put in.
@@ -128,19 +114,10 @@ public class FancyText : MonoBehaviour
         {
             TextCreator creator = creators[i];
 
-            TMP_CharacterInfo charInfo = textInfo.characterInfo[creator.index];
-
-            // Skip characters that are not visible and thus have no geometry to manipulate.
-            if (!charInfo.isVisible)
+            if (!creator.Data.IsVisible)
                 continue;
 
-            materialIndex = textInfo.characterInfo[creator.index].materialReferenceIndex;
-            vertexIndex = textInfo.characterInfo[creator.index].vertexIndex;
-            sourceVertices = cachedMeshInfo[materialIndex].vertices;
-            destinationVertices = textInfo.meshInfo[materialIndex].vertices;
-            newVertexColors = textInfo.meshInfo[materialIndex].colors32;
-
-            creator.Apply(vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
+            creator.Apply();
 
             // destroy any creators that are finished
             if (creator.Progress(Time.time) >= 1f)
@@ -154,9 +131,9 @@ public class FancyText : MonoBehaviour
         //finally, set everything that hasn't appeared yet to an invisible color
         for (int i = charIndex; i < characterCount; i += 1)
         {
-            materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
-            newVertexColors = textInfo.meshInfo[materialIndex].colors32;
-            vertexIndex = textInfo.characterInfo[i].vertexIndex;
+            int materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
+            Color32[] newVertexColors = textInfo.meshInfo[materialIndex].colors32;
+            int vertexIndex = textInfo.characterInfo[i].vertexIndex;
 
             // Only change the vertex color if the text element is visible.
             if (textInfo.characterInfo[i].isVisible)
@@ -265,8 +242,7 @@ public class FancyText : MonoBehaviour
                 {
                     TextEffect effect = new TextEffect();
                     effect.Effect = defaultEffect;
-
-                    effect.index = index;
+                    effect.Index = index;
                     effects.Add(effect);
                 }
                 textOutputString += textInputString[i];
@@ -289,8 +265,7 @@ public class FancyText : MonoBehaviour
                 {
                     TextEffect effect = new TextEffect();
                     effect.Effect = textEffect;
-
-                    effect.index = index;
+                    effect.Index = index;
                     effects.Add(effect);
                     textOutputString += letter;
                     textDisplayString += letter;
@@ -373,7 +348,7 @@ public class FancyText : MonoBehaviour
             {
                 TextCreator temp = new TextCreator();
                 temp.Effect = createtype;
-                temp.index = charIndex;
+                temp.Data = new CharacterData(charIndex, textInfo);
                 temp.startTime = Time.time;
                 creators.Add(temp);
                 charIndex += 1;
@@ -417,6 +392,14 @@ public class FancyText : MonoBehaviour
         textInputString = text;
         ParseText();
         m_TextComponent.text = textOutputString;
+
+        m_TextComponent.ForceMeshUpdate();
+
+        foreach(TextEffect effect in effects)
+        {
+            effect.Data = new CharacterData(effect.Index, textInfo);
+        }
+
         StartCoroutine("DisplayText");
     }
 

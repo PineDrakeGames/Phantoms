@@ -1,14 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class TextEffect
 {
-    public int index;
+    public int Index;
     public FancyTextEffect Effect;
+    public CharacterData Data;
 
-    public void Apply(int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    public void Apply()
     {
-        Effect.ApplyEffectConstant(index, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
+        Data.UpdateData();
+        Effect.ApplyEffectConstant(Data);
     }
 }

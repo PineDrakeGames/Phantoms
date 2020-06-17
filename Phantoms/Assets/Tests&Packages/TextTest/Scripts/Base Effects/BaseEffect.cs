@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using TMPro;
 
 public abstract class BaseEffect : ScriptableObject
 {
@@ -29,18 +30,18 @@ public abstract class BaseEffect : ScriptableObject
         }
     }
 
-    public void ApplyEffectConstant(int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    public void ApplyEffectConstant(CharacterData data)
     {
-        float characterTime = Mathf.Abs((Time.time - (m_characterDelay * characterIndex)) % m_effectPeriod);
+        float characterTime = Mathf.Abs((Time.time - (m_characterDelay * data.CharacterIndex)) % m_effectPeriod);
         float progress = (characterTime / m_effectPeriod);
-        ApplyEffect(progress, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
+        ApplyEffect(progress, data);
     }
 
-    public void ApplyEffectCreator(float time, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    public void ApplyEffectCreator(float time, CharacterData data)
     {
         float progress = Mathf.Clamp01(time / m_effectPeriod);
-        ApplyEffect(progress, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
+        ApplyEffect(progress, data);
     }
 
-    protected abstract void ApplyEffect(float progress, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors);
+    protected abstract void ApplyEffect(float progress, CharacterData data);
 }

@@ -47,9 +47,9 @@ public class BaseEffect_Jitter : BaseEffect
         SetPositions();
     }
 
-    protected override void ApplyEffect(float progress, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    protected override void ApplyEffect(float progress, CharacterData data)
     {
-        float size = (sourceVertices[vertexIndex + 0] - sourceVertices[vertexIndex + 2]).magnitude;
+        float size = data.GetCharacterDimensionsSource().magnitude;
 
         int index = Mathf.FloorToInt(progress * (float)m_randomPositions.Length);
 
@@ -60,8 +60,10 @@ public class BaseEffect_Jitter : BaseEffect
         for (int i = 0; i < vertices.Length; i++)
         {
             int vert = vertices[i];
-            destinationVertices[vertexIndex + vert].x += randx;
-            destinationVertices[vertexIndex + vert].y += randy;
+            Vector3 newPosition = data.GetVertexPositionCurrent(vert);
+            newPosition.x += randx;
+            newPosition.y += randx;
+            data.SetVertexPosition(vert, newPosition);
         }
     }
 

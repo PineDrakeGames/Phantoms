@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using TMPro;
 
 struct Creator
 {
@@ -10,11 +9,10 @@ struct Creator
 
 public class TextCreator
 {
-
-    public int index;
+    public int Index;
     public float startTime;
-
     public FancyTextEffect Effect;
+    public CharacterData Data;
 
     public float Progress(float time)
     {
@@ -28,12 +26,13 @@ public class TextCreator
         }
     }
 
-    public void Apply(int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    public void Apply()
     {
         float currentTime = (Time.time - startTime);
         if (Effect != null)
         {
-            Effect.ApplyEffectCreator(currentTime, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
+            Data.UpdateData();
+            Effect.ApplyEffectCreator(currentTime, Data);
         }
     }
 }

@@ -25,7 +25,7 @@ public class BaseEffect_Color : BaseEffect
     [Tooltip("The color gradient to animate the text over")]
     private Gradient m_colorValue = null;
 
-    protected override void ApplyEffect(float progress, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    protected override void ApplyEffect(float progress, CharacterData data)
     {
         Color color = m_colorValue.Evaluate(progress);
 
@@ -34,7 +34,7 @@ public class BaseEffect_Color : BaseEffect
         {
             int vert = vertices[i];
 
-            Color defaultColor = newVertexColors[vertexIndex + vert];
+            Color defaultColor = data.GetVertexColorCurrent(vert);
 
             Color targetColor = color;
 
@@ -51,7 +51,7 @@ public class BaseEffect_Color : BaseEffect
                     break;
             }
 
-            newVertexColors[vertexIndex + vert] = Color32.Lerp(defaultColor, targetColor, m_colorBlendStrength);
+            data.SetVertexColor(vert, Color32.Lerp(defaultColor, targetColor, m_colorBlendStrength));
         }
     }
 }

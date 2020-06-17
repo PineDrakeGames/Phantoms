@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using TMPro;
 
 public enum TextEffectType
 {
@@ -62,19 +63,19 @@ public class FancyTextEffect : ScriptableObject
     }
 
     /// Public functions to apply the text effect ///
-    public void ApplyEffectConstant(int characterIndex, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    public void ApplyEffectConstant(CharacterData data)
     {
         for (int i = 0; i < m_effects.Length; i++)
         {
-            m_effects[i].ApplyEffectConstant(characterIndex, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
+            m_effects[i].ApplyEffectConstant(data);
         }
     }
 
-    public void ApplyEffectCreator(float time, int vertexIndex, Vector3[] sourceVertices, ref Vector3[] destinationVertices, ref Color32[] newVertexColors)
+    public void ApplyEffectCreator(float time, CharacterData data)
     {
         for (int i = 0; i < m_effects.Length; i++)
         {
-            m_effects[i].ApplyEffectCreator(time, vertexIndex, sourceVertices, ref destinationVertices, ref newVertexColors);
+            m_effects[i].ApplyEffectCreator(time, data);
         }
     }
 }
