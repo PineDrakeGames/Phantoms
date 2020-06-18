@@ -1,7 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 using TMPro;
+
+public enum CharacterHeight
+{
+    CHARACTER,
+    WORD,
+    LINE
+}
 
 public class CharacterData
 {
@@ -17,6 +23,12 @@ public class CharacterData
     private Vector3[] m_destinationVertices = null;
     private Color32[] m_sourceVertexColors;
     private Color32[] m_vertexColors;
+
+    private TMP_WordInfo m_wordInfo;
+    private int m_wordIndex;
+    private TMP_LineInfo m_lineInfo;
+    private int m_lineIndex;
+
 
     /// Constructor and method to update character data ///
     public CharacterData(int characterIndex, TMP_TextInfo textInfo)
@@ -40,6 +52,36 @@ public class CharacterData
         if (!m_characterInfo.isVisible)
         {
             return;
+        }
+
+        foreach(TMP_WordInfo wordInfo in m_textInfo.wordInfo)
+        {
+            if (m_characterIndex >= wordInfo.firstCharacterIndex && m_characterIndex <= wordInfo.lastCharacterIndex)
+            {
+                m_wordInfo = wordInfo;
+            }
+        }
+        float maxHeight = 0;
+        for (int i = m_wordInfo.firstCharacterIndex; i <= m_wordInfo.lastCharacterIndex; i++)
+        {
+            float height = m_textInfo.characterInfo[i].topLeft.y - m_textInfo.characterInfo[i].bottomLeft.y;
+            if (height > maxHeight)
+            {
+                m_wordIndex = m_textInfo.characterInfo[i].vertexIndex;
+                maxHeight = height;
+            }
+        }
+
+        maxHeight = 0;
+        m_lineInfo = m_textInfo.lineInfo[m_characterInfo.lineNumber];
+        for (int i = m_lineInfo.firstVisibleCharacterIndex; i <= m_lineInfo.lastVisibleCharacterIndex; i++)
+        {
+            float height = m_textInfo.characterInfo[i].topLeft.y - m_textInfo.characterInfo[i].bottomLeft.y;
+            if (height > maxHeight)
+            {
+                m_lineIndex = m_textInfo.characterInfo[i].vertexIndex;
+                maxHeight = height;
+            }
         }
 
         // Get any indexes for specific data in the text info arrays.
@@ -78,42 +120,66 @@ public class CharacterData
 
 
     /// Data about the whole character ///
-    public Vector3 GetCharacterDimensionsSource()
+    public Vector3 GetCharacterDimensionsSource(CharacterHeight context = CharacterHeight.CHARACTER)
     {
-        return (m_sourceVertices[m_vertexIndex + 0] - m_sourceVertices[m_vertexIndex + 2]);
+        return (GetVertexPositionSource(0, context) - GetVertexPositionSource(2, context));
     }
 
-    public Vector3 GetCharacterDimensionsCurrent()
+    public Vector3 GetCharacterDimensionsCurrent(CharacterHeight context = CharacterHeight.CHARACTER)
     {
-        return (m_destinationVertices[m_vertexIndex + 0] - m_destinationVertices[m_vertexIndex + 2]);
+        return (GetVertexPositionCurrent(0, context) - GetVertexPositionCurrent(2, context));
     }
 
-    public Vector3 GetPivotSource(Vector2 pivotPoint)
+    public Vector3 GetPivotSource(Vector2 pivotPoint, CharacterHeight context = CharacterHeight.CHARACTER)
     {
-        Vector3 pointA = Vector3.Lerp(m_sourceVertices[m_vertexIndex + 0], m_sourceVertices[m_vertexIndex + 3], pivotPoint.x);
-        Vector3 pointB = Vector3.Lerp(m_sourceVertices[m_vertexIndex + 1], m_sourceVertices[m_vertexIndex + 2], pivotPoint.x);
+        Vector3 pointA = Vector3.Lerp(GetVertexPositionSource(0, context), GetVertexPositionSource(3, context), pivotPoint.x);
+        Vector3 pointB = Vector3.Lerp(GetVertexPositionSource(1, context), GetVertexPositionSource(2, context), pivotPoint.x);
 
         return Vector3.Lerp(pointA, pointB, pivotPoint.y);
     }
 
-    public Vector3 GetPivotCurrent(Vector2 pivotPoint)
+    public Vector3 GetPivotCurrent(Vector2 pivotPoint, CharacterHeight context = CharacterHeight.CHARACTER)
     {
-        Vector3 pointA = Vector3.Lerp(m_destinationVertices[m_vertexIndex + 0], m_destinationVertices[m_vertexIndex + 3], pivotPoint.x);
-        Vector3 pointB = Vector3.Lerp(m_destinationVertices[m_vertexIndex + 1], m_destinationVertices[m_vertexIndex + 2], pivotPoint.x);
+        Vector3 pointA = Vector3.Lerp(GetVertexPositionCurrent(0, context), GetVertexPositionCurrent(3, context), pivotPoint.x);
+        Vector3 pointB = Vector3.Lerp(GetVertexPositionCurrent(1, context), GetVertexPositionCurrent(2, context), pivotPoint.x);
 
         return Vector3.Lerp(pointA, pointB, pivotPoint.y);
     }
 
 
     /// Data about specific vertices ///
-    public Vector3 GetVertexPositionSource(int vertice)
+    public Vector3 GetVertexPositionSource(int vertice, CharacterHeight context = CharacterHeight.CHARACTER)
     {
-        return m_sourceVertices[m_vertexIndex + vertice];
+        Vector3 result = m_sourceVertices[m_vertexIndex + vertice];
+        switch (context)
+        {
+            case CharacterHeight.CHARACTER:
+                break;
+            case CharacterHeight.WORD:
+                result.y =  m_sourceVertices[m_wordIndex + vertice].y;
+                break;
+            case CharacterHeight.LINE:
+                result.y =  m_sourceVertices[m_lineIndex + vertice].y;
+                break;
+        }
+        return result;
     }
 
-    public Vector3 GetVertexPositionCurrent(int vertice)
+    public Vector3 GetVertexPositionCurrent(int vertice, CharacterHeight context = CharacterHeight.CHARACTER)
     {
-        return m_destinationVertices[m_vertexIndex + vertice];
+        Vector3 result = m_destinationVertices[m_vertexIndex + vertice];
+        switch (context)
+        {
+            case CharacterHeight.CHARACTER:
+                break;
+            case CharacterHeight.WORD:
+                result.y =  m_destinationVertices[m_wordIndex + vertice].y;
+                break;
+            case CharacterHeight.LINE:
+                result.y =  m_destinationVertices[m_lineIndex + vertice].y;
+                break;
+        }
+        return result;
     }
 
     public Color32 GetVertexColorSource(int vertice)
@@ -133,11 +199,17 @@ public class CharacterData
     /////////////////////////////
     public void SetVertexPosition(int vertice, Vector3 newPosition)
     {
-        m_destinationVertices[m_vertexIndex + vertice] = newPosition;
+        m_meshInfo.vertices[m_vertexIndex + vertice] = newPosition;
     }
 
     public void SetVertexColor(int vertice, Color32 newColor)
     {
-        m_vertexColors[m_vertexIndex + vertice] = newColor;
+        m_meshInfo.colors32[m_vertexIndex + vertice] = newColor;
     }
+
+
+    ////////////////////////////////
+    /// Private Helper Functions ///
+    ////////////////////////////////
+
 }

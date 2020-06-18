@@ -261,15 +261,30 @@ public class FancyText : MonoBehaviour
         switch (textEffect.EffectType)
         {
             case TextEffectType.CONSTANT:
-                foreach (char letter in value)
+                for (int i = 0; i < value.Length; i++)
                 {
-                    TextEffect effect = new TextEffect();
-                    effect.Effect = textEffect;
-                    effect.Index = index;
-                    effects.Add(effect);
-                    textOutputString += letter;
-                    textDisplayString += letter;
-                    index += 1;
+                    char letter = value[i];
+                    if (letter == '<')
+                    {
+                        textOutputString += letter;
+                        i += 1;
+                        while (value[i] != '>')
+                        {
+                            textOutputString += value[i];
+                            i += 1;
+                        }
+                        textOutputString += value[i];
+                    }
+                    else
+                    {
+                        TextEffect effect = new TextEffect();
+                        effect.Effect = textEffect;
+                        effect.Index = index;
+                        effects.Add(effect);
+                        textOutputString += letter;
+                        textDisplayString += letter;
+                        index += 1;
+                    }
                 }
                 break;
             case TextEffectType.CREATOR:
@@ -395,7 +410,7 @@ public class FancyText : MonoBehaviour
 
         m_TextComponent.ForceMeshUpdate();
 
-        foreach(TextEffect effect in effects)
+        foreach (TextEffect effect in effects)
         {
             effect.Data = new CharacterData(effect.Index, textInfo);
         }

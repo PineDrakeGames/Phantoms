@@ -5,6 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Jitter", menuName = "FancyText/BaseEffect/Jitter", order = 2)]
 public class BaseEffect_Jitter : BaseEffect
 {
+    [Header("Jitter specific variables")]
+    [SerializeField]
+    [Tooltip("Determines whether to use the height of the character, word, or line when moving the position, to keep movement consistent between neighboring characters.")]
+    private CharacterHeight m_characterHeight = CharacterHeight.LINE;
 
     [SerializeField]
     [Tooltip("The pivot point for the rotation.")]
@@ -49,7 +53,7 @@ public class BaseEffect_Jitter : BaseEffect
 
     protected override void ApplyEffect(float progress, CharacterData data)
     {
-        float size = data.GetCharacterDimensionsSource().magnitude;
+        float size = data.GetCharacterDimensionsSource(m_characterHeight).magnitude;
 
         int index = Mathf.FloorToInt(progress * (float)m_randomPositions.Length);
 

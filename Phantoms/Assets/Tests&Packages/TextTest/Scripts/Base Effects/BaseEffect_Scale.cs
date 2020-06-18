@@ -5,6 +5,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Scale", menuName = "FancyText/BaseEffect/Scale", order = 2)]
 public class BaseEffect_Scale : BaseEffect
 {
+    [Header("Scale specific variables")]
+    [SerializeField]
+    [Tooltip("Determines whether to use the height of the character, word, or line when moving the position, to keep movement consistent between neighboring characters.")]
+    private CharacterHeight m_characterHeight = CharacterHeight.LINE;
+
     [SerializeField]
     [Tooltip("The pivot point for the scaling.")]
     private Vector2 m_pivotPoint = new Vector2(0.5f, 0.5f);
@@ -15,7 +20,7 @@ public class BaseEffect_Scale : BaseEffect
 
     protected override void ApplyEffect(float progress, CharacterData data)
     {
-        Vector3 center = data.GetPivotSource(m_pivotPoint);
+        Vector3 center = data.GetPivotSource(m_pivotPoint, m_characterHeight);
 
         float scale = m_scaleValue.Evaluate(progress);
 

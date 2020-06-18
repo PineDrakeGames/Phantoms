@@ -5,6 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Rotate", menuName = "FancyText/BaseEffect/Rotate", order = 2)]
 public class BaseEffect_Rotate : BaseEffect
 {
+    [Header("Rotation specific variables")]
+    [SerializeField]
+    [Tooltip("Determines whether to use the height of the character, word, or line when moving the position, to keep movement consistent between neighboring characters.")]
+    private CharacterHeight m_characterHeight = CharacterHeight.LINE;
 
     [SerializeField]
     [Tooltip("The pivot point for the rotation.")]
@@ -20,7 +24,7 @@ public class BaseEffect_Rotate : BaseEffect
 
     protected override void ApplyEffect(float progress, CharacterData data)
     {
-        Vector3 center = data.GetPivotSource(m_centerOfRotation);
+        Vector3 center = data.GetPivotSource(m_centerOfRotation, m_characterHeight);
 
         float rotation = m_rotationValue.Evaluate(progress) * 360f;
 
