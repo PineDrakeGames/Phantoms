@@ -43,17 +43,20 @@ public class FancyText : MonoBehaviour
     // Reveal text strings and things 
     private TMP_Text m_TextComponent;
     private TMP_TextInfo textInfo;
-    private TMP_MeshInfo[] cachedMeshInfo;
+
     string textInputString;
     string textOutputString;
     string textDisplayString;
     int charIndex = 0;
-    float progress;
+    int speedIndex = 0;
+    int creatorsIndex = 0;
+    private readonly Color32 hiddenColor = new Color32(0, 0, 0, 0);
 
     // Things related to text display speed and pauses
     List<SpeedOption> speeds = new List<SpeedOption>();
     int numSpeeds = 0;
     public float newLinePause = 0.8f;
+    private float m_currentDelay = 0f;
 
     // Text Effects stuff
     List<TextEffect> effects = new List<TextEffect>();
@@ -72,7 +75,7 @@ public class FancyText : MonoBehaviour
     {
         m_TextComponent = GetComponent<TMP_Text>();
         m_TextComponent.enableVertexGradient = true;
-        textInfo = m_TextComponent.textInfo;
+
 
         if (GetComponent<AudioSource>() != null)
         {
@@ -84,10 +87,13 @@ public class FancyText : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        //tell the mesh that the verts must be redrawn
         if (Active)
         {
             ModifyMesh();
+            if (Revealing)
+            {
+                DisplayText();
+            }
         }
     }
 
@@ -102,7 +108,7 @@ public class FancyText : MonoBehaviour
         foreach (TextEffect effect in effects)
         {
             // Skip characters that are not visible and thus have no geometry to manipulate.
-            if (!effect.Data.IsVisible)
+            if (!effect.Data.IsVisible || effect.Index > charIndex)
                 continue;
 
             effect.Apply();
@@ -129,31 +135,102 @@ public class FancyText : MonoBehaviour
         }
 
         //finally, set everything that hasn't appeared yet to an invisible color
+        
         for (int i = charIndex; i < characterCount; i += 1)
         {
-            int materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
-            Color32[] newVertexColors = textInfo.meshInfo[materialIndex].colors32;
-            int vertexIndex = textInfo.characterInfo[i].vertexIndex;
-
             // Only change the vertex color if the text element is visible.
             if (textInfo.characterInfo[i].isVisible)
             {
-                Color32 c0 = new Color32(0, 0, 0, 0);
-
-                newVertexColors[vertexIndex + 0] = c0;
-                newVertexColors[vertexIndex + 1] = c0;
-                newVertexColors[vertexIndex + 2] = c0;
-                newVertexColors[vertexIndex + 3] = c0;
+                int materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
+                Color32[] newVertexColors = textInfo.meshInfo[materialIndex].colors32;
+                int vertexIndex = textInfo.characterInfo[i].vertexIndex;
+                for (int j = 0; j < 4; j++)
+                {
+                    newVertexColors[vertexIndex + j] = hiddenColor;
+                }
             }
         }
 
-        for (int i = 0; i < textInfo.meshInfo.Length; i++)
+        m_TextComponent.UpdateVertexData(TMP_VertexDataUpdateFlags.Vertices);
+        m_TextComponent.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
+    }
+
+    private void DisplayText()
+    {
+        if (m_currentDelay > 0)
         {
-            textInfo.meshInfo[i].mesh.vertices = textInfo.meshInfo[i].vertices;
-            m_TextComponent.UpdateGeometry(textInfo.meshInfo[i].mesh, i);
+            m_currentDelay -= Time.deltaTime;
+            return;
         }
 
-        m_TextComponent.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
+        bool playedSound = false;
+
+        while (charIndex < textDisplayString.Length)
+        {
+            // Check if there is any speed changes at this index, and set up all of them if so.
+            while (speedIndex < numSpeeds && speeds[speedIndex].index == charIndex)
+            {
+                switch (speeds[speedIndex].type)
+                {
+                    case SpeedModifier.SPEED:
+                        CharacterDelay = speeds[speedIndex].value;
+                        break;
+                    case SpeedModifier.NEWLINEPAUSE:
+                        newLinePause = speeds[speedIndex].value;
+                        break;
+                    case SpeedModifier.NEWLINE:
+                        m_currentDelay += newLinePause;
+                        speedIndex += 1;
+                        return;
+                    case SpeedModifier.PAUSE:
+                        m_currentDelay += speeds[speedIndex].value;
+                        speedIndex += 1;
+                        return;
+                }
+                speedIndex += 1;
+            }
+
+            // Check if there is a change in the creators at this index, and set it up if so.
+            // NOTE(CJ): Should in theory only ever be 1 creator per index, as only the last one would ever be used - 
+            //   but using a while loop just in case.
+            while (creatorsIndex < creatorIndexes.Count && creatorIndexes[creatorsIndex].index == charIndex)
+            {
+                Creator creator = creatorIndexes[creatorsIndex];
+                createtype = creator.CreateType;
+                creatorsIndex += 1;
+            }
+
+            // Get the current letter
+            char letter = textDisplayString[charIndex];
+
+            // If the current letter is not visible, skip it.
+            if (letter == ' ' || letter == '\n')
+            {
+                charIndex += 1;
+            }
+            else
+            {
+                TextCreator temp = new TextCreator();
+                temp.Effect = createtype;
+                temp.Data = new CharacterData(charIndex, textInfo);
+                temp.startTime = Time.time;
+                creators.Add(temp);
+                charIndex += 1;
+
+                if (!playedSound)
+                {
+                    if (hasAudio) { audioSource.Play(); }
+                    playedSound = true;
+                }
+                if (CharacterDelay != 0f)
+                {
+                    playedSound = false;
+                    m_currentDelay += CharacterDelay;
+                    return;
+                }
+            }
+        }
+        Revealing = false;
     }
 
     private void ParseText()
@@ -309,97 +386,25 @@ public class FancyText : MonoBehaviour
         numSpeeds += 1;
     }
 
-
-    IEnumerator DisplayText()
-    {
-        charIndex = 0;
-        int speedIndex = 0;
-        int creatorsIndex = 0;
-
-        bool playedSound = false;
-
-        while (charIndex < textDisplayString.Length)
-        {
-            // Check if there is any speed changes at this index, and set up all of them if so.
-            while (speedIndex < numSpeeds && speeds[speedIndex].index == charIndex)
-            {
-                switch (speeds[speedIndex].type)
-                {
-                    case SpeedModifier.SPEED:
-                        CharacterDelay = speeds[speedIndex].value;
-                        break;
-                    case SpeedModifier.NEWLINEPAUSE:
-                        newLinePause = speeds[speedIndex].value;
-                        break;
-                    case SpeedModifier.NEWLINE:
-                        yield return new WaitForSeconds(newLinePause);
-                        break;
-                    case SpeedModifier.PAUSE:
-                        yield return new WaitForSeconds(speeds[speedIndex].value);
-                        break;
-                }
-                speedIndex += 1;
-            }
-
-            // Check if there is a change in the creators at this index, and set it up if so.
-            // NOTE(CJ): Should in theory only ever be 1 creator per index, as only the last one would ever be used - 
-            //   but using a while loop just in case.
-            while (creatorsIndex < creatorIndexes.Count && creatorIndexes[creatorsIndex].index == charIndex)
-            {
-                Creator creator = creatorIndexes[creatorsIndex];
-                createtype = creator.CreateType;
-                creatorsIndex += 1;
-            }
-
-            // Get the current letter
-            char letter = textDisplayString[charIndex];
-
-            // If the current letter is not visible, skip it.
-            if (letter == ' ' || letter == '\n')
-            {
-                charIndex += 1;
-            }
-            else
-            {
-                TextCreator temp = new TextCreator();
-                temp.Effect = createtype;
-                temp.Data = new CharacterData(charIndex, textInfo);
-                temp.startTime = Time.time;
-                creators.Add(temp);
-                charIndex += 1;
-
-                if (!playedSound)
-                {
-                    if (hasAudio) { audioSource.Play(); }
-                    playedSound = true;
-                }
-                if (CharacterDelay != 0f)
-                {
-                    playedSound = false;
-                    yield return new WaitForSeconds(CharacterDelay);
-                }
-            }
-        }
-        Revealing = false;
-    }
-
     public void SetText(string text)
     {
         if (!Active) { Active = true; }
-        if (Revealing)
-        {
-            StopCoroutine("DisplayText");
-        }
-        else { Revealing = true; }
+        Revealing = true;
 
         // Resetting all variables
         if (m_TextComponent == null)
         {
             m_TextComponent = GetComponent<TMP_Text>();
         }
+        m_TextComponent.text = "";
+        m_TextComponent.ClearMesh(false);
+        textInfo = m_TextComponent.textInfo;
         charIndex = 0;
+        speedIndex = 0;
+        creatorsIndex = 0;
         speeds.Clear();
         numSpeeds = 0;
+        m_currentDelay = 0f;
         effects.Clear();
         creators.Clear();
         creatorIndexes.Clear();
@@ -415,7 +420,6 @@ public class FancyText : MonoBehaviour
             effect.Data = new CharacterData(effect.Index, textInfo);
         }
 
-        StartCoroutine("DisplayText");
     }
 
     public void FinishLine()
