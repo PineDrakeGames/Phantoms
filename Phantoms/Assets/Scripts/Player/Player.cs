@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         CharacterCamera.Player = Character.CameraFollowPoint;
+        CharacterCamera.PlayerMotor = Character.Motor;
     }
 
     private void Update()
