@@ -7,17 +7,16 @@ public class CameraController : MonoBehaviour
     [Header("Player Camera Variables")]
     [SerializeField]
     private float m_distanceFromFocus = 10f;
-
     [SerializeField]
     private Vector3 m_cameraForward = Vector3.forward;
-
-
-
     [SerializeField]
     private float m_angleUp = 30f;
 
+    [Header("Lead Player Variables")]
     [SerializeField]
     private float m_leadDistance = 2f;
+    [SerializeField]
+    private float m_leadDelay = 3f;
 
 
     [HideInInspector]
@@ -25,9 +24,18 @@ public class CameraController : MonoBehaviour
 
 
     private float m_currentLead = 0f;
+    private Vector3 m_prevPlayerPosition = Vector3.zero;
     private Vector3 m_focusPosition = Vector3.zero;
 
+    private void OnValidate() {
+        m_cameraForward.y = 0;
+        m_cameraForward.Normalize();
+    }
 
+    private void Start() 
+    {
+        m_prevPlayerPosition = Player.position;
+    }
 
     private void LateUpdate()
     {
@@ -40,7 +48,16 @@ public class CameraController : MonoBehaviour
 
     private void UpdateFocus()
     {
-        m_focusPosition = Player.position;
+        Vector3 distance = (Player.position - m_prevPlayerPosition);
+        Vector3 offsetDirection =  Quaternion.Euler(0, -90, 0) * m_cameraForward;
+
+        float lead = Vector3.Dot(offsetDirection, distance) / m_leadDelay;
+        m_currentLead += lead;
+        m_currentLead = Mathf.Clamp(m_currentLead, -1f, 1f);
+
+        m_focusPosition = Player.position + (offsetDirection * m_leadDistance * Mathf.SmoothStep(-1f, 1f, (m_currentLead + 1f) / 2f));
+
+        m_prevPlayerPosition = Player.position;
     }
 
     private void UpdateCamera()
