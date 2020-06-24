@@ -40,6 +40,11 @@ public class FancyText : MonoBehaviour
 
 
     /// Private variables ///
+    // For text parsing
+    private FancyTextEffect m_constantEffect = null;
+    private FancyTextEffect m_creatorEffect = null;
+
+
     // Reveal text strings and things 
     private TMP_Text m_TextComponent;
     private TMP_TextInfo textInfo;
@@ -235,6 +240,9 @@ public class FancyText : MonoBehaviour
 
     private void ParseText()
     {
+        m_constantEffect = defaultEffect;
+        m_creatorEffect = createtype;
+
         textOutputString = "";
         textDisplayString = "";
         int index = 0;
