@@ -11,8 +11,6 @@ public struct PlayerCharacterInputs
     public float MoveAxisRight;
     public Quaternion CameraRotation;
     public bool JumpDown;
-    public bool CrouchDown;
-    public bool CrouchUp;
 }
 
 public struct AICharacterInputs
@@ -60,6 +58,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
     private Collider[] _probedColliders = new Collider[8];
     private RaycastHit[] _probedHits = new RaycastHit[8];
     private Vector3 _moveInputVector;
+    public Vector3 MoveInputVector { get { return _moveInputVector; } }
     private Vector3 _lookInputVector;
     private bool _jumpRequested = false;
     private bool _jumpConsumed = false;
@@ -67,19 +66,17 @@ public class PlayerController : MonoBehaviour, ICharacterController
     private float _timeSinceJumpRequested = Mathf.Infinity;
     private float _timeSinceLastAbleToJump = 0f;
     private Vector3 _internalVelocityAdd = Vector3.zero;
-    private bool _shouldBeCrouching = false;
-    private bool _isCrouching = false;
 
     private Vector3 lastInnerNormal = Vector3.zero;
     private Vector3 lastOuterNormal = Vector3.zero;
 
-    private PlayerState m_prevState = null;
-    public PlayerState PrevState
+    private PlayerMovementState m_prevState = null;
+    public PlayerMovementState PrevState
     {
         get { return m_prevState; }
     }
-    private PlayerState m_currentState = null;
-    public PlayerState CurrentState
+    private PlayerMovementState m_currentState = null;
+    public PlayerMovementState CurrentState
     {
         get { return m_currentState; }
         set { SetState(value); }
@@ -98,7 +95,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
     /// <summary>
     /// Handles movement state transitions and enter/exit callbacks
     /// </summary>
-    public void SetState(PlayerState newState)
+    public void SetState(PlayerMovementState newState)
     {
         if (newState == null) { return; }
 
@@ -106,8 +103,9 @@ public class PlayerController : MonoBehaviour, ICharacterController
         Debug.Log("Transitioning from state - " + m_currentState.GetType() + " - to state - " + newState.GetType());
         #endif
 
-        PlayerState m_prevState = m_currentState;
+        PlayerMovementState m_prevState = m_currentState;
         m_currentState.StateExit();
+        newState.Controller = this;
         m_currentState = newState;
         m_currentState.StateEnter();
     }
@@ -141,23 +139,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
             _jumpRequested = true;
         }
 
-        // Crouching input
-        if (inputs.CrouchDown)
-        {
-            _shouldBeCrouching = true;
-
-            if (!_isCrouching)
-            {
-                _isCrouching = true;
-                Motor.SetCapsuleDimensions(0.5f, 1f, 0.5f);
-                MeshRoot.localScale = new Vector3(1f, 0.5f, 1f);
-            }
-        }
-        else if (inputs.CrouchUp)
-        {
-            _shouldBeCrouching = false;
-        }
-
+        m_currentState.TickInput();
     }
 
     /// <summary>
@@ -234,84 +216,8 @@ public class PlayerController : MonoBehaviour, ICharacterController
     /// </summary>
     public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
     {
-
+        m_currentState.TickVelocity(ref currentVelocity, deltaTime);
         // Ground movement
-        if (Motor.GroundingStatus.IsStableOnGround)
-        {
-            float currentVelocityMagnitude = currentVelocity.magnitude;
-
-            Vector3 effectiveGroundNormal = Motor.GroundingStatus.GroundNormal;
-            if (currentVelocityMagnitude > 0f && Motor.GroundingStatus.SnappingPrevented)
-            {
-                // Take the normal from where we're coming from
-                Vector3 groundPointToCharacter = Motor.TransientPosition - Motor.GroundingStatus.GroundPoint;
-                if (Vector3.Dot(currentVelocity, groundPointToCharacter) >= 0f)
-                {
-                    effectiveGroundNormal = Motor.GroundingStatus.OuterGroundNormal;
-                }
-                else
-                {
-                    effectiveGroundNormal = Motor.GroundingStatus.InnerGroundNormal;
-                }
-            }
-
-            // Reorient velocity on slope
-            currentVelocity = Motor.GetDirectionTangentToSurface(currentVelocity, effectiveGroundNormal) * currentVelocityMagnitude;
-
-            // Calculate target velocity
-            Vector3 inputRight = Vector3.Cross(_moveInputVector, Motor.CharacterUp);
-            Vector3 reorientedInput = Vector3.Cross(effectiveGroundNormal, inputRight).normalized * _moveInputVector.magnitude;
-            Vector3 targetMovementVelocity = reorientedInput * MaxStableMoveSpeed;
-
-            // Smooth movement Velocity
-            currentVelocity = Vector3.Lerp(currentVelocity, targetMovementVelocity, 1f - Mathf.Exp(-StableMovementSharpness * deltaTime));
-        }
-        // Air movement
-        else
-        {
-            // Add move input
-            if (_moveInputVector.sqrMagnitude > 0f)
-            {
-                Vector3 addedVelocity = _moveInputVector * AirAccelerationSpeed * deltaTime;
-
-                Vector3 currentVelocityOnInputsPlane = Vector3.ProjectOnPlane(currentVelocity, Motor.CharacterUp);
-
-                // Limit air velocity from inputs
-                if (currentVelocityOnInputsPlane.magnitude < MaxAirMoveSpeed)
-                {
-                    // clamp addedVel to make total vel not exceed max vel on inputs plane
-                    Vector3 newTotal = Vector3.ClampMagnitude(currentVelocityOnInputsPlane + addedVelocity, MaxAirMoveSpeed);
-                    addedVelocity = newTotal - currentVelocityOnInputsPlane;
-                }
-                else
-                {
-                    // Make sure added vel doesn't go in the direction of the already-exceeding velocity
-                    if (Vector3.Dot(currentVelocityOnInputsPlane, addedVelocity) > 0f)
-                    {
-                        addedVelocity = Vector3.ProjectOnPlane(addedVelocity, currentVelocityOnInputsPlane.normalized);
-                    }
-                }
-
-                // Prevent air-climbing sloped walls
-                if (Motor.GroundingStatus.FoundAnyGround)
-                {
-                    if (Vector3.Dot(currentVelocity + addedVelocity, addedVelocity) > 0f)
-                    {
-                        Vector3 perpenticularObstructionNormal = Vector3.Cross(Vector3.Cross(Motor.CharacterUp, Motor.GroundingStatus.GroundNormal), Motor.CharacterUp).normalized;
-                        addedVelocity = Vector3.ProjectOnPlane(addedVelocity, perpenticularObstructionNormal);
-                    }
-                }
-
-                // Apply added velocity
-                currentVelocity += addedVelocity;
-            }
-
-            // Gravity
-            currentVelocity += Gravity * deltaTime;
-
-            // Drag
-            currentVelocity *= (1f / (1f + (Drag * deltaTime)));
-        }
 
         // Handle jumping
         _jumpedThisFrame = false;
@@ -331,6 +237,8 @@ public class PlayerController : MonoBehaviour, ICharacterController
                 // Makes the character skip ground probing/snapping on its next update. 
                 // If this line weren't here, the character would remain snapped to the ground when trying to jump. Try commenting this line out and see.
                 Motor.ForceUnground();
+
+                SetState(new PlayerStateJump());
 
                 // Add to the return velocity and reset jump state
                 currentVelocity += (jumpDirection * JumpUpSpeed) - Vector3.Project(currentVelocity, Motor.CharacterUp);
@@ -376,29 +284,6 @@ public class PlayerController : MonoBehaviour, ICharacterController
             {
                 // Keep track of time since we were last able to jump (for grace period)
                 _timeSinceLastAbleToJump += deltaTime;
-            }
-        }
-
-        // Handle uncrouching
-        if (_isCrouching && !_shouldBeCrouching)
-        {
-            // Do an overlap test with the character's standing height to see if there are any obstructions
-            Motor.SetCapsuleDimensions(0.5f, 2f, 1f);
-            if (Motor.CharacterOverlap(
-                Motor.TransientPosition,
-                Motor.TransientRotation,
-                _probedColliders,
-                Motor.CollidableLayers,
-                QueryTriggerInteraction.Ignore) > 0)
-            {
-                // If obstructions, just stick to crouching dimensions
-                Motor.SetCapsuleDimensions(0.5f, 1f, 0.5f);
-            }
-            else
-            {
-                // If no obstructions, uncrouch
-                MeshRoot.localScale = new Vector3(1f, 1f, 1f);
-                _isCrouching = false;
             }
         }
     }
