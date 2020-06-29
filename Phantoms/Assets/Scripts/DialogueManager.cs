@@ -50,6 +50,11 @@ public class DialogueManager : MonoBehaviour
         m_fancyTextComponent.SetText(text);
     }
 
+    public void FinishLine()
+    {
+        m_fancyTextComponent.FinishLine();
+    }
+
     public void Hide()
     {
         m_revealing = false;

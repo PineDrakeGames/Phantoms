@@ -43,6 +43,7 @@ public class DialogueTrigger : Interactable
     {
         if (m_dialogueManager.Revealing)
         {
+            m_dialogueManager.FinishLine();
             return;
         }
 

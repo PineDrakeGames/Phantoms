@@ -21,13 +21,6 @@ public struct AICharacterInputs
     public Vector3 LookVector;
 }
 
-public enum BonusOrientationMethod
-{
-    None,
-    TowardsGravity,
-    TowardsGroundSlopeAndGravity,
-}
-
 public class PlayerController : MonoBehaviour, ICharacterController
 {
     public KinematicCharacterMotor Motor;
@@ -51,7 +44,6 @@ public class PlayerController : MonoBehaviour, ICharacterController
 
     [Header("Misc")]
     public List<Collider> IgnoredColliders = new List<Collider>();
-    public BonusOrientationMethod BonusOrientationMethod = BonusOrientationMethod.None;
     public float BonusOrientationSharpness = 10f;
     public Vector3 Gravity = new Vector3(0, -30f, 0);
     public Transform MeshRoot;
@@ -107,9 +99,9 @@ public class PlayerController : MonoBehaviour, ICharacterController
     {
         if (newState == null) { return; }
 
-        #if DEBUG_LOG
+#if DEBUG_LOG
         Debug.Log("Transitioning from state - " + m_currentState.GetType() + " - to state - " + newState.GetType());
-        #endif
+#endif
 
         PlayerMovementState m_prevState = m_currentState;
         m_currentState.StateExit();
@@ -191,35 +183,8 @@ public class PlayerController : MonoBehaviour, ICharacterController
         }
 
         Vector3 currentUp = (currentRotation * Vector3.up);
-        if (BonusOrientationMethod == BonusOrientationMethod.TowardsGravity)
-        {
-            // Rotate from current up to invert gravity
-            Vector3 smoothedGravityDir = Vector3.Slerp(currentUp, -Gravity.normalized, 1 - Mathf.Exp(-BonusOrientationSharpness * deltaTime));
-            currentRotation = Quaternion.FromToRotation(currentUp, smoothedGravityDir) * currentRotation;
-        }
-        else if (BonusOrientationMethod == BonusOrientationMethod.TowardsGroundSlopeAndGravity)
-        {
-            if (Motor.GroundingStatus.IsStableOnGround)
-            {
-                Vector3 initialCharacterBottomHemiCenter = Motor.TransientPosition + (currentUp * Motor.Capsule.radius);
-
-                Vector3 smoothedGroundNormal = Vector3.Slerp(Motor.CharacterUp, Motor.GroundingStatus.GroundNormal, 1 - Mathf.Exp(-BonusOrientationSharpness * deltaTime));
-                currentRotation = Quaternion.FromToRotation(currentUp, smoothedGroundNormal) * currentRotation;
-
-                // Move the position to create a rotation around the bottom hemi center instead of around the pivot
-                Motor.SetTransientPosition(initialCharacterBottomHemiCenter + (currentRotation * Vector3.down * Motor.Capsule.radius));
-            }
-            else
-            {
-                Vector3 smoothedGravityDir = Vector3.Slerp(currentUp, -Gravity.normalized, 1 - Mathf.Exp(-BonusOrientationSharpness * deltaTime));
-                currentRotation = Quaternion.FromToRotation(currentUp, smoothedGravityDir) * currentRotation;
-            }
-        }
-        else
-        {
-            Vector3 smoothedGravityDir = Vector3.Slerp(currentUp, Vector3.up, 1 - Mathf.Exp(-BonusOrientationSharpness * deltaTime));
-            currentRotation = Quaternion.FromToRotation(currentUp, smoothedGravityDir) * currentRotation;
-        }
+        Vector3 smoothedGravityDir = Vector3.Slerp(currentUp, Vector3.up, 1 - Mathf.Exp(-BonusOrientationSharpness * deltaTime));
+        currentRotation = Quaternion.FromToRotation(currentUp, smoothedGravityDir) * currentRotation;
     }
 
     /// <summary>
