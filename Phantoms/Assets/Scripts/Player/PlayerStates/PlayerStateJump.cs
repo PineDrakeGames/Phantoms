@@ -2,14 +2,17 @@
 
 public class PlayerStateJump : PlayerMovementState
 {
+    private bool m_holdingJump = true;
+
     public override void StateEnter()
     {
+        m_holdingJump = true;
 
     }
 
-    public override void TickInput()
+    public override void TickInput(PlayerCharacterInputs input)
     {
-
+        m_holdingJump = input.JumpHeld;
     }
 
     public override void TickVelocity(ref Vector3 currentVelocity, float deltaTime)
@@ -61,7 +64,14 @@ public class PlayerStateJump : PlayerMovementState
             }
 
             // Gravity
-            currentVelocity += Controller.Gravity * deltaTime;
+            if (!m_holdingJump)
+            {
+                currentVelocity += Controller.Gravity * deltaTime;
+            }
+            else
+            {
+                currentVelocity += Controller.Gravity * deltaTime * 0.5f;
+            }
 
             // Drag
             currentVelocity *= (1f / (1f + (Controller.Drag * deltaTime)));

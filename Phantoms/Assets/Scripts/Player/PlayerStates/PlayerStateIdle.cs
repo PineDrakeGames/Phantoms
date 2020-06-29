@@ -7,7 +7,7 @@ public class PlayerStateIdle : PlayerMovementState
 
     }
 
-    public override void TickInput()
+    public override void TickInput(PlayerCharacterInputs input)
     {
         if (Controller.MoveInputVector.magnitude > 0f)
         {

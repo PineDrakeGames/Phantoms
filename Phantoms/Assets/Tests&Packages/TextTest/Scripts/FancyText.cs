@@ -428,6 +428,21 @@ public class FancyText : MonoBehaviour
             effect.Data = new CharacterData(effect.Index, textInfo);
         }
 
+        for (int i = charIndex; i < textInfo.characterCount; i += 1)
+        {
+            // Only change the vertex color if the text element is visible.
+            if (textInfo.characterInfo[i].isVisible)
+            {
+                int materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
+                Color32[] newVertexColors = textInfo.meshInfo[materialIndex].colors32;
+                int vertexIndex = textInfo.characterInfo[i].vertexIndex;
+                for (int j = 0; j < 4; j++)
+                {
+                    newVertexColors[vertexIndex + j] = hiddenColor;
+                }
+            }
+        }
+        m_TextComponent.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
     }
 
     public void FinishLine()

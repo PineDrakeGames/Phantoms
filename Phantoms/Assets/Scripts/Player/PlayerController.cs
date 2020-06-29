@@ -1,4 +1,4 @@
-﻿#define DEBUG_LOG
+﻿//#define DEBUG_LOG
 
 using System.Collections;
 using System.Collections.Generic;
@@ -11,6 +11,8 @@ public struct PlayerCharacterInputs
     public float MoveAxisRight;
     public Quaternion CameraRotation;
     public bool JumpDown;
+    public bool JumpHeld;
+    public bool InteractDown;
 }
 
 public struct AICharacterInputs
@@ -66,6 +68,12 @@ public class PlayerController : MonoBehaviour, ICharacterController
     private float _timeSinceJumpRequested = Mathf.Infinity;
     private float _timeSinceLastAbleToJump = 0f;
     private Vector3 _internalVelocityAdd = Vector3.zero;
+
+    private Interactable m_currentInteractable = null;
+    public Interactable CurrentInteractable
+    {
+        set { m_currentInteractable = value; }
+    }
 
     private Vector3 lastInnerNormal = Vector3.zero;
     private Vector3 lastOuterNormal = Vector3.zero;
@@ -139,7 +147,12 @@ public class PlayerController : MonoBehaviour, ICharacterController
             _jumpRequested = true;
         }
 
-        m_currentState.TickInput();
+        m_currentState.TickInput(inputs);
+
+        if (inputs.InteractDown && m_currentInteractable != null)
+        {
+            m_currentInteractable.Interact();
+        }
     }
 
     /// <summary>

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PlayerStateMove : PlayerMovementState
+public class PlayerStateInteract : PlayerMovementState
 {
     public override void StateEnter()
     {
@@ -9,20 +9,11 @@ public class PlayerStateMove : PlayerMovementState
 
     public override void TickInput(PlayerCharacterInputs input)
     {
-        if (Controller.MoveInputVector.magnitude == 0f)
-        {
-            Controller.SetState(new PlayerStateIdle());
-        }
+        
     }
 
     public override void TickVelocity(ref Vector3 currentVelocity, float deltaTime)
     {
-        if (!Controller.Motor.GroundingStatus.IsStableOnGround)
-        {
-            Controller.SetState(new PlayerStateFall());
-        }
-        else
-        {
             float currentVelocityMagnitude = currentVelocity.magnitude;
 
             Vector3 effectiveGroundNormal = Controller.Motor.GroundingStatus.GroundNormal;
@@ -43,14 +34,8 @@ public class PlayerStateMove : PlayerMovementState
             // Reorient velocity on slope
             currentVelocity = Controller.Motor.GetDirectionTangentToSurface(currentVelocity, effectiveGroundNormal) * currentVelocityMagnitude;
 
-            // Calculate target velocity
-            Vector3 inputRight = Vector3.Cross(Controller.MoveInputVector, Controller.Motor.CharacterUp);
-            Vector3 reorientedInput = Vector3.Cross(effectiveGroundNormal, inputRight).normalized * Controller.MoveInputVector.magnitude;
-            Vector3 targetMovementVelocity = reorientedInput * Controller.MaxStableMoveSpeed;
-
             // Smooth movement Velocity
-            currentVelocity = Vector3.Lerp(currentVelocity, targetMovementVelocity, 1f - Mathf.Exp(-Controller.StableMovementSharpness * deltaTime));
-        }
+            currentVelocity = Vector3.Lerp(currentVelocity, Vector3.zero, 1f - Mathf.Exp(-Controller.StableMovementSharpness * deltaTime));
     }
 
     public override void StateExit()

@@ -7,7 +7,7 @@ public class PlayerStateFall : PlayerMovementState
 
     }
 
-    public override void TickInput()
+    public override void TickInput(PlayerCharacterInputs input)
     {
 
     }
