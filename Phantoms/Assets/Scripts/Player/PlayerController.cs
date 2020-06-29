@@ -54,6 +54,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
     private Vector3 _moveInputVector;
     public Vector3 MoveInputVector { get { return _moveInputVector; } }
     private Vector3 _lookInputVector;
+    public Vector3 LookInputVector { get { return _lookInputVector; } }
     private bool _jumpRequested = false;
     private bool _jumpConsumed = false;
     private bool _jumpedThisFrame = false;
@@ -173,18 +174,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
     /// </summary>
     public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
     {
-        if (_lookInputVector.sqrMagnitude > 0f && OrientationSharpness > 0f)
-        {
-            // Smoothly interpolate from current to target look direction
-            Vector3 smoothedLookInputDirection = Vector3.Slerp(Motor.CharacterForward, _lookInputVector, 1 - Mathf.Exp(-OrientationSharpness * deltaTime)).normalized;
-
-            // Set the current rotation (which will be used by the KinematicCharacterMotor)
-            currentRotation = Quaternion.LookRotation(smoothedLookInputDirection, Motor.CharacterUp);
-        }
-
-        Vector3 currentUp = (currentRotation * Vector3.up);
-        Vector3 smoothedGravityDir = Vector3.Slerp(currentUp, Vector3.up, 1 - Mathf.Exp(-BonusOrientationSharpness * deltaTime));
-        currentRotation = Quaternion.FromToRotation(currentUp, smoothedGravityDir) * currentRotation;
+        m_currentState.TickRotation(ref currentRotation, deltaTime);
     }
 
     /// <summary>

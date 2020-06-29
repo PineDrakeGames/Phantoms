@@ -12,6 +12,11 @@ public class PlayerStateInteract : PlayerMovementState
         
     }
 
+    public override void TickRotation(ref Quaternion currentRotation, float deltaTime)
+    {
+        
+    }
+
     public override void TickVelocity(ref Vector3 currentVelocity, float deltaTime)
     {
             float currentVelocityMagnitude = currentVelocity.magnitude;
