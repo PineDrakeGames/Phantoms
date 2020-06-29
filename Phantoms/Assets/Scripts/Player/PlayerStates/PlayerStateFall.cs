@@ -14,7 +14,7 @@ public class PlayerStateFall : PlayerMovementState
 
     public override void TickRotation(ref Quaternion currentRotation, float deltaTime)
     {
-        RotateTowardsMovement(ref currentRotation, Controller.OrientationSharpness, deltaTime);
+        //RotateTowardsMovement(ref currentRotation, Controller.OrientationSharpness, deltaTime);
     }
 
     public override void TickVelocity(ref Vector3 currentVelocity, float deltaTime)
