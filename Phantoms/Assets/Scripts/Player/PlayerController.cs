@@ -36,7 +36,6 @@ public class PlayerController : MonoBehaviour, ICharacterController
     public float Drag = 0.1f;
 
     [Header("Jumping")]
-    public bool AllowJumpingWhenSliding = false;
     public float JumpUpSpeed = 10f;
     public float JumpScalableForwardSpeed = 10f;
     public float JumpPreGroundingGraceTime = 0f;
@@ -56,8 +55,6 @@ public class PlayerController : MonoBehaviour, ICharacterController
     private Vector3 _lookInputVector;
     public Vector3 LookInputVector { get { return _lookInputVector; } }
     private bool _jumpRequested = false;
-    private bool _jumpConsumed = false;
-    private bool _jumpedThisFrame = false;
     private float _timeSinceJumpRequested = Mathf.Infinity;
     private float _timeSinceLastAbleToJump = 0f;
     private Vector3 _internalVelocityAdd = Vector3.zero;
@@ -185,37 +182,6 @@ public class PlayerController : MonoBehaviour, ICharacterController
     public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
     {
         m_currentState.TickVelocity(ref currentVelocity, deltaTime);
-        // Ground movement
-
-        // Handle jumping
-        _jumpedThisFrame = false;
-        _timeSinceJumpRequested += deltaTime;
-        if (_jumpRequested)
-        {
-            // See if we actually are allowed to jump
-            if (!_jumpConsumed && ((AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround) || _timeSinceLastAbleToJump <= JumpPostGroundingGraceTime))
-            {
-                // Calculate jump direction before ungrounding
-                Vector3 jumpDirection = Motor.CharacterUp;
-                if (Motor.GroundingStatus.FoundAnyGround && !Motor.GroundingStatus.IsStableOnGround)
-                {
-                    jumpDirection = Motor.GroundingStatus.GroundNormal;
-                }
-
-                // Makes the character skip ground probing/snapping on its next update. 
-                // If this line weren't here, the character would remain snapped to the ground when trying to jump. Try commenting this line out and see.
-                Motor.ForceUnground();
-
-                SetState(new PlayerStateJump());
-
-                // Add to the return velocity and reset jump state
-                currentVelocity += (jumpDirection * JumpUpSpeed) - Vector3.Project(currentVelocity, Motor.CharacterUp);
-                currentVelocity += (_moveInputVector * JumpScalableForwardSpeed);
-                _jumpRequested = false;
-                _jumpConsumed = true;
-                _jumpedThisFrame = true;
-            }
-        }
 
         // Take into account additive velocity
         if (_internalVelocityAdd.sqrMagnitude > 0f)
@@ -233,19 +199,15 @@ public class PlayerController : MonoBehaviour, ICharacterController
     {
         // Handle jump-related values
         {
+            _timeSinceJumpRequested += deltaTime;
             // Handle jumping pre-ground grace period
             if (_jumpRequested && _timeSinceJumpRequested > JumpPreGroundingGraceTime)
             {
                 _jumpRequested = false;
             }
 
-            if (AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround)
+            if (Motor.GroundingStatus.IsStableOnGround)
             {
-                // If we're on a ground surface, reset jumping values
-                if (!_jumpedThisFrame)
-                {
-                    _jumpConsumed = false;
-                }
                 _timeSinceLastAbleToJump = 0f;
             }
             else
@@ -317,5 +279,26 @@ public class PlayerController : MonoBehaviour, ICharacterController
 
     public void OnDiscreteCollisionDetected(Collider hitCollider)
     {
+    }
+
+
+    /// Functions to send data to the different player states. ///
+    public bool CanJump()
+    {
+        if (_jumpRequested)
+        {
+            // See if we actually are allowed to jump
+            if (Motor.GroundingStatus.IsStableOnGround || _timeSinceLastAbleToJump <= JumpPostGroundingGraceTime)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void Jump()
+    {
+        // Calculate jump direction before ungrounding
+        _jumpRequested = false;
     }
 }

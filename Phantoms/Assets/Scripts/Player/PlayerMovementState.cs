@@ -14,6 +14,17 @@ public abstract class PlayerMovementState
     /// Protected function for calculations that are common to many different states ///
     ////////////////////////////////////////////////////////////////////////////////////
 
+    /// Input Checking functions ///
+    protected void CheckForJumpInput()
+    {
+        if (Controller.CanJump())
+        {
+            Controller.SetState(new PlayerStateJump());
+        }
+    }
+
+    /// Movement Functions ///
+
     // Rotates the player towards the controller's look input vector with the given sharpness.
     protected void RotateTowardsMovement(ref Quaternion currentRotation, float sharpness, float deltaTime)
     {
@@ -30,6 +41,7 @@ public abstract class PlayerMovementState
         Vector3 smoothedGravityDir = Vector3.Slerp(currentUp, Vector3.up, 1 - Mathf.Exp(-Controller.BonusOrientationSharpness * deltaTime));
         currentRotation = Quaternion.FromToRotation(currentUp, smoothedGravityDir) * currentRotation;
     }
+
 
     // Handles movement while on the ground.
     protected void GroundMovement(ref Vector3 currentVelocity, Vector3 moveVector, float deltaTime)
@@ -70,6 +82,7 @@ public abstract class PlayerMovementState
         }
     }
 
+
     // Handles movement while in the air.
     protected void AirStrafeMovement(ref Vector3 currentVelocity, Vector3 moveVector, float deltaTime)
     {
@@ -107,11 +120,13 @@ public abstract class PlayerMovementState
         }
     }
 
+
     // Applies gravity.
     protected void ApplyGravity(ref Vector3 currentVelocity, float deltaTime)
     {
         currentVelocity += Controller.Gravity * deltaTime;
     }
+
 
     // Applies drag.
     protected void ApplyDrag(ref Vector3 currentVelocity, float deltaTime)

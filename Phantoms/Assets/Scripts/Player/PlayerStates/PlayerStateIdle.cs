@@ -13,6 +13,7 @@ public class PlayerStateIdle : PlayerMovementState
         {
             Controller.SetState(new PlayerStateMove());
         }
+        CheckForJumpInput();
     }
 
     public override void TickRotation(ref Quaternion currentRotation, float deltaTime)
