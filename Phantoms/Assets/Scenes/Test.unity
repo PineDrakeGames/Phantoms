@@ -765,6 +765,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 909170887}
+  - component: {fileID: 909170889}
+  - component: {fileID: 909170888}
   m_Layer: 5
   m_Name: Dialouge Box
   m_TagString: Untagged
@@ -794,6 +796,37 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 360}
   m_SizeDelta: {x: 0, y: -720}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &909170888
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 909170886}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!95 &909170889
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 909170886}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 0ce3b9dd3c093c2488606772c722987b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1029156177
 GameObject:
   m_ObjectHideFlags: 0
@@ -1277,7 +1310,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_dialogueBox: {fileID: 909170886}
   m_fancyTextComponent: {fileID: 417108188}
-  m_lineFinished: {fileID: 2039544365}
 --- !u!1 &1802015961
 GameObject:
   m_ObjectHideFlags: 0

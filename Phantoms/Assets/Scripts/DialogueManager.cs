@@ -8,34 +8,35 @@ public class DialogueManager : MonoBehaviour
     private GameObject m_dialogueBox = null;
     [SerializeField]
     private FancyText m_fancyTextComponent = null;
-    [SerializeField]
-    private GameObject m_lineFinished = null;
+
+    private Animator m_dialogueBoxAnim = null;
 
     private bool m_revealing = false;
     public bool Revealing
     {
         get { return m_revealing; }
     }
-
     private bool m_active = false;
 
-    private void Awake() 
+    private void Awake()
     {
+        m_dialogueBox.SetActive(true);
+        m_dialogueBoxAnim = m_dialogueBox.GetComponent<Animator>();
+        if (m_dialogueBoxAnim) { m_dialogueBoxAnim.SetBool("Active", false); }
         m_fancyTextComponent.SetText("");
         Hide();
     }
 
 
-    private void Update() 
+    private void Update()
     {
         if (m_active)
-        {  
+        {
             bool revealing = m_fancyTextComponent.Revealing;
             if (revealing != m_revealing)
             {
-                m_lineFinished.SetActive(!revealing);
+                if (m_dialogueBoxAnim) { m_dialogueBoxAnim.SetBool("Finished Line", !revealing); }
                 m_revealing = revealing;
-                Debug.Log(m_revealing);
             }
         }
     }
@@ -44,9 +45,13 @@ public class DialogueManager : MonoBehaviour
     {
         m_revealing = true;
         m_active = true;
-        m_lineFinished.SetActive(false);
 
-        m_dialogueBox.SetActive(true);
+
+        if (m_dialogueBoxAnim)
+        {
+            m_dialogueBoxAnim.SetBool("Active", true);
+            m_dialogueBoxAnim.SetBool("Finished Line", false);
+        }
         m_fancyTextComponent.SetText(text);
     }
 
@@ -60,6 +65,6 @@ public class DialogueManager : MonoBehaviour
         m_revealing = false;
         m_active = false;
 
-        m_dialogueBox.SetActive(false);
+        if (m_dialogueBoxAnim) { m_dialogueBoxAnim.SetBool("Active", false); }
     }
 }
