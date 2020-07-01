@@ -1972,16 +1972,20 @@ namespace Ares {
 			List<Actor> remainingTargets = targets.ToList();
 			AbilityResults abilityResults = new AbilityResults(ability);
 
+			AbilityMinigame.MinigameResult minigameResult = AbilityMinigame.MinigameResult.FAIL;
+			bool usedMinigame = false;
 			if (ability.UseMinigame && ability.Minigame != null)
 			{
                 AbilityMinigame minigame = ability.Minigame.GetComponent<AbilityMinigame>();
 				if (minigame)
 				{
+					usedMinigame = true;
 					minigame.StartMinigame();
 					while (minigame.State != AbilityMinigame.MinigameState.FINISHED)
 					{
 						yield return null;
 					}
+					minigameResult = minigame.Result;
 				}
 			}
 
@@ -1990,9 +1994,29 @@ namespace Ares {
 
 				foreach(Actor target in remainingTargets){
 					bool breakChain = false;
-					BattleInteractorData.HitStatus hitStatus = target != null ?
+
+					BattleInteractorData.HitStatus hitStatus;
+					if (usedMinigame)
+					{
+						switch(minigameResult)
+						{
+							case AbilityMinigame.MinigameResult.FAIL:
+								hitStatus = BattleInteractorData.HitStatus.Evade;
+								break;
+							default:
+								hitStatus = target != null ?
+								target.PerformHitTest(actor, ability.Data, action) :
+								(Random.value <= action.HitChance ? BattleInteractorData.HitStatus.Hit : BattleInteractorData.HitStatus.Evade);
+								break;
+						}
+					}
+					else
+					{
+						hitStatus = target != null ?
 						target.PerformHitTest(actor, ability.Data, action) :
 						(Random.value <= action.HitChance ? BattleInteractorData.HitStatus.Hit : BattleInteractorData.HitStatus.Evade);
+					}
+					
 
 					switch(hitStatus){
 						case BattleInteractorData.HitStatus.Hit:

@@ -23,8 +23,8 @@ namespace Ares {
 		[SerializeField] bool enabled;
 		[SerializeField] bool overrideBaseDuration;
 		[SerializeField] float baseDuration;
-		[SerializeField] bool overrideUseMinigame;
-		[SerializeField] GameObject minigame;
+		[SerializeField] bool overrideUseMinigame = false;
+		[SerializeField] GameObject minigame = null;
 		
 		public Ability(AbilityData data, bool enabled, bool overrideBaseDuration, float baseDuration){
 			Data = data;
