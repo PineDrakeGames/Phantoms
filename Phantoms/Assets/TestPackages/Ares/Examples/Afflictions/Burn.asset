@@ -1,0 +1,186 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6af41aef462a40ab8f855f3b6ccada5, type: 3}
+  m_Name: Burn
+  m_EditorClassIdentifier: 
+  powerIncrement: 1.2
+  powerMultiplier: 1.2
+  powerFormula: ABS(STAGE)
+  powerScalingMode: 2
+  minStage: 1
+  maxStage: 8
+  displayName: Burn
+  description: A nasty burn that hurts the user every turn.
+  baseDuration: 0
+  power: 10
+  cureCondition: 1
+  duration1: 3
+  duration2: 6
+  cureChance: 1
+  cureOnAfflictedDeath: 0
+  cureOnAfflicterDeath: 0
+  canAfflictDefeatedActors: 0
+  effectProcessingMoment: 4
+  durationProcessingMoment: 4
+  doubleSetStageBehaviour: 0
+  doubleSetDurationBehaviour: 0
+  actions:
+  - action: 0
+    powerType: 0
+    stat: {fileID: 0}
+    environmentVariable: {fileID: 0}
+    environmentVariableSetType: 0
+    affliction: {fileID: 0}
+    isChildEffect: 0
+    duration: 1
+    normalizedProcessTime: 0.8
+    chance: 1
+    power1: 1
+    power2: 2
+    powerFormula: 
+    breaksChainOnMiss: 0
+    targetType: 0
+  obtainAnimation:
+    enabled: 0
+    parameterName: 
+    parameterType: 0
+    valueBool: 1
+    valueFloat: 1
+    delayType: 0
+    delayTime: 0
+    delayAnimationLayer: 0
+  triggerAnimation:
+    enabled: 0
+    parameterName: 
+    parameterType: 0
+    valueBool: 1
+    valueFloat: 1
+    delayType: 0
+    delayTime: 0
+    delayAnimationLayer: 0
+  stageIncreaseAnimation:
+    enabled: 0
+    parameterName: 
+    parameterType: 0
+    valueBool: 1
+    valueFloat: 1
+    delayType: 0
+    delayTime: 0
+    delayAnimationLayer: 0
+  stageDecreaseAnimation:
+    enabled: 0
+    parameterName: 
+    parameterType: 0
+    valueBool: 1
+    valueFloat: 1
+    delayType: 0
+    delayTime: 0
+    delayAnimationLayer: 0
+  endAnimation:
+    enabled: 0
+    parameterName: 
+    parameterType: 0
+    valueBool: 1
+    valueFloat: 1
+    delayType: 0
+    delayTime: 0
+    delayAnimationLayer: 0
+  obtainInstantiation:
+    enabled: 0
+    effect: {fileID: 0}
+    targetMode: 1
+    targetActor: 0
+    targetName: root
+    targetTransform: {fileID: 0}
+    parentToTarget: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    delay: 0
+  triggerInstantiation:
+    enabled: 0
+    effect: {fileID: 0}
+    targetMode: 1
+    targetActor: 0
+    targetName: root
+    targetTransform: {fileID: 0}
+    parentToTarget: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    delay: 0
+  stageIncreaseInstantiation:
+    enabled: 0
+    effect: {fileID: 0}
+    targetMode: 1
+    targetActor: 0
+    targetName: root
+    targetTransform: {fileID: 0}
+    parentToTarget: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    delay: 0
+  stageDecreaseInstantiation:
+    enabled: 0
+    effect: {fileID: 0}
+    targetMode: 1
+    targetActor: 0
+    targetName: root
+    targetTransform: {fileID: 0}
+    parentToTarget: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    delay: 0
+  endInstantiation:
+    enabled: 0
+    effect: {fileID: 0}
+    targetMode: 0
+    targetActor: 0
+    targetName: root
+    targetTransform: {fileID: 0}
+    parentToTarget: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    delay: 0
+  obtainAudio:
+    enabled: 0
+    clip: {fileID: 0}
+    playPosition: 0
+    volume: 1
+    delay: 0
+  triggerAudio:
+    enabled: 0
+    clip: {fileID: 0}
+    playPosition: 0
+    volume: 1
+    delay: 0
+  stageIncreaseAudio:
+    enabled: 0
+    clip: {fileID: 0}
+    playPosition: 0
+    volume: 1
+    delay: 0
+  stageDecreaseAudio:
+    enabled: 0
+    clip: {fileID: 0}
+    playPosition: 0
+    volume: 1
+    delay: 0
+  endAudio:
+    enabled: 0
+    clip: {fileID: 0}
+    playPosition: 0
+    volume: 1
+    delay: 0

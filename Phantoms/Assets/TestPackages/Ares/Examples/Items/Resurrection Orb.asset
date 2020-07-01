@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2602b58a15b3e4d60a226367dbb117f0, type: 3}
+  m_Name: Resurrection Orb
+  m_EditorClassIdentifier: 
+  displayName: Resurrection Orb
+  description: Revives a fallen ally and restores 50% of their max HP.
+  baseDuration: 0
+  preparation:
+    turns: 0
+    texts: []
+    animations: []
+    audios: []
+    instantiations: []
+    interrupt: 2
+  recovery:
+    turns: 0
+    texts: []
+    animations: []
+    audios: []
+    instantiations: []
+    interrupt: 1
+  targetType: 0
+  numberOfTargets: 1
+  validTargets: 2
+  isTargetable: 1
+  validTargetGroups: 0
+  validTargetStates: 1
+  validTargetParticipants: 2
+  turnTowardsTarget: 0
+  actions:
+  - action: 1
+    powerType: 2
+    stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
+    environmentVariable: {fileID: 11400000, guid: d8117ffac9dff4758942f91abde9bd99,
+      type: 2}
+    environmentVariableSetType: 0
+    affliction: {fileID: 11400000, guid: dea86d6f7d23c403e8f158af05433ed4, type: 2}
+    isChildEffect: 0
+    duration: 1
+    normalizedProcessTime: 1
+    chance: 1
+    power1: 25
+    power2: 0
+    powerFormula: TARGET_MAX_HP * 0.5
+    breaksChainOnMiss: 0
+    targetType: 0
+  animation:
+    enabled: 0
+    parameterName: 
+    parameterType: 0
+    valueBool: 1
+    valueFloat: 1
+    delayType: 0
+    delayTime: 0
+    delayAnimationLayer: 0
+  instantiation:
+    enabled: 0
+    effect: {fileID: 0}
+    targetMode: 0
+    targetActor: 0
+    targetName: 
+    targetTransform: {fileID: 0}
+    parentToTarget: 0
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 0, y: 0, z: 0}
+    delay: 0
+  audio:
+    enabled: 0
+    clip: {fileID: 0}
+    playPosition: 0
+    volume: 0
+    delay: 0
+  category: 1
+  uses: 1
+  mockUserAsTarget: 0
