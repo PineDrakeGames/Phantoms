@@ -1822,6 +1822,26 @@ namespace Ares {
 			}
 		}
 
+		public void SwapTurn()
+		{
+			Actor nextActor = queuedActors[currentActorIndex + 1];
+
+			for (int i = 0; i < queuedActors.Count; i++)
+			{
+				Debug.Log(queuedActors[i].name);
+			}
+			Debug.Log(currentActor.name + ", " + currentActorIndex);
+			if (ActorInfo[nextActor].Group == ActorInfo[currentActor].Group)
+			{
+				queuedActors.Remove(currentActor);
+				queuedActors.Insert(currentActorIndex + 1, currentActor);
+				currentRoundState = RoundState.InProgress;
+				currentActor = nextActor;
+				
+				ProgressBattle();
+			}
+		}
+
 		Ability[] GetValidAbilities(Actor actor){
 			var validAbilities = Rules.CanSelectAbilitiesWithNoValidTargets ?
 								 actor.Abilities.Where(ab => ab.Enabled) :
