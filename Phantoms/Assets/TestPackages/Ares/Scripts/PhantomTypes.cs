@@ -81,6 +81,23 @@ public class PhantomTypeChart : ScriptableObject, ISerializationCallbackReceiver
 
 public static class PhantomTypes
 {
+    private static PhantomTypeChart s_typeChart = null;
 
+    public static float GetTypeMultiplier(PhantomType attack, PhantomType defender)
+    {
+        if (s_typeChart == null)
+        {
+            s_typeChart = Resources.Load<PhantomTypeChart>("PhantomTypeChart");
+            if (s_typeChart == null)
+            {
+                Debug.LogError("Type chart cannot be found, using default multiplier of 1.");
+                return 1f;
+            }
+        }
+
+        TypeMultiplier multiplier = s_typeChart.TypeChart[attack][defender];
+
+        return ((sbyte)multiplier / 2f);
+    }
 
 }

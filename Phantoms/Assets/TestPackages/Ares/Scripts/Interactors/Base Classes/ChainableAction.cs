@@ -12,6 +12,7 @@ namespace Ares {
 
 		public ChainEvaluator.ActionType Action {get{return action;}}
 		public PowerType PowerMode {get{return powerType;}}
+		public PhantomType ActionType {get{return actionType;}}
 		public AfflictionData Affliction {get{return affliction;}}
 		public StatData Stat {get{return stat;}}
 		public EnvironmentVariableData EnvironmentVariable {get{return environmentVariable;}}
@@ -24,6 +25,7 @@ namespace Ares {
 
 		[SerializeField] ChainEvaluator.ActionType action = ChainEvaluator.ActionType.Damage;
 		[SerializeField] PowerType powerType = PowerType.Constant;
+		[SerializeField] PhantomType actionType = PhantomType.NONE;
 		[SerializeField] StatData stat = null;
 		[SerializeField] EnvironmentVariableData environmentVariable = null;
 		[SerializeField] EnvironmentVariableSetType environmentVariableSetType = EnvironmentVariableSetType.Set;

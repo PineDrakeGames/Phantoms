@@ -83,6 +83,9 @@ namespace Ares {
 				}
 			}
 		}
+
+		public PhantomType MainType {get{return mainType;}}
+		public PhantomType SecondType{get{return secondType;}}
 		
 		//Misc. properties
 		public Battle Battle {get; private set;} //Only used as a convenience reference
@@ -99,6 +102,8 @@ namespace Ares {
 		[SerializeField] Ability[] abilities;
 		[SerializeField] Ability fallbackAbility;
 		[SerializeField] List<Stat> stats;
+		[SerializeField] PhantomType mainType = PhantomType.NONE;
+		[SerializeField] PhantomType secondType = PhantomType.NONE;
 
 		Dictionary<string, Stat> statsMap;
 		HashSet<Affliction> afflictions;

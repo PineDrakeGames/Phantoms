@@ -9,7 +9,7 @@ using Ares.ActorComponents;
 namespace Ares.Editor {
 	[CustomEditor(typeof(Actor), true)]
 	public class ActorEditor : AresEditor {
-		readonly string[] propertyGroup1 = {"displayName", "hp", "maxHP"};
+		readonly string[] propertyGroup1 = {"displayName", "hp", "maxHP", "mainType", "secondType" };
 		readonly string[] propertyGroup2 = {};
 		readonly string[] hiddenProperties = {"m_Script", "stats", "abilities", "fallbackAbility"};
 //		readonly Color fallbackFieldBackground = new Color(.894f, .894f, .894f, 1f);
@@ -61,7 +61,7 @@ namespace Ares.Editor {
 				DrawField(rect, ref xOffset, 22, spUseMinigame);
 
 				GUI.enabled = spUseMinigame.boolValue;
-				DrawLabel(rect, ref xOffset, 50, "Minigame");
+				DrawLabel(rect, ref xOffset, 55, "Minigame");
 				DrawField(rect, ref xOffset, (int)Mathf.Min(Mathf.Max(100, rect.width - 298), 250), spMinigame);
 				GUI.enabled = true;
 			};

@@ -92,6 +92,7 @@ namespace Ares.Editor {
 				SerializedProperty newAction = list.serializedProperty.GetArrayElementAtIndex(list.serializedProperty.arraySize - 1);
 				newAction.FindPropertyRelative("action").enumValueIndex = 0;
 				newAction.FindPropertyRelative("powerType").enumValueIndex = 0;
+				newAction.FindPropertyRelative("actionType").enumValueIndex = 0;
 				newAction.FindPropertyRelative("power1").floatValue = 0f;
 				newAction.FindPropertyRelative("power2").floatValue = 0f;
 				newAction.FindPropertyRelative("powerFormula").stringValue = "";
@@ -107,6 +108,7 @@ namespace Ares.Editor {
 				SerializedProperty element = actionList.serializedProperty.GetArrayElementAtIndex(index);
 				SerializedProperty spAction = element.FindPropertyRelative("action");
 				SerializedProperty spPowerType = element.FindPropertyRelative("powerType");
+				SerializedProperty spActionType = element.FindPropertyRelative("actionType");
 				SerializedProperty spTargetType = element.FindPropertyRelative("targetType");
 				SerializedProperty spSetType = element.FindPropertyRelative("environmentVariableSetType");
 				SerializedProperty spChance = element.FindPropertyRelative("chance");
@@ -136,6 +138,8 @@ namespace Ares.Editor {
 				else{
 					DrawField(rect, ref xOffset, 94, spTargetType);
 				}
+
+				DrawField(rect, ref xOffset, 94, spActionType);
 
 				if(type == ChainEvaluator.ActionType.Buff){
 					SerializedProperty spStat = element.FindPropertyRelative("stat");
