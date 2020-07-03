@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b60d24c9ad2814f8e90f8f3866760da3, type: 3}
-  m_Name: Punch
+  m_Name: Lightning
   m_EditorClassIdentifier: 
-  displayName: Punch
-  description: punch em
-  baseDuration: 0
+  displayName: Lightning
+  description: Zap em with poison i guess
+  baseDuration: 1
   preparation:
     turns: 0
     texts: []
@@ -39,17 +39,32 @@ MonoBehaviour:
   turnTowardsTarget: 0
   actions:
   - action: 0
-    powerType: 1
+    powerType: 0
     stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
     environmentVariable: {fileID: 0}
     environmentVariableSetType: 0
-    affliction: {fileID: 0}
+    affliction: {fileID: 11400000, guid: 30b929e4025904ad3a16c59cd432ee42, type: 2}
     isChildEffect: 0
-    duration: 0
+    duration: 1
     normalizedProcessTime: 1
     chance: 1
     power1: 10
-    power2: 15
+    power2: 0
+    powerFormula: 
+    breaksChainOnMiss: 0
+    targetType: 0
+  - action: 3
+    powerType: 0
+    stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
+    environmentVariable: {fileID: 0}
+    environmentVariableSetType: 0
+    affliction: {fileID: 11400000, guid: 1b943298e53dc4c1da23802a9ba9df93, type: 2}
+    isChildEffect: 0
+    duration: 1
+    normalizedProcessTime: 1
+    chance: 1
+    power1: 2
+    power2: 0
     powerFormula: 
     breaksChainOnMiss: 0
     targetType: 0

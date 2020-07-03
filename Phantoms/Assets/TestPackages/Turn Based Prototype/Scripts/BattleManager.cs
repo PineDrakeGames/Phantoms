@@ -12,9 +12,9 @@ namespace Ares.Examples {
 
 		[Header("Actors")]
 		[SerializeField]
-		private Actor player = null;
+		private Actor[] playerTeam = null;
 		[SerializeField]
-		private Actor enemy = null;
+		private Actor[] enemies = null;
 
 		[Header("Player options")]
 		[SerializeField]
@@ -46,8 +46,15 @@ namespace Ares.Examples {
 			group2.OnDefeat.AddListener(() => EndBattle(true));
 
 			// Add all actors to their respective groups
-			group1.AddActor(player, true);
-			group2.AddActor(enemy, true);
+			foreach (Actor actor in playerTeam)
+			{
+				group1.AddActor(actor, true);
+			}
+			foreach (Actor actor in enemies)
+			{
+				group2.AddActor(actor, true);
+			}
+			
 
 			// Start the battle and get it initialized
 			battle.Start(true);
@@ -75,6 +82,8 @@ namespace Ares.Examples {
 
 			int numOptions = Mathf.Min(actionInput.ValidAbilities.Length, playerButtons.Length);
 			int index = 0;
+
+			Debug.Log("Hello " + actor.DisplayName);
 
 			for (index = 0; index < numOptions; index++)
 			{
