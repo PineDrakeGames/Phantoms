@@ -192,6 +192,12 @@ namespace Ares.Examples
             battle.SwapTurn();
         }
 
+        public void ProgressBattle()
+        {
+            ClearAllButtons();
+            battle.RestartTurn();
+        }
+
         private void ClearAllButtons()
         {
             for (int j = 0; j < playerButtons.Length; j++)
