@@ -104,6 +104,8 @@ public class BattlePlayerMenu : MonoBehaviour
 
     public void TacticsMenu()
     {
+        SetState(BattleMenuState.TACTICS);
+
         m_mainMenuParent.SetActive(false);
         ShowSubmenu();
         ClearSubmenu();
@@ -117,6 +119,8 @@ public class BattlePlayerMenu : MonoBehaviour
 
     public void AbilitiesMenu()
     {
+        SetState(BattleMenuState.ABILITIES);
+
         m_mainMenuParent.SetActive(false);
         ShowSubmenu();
         ClearSubmenu();
@@ -132,6 +136,8 @@ public class BattlePlayerMenu : MonoBehaviour
 
     public void ItemsMenu()
     {
+        SetState(BattleMenuState.ITEMS);
+
         m_mainMenuParent.SetActive(false);
         ShowSubmenu();
         ClearSubmenu();
@@ -146,6 +152,8 @@ public class BattlePlayerMenu : MonoBehaviour
 
     public void TargetMenuAbility(Ability ability)
     {
+        SetState(BattleMenuState.TARGETING);
+
         ShowSubmenu();
         ClearSubmenu();
         SetDescription();
@@ -194,6 +202,8 @@ public class BattlePlayerMenu : MonoBehaviour
 
     public void TargetMenuItem(Item item)
     {
+        SetState(BattleMenuState.TARGETING);
+
         m_currentItem = item;
 
         Actor[] validTargets = m_battleManager.CurrentBattle.GetValidTargets(m_currentActor, item);
@@ -217,8 +227,38 @@ public class BattlePlayerMenu : MonoBehaviour
         }
     }
 
+    public void ReturnToPrevMenu()
+    {
+        switch (m_currentState)
+        {
+            case BattleMenuState.MAIN:
+                return;
+            case BattleMenuState.ABILITIES:
+            case BattleMenuState.TACTICS:
+            case BattleMenuState.ITEMS:
+                ReturnToMainMenu();
+                return;
+            case BattleMenuState.TARGETING:
+                switch(m_prevState)
+                {
+                    case BattleMenuState.ABILITIES:
+                        AbilitiesMenu();
+                        break;
+                    case BattleMenuState.TACTICS:
+                        TacticsMenu();
+                        break;
+                    case BattleMenuState.ITEMS:
+                        ItemsMenu();
+                        break;
+                }
+                return;
+        }
+    }
+
+
     public void ReturnToMainMenu()
     {
+        SetState(BattleMenuState.MAIN);
         m_mainMenuParent.SetActive(true);
         ClearSubmenu();
         HideSubmenu();
@@ -228,6 +268,12 @@ public class BattlePlayerMenu : MonoBehaviour
     ///////////////////////////////////////////////////////////
     /// Private helper functions to manage the battle menu. ///
     ///////////////////////////////////////////////////////////
+
+    private void SetState(BattleMenuState newState)
+    {
+        m_prevState = m_currentState;
+        m_currentState = newState;
+    }
 
     private BattleSubmenuButton AddSubmenuButton(string name, string description)
     {
