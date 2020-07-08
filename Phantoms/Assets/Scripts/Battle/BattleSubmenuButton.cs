@@ -10,7 +10,7 @@ public class BattleSubmenuButton : MonoBehaviour, ISelectHandler, IPointerEnterH
 {
     [Header("References to items on button.")]
     [SerializeField]
-    private TextMeshProUGUI m_buttonText;
+    private TextMeshProUGUI m_buttonText = null;
 
     [HideInInspector]
     public BattlePlayerMenu BattleMenu = null;

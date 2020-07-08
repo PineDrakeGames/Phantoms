@@ -1323,12 +1323,12 @@ namespace Ares
             }
         }
 
-        Actor[] GetValidTargets(Actor caster, Ability ability)
+        public Actor[] GetValidTargets(Actor caster, Ability ability)
         {
             return Actors.Where(target => ability.CanUse(ActorInfo[caster], ActorInfo[target])).ToArray();
         }
 
-        Actor[] GetValidTargets(Actor caster, Item item)
+        public Actor[] GetValidTargets(Actor caster, Item item)
         {
             return Actors.Where(target => item.CanUse(ActorInfo[caster], ActorInfo[target])).ToArray();
         }
@@ -2132,12 +2132,6 @@ namespace Ares
 
                 ProgressBattle();
             }
-        }
-
-        public void RestartTurn()
-        {
-            currentRoundState = RoundState.InProgress;
-            ProgressBattle();
         }
 
         Ability[] GetValidAbilities(Actor actor)

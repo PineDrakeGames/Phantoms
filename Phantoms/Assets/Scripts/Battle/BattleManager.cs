@@ -4,207 +4,143 @@
  */
 
 using UnityEngine;
-using UnityEngine.UI;
+using Ares;
 
-namespace Ares.Examples
+public class BattleManager : MonoBehaviour
 {
-    public class BattleManager : MonoBehaviour
+    [SerializeField, Header("Battle")] BattleRules rules = null; // The rules and settings that the battle will adhere to.
+
+    [Header("Actors")]
+    [SerializeField]
+    private Actor[] playerTeam = null;
+    [SerializeField]
+    private Actor[] enemies = null;
+
+    [Header("UI Items")]
+    [SerializeField]
+    private BattlePlayerMenu m_playerMenu = null;
+
+    private Battle battle; // A reference to the actual Battle object
+    public Battle CurrentBattle
     {
-        [SerializeField, Header("Battle")] BattleRules rules = null; // The rules and settings that the battle will adhere to.
+        get { return battle; }
+    }
 
-        [Header("Actors")]
-        [SerializeField]
-        private Actor[] playerTeam = null;
-        [SerializeField]
-        private Actor[] enemies = null;
+    void Awake()
+    {
+        // Spawn all dynamic actors and set up their Actor* components here.
+    }
 
-        [Header("Player options")]
-        [SerializeField]
-        private Button[] playerButtons = null;
+    void Start()
+    {
+        // Set up battle
+        battle = new Battle(rules);
 
-        Battle battle; // A reference to the actual Battle object
+        // Set up the required battle delegates and events
+        battle.OnActorNeedsActionInput.AddListener(ShowActionInput);
+        battle.OnActorNeedsSingleTargetInput.AddListener(ShowTargetInput);
+        battle.OnActorNeedsActorsTargetInput.AddListener(ShowTargetInput);
+        battle.OnActorNeedsGroupTargetInput.AddListener(ShowTargetInput);
+        battle.OnActorHasGivenAllNeededInput.AddListener(HideInput);
+        battle.OnBattleEnd.AddListener(OnBattleEnd);
 
-        void Awake()
+        // Set up groups and win conditions
+        BattleGroup group1 = battle.AddGroup("Player");
+        BattleGroup group2 = battle.AddGroup("Enemies");
+
+        group1.OnDefeat.AddListener(() => EndBattle(false));
+        group2.OnDefeat.AddListener(() => EndBattle(true));
+
+        // Add all actors to their respective groups
+        foreach (Actor actor in playerTeam)
         {
-            // Spawn all dynamic actors and set up their Actor* components here.
+            group1.AddActor(actor, true);
+        }
+        foreach (Actor actor in enemies)
+        {
+            group2.AddActor(actor, true);
         }
 
-        void Start()
+
+        // Start the battle and get it initialized
+        battle.Start(true);
+
+        // If we'd started the battle with `progressAutomatically = false`, we could wait a while here to open menus etc.
+        // before manually progressing to the first round by calling `battle.ProgressBattle()`.
+    }
+
+    void ShowActionInput(Actor actor, ActionInput actionInput)
+    {
+        // Set up and show the UI for selecting an actor's item or ability.
+
+        // `actionInput.ValidAbilities` and `.ValidItems` are filtered lists of all abilities and items that can be used
+        // given the current state of the battle.
+
+        // `actor.Abilities` can be used to access all abilities.
+
+        // The actor's full inventory can be accessed from either `actor.inventory`, `actor.Group.Inventory`
+        // or both, depending on how your game works and which items you wish to show when.
+        // These inventories can be filtered based on the `rules.ItemComsumptionMoment`.
+        // Typically `OnRoundStart` and `OnTurn` moments would use the `Inventory.Filter.All` filter,
+        // and `OnTurnButMarkPendingOnSelect` would use `Inventory.Filter.ExcludePending`.
+
+        // To select an item or ability, call the respective callback method inside `actionInput`.
+        // These callbacks will return a `success` bool.
+
+        m_playerMenu.SetupMenu(actor, actionInput);
+    }
+
+    void ShowItemInput(Actor actor, StackedItem[] items, ActionInput actionInput)
+    {
+        // Set up and show the UI for selecting an item for the current actor to use.
+        // When a target is selected, call `actionInput.ItemSelectCallback(chosenItem)`
+    }
+
+    void ShowTargetInput(Actor actor, TargetInputSingleActor targetInput)
+    {
+        if (m_playerMenu.ActionTargets.Count > 0)
         {
-            // Set up battle
-            battle = new Battle(rules);
-
-            // Set up the required battle delegates and events
-            battle.OnActorNeedsActionInput.AddListener(ShowActionInput);
-            battle.OnActorNeedsSingleTargetInput.AddListener(ShowTargetInput);
-            battle.OnActorNeedsActorsTargetInput.AddListener(ShowTargetInput);
-            battle.OnActorNeedsGroupTargetInput.AddListener(ShowTargetInput);
-            battle.OnActorHasGivenAllNeededInput.AddListener(HideInput);
-            battle.OnBattleEnd.AddListener(OnBattleEnd);
-
-            // Set up groups and win conditions
-            BattleGroup group1 = battle.AddGroup("Player");
-            BattleGroup group2 = battle.AddGroup("Enemies");
-
-            group1.OnDefeat.AddListener(() => EndBattle(false));
-            group2.OnDefeat.AddListener(() => EndBattle(true));
-
-            // Add all actors to their respective groups
-            foreach (Actor actor in playerTeam)
-            {
-                group1.AddActor(actor, true);
-            }
-            foreach (Actor actor in enemies)
-            {
-                group2.AddActor(actor, true);
-            }
-
-
-            // Start the battle and get it initialized
-            battle.Start(true);
-
-            // If we'd started the battle with `progressAutomatically = false`, we could wait a while here to open menus etc.
-            // before manually progressing to the first round by calling `battle.ProgressBattle()`.
+            targetInput.TargetSelectCallback(m_playerMenu.ActionTargets[0]);
         }
+    }
 
-        void ShowActionInput(Actor actor, ActionInput actionInput)
+    void ShowTargetInput(Actor actor, TargetInputNumActors targetInput)
+    {
+        targetInput.TargetSelectCallback(m_playerMenu.ActionTargets.ToArray());
+    }
+
+    void ShowTargetInput(Actor actor, TargetInputGroup targetInput)
+    {
+        // Set up and show the UI for selecting the chosen action's target group.
+        // When a target is selected, call `actionInput.TargetSelectCallback(chosenBattleGroup)`.
+        // This callback will return a `success` bool.
+        
+        // TODO
+    }
+
+    void HideInput(Actor actor)
+    {
+        // Hide the UI now that the actor has received all needed input.
+    }
+
+    void EndBattle(bool playerWon)
+    {
+        // A win condition has been met; end the battle.
+        battle.EndBattle(Battle.EndReason.WinLoseConditionMet);
+
+        // Show victory/ defeat animations and UI
+    }
+
+    void OnBattleEnd(Battle.EndReason endReason)
+    {
+        if (endReason == Battle.EndReason.OutOfTurns)
         {
-            // Set up and show the UI for selecting an actor's item or ability.
-
-            // `actionInput.ValidAbilities` and `.ValidItems` are filtered lists of all abilities and items that can be used
-            // given the current state of the battle.
-
-            // `actor.Abilities` can be used to access all abilities.
-
-            // The actor's full inventory can be accessed from either `actor.inventory`, `actor.Group.Inventory`
-            // or both, depending on how your game works and which items you wish to show when.
-            // These inventories can be filtered based on the `rules.ItemComsumptionMoment`.
-            // Typically `OnRoundStart` and `OnTurn` moments would use the `Inventory.Filter.All` filter,
-            // and `OnTurnButMarkPendingOnSelect` would use `Inventory.Filter.ExcludePending`.
-
-            // To select an item or ability, call the respective callback method inside `actionInput`.
-            // These callbacks will return a `success` bool.
-
-            int numOptions = Mathf.Min(actionInput.ValidAbilities.Length, playerButtons.Length);
-            int index = 0;
-
-            Debug.Log("Hello " + actor.DisplayName);
-
-            for (index = 0; index < numOptions; index++)
-            {
-                Ability ability = actionInput.ValidAbilities[index];
-                Button button = playerButtons[index];
-
-                button.gameObject.SetActive(true);
-
-                button.GetComponentInChildren<Text>().text = ability.Data.DisplayName + "\n" + ability.Data.Description;
-                button.onClick.AddListener(() =>
-                {
-                    actionInput.AbilitySelectCallback(ability);
-                    ClearAllButtons();
-                });
-            }
-
-            for (index = actionInput.ValidAbilities.Length; index < playerButtons.Length; index++)
-            {
-                Button button = playerButtons[index];
-
-                button.gameObject.SetActive(false);
-            }
+            // Show tie screen or determine winner
         }
+    }
 
-        void ShowItemInput(Actor actor, StackedItem[] items, ActionInput actionInput)
-        {
-            // Set up and show the UI for selecting an item for the current actor to use.
-            // When a target is selected, call `actionInput.ItemSelectCallback(chosenItem)`
-        }
-
-        void ShowTargetInput(Actor actor, TargetInputSingleActor targetInput)
-        {
-            // Set up and show the UI for selecting the chosen action's target actor.
-            // When a target is selected, call `actionInput.TargetSelectCallback(chosenActor)`.
-            // This callback will return a `success` bool.
-
-            int numOptions = Mathf.Min(targetInput.ValidTargets.Length, playerButtons.Length);
-            int index = 0;
-
-            for (index = 0; index < numOptions; index++)
-            {
-                Actor target = targetInput.ValidTargets[index];
-                Button button = playerButtons[index];
-
-                button.gameObject.SetActive(true);
-
-                button.GetComponentInChildren<Text>().text = target.DisplayName;
-                button.onClick.AddListener(() =>
-                {
-                    targetInput.TargetSelectCallback(target);
-					ClearAllButtons();
-                });
-            }
-
-            for (index = targetInput.ValidTargets.Length; index < playerButtons.Length; index++)
-            {
-                Button button = playerButtons[index];
-
-                button.gameObject.SetActive(false);
-            }
-        }
-
-        void ShowTargetInput(Actor actor, TargetInputNumActors targetInput)
-        {
-            // Set up and show the UI for selecting the chosen action's target actors.
-            // When a target is selected, call `actionInput.TargetSelectCallback(chosenActors)`.
-            // This callback will return a `success` bool.
-        }
-
-        void ShowTargetInput(Actor actor, TargetInputGroup targetInput)
-        {
-            // Set up and show the UI for selecting the chosen action's target group.
-            // When a target is selected, call `actionInput.TargetSelectCallback(chosenBattleGroup)`.
-            // This callback will return a `success` bool.
-        }
-
-        void HideInput(Actor actor)
-        {
-            // Hide the UI now that the actor has received all needed input.
-        }
-
-        void EndBattle(bool playerWon)
-        {
-            // A win condition has been met; end the battle.
-            battle.EndBattle(Battle.EndReason.WinLoseConditionMet);
-
-            // Show victory/ defeat animations and UI
-        }
-
-        void OnBattleEnd(Battle.EndReason endReason)
-        {
-            if (endReason == Battle.EndReason.OutOfTurns)
-            {
-                // Show tie screen or determine winner
-            }
-        }
-
-        public void SwapTurns()
-        {
-			ClearAllButtons();
-            battle.SwapTurn();
-        }
-
-        public void ProgressBattle()
-        {
-            ClearAllButtons();
-            battle.RestartTurn();
-        }
-
-        private void ClearAllButtons()
-        {
-            for (int j = 0; j < playerButtons.Length; j++)
-            {
-                playerButtons[j].onClick.RemoveAllListeners();
-                playerButtons[j].gameObject.SetActive(false);
-            }
-        }
+    public void SwapTurns()
+    {
+        battle.SwapTurn();
     }
 }
