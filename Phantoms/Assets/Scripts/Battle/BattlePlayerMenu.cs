@@ -18,12 +18,22 @@ public class BattlePlayerMenu : MonoBehaviour
     [SerializeField]
     private GameObject m_mainMenuParent = null;
 
+    // Reference to each of the main menu buttons, both for disabling them when the option is not available, and for menu navigation.
+    [SerializeField]
+    private Button m_abilitiesButton = null;
+    [SerializeField]
+    private Button m_itemsButton = null;
+    [SerializeField]
+    private Button m_tacticsButton = null;
+
 
     [Header("Sub-menu items")]
     [SerializeField]
     private GameObject m_subMenuParent = null;
     [SerializeField]
     private GameObject m_content = null;
+    [SerializeField]
+    private Button m_backButton = null;
     [SerializeField]
     private GameObject m_buttonPrefab = null;
 
@@ -33,7 +43,6 @@ public class BattlePlayerMenu : MonoBehaviour
     private TextMeshProUGUI m_descriptionText = null;
 
 
-    private Button m_currentMainMenuButton = null;
     private List<BattleSubmenuButton> m_subMenuButtons = new List<BattleSubmenuButton>();
     private ActionInput m_actionInput;
     private Actor m_currentActor = null;
@@ -63,10 +72,8 @@ public class BattlePlayerMenu : MonoBehaviour
     private void Start()
     {
         // Test stuff, making a few buttons.
-        m_mainMenuParent.SetActive(true);
+        m_mainMenuParent.SetActive(false);
         HideSubmenu();
-        m_currentMainMenuButton = m_mainMenuParent.GetComponentInChildren<Button>();
-        m_currentMainMenuButton.Select();
     }
 
 
@@ -106,23 +113,23 @@ public class BattlePlayerMenu : MonoBehaviour
     {
         SetState(BattleMenuState.TACTICS);
 
-        m_mainMenuParent.SetActive(false);
-        ShowSubmenu();
         ClearSubmenu();
 
         BattleSubmenuButton submenuButton = null;
         submenuButton = AddSubmenuButton("Run", "Run away from battle");
+        // TODO: Run?
         submenuButton = AddSubmenuButton("Swap", "Swap turns with your partner");
         submenuButton.ButtonComponent.onClick.AddListener(m_battleManager.SwapTurns);
         submenuButton = AddSubmenuButton("Skip", "Skip your turn");
+        submenuButton.ButtonComponent.onClick.AddListener(delegate { m_actionInput.SkipCallback(); });
+
+        ShowSubmenu();
     }
 
     public void AbilitiesMenu()
     {
         SetState(BattleMenuState.ABILITIES);
 
-        m_mainMenuParent.SetActive(false);
-        ShowSubmenu();
         ClearSubmenu();
 
         BattleSubmenuButton submenuButton = null;
@@ -132,14 +139,14 @@ public class BattlePlayerMenu : MonoBehaviour
             submenuButton.ButtonComponent.onClick.AddListener(delegate { TargetMenuAbility(ability); });
 
         }
+
+        ShowSubmenu();
     }
 
     public void ItemsMenu()
     {
         SetState(BattleMenuState.ITEMS);
 
-        m_mainMenuParent.SetActive(false);
-        ShowSubmenu();
         ClearSubmenu();
 
         BattleSubmenuButton submenuButton = null;
@@ -148,15 +155,15 @@ public class BattlePlayerMenu : MonoBehaviour
             submenuButton = AddSubmenuButton(item.Data.DisplayName, item.Data.Description);
             submenuButton.ButtonComponent.onClick.AddListener(delegate { TargetMenuItem(item); });
         }
+
+        ShowSubmenu();
     }
 
     public void TargetMenuAbility(Ability ability)
     {
         SetState(BattleMenuState.TARGETING);
 
-        ShowSubmenu();
         ClearSubmenu();
-        SetDescription();
 
         m_currentAbility = ability;
 
@@ -198,16 +205,21 @@ public class BattlePlayerMenu : MonoBehaviour
                 m_actionInput.AbilitySelectCallback(ability);
                 break;
         }
+
+        ShowSubmenu();
     }
 
     public void TargetMenuItem(Item item)
     {
         SetState(BattleMenuState.TARGETING);
 
+        ClearSubmenu();
+
         m_currentItem = item;
 
         Actor[] validTargets = m_battleManager.CurrentBattle.GetValidTargets(m_currentActor, item);
 
+        ShowSubmenu();
     }
 
     public void SetTarget(Actor actor)
@@ -239,7 +251,7 @@ public class BattlePlayerMenu : MonoBehaviour
                 ReturnToMainMenu();
                 return;
             case BattleMenuState.TARGETING:
-                switch(m_prevState)
+                switch (m_prevState)
                 {
                     case BattleMenuState.ABILITIES:
                         AbilitiesMenu();
@@ -262,6 +274,20 @@ public class BattlePlayerMenu : MonoBehaviour
         m_mainMenuParent.SetActive(true);
         ClearSubmenu();
         HideSubmenu();
+
+        switch (m_prevState)
+        {
+            case BattleMenuState.TACTICS:
+                m_tacticsButton.Select();
+                break;
+            case BattleMenuState.ITEMS:
+                m_itemsButton.Select();
+                break;
+            default:
+                // Both if we were previously in the abilities menu, or from any other menu.
+                m_abilitiesButton.Select();
+                break;
+        }
     }
 
 
@@ -305,10 +331,23 @@ public class BattlePlayerMenu : MonoBehaviour
         return submenuButton;
     }
 
-    private void ShowSubmenu(bool resetMenu = false)
+    private void ShowSubmenu()
     {
+        m_mainMenuParent.SetActive(false);
         m_subMenuParent.SetActive(true);
         m_descriptionObject.SetActive(true);
+
+        foreach (BattleSubmenuButton submenuButton in m_subMenuButtons)
+        {
+            if (submenuButton.gameObject.activeSelf)
+            {
+                submenuButton.ButtonComponent.Select();
+                return;
+            }
+        }
+
+        m_backButton.Select();
+        SetDescription();
     }
 
     private void HideSubmenu()
