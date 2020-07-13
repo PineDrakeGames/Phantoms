@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 using TMPro;
 
 [RequireComponent(typeof(Button))]
@@ -14,6 +13,9 @@ public class BattleSubmenuButton : MonoBehaviour, ISelectHandler, IPointerEnterH
 
     [HideInInspector]
     public BattlePlayerMenu BattleMenu = null;
+
+    public UnityEvent ClickEvent = new UnityEvent();
+    public UnityEvent SelectEvent = new UnityEvent();
 
     private string m_buttonName = null;
     private string m_buttonDesc = null;
@@ -45,13 +47,27 @@ public class BattleSubmenuButton : MonoBehaviour, ISelectHandler, IPointerEnterH
         }
     }
 
-    private void Awake() {
+    private void Awake() 
+    {
         m_button = GetComponent<Button>();
+        m_button.onClick.AddListener(OnClick);
+    }
+
+    private void OnDestroy() 
+    {
+        m_button.onClick.RemoveListener(OnClick);
+        ClickEvent.RemoveAllListeners();
+        SelectEvent.RemoveAllListeners();
+    }
+
+    public void OnClick()
+    {
+        ClickEvent.Invoke();
     }
 
     public void OnSelect(BaseEventData eventData)
     {
-        BattleMenu.SetDescription(m_buttonDesc);
+        SelectEvent.Invoke();
     }
 
     public void OnPointerEnter(PointerEventData eventData)

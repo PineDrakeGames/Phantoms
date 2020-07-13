@@ -42,6 +42,9 @@ public class BattlePlayerMenu : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI m_descriptionText = null;
 
+    [SerializeField]
+    private GameObject m_arrowIndicator = null;
+
 
     private List<BattleSubmenuButton> m_subMenuButtons = new List<BattleSubmenuButton>();
     private ActionInput m_actionInput;
@@ -73,6 +76,7 @@ public class BattlePlayerMenu : MonoBehaviour
     {
         // Test stuff, making a few buttons.
         m_mainMenuParent.SetActive(false);
+        SetArrowIndicator();
         HideSubmenu();
     }
 
@@ -102,6 +106,20 @@ public class BattlePlayerMenu : MonoBehaviour
             m_descriptionText.text = description;
         }
 
+    }
+
+    public void SetArrowIndicator(Actor actor = null)
+    {
+        if (actor == null)
+        {
+            m_arrowIndicator.SetActive(false);
+        }
+        else
+        {
+            m_arrowIndicator.SetActive(true);
+            // TODO: Either set offset in prefab or in data
+            m_arrowIndicator.transform.position = actor.transform.position + (Vector3.up * 1.5f);
+        }
     }
 
 
@@ -136,8 +154,7 @@ public class BattlePlayerMenu : MonoBehaviour
         foreach (Ability ability in m_actionInput.ValidAbilities)
         {
             submenuButton = AddSubmenuButton(ability.Data.DisplayName, ability.Data.Description);
-            submenuButton.ButtonComponent.onClick.AddListener(delegate { TargetMenuAbility(ability); });
-
+            submenuButton.ClickEvent.AddListener(delegate { TargetMenuAbility(ability); });
         }
 
         ShowSubmenu();
@@ -153,7 +170,7 @@ public class BattlePlayerMenu : MonoBehaviour
         foreach (Item item in m_actionInput.ValidItems)
         {
             submenuButton = AddSubmenuButton(item.Data.DisplayName, item.Data.Description);
-            submenuButton.ButtonComponent.onClick.AddListener(delegate { TargetMenuItem(item); });
+            submenuButton.ClickEvent.AddListener(delegate { TargetMenuItem(item); });
         }
 
         ShowSubmenu();
@@ -178,10 +195,8 @@ public class BattlePlayerMenu : MonoBehaviour
                 foreach (Actor actor in validTargets)
                 {
                     submenuButton = AddSubmenuButton(actor.DisplayName, null);
-                    submenuButton.ButtonComponent.onClick.AddListener(delegate
-                    {
-                        SetTarget(actor);
-                    });
+                    submenuButton.ClickEvent.AddListener(delegate { SetTarget(actor); });
+                    submenuButton.SelectEvent.AddListener( delegate {SetArrowIndicator(actor); });
                 }
                 break;
             case BattleInteractorData.TargetType.NumberOfActors:
@@ -189,11 +204,12 @@ public class BattlePlayerMenu : MonoBehaviour
                 foreach (Actor actor in validTargets)
                 {
                     submenuButton = AddSubmenuButton(actor.DisplayName, null);
-                    submenuButton.ButtonComponent.onClick.AddListener(delegate
+                    submenuButton.ClickEvent.AddListener(delegate
                     {
                         SetTarget(actor);
                         submenuButton.gameObject.SetActive(false);
                     });
+                    submenuButton.SelectEvent.AddListener( delegate {SetArrowIndicator(actor); });
                 }
                 break;
             case BattleInteractorData.TargetType.AllActorsInGroup:
@@ -251,6 +267,7 @@ public class BattlePlayerMenu : MonoBehaviour
                 ReturnToMainMenu();
                 return;
             case BattleMenuState.TARGETING:
+                SetArrowIndicator();
                 switch (m_prevState)
                 {
                     case BattleMenuState.ABILITIES:
@@ -325,9 +342,12 @@ public class BattlePlayerMenu : MonoBehaviour
         submenuButton.ButtonDesc = description;
 
         // Remove all previous listeners, and add any onclick listeners that all buttons would have.
-        submenuButton.ButtonComponent.onClick.RemoveAllListeners();
-        submenuButton.ButtonComponent.onClick.AddListener(ClearSubmenu);
-        submenuButton.ButtonComponent.onClick.AddListener(HideSubmenu);
+        submenuButton.ClickEvent.RemoveAllListeners();
+        submenuButton.SelectEvent.RemoveAllListeners();
+
+        submenuButton.ClickEvent.AddListener(ClearSubmenu);
+        submenuButton.ClickEvent.AddListener(HideSubmenu);
+        submenuButton.SelectEvent.AddListener( delegate {SetDescription(description); });
         return submenuButton;
     }
 

@@ -139,8 +139,12 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    /// Public functions ///
+
     public void SwapTurns()
     {
         battle.SwapTurn();
     }
+
+    
 }
