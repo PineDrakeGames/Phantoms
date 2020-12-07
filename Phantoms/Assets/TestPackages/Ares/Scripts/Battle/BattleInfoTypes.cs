@@ -237,6 +237,23 @@ namespace Ares {
 		}
 	}
 
+	public struct AfflictionResults {
+		public readonly Affliction affliction;
+		public readonly Dictionary<AfflictionAction, BattleActionResults> actionResults;
+
+		public AfflictionResults(Affliction affliction){
+			this.affliction = affliction;
+			actionResults = new Dictionary<AfflictionAction, BattleActionResults> ();
+		}
+
+		public BattleActionResults CreateResult(AfflictionAction action){
+			BattleActionResults results = new BattleActionResults(0);
+			actionResults.Add (action, results);
+
+			return results;
+		}
+	}
+
 	/* Replay structs */
 	public struct EnvironmentVariableResults {
 		public enum Action {Set, Unset, StageIncrease, StageDecrease, DurationIncrease, DurationDecrease, AbilityAction}
@@ -276,10 +293,5 @@ namespace Ares {
 		public readonly ItemResults itemResults;
 		public readonly AfflictionResult[] afflictionResults;
 		public readonly AfflictionResult[] environmentVariableResults;
-
-//		public string ToJSON(){
-////			return string.Format("{}");
-//			return JsonUtility.ToJson();
-//		}
 	}
 }

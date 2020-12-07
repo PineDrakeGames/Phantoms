@@ -47,7 +47,7 @@ namespace Ares {
 		public Affliction_IntEvent OnAfflictionDurationChange {get; private set;}
 		public Affliction_AfflictionActionEvent OnAfflictionActionProcess {get; private set;}
 		public Affliction_AfflictionActionEvent OnAfflictionActionEnd {get; private set;}
-		public Affliction_AfflictionActionEvent OnAfflictionActionMiss {get; private set;}
+		public Affliction_AfflictionActionEvent OnAfflictionActionAvoid {get; private set;}
 		public AfflictionEvent OnAfflictionEnd {get; private set;}
 		public AfflictionEvent OnAfflictionCure {get; private set;}
 
@@ -59,6 +59,7 @@ namespace Ares {
 		public int MaxHP {get{return maxHP;}}
 		public Ability[] Abilities {get{return abilities;}}
 		public HashSet<Affliction> Afflictions {get{return afflictions;}}
+		public List<TemporaryBuff> TemporaryBuffs {get{return temporaryBuffs;}}
 		public Ability FallbackAbility {get{return fallbackAbility;}}
 		public Dictionary<string, Stat> Stats {get{return statsMap;}}
 		public bool IsCastingAbility {get; private set;}
@@ -90,7 +91,6 @@ namespace Ares {
 		//Misc. properties
 		public Battle Battle {get; private set;} //Only used as a convenience reference
 		public BattleGroup Group {get{return Battle.ActorInfo[this].Group;}} //Only used as a convenience reference
-		public int NetID {get; private set;}
 
 		//Public fields
 		public Inventory inventory;
@@ -107,6 +107,7 @@ namespace Ares {
 
 		Dictionary<string, Stat> statsMap;
 		HashSet<Affliction> afflictions;
+		List<TemporaryBuff> temporaryBuffs;
 		List<DelayRequest> abilityEndDelays;
 		HashSet<BattleDelayElement> abilityEndDelayLocks;
 
@@ -162,7 +163,7 @@ namespace Ares {
 			OnAfflictionDurationChange = new Affliction_IntEvent();
 			OnAfflictionActionProcess = new Affliction_AfflictionActionEvent();
 			OnAfflictionActionEnd = new Affliction_AfflictionActionEvent();
-			OnAfflictionActionMiss = new Affliction_AfflictionActionEvent();
+			OnAfflictionActionAvoid = new Affliction_AfflictionActionEvent();
 			OnAfflictionEnd = new AfflictionEvent();
 			OnAfflictionCure = new AfflictionEvent();
 
@@ -170,6 +171,7 @@ namespace Ares {
 			OnStatDebuff = new Stat_IntEvent();
 
 			afflictions = new HashSet<Affliction>();
+			temporaryBuffs = new List<TemporaryBuff>();
 
 			abilityEndDelays = new List<DelayRequest>();
 			abilityEndDelayLocks = new HashSet<BattleDelayElement>();
@@ -224,7 +226,7 @@ namespace Ares {
 		}
 
 		public void Init(string displayName, int hp, int maxHP, Dictionary<string, int> stats, Ability[] abilities,
-		                 Ability fallbackAbility, HashSet<Affliction> afflictions, Inventory inventory, int netID = 0){
+		                 Ability fallbackAbility, HashSet<Affliction> afflictions, Inventory inventory){
 			this.displayName = displayName;
 			this.hp = hp;
 			this.maxHP = maxHP;
@@ -232,7 +234,6 @@ namespace Ares {
 			this.abilities = abilities == null ? new Ability[0] : abilities;
 			this.afflictions = afflictions == null ? new HashSet<Affliction>() : afflictions;
 			this.inventory = inventory;
-			NetID = netID;
 
 			foreach(KeyValuePair<string, int> statInfo in stats){
 				Stats[statInfo.Key].baseValue = statInfo.Value;
@@ -466,6 +467,7 @@ namespace Ares {
 				string.Join(",", targets.Select(t => t.displayName).AresZip(hitStatuses, (t, h) => string.Format("{0} ({1})", t, h)).ToArray())));
 			
 			OnAbilityActionMiss.Invoke(targets, ability, action);
+			OnAbilityActionEnd.Invoke(targets, ability, action);
 
 			if(action.BreaksChainOnMiss && canEndAbility){
 				OnAbilityEnd.Invoke(ability, targets);
@@ -491,8 +493,9 @@ namespace Ares {
 				string.Join(",", targets.Select(t => t.displayName).AresZip(hitStatuses, (t, h) => string.Format("{0} ({1})", t, h)).ToArray())));
 			
 			OnItemActionMiss.Invoke(targets, item, action);
-			
-			if(action.BreaksChainOnMiss && canEndItem){
+			OnItemActionEnd.Invoke(targets, item, action);
+
+			if (action.BreaksChainOnMiss && canEndItem){
 				OnItemEnd.Invoke(item, targets);
 			}
 		}
@@ -505,14 +508,20 @@ namespace Ares {
 		
 		//Affliction confirmations
 		public void ConfirmAfflictionActionSuccess(Affliction affliction, AfflictionAction action){
-			VerboseLogger.Log(string.Format("{0} succesfully got afflicted by {1}", DisplayName, affliction.Data.DisplayName));
+			VerboseLogger.Log(string.Format("{0} succesfully got afflicted by {1} ({2})", DisplayName, affliction.Data.DisplayName, action.Action));
 
 			StartCoroutine(ScheduleOnAfflictionActionProcessedAndEnded(affliction, action));
 		}
 
-		public void ConfirmAfflictionActionFail(Affliction affliction, BattleInteractorData.HitStatus hitStatus, AfflictionAction action){
+		public void ConfirmAfflictionActionFail(Affliction affliction, BattleInteractorData.HitStatus[] hitStatus, AfflictionAction action, bool canEndAffliction){
 			VerboseLogger.Log(string.Format("{0} avoided afflicted action {1}", DisplayName, affliction.Data.DisplayName));
-			OnAfflictionActionMiss.Invoke(affliction, action);
+
+			OnAfflictionActionAvoid.Invoke(affliction, action);
+			OnAfflictionActionEnd.Invoke(affliction, action); //V1.3
+
+			if(action.BreaksChainOnMiss && canEndAffliction){
+				OnAfflictionEnd.Invoke(affliction);
+			}
 		}
 
 		public void AddAbilityEndDelay(float delay){

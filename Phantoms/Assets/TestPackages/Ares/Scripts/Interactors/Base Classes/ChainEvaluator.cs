@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Ares {
 	[System.Serializable]
@@ -9,10 +9,11 @@ namespace Ares {
 		/* Evaluated action values are stored per target actor. This allows for each
 		 * target to use their own stats linked to the keywords. It also leaves the
 		 * door open for other damage implementations, like dealing damage per
-		 * actor in order, which might change caster stats as well (i.e. from a
+		 * actor in order, which might change caster stats as well (i.e.: from a
 		 * lifesteal-like ability).
 		 */
 
+		protected Dictionary<string, float> evaluatedActionTokens; //Constant and Random only
 		protected Dictionary<Actor, Dictionary<string, float>> evaluatedActionValues;
 		protected Dictionary<ActionType, int> numActionTypes;
 		protected Dictionary<ChainableAction, string> actionIdentifiers;
@@ -36,7 +37,10 @@ namespace Ares {
 			return results;
 		}
 
-		protected void PrepareForChainEvaluation(List<ChainableAction> actions, Actor caster, Actor[] targets){
+		protected void PrepareForChainEvaluation(List<ActionToken> actionTokens, List<ChainableAction> actions, Actor caster, Actor[] targets){
+			evaluatedActionTokens = actionTokens.ToDictionary(t => t.ID,
+				t => t.EvaluationMode == ActionChainValueEvaluator.PowerType.Formula ? 0 : t.Evaluate(null));
+
 			if(actionIdentifiers == null){
 				actionIdentifiers = new Dictionary<ChainableAction, string>();
 				evaluatedActionValues = new Dictionary<Actor, Dictionary<string, float>>();

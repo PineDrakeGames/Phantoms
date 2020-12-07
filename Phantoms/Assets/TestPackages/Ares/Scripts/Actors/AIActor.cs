@@ -15,7 +15,7 @@ namespace Ares {
 			if(actionInput.ValidAbilities.Length > 0){
 				actionInput.AbilitySelectCallback(actionInput.ValidAbilities[Random.Range(0, actionInput.ValidAbilities.Length)]);
 			}
-			else if(actionInput.ValidItems.Length > 0){
+			else if(actionInput.ValidAbilities.Length > 0){
 				actionInput.ItemSelectCallback(actionInput.ValidItems[Random.Range(0, actionInput.ValidItems.Length)]);
 			}
 			else{

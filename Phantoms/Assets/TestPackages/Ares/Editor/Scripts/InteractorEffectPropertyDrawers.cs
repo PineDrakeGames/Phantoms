@@ -67,7 +67,7 @@ namespace Ares.Editor {
 			rect.width = oldRect.width * .7f - halfSpacing;
 			EditorGUIUtility.labelWidth = fullLabelWidth;
 
-			EditorGUI.PropertyField(rect, spDelayType, new GUIContent("Delay"));
+			EditorGUI.PropertyField(rect, spDelayType, new GUIContent("Battle Delay"));
 
 			rect.x += rect.width + halfSpacing;
 			rect.width = oldRect.width - rect.width - halfSpacing;
@@ -95,7 +95,7 @@ namespace Ares.Editor {
 				labelColor.a = .5f;
 				EditorStyles.miniLabel.normal.textColor = labelColor;
 				EditorStyles.miniLabel.wordWrap = true;
-				GUI.Label(rect, "*Animation delays only supported on Actors with an ActorAnimation component attached.", EditorStyles.miniLabel);
+				GUI.Label(rect, "*Battle delays only supported on Actors with an ActorAnimation component attached.", EditorStyles.miniLabel);
 				EditorStyles.miniLabel.wordWrap = false;
 				labelColor.a = 1f;
 				EditorStyles.miniLabel.normal.textColor = labelColor;
@@ -181,6 +181,10 @@ namespace Ares.Editor {
 
 			if(targetMode == InstantiationTargetMode.FindByName || targetMode == InstantiationTargetMode.Transform){
 				numLines++;
+
+				if(property.FindPropertyRelative("parentToTarget").boolValue){
+					numLines++;
+				}
 			}
 
 			if(!EditorGUIUtility.wideMode){
@@ -200,6 +204,7 @@ namespace Ares.Editor {
 			SerializedProperty spEnabled = property.FindPropertyRelative("enabled");
 			SerializedProperty spTargetMode = property.FindPropertyRelative("targetMode");
 			InstantiationTargetMode targetMode = (InstantiationTargetMode)System.Enum.GetValues(typeof(InstantiationTargetMode)).GetValue(spTargetMode.enumValueIndex);
+			SerializedProperty spParentToTarget = property.FindPropertyRelative ("parentToTarget");
 
 			rect.height = EditorGUIUtility.singleLineHeight;
 
@@ -300,7 +305,11 @@ namespace Ares.Editor {
 					rect.width = defaultWidth - onActorCorrection;
 					rect.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
-					DrawPropertyField(ref rect, property.FindPropertyRelative("parentToTarget"));
+					DrawPropertyField(ref rect, spParentToTarget);
+
+					if(spParentToTarget.boolValue){
+						DrawPropertyField(ref rect, property.FindPropertyRelative ("inheritParentScale"));
+					}
 
 					offsetLabel = "Offset";
 					break;
@@ -320,7 +329,11 @@ namespace Ares.Editor {
 					rect.width = defaultWidth - onActorCorrection;
 					rect.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
-					DrawPropertyField(ref rect, property.FindPropertyRelative("parentToTarget"));
+					DrawPropertyField(ref rect, spParentToTarget);
+
+					if(spParentToTarget.boolValue){
+						DrawPropertyField(ref rect, property.FindPropertyRelative ("inheritParentScale"));
+					}
 
 					offsetLabel = "Offset";
 					break;

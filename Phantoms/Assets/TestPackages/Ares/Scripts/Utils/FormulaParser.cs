@@ -119,7 +119,7 @@ namespace Ares {
 
 				b1 = b1.Skip(2).ToList();
 			}
-
+			
 			return Convert.ToSingle(b1[0]);
 		}
 	}

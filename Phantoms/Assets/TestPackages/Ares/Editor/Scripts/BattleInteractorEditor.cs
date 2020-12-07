@@ -1,9 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using UnityEditorInternal;
-using System.Collections.Generic;
 using System.Linq;
-using System.Collections;
 
 namespace Ares.Editor {
 	public class BattleInteractorEditor : ChainEvaluatorEditor {
@@ -11,7 +8,7 @@ namespace Ares.Editor {
 		readonly string[] propertyGroup1End = {"validTargetStates", "validTargetParticipants"};
 		readonly string[] propertyGroup1EndWithTurnTowardsTarget = {"validTargetStates", "validTargetParticipants", "turnTowardsTarget"};
 		readonly string[] propertyGroup2 = {"animation", "instantiation", "audio"};
-		readonly string[] hiddenProperties = {"m_Script", "actions", "validTargets", "validTargetGroups", "validTargetStates", "isTargetable",
+		readonly string[] hiddenProperties = {"m_Script", "actionTokens", "actions", "targetType", "validTargets", "validTargetGroups", "validTargetStates", "isTargetable",
 			"validTargetParticipants", "turnTowardsTarget", "numberOfTargets"};
 
 		protected override void DrawHelpBoxIfNeeded(){
@@ -67,7 +64,7 @@ namespace Ares.Editor {
 		}
 
 		protected override string[] GetPropertyGroup1(){
-			return propertyGroup1.Concat(GetTargetProps()).ToArray();
+			return propertyGroup1;//.Concat(GetTargetProps()).ToArray();
 		}
 
 		string[] GetTargetProps(){
@@ -101,7 +98,7 @@ namespace Ares.Editor {
 		}
 
 		protected override void DrawPropertyGroup1(){
-			foreach(string prop in propertyGroup1){
+			foreach(string prop in GetPropertyGroup1()) {
 				EditorGUILayout.PropertyField(serializedObject.FindProperty(prop));
 			}
 

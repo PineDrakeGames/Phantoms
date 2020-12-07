@@ -1,18 +1,16 @@
 ﻿using UnityEngine;
-using System.Text.RegularExpressions;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace Ares {
 	[Serializable]
-	public class ChainableAction {
-		public enum PowerType {Constant, Random, Formula}
+	public class ChainableAction : ActionChainValueEvaluator {
 		public enum EnvironmentVariableSetType {Set, Unset}
 
 		public ChainEvaluator.ActionType Action {get{return action;}}
 		public PowerType PowerMode {get{return powerType;}}
 		public PhantomType ActionType {get{return actionType;}}
+		public PowerType SpecialMode {get{return specialType; } }
 		public AfflictionData Affliction {get{return affliction;}}
 		public StatData Stat {get{return stat;}}
 		public EnvironmentVariableData EnvironmentVariable {get{return environmentVariable;}}
@@ -26,6 +24,7 @@ namespace Ares {
 		[SerializeField] ChainEvaluator.ActionType action = ChainEvaluator.ActionType.Damage;
 		[SerializeField] PowerType powerType = PowerType.Constant;
 		[SerializeField] PhantomType actionType = PhantomType.NONE;
+		[SerializeField] PowerType specialType = PowerType.Constant;
 		[SerializeField] StatData stat = null;
 		[SerializeField] EnvironmentVariableData environmentVariable = null;
 		[SerializeField] EnvironmentVariableSetType environmentVariableSetType = EnvironmentVariableSetType.Set;
@@ -38,22 +37,17 @@ namespace Ares {
 		[SerializeField] float power2 = 0f;
 		[SerializeField] string powerFormula = null;
 		[SerializeField] bool breaksChainOnMiss = false;
-
-		static Regex reFormula = new Regex(@"([A-Z_]+[0-9]*(?![\(A-Z0-9]))"); //Matches variable references like ATTACK1, (but not ABS(...))
+		[SerializeField] float special1;
+		[SerializeField] float special2;
+		[SerializeField] string specialFormula;
 
 		public float EvaluatePower(Dictionary<string, float> evaluatedValues){
-			switch(powerType){
-				case PowerType.Constant:
-					return power1;
-				case PowerType.Random:
-					return UnityEngine.Random.Range(power1, power2);
-				case PowerType.Formula:
-					string formula = reFormula.Replace(powerFormula, m => evaluatedValues[m.Value].ToString());
-
-					return FormulaParser.Parse(formula);
-			}
-
-			return 0f;
+			return EvaluateValues(powerType, evaluatedValues, power1, power2, powerFormula);
 		}
+
+		public float EvaluateSpecial(Dictionary<string, float> evaluatedValues){
+			return EvaluateValues(specialType, evaluatedValues, special1, special2, specialFormula);
+		}
+
 	}
 }

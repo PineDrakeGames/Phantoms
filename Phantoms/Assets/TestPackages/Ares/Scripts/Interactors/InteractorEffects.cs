@@ -224,6 +224,7 @@ namespace Ares {
 		[SerializeField] string targetName = "root";
 		[SerializeField] Transform targetTransform;
 		[SerializeField] bool parentToTarget = true;
+		[SerializeField] bool inheritParentScale = false;
 		[SerializeField] Vector3 offset;
 		[SerializeField] Vector3 rotation;
 		[SerializeField] Vector3 scale = Vector3.one;
@@ -347,11 +348,8 @@ namespace Ares {
 
 			switch(targetMode){
 				case InstantiationTargetMode.Transform:
-					spawnedEffect = (InstantiationEffectInstance)Object.Instantiate(effect, targetTransform.position + offset, Quaternion.Euler(rotation));
-
-					if(parentToTarget){
-						spawnedEffect.transform.SetParent(targetTransform, true);
-					}
+					spawnedEffect = SpawnEffect(targetTransform.position + offset);
+					HandleParenting(spawnedEffect, targetTransform);
 					break;
 				case InstantiationTargetMode.FindByName:
 					Transform foundTransform = null;
@@ -371,29 +369,39 @@ namespace Ares {
 
 					if(foundTransform == null){
 						Debug.LogError(string.Format("The target {0} could not be found for the associated instantiation effect.", targetName));
-						spawnedEffect = (InstantiationEffectInstance)Object.Instantiate(effect, offset, Quaternion.Euler(rotation));
+						spawnedEffect = SpawnEffect(offset);
 					}
 					else{
-						spawnedEffect = (InstantiationEffectInstance)Object.Instantiate(effect, foundTransform.position + offset, Quaternion.Euler(rotation));
-
-						if(parentToTarget){
-							spawnedEffect.transform.SetParent(foundTransform, true);
-						}
+						spawnedEffect = SpawnEffect(foundTransform.position + offset);
+						HandleParenting(spawnedEffect, foundTransform);
 					}
 					break;
 				case InstantiationTargetMode.LocalPosition:
-					spawnedEffect = (InstantiationEffectInstance)Object.Instantiate(effect,
-						(targetActor == InstantiationTargetActor.Caster ? caster : targets[0]).transform.TransformPoint(offset),
-						Quaternion.Euler(rotation));
+					spawnedEffect = SpawnEffect((targetActor == InstantiationTargetActor.Caster ? caster : targets[0]).transform.TransformPoint(offset));
 					break;
 				case InstantiationTargetMode.WorldPosition:
-					spawnedEffect = (InstantiationEffectInstance)Object.Instantiate(effect, offset, Quaternion.Euler(rotation));
+					spawnedEffect = SpawnEffect (offset);
 					break;
 			}
 
-			spawnedEffect.transform.localScale = scale;
-
 			return spawnedEffect;
+		}
+
+		InstantiationEffectInstance SpawnEffect(Vector3 position){
+			InstantiationEffectInstance instance = Object.Instantiate(effect, position, Quaternion.Euler(rotation));
+			instance.transform.localScale = scale;
+
+			return instance;
+		}
+
+		void HandleParenting(InstantiationEffectInstance effect, Transform parent){
+			if(parentToTarget){
+				effect.transform.SetParent(parent, true);
+
+				if(inheritParentScale){
+					effect.transform.localScale = scale;
+				}
+			}
 		}
 	}
 }

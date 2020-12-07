@@ -208,7 +208,7 @@ namespace Ares.ActorComponents {
 
 			Actor.OnAbilityPreparationUpdate.AddListener((ability, turnsRemaining, message) => {
 				ability.ConsumeAnimationUseEvent();
-				ProcessCallbackElement(Actor, ability.Data.Preparation.Animations[ability.Data.Recovery.Turns - turnsRemaining], true, null);
+				ProcessCallbackElement(Actor, ability.Data.Preparation.Animations[ability.Data.Preparation.Turns - turnsRemaining], true, null);
 			});
 
 			Actor.OnAbilityRecoveryStart.AddListener(ability => {

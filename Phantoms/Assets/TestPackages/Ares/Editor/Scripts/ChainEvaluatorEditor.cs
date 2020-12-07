@@ -7,6 +7,7 @@ using System.Linq;
 namespace Ares.Editor {
 	public abstract class ChainEvaluatorEditor : AresEditor {
 		ReorderableList actionList;
+		ReorderableList tokenList;
 		Dictionary<ChainEvaluator.ActionType, int> numActionTypes;
 
 		string[] afflictionGuids;
@@ -26,7 +27,38 @@ namespace Ares.Editor {
 
 		string[] actionTypeNames;
 
-		private void OnEnable() {
+		void DrawActionChainValueEvaluator(Rect rect, int xStart, ref int xOffset, string powerLabelText, SerializedProperty spValueType, SerializedProperty spValue1, SerializedProperty spValue2, SerializedProperty spValueFormula){
+			DrawField(rect, ref xOffset, 70, spValueType);
+
+			if((ActionChainValueEvaluator.PowerType)spValueType.enumValueIndex == ActionChainValueEvaluator.PowerType.Random){
+				powerLabelText += " [";
+			}
+
+			DrawLabel(rect, ref xOffset, 37, powerLabelText);
+
+			if((ActionChainValueEvaluator.PowerType)spValueType.enumValueIndex == ActionChainValueEvaluator.PowerType.Formula){
+				DrawField(rect, ref xOffset, Mathf.Max((int)rect.width - xOffset - 70, 160 - xStart), spValueFormula);
+			}
+			else{
+				DrawField(rect, ref xOffset, 40, spValue1);
+			}
+
+			if((ActionChainValueEvaluator.PowerType)spValueType.enumValueIndex == ActionChainValueEvaluator.PowerType.Random){
+				xOffset -= 3;
+				DrawLabel(rect, ref xOffset, 7, "-");
+				DrawField(rect, ref xOffset, 40, spValue2);
+				xOffset -= 6;
+				DrawLabel(rect, ref xOffset, 3, "]");
+				xOffset += 2;
+			}
+
+			if(target.GetType() == typeof(AfflictionData) && (ActionChainValueEvaluator.PowerType)spValueType.enumValueIndex != ActionChainValueEvaluator.PowerType.Formula){
+				xOffset -= 4;
+				DrawLabel(rect, ref xOffset, 50, "* power");
+			}
+		}
+
+		void OnEnable() {
 			string[] missingPrependArray = new string[]{"[Missing!]"};
 
 			afflictionGuids = AssetDatabase.FindAssets("t:AfflictionData");
@@ -54,6 +86,41 @@ namespace Ares.Editor {
 			}
 
 			actionList = new ReorderableList(serializedObject, serializedObject.FindProperty("actions"), true, true, true, true);
+			tokenList = new ReorderableList(serializedObject, serializedObject.FindProperty("actionTokens"), true, true, true, true);
+
+			tokenList.drawHeaderCallback = (Rect rect) => {  
+				EditorGUI.LabelField(rect, "Tokens");
+			};
+
+			tokenList.elementHeightCallback = (index) => {
+				return (EditorGUIUtility.singleLineHeight + 2) + 6;
+			};
+
+			tokenList.onAddCallback = (list) => {
+				list.serializedProperty.arraySize++;
+				SerializedProperty newToken = list.serializedProperty.GetArrayElementAtIndex(list.serializedProperty.arraySize - 1);
+				newToken.FindPropertyRelative("id").stringValue = "TOKEN" + list.serializedProperty.arraySize.ToString();
+				newToken.FindPropertyRelative("valueType").enumValueIndex = 0;
+				newToken.FindPropertyRelative("value1").floatValue = 0f;
+				newToken.FindPropertyRelative("value2").floatValue = 0f;
+				newToken.FindPropertyRelative("valueFormula").stringValue = "";
+			};
+
+			tokenList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => {
+				SerializedProperty element = tokenList.serializedProperty.GetArrayElementAtIndex(index);
+
+				int xStart = 0;
+				int xOffset = xStart;
+
+				rect.y += 4;
+
+				DrawField(rect, ref xOffset, rect.width * .2f, element.FindPropertyRelative ("id"));
+
+				DrawActionChainValueEvaluator(rect, xStart, ref xOffset, "Value", element.FindPropertyRelative ("valueType"), element.FindPropertyRelative ("value1"),
+											  element.FindPropertyRelative ("value2"), element.FindPropertyRelative ("valueFormula"));
+			};
+
+
 
 			actionList.drawHeaderCallback = (Rect rect) => {  
 				EditorGUI.LabelField(rect, "Actions");
@@ -83,6 +150,9 @@ namespace Ares.Editor {
 				if(type == ChainEvaluator.ActionType.Environment && spSetType == ChainableAction.EnvironmentVariableSetType.Unset){
 					numExtraLines--;
 				}
+				else if(type == ChainEvaluator.ActionType.Buff){
+					numExtraLines++;
+				}
 
 				return (EditorGUIUtility.singleLineHeight + 2) * (2 + numExtraLines) + 6;
 			};
@@ -92,10 +162,13 @@ namespace Ares.Editor {
 				SerializedProperty newAction = list.serializedProperty.GetArrayElementAtIndex(list.serializedProperty.arraySize - 1);
 				newAction.FindPropertyRelative("action").enumValueIndex = 0;
 				newAction.FindPropertyRelative("powerType").enumValueIndex = 0;
-				newAction.FindPropertyRelative("actionType").enumValueIndex = 0;
 				newAction.FindPropertyRelative("power1").floatValue = 0f;
 				newAction.FindPropertyRelative("power2").floatValue = 0f;
 				newAction.FindPropertyRelative("powerFormula").stringValue = "";
+				newAction.FindPropertyRelative("specialType").enumValueIndex = 0;
+				newAction.FindPropertyRelative("special1").floatValue = 0f;
+				newAction.FindPropertyRelative("special2").floatValue = 0f;
+				newAction.FindPropertyRelative("specialFormula").stringValue = "";
 				newAction.FindPropertyRelative("chance").floatValue = 1f;
 				newAction.FindPropertyRelative("duration").floatValue = 1f;
 				newAction.FindPropertyRelative("normalizedProcessTime").floatValue = 1f;
@@ -108,7 +181,7 @@ namespace Ares.Editor {
 				SerializedProperty element = actionList.serializedProperty.GetArrayElementAtIndex(index);
 				SerializedProperty spAction = element.FindPropertyRelative("action");
 				SerializedProperty spPowerType = element.FindPropertyRelative("powerType");
-				SerializedProperty spActionType = element.FindPropertyRelative("actionType");
+				SerializedProperty spSpecialType = element.FindPropertyRelative("specialType");
 				SerializedProperty spTargetType = element.FindPropertyRelative("targetType");
 				SerializedProperty spSetType = element.FindPropertyRelative("environmentVariableSetType");
 				SerializedProperty spChance = element.FindPropertyRelative("chance");
@@ -139,8 +212,6 @@ namespace Ares.Editor {
 					DrawField(rect, ref xOffset, 94, spTargetType);
 				}
 
-				DrawField(rect, ref xOffset, 94, spActionType);
-
 				if(type == ChainEvaluator.ActionType.Buff){
 					SerializedProperty spStat = element.FindPropertyRelative("stat");
 					int enumIndex = 0;
@@ -151,13 +222,13 @@ namespace Ares.Editor {
 						GUI.backgroundColor = Color.white;
 
 						if(enumIndex > 0){
-							spStat.objectReferenceValue = statDatas[enumIndex - 1];
+							spStat.objectReferenceValue = statDatas.First(d => d.DisplayName == statNames[enumIndex - 1]);
 						}
 					}
 					else{
 						enumIndex = System.Array.IndexOf(statNames, ((StatData)spStat.objectReferenceValue).DisplayName);
 						enumIndex = EditorGUI.Popup(new Rect(rect.x + xOffset, rect.y, enumFieldWidth, EditorGUIUtility.singleLineHeight), enumIndex, statNames);
-						spStat.objectReferenceValue = statDatas[enumIndex];
+						spStat.objectReferenceValue = statDatas.First(d => d.DisplayName == statNames[enumIndex]);
 					}
 
 
@@ -194,13 +265,13 @@ namespace Ares.Editor {
 						GUI.backgroundColor = Color.white;
 
 						if(enumIndex > 0){
-							spEnvironmentVariable.objectReferenceValue = environmentVariableDatas[enumIndex - 1];
+							spEnvironmentVariable.objectReferenceValue = environmentVariableDatas.First(d => d.DisplayName == environmentVariableNames[enumIndex - 1]);
 						}
 					}
 					else{
 						enumIndex = System.Array.IndexOf(environmentVariableNames, ((EnvironmentVariableData)spEnvironmentVariable.objectReferenceValue).DisplayName);
 						enumIndex = EditorGUI.Popup(new Rect(rect.x + xOffset, rect.y, enumFieldWidth, EditorGUIUtility.singleLineHeight), enumIndex, environmentVariableNames);
-						spEnvironmentVariable.objectReferenceValue = environmentVariableDatas[enumIndex];
+						spEnvironmentVariable.objectReferenceValue = environmentVariableDatas.First(d => d.DisplayName == environmentVariableNames[enumIndex]);
 					}
 
 
@@ -245,32 +316,35 @@ namespace Ares.Editor {
 						powerLabelText = "Power";
 					}
 
-					if((AbilityAction.PowerType)spPowerType.enumValueIndex == AbilityAction.PowerType.Random){
-						powerLabelText += " [";
+					DrawActionChainValueEvaluator(rect, xStart, ref xOffset, powerLabelText, spPowerType, element.FindPropertyRelative ("power1"),
+												  element.FindPropertyRelative ("power2"), element.FindPropertyRelative ("powerFormula"));
+				}
+
+				if(type == ChainEvaluator.ActionType.Buff){
+					rect.y += EditorGUIUtility.singleLineHeight + 2;
+					xOffset = xStart;
+
+					DrawField(rect, ref xOffset, 70, spSpecialType);
+
+					int xType = xOffset;
+					float ySpecial = rect.y;
+
+					DrawActionChainValueEvaluator(rect, xStart, ref xOffset, "Turns", spSpecialType, element.FindPropertyRelative ("special1"),
+												  element.FindPropertyRelative ("special2"), element.FindPropertyRelative ("specialFormula"));
+
+					if((ActionChainValueEvaluator.PowerType)spSpecialType.enumValueIndex == ActionChainValueEvaluator.PowerType.Formula){
+						rect.y += EditorGUIUtility.singleLineHeight + 2;
+						xOffset = xType + 120;
 					}
 
-					DrawLabel(rect, ref xOffset, 37, powerLabelText);
+					Color labelColor = EditorStyles.miniLabel.normal.textColor;
+					labelColor.a = .5f;
+					EditorStyles.miniLabel.normal.textColor = labelColor;
+					DrawLabel(rect, ref xOffset, "(0 or less means the buff is permanent)", EditorStyles.miniLabel);
+					labelColor.a = 1f;
+					EditorStyles.miniLabel.normal.textColor = labelColor;
 
-					if((AbilityAction.PowerType)spPowerType.enumValueIndex == AbilityAction.PowerType.Formula){
-						DrawField(rect, ref xOffset, Mathf.Max((int)rect.width - xOffset - 70, 160 - xStart), element.FindPropertyRelative("powerFormula"));
-					}
-					else{
-						DrawField(rect, ref xOffset, 40, element.FindPropertyRelative("power1"));
-					}
-
-					if((AbilityAction.PowerType)spPowerType.enumValueIndex == AbilityAction.PowerType.Random){
-						xOffset -= 3;
-						DrawLabel(rect, ref xOffset, 7, "-");
-						DrawField(rect, ref xOffset, 40, element.FindPropertyRelative("power2"));
-						xOffset -= 6;
-						DrawLabel(rect, ref xOffset, 3, "]");
-						xOffset += 2;
-					}
-
-					if(target.GetType() == typeof(AfflictionData) && (AbilityAction.PowerType)spPowerType.enumValueIndex != AbilityAction.PowerType.Formula){
-						xOffset -= 4;
-						DrawLabel(rect, ref xOffset, 50, "* power");
-					}
+					rect.y = ySpecial;
 				}
 
 				if(!spIsChildEffect.boolValue || index == 0){
@@ -379,6 +453,7 @@ namespace Ares.Editor {
 
 			EditorGUILayout.Space();
 			EditorGUILayout.LabelField("Actions", EditorStyles.boldLabel);
+			tokenList.DoLayoutList();
 			actionList.DoLayoutList();
 
 			DrawHelpBoxIfNeeded();

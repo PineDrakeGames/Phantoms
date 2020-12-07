@@ -82,7 +82,7 @@ namespace Ares.Editor {
 				if(EditorPrefs.GetBool(AresPreferences.ARES_PREF_ADD_ABILITY_OPTIONS, true)){
 					GenericMenu menu = new GenericMenu();
 
-					PopulateGenericMenu<AbilityData>(menu, AbilityAddHandler, o => displayNamePropertyAbilityData.GetValue(o, null).ToString()); //TODO: categories
+					PopulateGenericMenu<AbilityData>(menu, AbilityAddHandler, o => ((AbilityData)o).FullCategoryPath + "/" + displayNamePropertyAbilityData.GetValue(o, null));
 					menu.ShowAsContext();
 				}
 				else{

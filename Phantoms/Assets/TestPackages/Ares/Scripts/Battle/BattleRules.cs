@@ -10,7 +10,7 @@ namespace Ares {
 		public enum ActorFacingMoment {Always, OnAttackHit, Never}
 		public enum SelectActionMoment {OnRoundStart, OnTurnStart}
 		public enum RoundStartModeItemComsumptionMoment {OnRoundStart, OnTurn, OnTurnButMarkPendingOnSelect}
-		public enum TimedProcess {AfflictionEffect, AfflictionDuration, EnvironmentVariableCallback, EnvironmentVariableDuration}
+		public enum TimedProcess {AfflictionEffect, AfflictionDuration, EnvironmentVariableCallback, EnvironmentVariableDuration, TemporaryBuffReduction}
 		public enum ActorSort {BySpeed, Random, None}
 
 		public int MaxRounds {get{return maxRounds;}}

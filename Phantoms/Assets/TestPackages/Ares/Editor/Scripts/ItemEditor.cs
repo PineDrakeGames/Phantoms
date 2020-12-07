@@ -11,12 +11,10 @@ namespace Ares.Editor {
 		protected override string[] GetPropertyGroup1(){
 			List<string> propertyGroup1 = base.GetPropertyGroup1().ToList();
 
-//			propertyGroup1.Insert(3, "uses");
-//			propertyGroup1.Insert(2, "category");
 			propertyGroup1.Insert(4, "uses");
 
 			if(serializedObject.FindProperty("targetType").enumValueIndex == (int)BattleInteractorData.TargetType.SingleActor){
-				propertyGroup1.Insert(8, "mockUserAsTarget");
+				propertyGroup1.Insert(propertyGroup1.Count, "mockUserAsTarget");
 			}
 
 			return propertyGroup1.ToArray();

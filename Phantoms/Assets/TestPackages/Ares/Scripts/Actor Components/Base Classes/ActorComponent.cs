@@ -124,17 +124,17 @@ namespace Ares.ActorComponents {
 				abilityCallbacks[abilityCallbacks.Length - 1] = new T();
 				Debug.Log("Added missing fallback ability.");
 			}
-			else{
-				if(UnityEditor.EditorUtility.DisplayDialog("Fixing ability list",
+			#if UNITY_EDITOR
+			else if(UnityEditor.EditorUtility.DisplayDialog("Fixing ability list",
 				   "All abilities already seem to be accounted for. Do you wish to continue and reset all ability entries on this component?",
 				   "Ok", "Cancel")){
-					System.Array.Resize(ref abilityCallbacks, numAbilities + 1);
+				System.Array.Resize(ref abilityCallbacks, numAbilities + 1);
 
-					for(int i = 0; i < numAbilities + 1; i++){
-						abilityCallbacks[i] = new T();
-					}
+				for(int i = 0; i < numAbilities + 1; i++){
+					abilityCallbacks[i] = new T();
 				}
 			}
+			#endif
 		}
 
 		public abstract void OnAbilityAdded();

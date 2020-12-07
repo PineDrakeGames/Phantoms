@@ -27,9 +27,8 @@ namespace Ares.Editor {
 		public static bool useVerboseLogging = false;
 
 		static SerializedObject soVerboseLoggerSettings;
-#pragma warning disable 0618
+
 		[PreferenceItem("Ares")]
-#pragma warning restore 0618
 		public static void PreferencesGUI(){
 			SerializedProperty[] spVerboseLoggerColors = null;
 

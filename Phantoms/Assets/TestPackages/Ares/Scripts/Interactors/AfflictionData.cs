@@ -6,7 +6,7 @@ namespace Ares {
 	[CreateAssetMenu(fileName="New Ares Ability", menuName="Ares/Affliction", order=52)]
 	public class AfflictionData : PowerData {
 		public enum Cure {ConstantNumberOfTurns, RandomNumberOfTurns, RandomChance}
-		public enum ProcessingMoment {Never, StartOfRound, EndOfRound, StartOfAfflictedActorTurn, EndOfAfflictedActorTurn}
+		public enum ProcessingMoment {Never, StartOfRound, EndOfRound, StartOfAfflictedActorTurn, EndOfAfflictedActorTurn}//, OnCure
 
 		public string DisplayName {get{return displayName;}}
 		public string Description {get{return description;}}
@@ -21,6 +21,7 @@ namespace Ares {
 		public ProcessingMoment DurationProcessingMoment {get{return durationProcessingMoment;}}
 		public DoubleSetStageAction DoubleSetStageBehaviour {get{return doubleSetStageBehaviour;}}
 		public DoubleSetDurationAction DoubleSetDurationBehaviour {get{return doubleSetDurationBehaviour;}}
+		public List<ActionToken> ActionTokens {get{return actionTokens;}}
 		public List<AfflictionAction> Actions {get{return actions;}}
 
 		public AnimationEffect ObtainAnimation {get{return obtainAnimation;}}
@@ -63,6 +64,7 @@ namespace Ares {
 		[SerializeField, Tooltip("The adjustment to make to the affliction's remaining duration if an already-afflicted actor tries to get afflicted by it again.")]
 		DoubleSetDurationAction doubleSetDurationBehaviour = DoubleSetDurationAction.Ignore;
 
+		[SerializeField] List<ActionToken> actionTokens = null;
 		[SerializeField] List<AfflictionAction> actions = null;
 		[SerializeField] AnimationEffect obtainAnimation = null;
 		[SerializeField] AnimationEffect triggerAnimation = null;
@@ -82,6 +84,7 @@ namespace Ares {
 
 		void OnEnable(){
 			if(actions == null){
+				actionTokens = new List<ActionToken>();
 				actions = new List<AfflictionAction>();
 			}
 		}
@@ -99,7 +102,6 @@ namespace Ares {
 
 		public float GetScaledPower(int stage){
 			return GetScaledPowerFloat(power, stage);
-//			return powerScalingMode == PowerScaling.Linear ? power + stage * powerMultiplier : power * Mathf.Pow(powerMultiplier, stage);
 		}
 	}
 
@@ -253,7 +255,7 @@ namespace Ares {
 		}
 
 		public override void PrepareForChainEvaluation(Actor caster, Actor[] targets){
-			PrepareForChainEvaluation(Data.Actions.Cast<ChainableAction>().ToList(), caster, targets);
+			PrepareForChainEvaluation(Data.ActionTokens, Data.Actions.Cast<ChainableAction>().ToList(), caster, targets);
 		}
 
 		protected override void AddUninitializedDefaultTokens(Actor caster, Actor[] targets){
@@ -272,6 +274,10 @@ namespace Ares {
 				foreach(string stat in caster.Stats.Keys){
 					targetActionValues.Add("AFFLICTER_" + stat.ToUpper(), 0);
 					targetActionValues.Add("AFFLICTED_" + stat.ToUpper(), 0);
+				}
+
+				foreach(ActionToken token in Data.ActionTokens){
+					targetActionValues.Add(token.ID, token.EvaluationMode == ActionChainValueEvaluator.PowerType.Formula ? token.Evaluate(targetActionValues) : evaluatedActionTokens[token.ID]);
 				}
 
 				evaluatedActionValues.Add(target, targetActionValues);
@@ -308,8 +314,7 @@ namespace Ares {
 			return result;
 		}
 
-		public void SetActionResult(AfflictionAction action, Actor target, int value){//, bool targetBecameAfflicted){
-//			evaluatedActionValues[target].Add(actionIdentifiers[action], targetBecameAfflicted ? evaluatedActionValues[target][actionIdentifiers[action]+"_RAW"] : 0);
+		public void SetActionResult(AfflictionAction action, Actor target, int value){
 			evaluatedActionValues[target].Add(actionIdentifiers[action], value);
 		}
 	}

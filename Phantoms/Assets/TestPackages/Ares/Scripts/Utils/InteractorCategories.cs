@@ -21,7 +21,7 @@ namespace Ares.Development {
 		}
 
 		public static string GetCategoryForId(CategoryType categoryType, int id){
-			InteractorCategory category = Resources.FindObjectsOfTypeAll<InteractorCategories>().First(c => c.categoryType == categoryType).categories.FirstOrDefault(c => c.id == id);
+			InteractorCategory category = Resources.LoadAll<InteractorCategories>("").First(c => c.categoryType == categoryType).categories.FirstOrDefault (c => c.id == id);
 			return category.path == "None" ? "" : category.path;
 		}
 	}

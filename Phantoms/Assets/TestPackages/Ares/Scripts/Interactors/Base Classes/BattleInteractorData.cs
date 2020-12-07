@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using Ares.Development;
 
 namespace Ares {
 	public static class BattleInteractorData {
@@ -90,6 +89,7 @@ namespace Ares {
 		public BattleInteractorData.TargetParticipationState ValidTargetParticipants {get{return validTargetParticipants;}}
 		public bool TurnTowardsTarget {get{return turnTowardsTarget;}}
 		public List<T> Actions {get{return actions;}}
+		public List<ActionToken> ActionTokens {get{return actionTokens;}}
 		public AnimationEffect Animation {get{return animation;}}
 		public InstantiationEffect Instantiation {get{return instantiation;}}
 		public AudioEffect Audio {get{return audio;}}
@@ -100,8 +100,6 @@ namespace Ares {
 		[SerializeField, Tooltip("The base duration of this ability, before any effects are executed."), Header("Timing")] float baseDuration = 0f;
 		[SerializeField, Tooltip("Number of turns needed to charge before this interactor evaluates its action chain.")] BattleInteractorData.PreparationData preparation = null;
 		[SerializeField, Tooltip("Number of turns needed to charge before this interactor evaluates its action chain.")] BattleInteractorData.RecoveryData recovery = null;
-//		[SerializeField, Header("Preparation and Recovery")] string[] preparationTexts;
-//		[SerializeField] string[] recoveryTexts;
 		[SerializeField, Tooltip("The type of targets this interactor requires."), Header("Targeting")] BattleInteractorData.TargetType targetType = BattleInteractorData.TargetType.SingleActor;
 		[SerializeField, Tooltip("The maximum number of actors this interactor can target.")] int numberOfTargets = 1;
 		[SerializeField, Tooltip("The type of actors this interactor can target.")] BattleInteractorData.TargetGroupActors validTargets = BattleInteractorData.TargetGroupActors.All;
@@ -114,8 +112,10 @@ namespace Ares {
 		[SerializeField] AnimationEffect animation = null;
 		[SerializeField] InstantiationEffect instantiation = null;
 		[SerializeField] AudioEffect audio = null;
+		[SerializeField] List<ActionToken> actionTokens;
 
 		void Reset(){
+			actionTokens = new List<ActionToken>();
 			actions = new List<T>();
 
 			if(animation == null){
@@ -221,7 +221,7 @@ namespace Ares {
 		}
 
 		public override void PrepareForChainEvaluation(Actor caster, Actor[] targets){
-			PrepareForChainEvaluation(Data.Actions.Cast<ChainableAction>().ToList(), caster, targets);
+			PrepareForChainEvaluation(Data.ActionTokens, Data.Actions.Cast<ChainableAction>().ToList(), caster, targets);
 		}
 
 		protected override void AddUninitializedDefaultTokens(Actor caster, Actor[] targets){
@@ -229,21 +229,25 @@ namespace Ares {
 			foreach(Actor target in targets){
 				Dictionary<string, float> targetActionValues = new Dictionary<string, float>(targets.Length);
 
-				targetActionValues.Add("CASTER_HP", 0);
-				targetActionValues.Add("CASTER_MAX_HP", 0);
+				targetActionValues.Add("CASTER_HP", caster.HP);
+				targetActionValues.Add("CASTER_MAX_HP", caster.MaxHP);
 
-				targetActionValues.Add("TARGET_HP", 0);
-				targetActionValues.Add("TARGET_MAX_HP", 0);
+				targetActionValues.Add("TARGET_HP", target.HP);
+				targetActionValues.Add("TARGET_MAX_HP", target.MaxHP);
 
 				foreach(string stat in caster.Stats.Keys){
-					targetActionValues.Add("CASTER_" + stat.ToUpper(), 0);
-					targetActionValues.Add("TARGET_" + stat.ToUpper(), 0);
+					targetActionValues.Add("CASTER_" + stat.ToUpper(), caster.Stats[stat].Value);
+					targetActionValues.Add("TARGET_" + stat.ToUpper(), target.Stats[stat].Value);
+				}
+
+				foreach(ActionToken token in Data.ActionTokens){
+					targetActionValues.Add(token.ID, token.EvaluationMode == ActionChainValueEvaluator.PowerType.Formula ? token.Evaluate(targetActionValues) : evaluatedActionTokens[token.ID]);
 				}
 
 				evaluatedActionValues.Add(target, targetActionValues);
 			}
 		}
-
+		
 		protected virtual void ApplyPowerModifiers(Actor caster, Actor interactorTarget, Actor actionTarget, AbilityAction action, ref float result){
 			// The actual power calculation. Here you could implement extra modifiers like
 			// weaknesses, critical hits, etc.
@@ -271,15 +275,7 @@ namespace Ares {
 			Dictionary<string, float> targetEvaluatedActionValues = evaluatedActionValues[interactorTarget];
 
 			if(action.PowerMode == AbilityAction.PowerType.Formula){
-				targetEvaluatedActionValues["CASTER_HP"] = caster.HP;
-				targetEvaluatedActionValues["CASTER_MAX_HP"] = caster.MaxHP; 
-				targetEvaluatedActionValues["TARGET_HP"] = actionTarget.HP;
-				targetEvaluatedActionValues["TARGET_MAX_HP"] = actionTarget.MaxHP;
-
-				foreach(string stat in caster.Stats.Keys){
-					targetEvaluatedActionValues["CASTER_" + stat.ToUpper()] = caster.Stats[stat].Value;
-					targetEvaluatedActionValues["TARGET_" + stat.ToUpper()] = actionTarget.Stats[stat].Value;
-				}
+				UpdateFormulaTokens(targetEvaluatedActionValues, caster, actionTarget);
 			}
 
 			float result = action.EvaluatePower(targetEvaluatedActionValues);
@@ -289,6 +285,28 @@ namespace Ares {
 			ApplyPowerModifiers(caster, interactorTarget, actionTarget, action, ref result);
 
 			return result;
+		}
+
+		public float EvaluateSpecial(Actor caster, Actor interactorTarget, Actor actionTarget, AbilityAction action){
+			Dictionary<string, float> targetEvaluatedActionValues = evaluatedActionValues[interactorTarget];
+
+			if(action.SpecialMode == AbilityAction.PowerType.Formula){
+				UpdateFormulaTokens(targetEvaluatedActionValues, caster, actionTarget);
+			}
+
+			return action.EvaluateSpecial(targetEvaluatedActionValues);
+		}
+
+		void UpdateFormulaTokens(Dictionary<string, float> targetEvaluatedActionValues, Actor caster, Actor actionTarget){
+			targetEvaluatedActionValues["CASTER_HP"] = caster.HP;
+			targetEvaluatedActionValues["CASTER_MAX_HP"] = caster.MaxHP; 
+			targetEvaluatedActionValues["TARGET_HP"] = actionTarget.HP;
+			targetEvaluatedActionValues["TARGET_MAX_HP"] = actionTarget.MaxHP;
+
+			foreach(string stat in caster.Stats.Keys){
+				targetEvaluatedActionValues["CASTER_" + stat.ToUpper()] = caster.Stats[stat].Value;
+				targetEvaluatedActionValues["TARGET_" + stat.ToUpper()] = actionTarget.Stats[stat].Value;
+			}
 		}
 		
 		public void SetActionResult(AbilityAction action, Actor abilityTarget, int value){
