@@ -180,6 +180,8 @@ public class BattlePlayerMenu : MonoBehaviour
     {
         SetState(BattleMenuState.TARGETING);
 
+        m_actionTargets.Clear();
+
         ClearSubmenu();
 
         m_currentAbility = ability;
