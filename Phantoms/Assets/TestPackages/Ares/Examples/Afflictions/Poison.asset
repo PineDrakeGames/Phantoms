@@ -33,10 +33,13 @@ MonoBehaviour:
   effectProcessingMoment: 4
   durationProcessingMoment: 4
   doubleSetStageBehaviour: 1
-  doubleSetDurationBehaviour: 0
+  doubleSetDurationBehaviour: 2
+  actionTokens: []
   actions:
   - action: 0
     powerType: 0
+    actionType: 0
+    specialType: 0
     stat: {fileID: 0}
     environmentVariable: {fileID: 0}
     environmentVariableSetType: 0
@@ -49,22 +52,29 @@ MonoBehaviour:
     power2: 0
     powerFormula: 
     breaksChainOnMiss: 0
+    special1: 0
+    special2: 0
+    specialFormula: 
     targetType: 0
   - action: 3
     powerType: 2
+    actionType: 0
+    specialType: 0
     stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
-    environmentVariable: {fileID: 11400000, guid: d8117ffac9dff4758942f91abde9bd99,
-      type: 2}
+    environmentVariable: {fileID: 0}
     environmentVariableSetType: 0
     affliction: {fileID: 11400000}
     isChildEffect: 0
-    duration: 1
+    duration: 2
     normalizedProcessTime: 1
     chance: 1
     power1: 1
     power2: 0
     powerFormula: 1
     breaksChainOnMiss: 0
+    special1: 0
+    special2: 0
+    specialFormula: 
     targetType: 0
   obtainAnimation:
     enabled: 0
@@ -119,6 +129,7 @@ MonoBehaviour:
     targetName: root
     targetTransform: {fileID: 0}
     parentToTarget: 1
+    inheritParentScale: 0
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
     scale: {x: 0, y: 0, z: 0}
@@ -131,6 +142,7 @@ MonoBehaviour:
     targetName: root
     targetTransform: {fileID: 0}
     parentToTarget: 1
+    inheritParentScale: 0
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
     scale: {x: 0, y: 0, z: 0}
@@ -143,6 +155,7 @@ MonoBehaviour:
     targetName: 
     targetTransform: {fileID: 0}
     parentToTarget: 0
+    inheritParentScale: 0
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
     scale: {x: 0, y: 0, z: 0}
@@ -155,6 +168,7 @@ MonoBehaviour:
     targetName: 
     targetTransform: {fileID: 0}
     parentToTarget: 0
+    inheritParentScale: 0
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
     scale: {x: 0, y: 0, z: 0}
@@ -167,6 +181,7 @@ MonoBehaviour:
     targetName: 
     targetTransform: {fileID: 0}
     parentToTarget: 0
+    inheritParentScale: 0
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
     scale: {x: 0, y: 0, z: 0}

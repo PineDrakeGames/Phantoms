@@ -70,6 +70,7 @@ public abstract class AbilityMinigame : MonoBehaviour
 
     protected abstract void Restart();
 
+    /// For any intro parts to the minigame - usually animations to bring it in?
     protected abstract void InitializingState();
 
     protected abstract void RunningState();
