@@ -33,7 +33,7 @@ public static class MinigameInputManager
         // Check Keyboard Input
         foreach(KeyCode key in InputToKeyCodes[input])
         {
-            if (Input.GetKey(key))
+            if (Input.GetKeyDown(key))
             {
                 return true;
             }
@@ -46,7 +46,7 @@ public static class MinigameInputManager
         // Check Keyboard Input
         foreach(KeyCode key in InputToKeyCodes[input])
         {
-            if (Input.GetKeyDown(key))
+            if (Input.GetKey(key))
             {
                 return true;
             }

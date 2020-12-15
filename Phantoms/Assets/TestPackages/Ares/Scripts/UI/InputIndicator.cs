@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+
 
 public class InputIndicator : MonoBehaviour
 {
@@ -25,9 +25,13 @@ public class InputIndicator : MonoBehaviour
     [SerializeField]
     private Image m_indicatorImage = null;
 
+    [SerializeField]
+    private TextMeshProUGUI m_indicatorText = null;
+
     public void SetIndicator(MinigameInput inputType)
     {
         // Set the image based on the button?
+        m_indicatorText.text = inputType.ToString();
     }
 
     public void SetState(IndicatorState newState)

@@ -39,6 +39,9 @@ public class TimingMeterMinigame : AbilityMinigame
 
     [Header("References to parts of the Meter")]
     [SerializeField]
+    private GameObject m_meter = null;
+
+    [SerializeField]
     private RectTransform m_fillArea = null;
 
     [SerializeField]
@@ -58,6 +61,11 @@ public class TimingMeterMinigame : AbilityMinigame
     private List<TimingMeterTarget> m_targetInstances = new List<TimingMeterTarget>();
     private List<GameObject> m_inputIndicators = new List<GameObject>();
 
+    private void Start()
+    {
+        m_meter.SetActive(false);
+    }
+
     protected override void Restart()
     {
         m_meterFillImage.fillAmount = 0f;
@@ -65,6 +73,8 @@ public class TimingMeterMinigame : AbilityMinigame
 
     protected override void InitializingState()
     {
+        m_meter.SetActive(true);
+
         // Calculate some stuff
         m_targetPercentArea = TargetTimeWindow / MeterDuration;
 
@@ -179,6 +189,8 @@ public class TimingMeterMinigame : AbilityMinigame
         {
             m_result = MinigameResult.SUCCESS;
         }
+
+        m_meter.SetActive(false);
     }
 
     protected override void FinishedState()
