@@ -3,6 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[System.Serializable]
+public class TimingMeterMinigameData
+{
+    public float MeterDuration = 1.5f;
+
+    public float TargetTimeWindow = 0.35f;
+    public float PerfectTimeWindow = 0.05f;
+
+    public int AllowedMisses = 0;
+
+    public List<TimingMeterMinigame.TimingMeterTargetData> Targets = new List<TimingMeterMinigame.TimingMeterTargetData>();
+
+    public TimingMeterMinigameData()
+    {
+        Targets.Add(new TimingMeterMinigame.TimingMeterTargetData());
+        Targets.Add(new TimingMeterMinigame.TimingMeterTargetData());
+    }
+}
+
 public class TimingMeterMinigame : AbilityMinigame
 {
     [System.Serializable]
@@ -28,14 +47,7 @@ public class TimingMeterMinigame : AbilityMinigame
 
 
     [Header("Minigame Variables")]
-    public float MeterDuration = 1.5f;
-
-    public float TargetTimeWindow = 0.35f;
-    public float PerfectTimeWindow = 0.05f;
-
-    public int AllowedMisses = 0;
-
-    public List<TimingMeterTargetData> Targets = new List<TimingMeterTargetData>();
+    public TimingMeterMinigameData Data;
 
     [Header("References to parts of the Meter")]
     [SerializeField]
@@ -76,12 +88,12 @@ public class TimingMeterMinigame : AbilityMinigame
         m_meter.SetActive(true);
 
         // Calculate some stuff
-        m_targetPercentArea = TargetTimeWindow / MeterDuration;
+        m_targetPercentArea = Data.TargetTimeWindow / Data.MeterDuration;
 
         float targetWidth = m_targetPercentArea * m_fillArea.rect.width;
 
         // Set up the targets so they are listed in order, and set them all to not being hit.
-        foreach (TimingMeterTargetData data in Targets)
+        foreach (TimingMeterTargetData data in Data.Targets)
         {
             m_targetInstances.Add(new TimingMeterTarget(data));
         }
@@ -119,8 +131,8 @@ public class TimingMeterMinigame : AbilityMinigame
         float prevTime = m_currentTime;
         m_currentTime += Time.deltaTime;
 
-        float prevProgress = prevTime / MeterDuration;
-        float progress = m_currentTime / MeterDuration;
+        float prevProgress = prevTime / Data.MeterDuration;
+        float progress = m_currentTime / Data.MeterDuration;
 
         TimingMeterTarget target = null;
         if (m_currentTargetIndex < m_targetInstances.Count) { target = m_targetInstances[m_currentTargetIndex]; }
@@ -181,7 +193,7 @@ public class TimingMeterMinigame : AbilityMinigame
             }
         }
 
-        if (misses > AllowedMisses)
+        if (misses > Data.AllowedMisses)
         {
             m_result = MinigameResult.FAIL;
         }

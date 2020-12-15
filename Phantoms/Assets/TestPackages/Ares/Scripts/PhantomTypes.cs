@@ -9,12 +9,10 @@ public enum PhantomType
     FEAR = 2,
     ANGER = 3,
     SADNESS = 4,
-    ANXIETY = 5,
-    CALM = 6,
-    HOPE = 7,
-    JOY = 8,
-    SURPRISE = 9,
-    SHAME = 10,
+    CALM = 5,
+    HOPE = 6,
+    JOY = 7,
+    SHAME = 8,
 }
 
 // Such that, when divided by 2, is what is multiplied by the damage.
