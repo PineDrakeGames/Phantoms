@@ -26,7 +26,23 @@ public class AbilityMinigameData : ScriptableObject
 
     public void UpdateData()
     {
-        MinigameData = JsonUtility.ToJson(new TimingMeterMinigameData(), true);
+        switch (type)
+        {
+            case AbilityMinigameType.JOY_METER:
+                try
+                {
+                    JsonUtility.FromJson<TimingMeterMinigameData>(MinigameData);
+                }
+                catch
+                {
+                    MinigameData = JsonUtility.ToJson(new TimingMeterMinigameData(), true);
+                }
+                break;
+            default:
+                MinigameData = "Not yet Implemented!";
+                break;
+        }
+
     }
 }
 

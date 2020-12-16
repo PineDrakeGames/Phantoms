@@ -2346,16 +2346,15 @@ namespace Ares
             bool usedMinigame = false;
             if (ability.UseMinigame && ability.Minigame != null)
             {
-                AbilityMinigame minigame = ability.Minigame.GetComponent<AbilityMinigame>();
-                if (minigame)
+                if (AbilityMinigameManager.HasMinigame(ability.Minigame.type))
                 {
                     usedMinigame = true;
-                    minigame.StartMinigame();
-                    while (minigame.State != AbilityMinigame.MinigameState.FINISHED)
+                    AbilityMinigameManager.StartMinigame(ability.Minigame);
+                    while (AbilityMinigameManager.CurrentMinigame.State != AbilityMinigame.MinigameState.FINISHED)
                     {
                         yield return null;
                     }
-                    minigameResult = minigame.Result;
+                    minigameResult = AbilityMinigameManager.CurrentMinigame.Result;
                 }
             }
 

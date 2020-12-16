@@ -17,13 +17,13 @@ namespace Ares {
 		public bool OverrideBaseDuration {get{return overrideBaseDuration;}}
 		public float BaseDuration {get{return OverrideBaseDuration ? baseDuration : Data.BaseDuration;}}
 		public bool UseMinigame { get { return overrideUseMinigame; } }
-		public GameObject Minigame { get { return minigame; } }
+		public AbilityMinigameData Minigame { get { return minigame; } }
 
 		[SerializeField] bool enabled;
 		[SerializeField] bool overrideBaseDuration;
 		[SerializeField] float baseDuration;
 		[SerializeField] bool overrideUseMinigame = false;
-		[SerializeField] GameObject minigame = null;
+		[SerializeField] AbilityMinigameData minigame = null;
 		
 		public Ability(AbilityData data, bool enabled, bool overrideBaseDuration, float baseDuration){
 			Data = data;
