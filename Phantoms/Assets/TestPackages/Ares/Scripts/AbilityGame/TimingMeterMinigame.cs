@@ -202,6 +202,14 @@ public class TimingMeterMinigame : AbilityMinigame
             m_result = MinigameResult.SUCCESS;
         }
 
+        foreach (GameObject indicator in m_inputIndicators)
+        {
+            indicator.SetActive(false);
+        }
+
+        // Clear arrays
+        m_targetInstances.Clear();
+
         m_meter.SetActive(false);
     }
 
