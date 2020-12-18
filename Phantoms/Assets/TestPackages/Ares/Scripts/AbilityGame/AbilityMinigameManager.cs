@@ -83,6 +83,16 @@ public class AbilityMinigameManager : MonoBehaviour
         m_currentMinigame = m_typeToMinigame[data.type];
         switch (data.type)
         {
+            case AbilityMinigameType.ANGER:
+                try
+                {
+                    (m_currentMinigame as ButtonMashMinigame).Data = JsonUtility.FromJson<ButtonMashMinigameData>(data.MinigameData);
+                }
+                catch
+                {
+                    Debug.LogError("Minigame data is not valid!");
+                }
+                break;
             case AbilityMinigameType.JOY_METER:
                 try
                 {

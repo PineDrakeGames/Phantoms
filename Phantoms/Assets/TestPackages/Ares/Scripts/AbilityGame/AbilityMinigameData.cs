@@ -28,6 +28,16 @@ public class AbilityMinigameData : ScriptableObject
     {
         switch (type)
         {
+            case AbilityMinigameType.ANGER:
+                try
+                {
+                    JsonUtility.FromJson<ButtonMashMinigameData>(MinigameData);
+                }
+                catch
+                {
+                    MinigameData = JsonUtility.ToJson(new ButtonMashMinigameData(), true);
+                }
+                break;
             case AbilityMinigameType.JOY_METER:
                 try
                 {
