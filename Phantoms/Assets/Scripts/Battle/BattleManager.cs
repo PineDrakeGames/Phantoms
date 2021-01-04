@@ -65,6 +65,8 @@ public class BattleManager : MonoBehaviour
         // Start the battle and get it initialized
         battle.Start(true);
 
+        m_playerMenu.OnBattleStart();
+
         // If we'd started the battle with `progressAutomatically = false`, we could wait a while here to open menus etc.
         // before manually progressing to the first round by calling `battle.ProgressBattle()`.
     }

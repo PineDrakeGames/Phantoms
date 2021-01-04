@@ -42,8 +42,17 @@ public class BattlePlayerMenu : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI m_descriptionText = null;
 
+    [Header("3D Indicators")]
     [SerializeField]
     private GameObject m_arrowIndicator = null;
+    [SerializeField]
+    private GameObject m_currentTurnIndicator = null;
+    [SerializeField]
+    private GameObject m_damageIndicator = null;
+    [SerializeField]
+    private Animator m_damageIndicatorAnimation = null;
+    [SerializeField]
+    private TextMeshPro m_damageIndicatorText = null;
 
 
     private List<BattleSubmenuButton> m_subMenuButtons = new List<BattleSubmenuButton>();
@@ -71,13 +80,42 @@ public class BattlePlayerMenu : MonoBehaviour
     private BattleMenuState m_prevState = BattleMenuState.INACTIVE;
     private BattleMenuState m_currentState = BattleMenuState.MAIN;
 
+    private static BattlePlayerMenu s_instance = null;
+    public static BattlePlayerMenu Instance { get { return s_instance; } }
 
-    private void Start()
+
+    public void OnBattleStart()
     {
+        if (s_instance == null)
+        {
+            s_instance = this;
+        }
+
         // Test stuff, making a few buttons.
         m_mainMenuParent.SetActive(false);
         SetArrowIndicator();
         HideSubmenu();
+
+        m_battleManager.CurrentBattle.OnTurnStart.AddListener(SetCurrentTurnIndicator);
+    }
+
+    private void OnDestroy()
+    {
+        if (m_battleManager && m_battleManager.CurrentBattle != null)
+        {
+            m_battleManager.CurrentBattle.OnTurnStart.RemoveListener(SetCurrentTurnIndicator);
+        }
+    }
+
+    /////////////////////////////////
+    /// Public UI event Listeners ///
+    /////////////////////////////////
+    public void SetCurrentTurnIndicator(Actor actor)
+    {
+        if (m_currentTurnIndicator && actor)
+        {
+            m_currentTurnIndicator.transform.position = actor.gameObject.transform.position + Vector3.down;
+        }
     }
 
 
@@ -120,6 +158,13 @@ public class BattlePlayerMenu : MonoBehaviour
             // TODO: Either set offset in prefab or in data
             m_arrowIndicator.transform.position = actor.transform.position + (Vector3.up * 1.5f);
         }
+    }
+
+    public void SetDamageIndicator(Vector3 position, int damage)
+    {
+        m_damageIndicator.transform.position = position;
+        m_damageIndicatorText.text = damage.ToString();
+        m_damageIndicatorAnimation.SetTrigger("Play");
     }
 
 

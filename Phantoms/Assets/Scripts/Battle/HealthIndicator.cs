@@ -14,11 +14,14 @@ public class HealthIndicator : MonoBehaviour
     [SerializeField]
     private TMP_Text m_currentHP = null;
 
+    int prevHP = 0;
+
     // Start is called before the first frame update
     void Start()
     {
         m_maxHP.text = m_actor.MaxHP.ToString();
         m_currentHP.text = m_actor.HP.ToString();
+        prevHP = m_actor.HP;
 
         m_actor.OnHPChange.AddListener(UpdateActorHP);
     }
@@ -30,5 +33,7 @@ public class HealthIndicator : MonoBehaviour
     private void UpdateActorHP(int newHP)
     {
         m_currentHP.text = newHP.ToString();
+        BattlePlayerMenu.Instance.SetDamageIndicator(m_actor.gameObject.transform.position, (prevHP - newHP));
+        prevHP = newHP;
     }
 }
