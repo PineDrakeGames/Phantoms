@@ -41,6 +41,11 @@ public class PlayerController : MonoBehaviour, ICharacterController
     public float JumpPreGroundingGraceTime = 0f;
     public float JumpPostGroundingGraceTime = 0f;
 
+    [Header("Art stuff")]
+    [SerializeField]
+    private Animator m_characterAnimator = null;
+    public float RunSpeedScale = 0.5f;
+
     [Header("Misc")]
     public List<Collider> IgnoredColliders = new List<Collider>();
     public float BonusOrientationSharpness = 10f;
@@ -189,6 +194,9 @@ public class PlayerController : MonoBehaviour, ICharacterController
             currentVelocity += _internalVelocityAdd;
             _internalVelocityAdd = Vector3.zero;
         }
+
+        // Update animator with speed
+        m_characterAnimator.SetFloat("Speed", currentVelocity.magnitude * RunSpeedScale);
     }
 
     /// <summary>
