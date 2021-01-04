@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.lockState = CursorLockMode.Locked;
         CharacterCamera.Player = Character.CameraFollowPoint;
         CharacterCamera.PlayerMotor = Character.Motor;
     }
@@ -24,7 +24,7 @@ public class Player : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Cursor.lockState = CursorLockMode.Locked;
+            //Cursor.lockState = CursorLockMode.Locked;
         }
 
         HandleCharacterInput();

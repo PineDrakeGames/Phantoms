@@ -20,6 +20,11 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private BattlePlayerMenu m_playerMenu = null;
 
+    [Header("Test stuff")]
+    [SerializeField]
+    [Scene]
+    private string m_testReturnScene = null;
+
     private Battle battle; // A reference to the actual Battle object
     public Battle CurrentBattle
     {
@@ -139,6 +144,9 @@ public class BattleManager : MonoBehaviour
         {
             // Show tie screen or determine winner
         }
+
+        // For now, just loading back to the test scene
+        LoadingManager.LoadSceneByPath(m_testReturnScene);
     }
 
     /// Public functions ///
