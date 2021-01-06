@@ -41,6 +41,7 @@ MonoBehaviour:
   - action: 0
     powerType: 0
     actionType: 3
+    specialType: 0
     stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
     environmentVariable: {fileID: 0}
     environmentVariableSetType: 0
@@ -49,10 +50,13 @@ MonoBehaviour:
     duration: 0
     normalizedProcessTime: 1
     chance: 1
-    power1: 10
+    power1: 1
     power2: 15
     powerFormula: 
     breaksChainOnMiss: 0
+    special1: 0
+    special2: 0
+    specialFormula: 
     targetType: 0
   animation:
     enabled: 0
@@ -71,6 +75,7 @@ MonoBehaviour:
     targetName: 
     targetTransform: {fileID: 0}
     parentToTarget: 0
+    inheritParentScale: 0
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
     scale: {x: 1, y: 1, z: 1}
@@ -81,5 +86,6 @@ MonoBehaviour:
     playPosition: 0
     volume: 1
     delay: 0
+  actionTokens: []
   category: 0
   priority: 0

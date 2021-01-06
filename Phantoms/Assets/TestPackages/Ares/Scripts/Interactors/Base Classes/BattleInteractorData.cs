@@ -254,9 +254,11 @@ namespace Ares {
 
 			switch(action.Action){
 				case ActionType.Damage:
-					result *= caster.Stats["attack"].Value / actionTarget.Stats["defense"].Value;
+					result += caster.Stats["attack"].Value;
 					float modifier = PhantomTypes.GetTypeMultiplier(action.ActionType, actionTarget.MainType) * PhantomTypes.GetTypeMultiplier(action.ActionType, actionTarget.SecondType);
 					result *= modifier;
+					result -= actionTarget.Stats["defense"].Value;
+					if (result < 1) { result = 1;}
 					break;
 				case ActionType.Heal:
 					break;

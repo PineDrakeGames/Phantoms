@@ -56,6 +56,7 @@ public class AbilityMinigameData : ScriptableObject
     }
 }
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(AbilityMinigameData))]
 public class AbilityMinigameDataEditor : Editor
 {
@@ -71,3 +72,4 @@ public class AbilityMinigameDataEditor : Editor
 
     }
 }
+#endif
