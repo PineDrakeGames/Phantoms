@@ -29,8 +29,8 @@ public enum PhantomBackground
 
 public struct BackgroundStats
 {
-    BattleStatType Increase;
-    BattleStatType Decrease;
+    public BattleStatType Increase;
+    public BattleStatType Decrease;
 
     public BackgroundStats(BattleStatType increase, BattleStatType decrease)
     {
@@ -63,5 +63,15 @@ public static class PhantomDataUtility
         { (PhantomBackground)18, new BackgroundStats(BattleStatType.RELIC,  BattleStatType.ATTACK) },
         { (PhantomBackground)19, new BackgroundStats(BattleStatType.RELIC,  BattleStatType.DEFENSE) },
         { (PhantomBackground)20, new BackgroundStats(BattleStatType.RELIC,  BattleStatType.MANA) }
+    };
+
+
+    public static BattleStatType[] LevelUpStats = new BattleStatType[5]
+    {
+        BattleStatType.MAXHP,
+        BattleStatType.ATTACK,
+        BattleStatType.DEFENSE,
+        BattleStatType.MANA,
+        BattleStatType.RELIC
     };
 }

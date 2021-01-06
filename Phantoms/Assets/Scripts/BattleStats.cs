@@ -73,4 +73,13 @@ public class BattleStats
                 break;
         }
     }
+
+    public void SetToZero()
+    {
+        MaxHP = 0;
+        Attack = 0;
+        Defense = 0;
+        Mana = 0;
+        Relic = 0;
+    }
 }
