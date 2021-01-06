@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class PhantomInstanceData
 {
     public string PhantomID = null;
@@ -23,7 +24,7 @@ public class PhantomInstanceData
         { 
             if (m_data == null)
             {
-                m_data = DataManager.PhantomData.IdToData[PhantomID];
+                m_data = DataManager.Instance.TryGetPhantomData(PhantomID);
             }
             return m_data;
         }

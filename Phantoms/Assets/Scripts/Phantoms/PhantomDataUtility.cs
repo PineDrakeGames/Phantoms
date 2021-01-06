@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Ares;
 
 public enum PhantomBackground
 {
@@ -74,4 +75,20 @@ public static class PhantomDataUtility
         BattleStatType.MANA,
         BattleStatType.RELIC
     };
+
+    public static void SetPhantomActor(Actor phantomActor, PhantomInstanceData instanceData)
+    {
+        Dictionary<string, int> stats = new Dictionary<string, int>();
+        stats.Add("attack", instanceData.CurrentStats.Attack);
+        stats.Add("defense", instanceData.CurrentStats.Defense);
+
+        string displayName = instanceData.NickName;
+        if (string.IsNullOrEmpty(displayName))
+        {
+            displayName = instanceData.Data.PhantomDisplayName;
+        }
+
+        phantomActor.Init(instanceData.NickName, instanceData.CurrentStats.MaxHP, instanceData.CurrentStats.MaxHP, stats, phantomActor.Abilities, phantomActor.FallbackAbility, phantomActor.Afflictions, phantomActor.inventory);
+
+    }
 }

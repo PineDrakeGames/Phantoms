@@ -36,7 +36,7 @@ public class BattleManager : MonoBehaviour
         // Spawn all dynamic actors and set up their Actor* components here.
     }
 
-    void Start()
+    public void StartBattle()
     {
         // Set up battle
         battle = new Battle(rules);
