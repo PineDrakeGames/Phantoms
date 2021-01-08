@@ -85,8 +85,8 @@ namespace Ares {
 			}
 		}
 
-		public PhantomType MainType {get{return mainType;}}
-		public PhantomType SecondType{get{return secondType;}}
+		public PhantomType MainType {get{return mainType;} set{mainType = value;}}
+		public PhantomType SecondType{get{return secondType;} set{secondType = value;}}
 		
 		//Misc. properties
 		public Battle Battle {get; private set;} //Only used as a convenience reference

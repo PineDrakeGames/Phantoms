@@ -2344,7 +2344,7 @@ namespace Ares
 
             AbilityMinigame.MinigameResult minigameResult = AbilityMinigame.MinigameResult.FAIL;
             bool usedMinigame = false;
-            if (ability.UseMinigame && ability.Minigame != null)
+            if (ability.UseMinigame && ability.Minigame != null && actor.Group.Name == "Player")
             {
                 if (AbilityMinigameManager.HasMinigame(ability.Minigame.type))
                 {
