@@ -17,7 +17,7 @@ public class HealthIndicator : MonoBehaviour
     int prevHP = 0;
 
     // Start is called before the first frame update
-    void Start()
+    public void BattleStart()
     {
         m_maxHP.text = m_actor.MaxHP.ToString();
         m_currentHP.text = m_actor.HP.ToString();

@@ -185,6 +185,12 @@ MonoBehaviour:
     type: 3}
   m_descriptionObject: {fileID: 330897005}
   m_descriptionText: {fileID: 109716249}
+  m_healthIndicators:
+  - {fileID: 2133972950}
+  - {fileID: 817166746}
+  - {fileID: 1157246652}
+  - {fileID: 1008429796}
+  - {fileID: 1792146096}
   m_arrowIndicator: {fileID: 325819421}
   m_currentTurnIndicator: {fileID: 1761378179}
   m_damageIndicator: {fileID: 391790461}
@@ -4939,6 +4945,120 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1359268454}
   m_CullTransparentMesh: 0
+--- !u!1 &1365962235
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1365962237}
+  - component: {fileID: 1365962236}
+  m_Layer: 0
+  m_Name: Test Battle Start
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1365962236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1365962235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38fce1928f96d6849930e99f73efdd6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_battleManager: {fileID: 245611249}
+  m_phantomActors:
+  - {fileID: 279658742}
+  - {fileID: 1848820915}
+  - {fileID: 971265304}
+  - {fileID: 1176759219}
+  m_phantomData:
+  - PhantomID: CHESTER
+    NickName: Chestnut
+    Level: 0
+    Background: 1
+    LevelUps:
+      MaxHP: 0
+      Attack: 0
+      Defense: 0
+      Mana: 0
+      Relic: 0
+    CurrentStats:
+      MaxHP: 0
+      Attack: 0
+      Defense: 0
+      Mana: 0
+      Relic: 0
+  - PhantomID: BAT
+    NickName: Gruyere
+    Level: 0
+    Background: 8
+    LevelUps:
+      MaxHP: 0
+      Attack: 0
+      Defense: 0
+      Mana: 0
+      Relic: 0
+    CurrentStats:
+      MaxHP: 0
+      Attack: 0
+      Defense: 0
+      Mana: 0
+      Relic: 0
+  - PhantomID: BAT
+    NickName: Parm
+    Level: 0
+    Background: 17
+    LevelUps:
+      MaxHP: 0
+      Attack: 0
+      Defense: 0
+      Mana: 0
+      Relic: 0
+    CurrentStats:
+      MaxHP: 0
+      Attack: 0
+      Defense: 0
+      Mana: 0
+      Relic: 0
+  - PhantomID: BAT
+    NickName: Cheddar
+    Level: 0
+    Background: 20
+    LevelUps:
+      MaxHP: 0
+      Attack: 0
+      Defense: 0
+      Mana: 0
+      Relic: 0
+    CurrentStats:
+      MaxHP: 0
+      Attack: 0
+      Defense: 0
+      Mana: 0
+      Relic: 0
+--- !u!4 &1365962237
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1365962235}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.33906388, y: 1.5634248, z: -1.0230045}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1370314389
 GameObject:
   m_ObjectHideFlags: 0

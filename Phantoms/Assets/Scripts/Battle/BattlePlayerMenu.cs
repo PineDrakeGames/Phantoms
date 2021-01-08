@@ -42,6 +42,10 @@ public class BattlePlayerMenu : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI m_descriptionText = null;
 
+    [Header("UI Items")]
+    [SerializeField]
+    private HealthIndicator[] m_healthIndicators = null;
+
     [Header("3D Indicators")]
     [SerializeField]
     private GameObject m_arrowIndicator = null;
@@ -97,6 +101,11 @@ public class BattlePlayerMenu : MonoBehaviour
         HideSubmenu();
 
         m_battleManager.CurrentBattle.OnTurnStart.AddListener(SetCurrentTurnIndicator);
+
+        foreach(HealthIndicator indicator in m_healthIndicators)
+        {
+            if (indicator) { indicator.BattleStart(); }
+        }
     }
 
     private void OnDestroy()
