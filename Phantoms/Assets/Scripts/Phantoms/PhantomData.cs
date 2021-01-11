@@ -4,8 +4,9 @@ using UnityEngine;
 using Ares;
 
 [CreateAssetMenu(menuName = "Phantoms/Phantom Data")]
-public class PhantomData : ScriptableObject
+public class PhantomData : CombatantData
 {
+    [Header("Phantom Info")]
     public string PhantomID = string.Empty;
     public string PhantomDisplayName = string.Empty;
     public string PhantomDescription = string.Empty;
@@ -19,8 +20,4 @@ public class PhantomData : ScriptableObject
 
     [Tooltip("The amount that each stat increases when leveled for this phantom")]
     public BattleStats LevelUpAmounts;
-
-    [Header("Things needed for ARES Combat")]
-    public GameObject BattlePrefab = null;
-    public Ability[] Abilities;
 }

@@ -25,6 +25,9 @@ public class DataManager : MonoBehaviour
     }
 
     [SerializeField]
+    private PlayerBattleData m_playerBattleData = null;
+
+    [SerializeField]
     private PhantomDataTable m_phantomData = null;
     public static PhantomDataTable PhantomData
     {
@@ -58,5 +61,10 @@ public class DataManager : MonoBehaviour
         {
             return null;
         }
+    }
+
+    public PlayerBattleData GetPlayerBattleData()
+    {
+        return m_playerBattleData;
     }
 }

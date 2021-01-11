@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class PhantomInstanceData
+public class PhantomInstanceData : CombatantInstanceData
 {
     public string PhantomID = null;
 
@@ -14,19 +14,16 @@ public class PhantomInstanceData
     public PhantomBackground Background = PhantomBackground.None;
 
     public BattleStats LevelUps = new BattleStats();
-
-    public BattleStats CurrentStats = new BattleStats();
-
-    private PhantomData m_data = null;
-    public PhantomData Data
+    
+    public PhantomData PhanData
     {
         get
         { 
-            if (m_data == null)
+            if (Data == null)
             {
-                m_data = DataManager.Instance.TryGetPhantomData(PhantomID);
+                Data = DataManager.Instance.TryGetPhantomData(PhantomID);
             }
-            return m_data;
+            return (PhantomData)Data;
         }
     }
 
@@ -43,21 +40,21 @@ public class PhantomInstanceData
 
     public void SetCurrentStats()
     {
-        BattleStats startingStats = new BattleStats(Data.StartingStats);
+        BattleStats startingStats = new BattleStats(PhanData.StartingStats);
 
         // Setting up background stats - for now, just subtract the decrease and add the increase
         BackgroundStats backStats = PhantomDataUtility.BackgroundToStats[Background];
         BattleStatType increase = backStats.Increase;
         BattleStatType decrease = backStats.Decrease;
-        startingStats.SetStat(increase, startingStats.GetStat(increase) + Data.LevelUpAmounts.GetStat(increase));
-        startingStats.SetStat(decrease, startingStats.GetStat(decrease) - Data.LevelUpAmounts.GetStat(decrease));
+        startingStats.SetStat(increase, startingStats.GetStat(increase) + PhanData.LevelUpAmounts.GetStat(increase));
+        startingStats.SetStat(decrease, startingStats.GetStat(decrease) - PhanData.LevelUpAmounts.GetStat(decrease));
 
         // Add in level ups!
         foreach(BattleStatType type in PhantomDataUtility.LevelUpStats)
         {
             for (int i = 0; i < LevelUps.GetStat(type); i++)
             {
-                startingStats.SetStat(type, startingStats.GetStat(type) + Data.LevelUpAmounts.GetStat(type));
+                startingStats.SetStat(type, startingStats.GetStat(type) + PhanData.LevelUpAmounts.GetStat(type));
             }
         }
 

@@ -85,12 +85,12 @@ public static class PhantomDataUtility
         string displayName = instanceData.NickName;
         if (string.IsNullOrEmpty(displayName))
         {
-            displayName = instanceData.Data.PhantomDisplayName;
+            displayName = instanceData.PhanData.PhantomDisplayName;
         }
 
-        phantomActor.Init(instanceData.NickName, instanceData.CurrentStats.MaxHP, instanceData.CurrentStats.MaxHP, stats, instanceData.Data.Abilities, phantomActor.FallbackAbility, phantomActor.Afflictions, phantomActor.inventory);
-        phantomActor.MainType = instanceData.Data.MainType;
-        phantomActor.SecondType = instanceData.Data.SecondType;
+        phantomActor.Init(displayName, instanceData.CurrentStats.MaxHP, instanceData.CurrentStats.MaxHP, stats, instanceData.Data.Abilities, phantomActor.FallbackAbility, phantomActor.Afflictions, phantomActor.inventory);
+        phantomActor.MainType = instanceData.PhanData.MainType;
+        phantomActor.SecondType = instanceData.PhanData.SecondType;
 
     }
 }
