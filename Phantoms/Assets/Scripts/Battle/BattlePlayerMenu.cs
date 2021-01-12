@@ -44,7 +44,11 @@ public class BattlePlayerMenu : MonoBehaviour
 
     [Header("UI Items")]
     [SerializeField]
-    private HealthIndicator[] m_healthIndicators = null;
+    private Transform m_playerHealthIndicators = null;
+    [SerializeField]
+    private Transform m_enemyHealthIndicators = null;
+    [SerializeField]
+    private GameObject m_healthIndicator = null;
 
     [Header("3D Indicators")]
     [SerializeField]
@@ -102,9 +106,21 @@ public class BattlePlayerMenu : MonoBehaviour
 
         m_battleManager.CurrentBattle.OnTurnStart.AddListener(SetCurrentTurnIndicator);
 
-        foreach(HealthIndicator indicator in m_healthIndicators)
+        foreach(Actor actor in m_battleManager.CurrentBattle.Actors)
         {
-            if (indicator) { indicator.BattleStart(); }
+            GameObject gameObj = null;
+            HealthIndicator indicator = null;
+            if (actor.Group.Name == "Player")
+            {
+                gameObj = Instantiate(m_healthIndicator, m_playerHealthIndicators);
+            }
+            else
+            {
+                gameObj = Instantiate(m_healthIndicator, m_enemyHealthIndicators);
+            }
+            indicator = gameObj.GetComponent<HealthIndicator>();
+            indicator.Actor = actor;
+            indicator.BattleStart();
         }
     }
 
