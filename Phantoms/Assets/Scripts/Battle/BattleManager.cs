@@ -36,6 +36,13 @@ public class BattleManager : MonoBehaviour
         // Spawn all dynamic actors and set up their Actor* components here.
     }
 
+    public void StartBattle(Actor[] playerActors, Actor[] enemyActors)
+    {
+        playerTeam = playerActors;
+        enemies = enemyActors;
+        StartBattle();
+    }
+
     public void StartBattle()
     {
         // Set up battle
