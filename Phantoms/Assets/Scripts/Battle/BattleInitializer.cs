@@ -30,6 +30,9 @@ public class BattleInitializer : MonoBehaviour
     {
         List<Actor> PlayerActors = SpawnActorsInLine(true, playerCombatants, m_playerSpawnPoint1.position, m_playerSpawnPoint2.position, m_maxDistanceBetweenPlayers);
         List<Actor> EnemyActors = SpawnActorsInLine(false, enemyCombatants, m_enemySpawnPoint1.position, m_enemySpawnPoint2.position, m_maxDistanceBetweenEnemies);
+
+        SetInitialRotations(PlayerActors, EnemyActors);
+
         m_battleManager.StartBattle(PlayerActors.ToArray(), EnemyActors.ToArray());
     }
 
@@ -125,5 +128,37 @@ public class BattleInitializer : MonoBehaviour
         }
 
         return spawnedActors;
+    }
+
+
+    private void SetInitialRotations(List<Actor> players, List<Actor> enemies)
+    {
+        Vector3 playerCenter = Vector3.zero;
+        foreach(Actor player in players)
+        {
+            playerCenter += player.transform.position;
+        }
+        playerCenter /= (float)(players.Count);
+        playerCenter.y = 0;
+
+        Vector3 enemyCenter = Vector3.zero;
+        foreach(Actor enemy in enemies)
+        {
+            enemyCenter += enemy.transform.position;
+        }
+        enemyCenter /= (float)(enemies.Count);
+        enemyCenter.y = 0;
+
+        Quaternion playerLookDirection = Quaternion.LookRotation(enemyCenter - playerCenter, Vector3.up);
+        Quaternion enemyLookDirection = Quaternion.LookRotation(playerCenter - enemyCenter, Vector3.up);
+
+        foreach(Actor player in players)
+        {
+            player.transform.rotation = playerLookDirection;
+        }
+        foreach(Actor enemy in enemies)
+        {
+            enemy.transform.rotation = enemyLookDirection;
+        }
     }
 }
