@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Ares;
+using Ares.ActorComponents;
 
 public class BattleInitializer : MonoBehaviour
 {
@@ -108,6 +109,12 @@ public class BattleInitializer : MonoBehaviour
                 PhantomInstanceData data = combatants[i] as PhantomInstanceData;
                 data.SetCurrentStats();
                 PhantomDataUtility.SetPhantomActor(actorComponent, data);
+                ActorAnimation actorAnimation = spawnedObject.GetComponent<ActorAnimation>();
+                if (actorAnimation == null)
+                {
+                    actorAnimation = spawnedObject.AddComponent<ActorAnimation>();
+                    SetActorAnimations(actorAnimation);
+                }
             }
             else
             {
@@ -133,7 +140,7 @@ public class BattleInitializer : MonoBehaviour
     private void SetInitialRotations(List<Actor> players, List<Actor> enemies)
     {
         Vector3 playerCenter = Vector3.zero;
-        foreach(Actor player in players)
+        foreach (Actor player in players)
         {
             playerCenter += player.transform.position;
         }
@@ -141,7 +148,7 @@ public class BattleInitializer : MonoBehaviour
         playerCenter.y = 0;
 
         Vector3 enemyCenter = Vector3.zero;
-        foreach(Actor enemy in enemies)
+        foreach (Actor enemy in enemies)
         {
             enemyCenter += enemy.transform.position;
         }
@@ -151,13 +158,25 @@ public class BattleInitializer : MonoBehaviour
         Quaternion playerLookDirection = Quaternion.LookRotation(enemyCenter - playerCenter, Vector3.up);
         Quaternion enemyLookDirection = Quaternion.LookRotation(playerCenter - enemyCenter, Vector3.up);
 
-        foreach(Actor player in players)
+        foreach (Actor player in players)
         {
             player.transform.rotation = playerLookDirection;
         }
-        foreach(Actor enemy in enemies)
+        foreach (Actor enemy in enemies)
         {
             enemy.transform.rotation = enemyLookDirection;
         }
+    }
+
+    private void SetActorAnimations(ActorAnimation actorAnimation)
+    {
+        actorAnimation.Init(false, false, false, true, ActorAnimation.ParamaterResetType.DefaultValue, 0, ActorAnimation.ParamaterResetType.DefaultValue, 0f, ActorAnimation.ParamaterResetType.DefaultValue, false);
+        ActorAnimationEventElement takeDamageCallback = actorAnimation.GetEventCallback(EventCallbackType.TakeDamage);
+        takeDamageCallback.Effect.SetAsTrigger("TakeDamage");
+        takeDamageCallback.Enabled = true;
+
+        ActorAnimationEventElement deathCallback = actorAnimation.GetEventCallback(EventCallbackType.Die);
+        deathCallback.Effect.SetAsTrigger("Dead");
+        deathCallback.Enabled = true;
     }
 }
