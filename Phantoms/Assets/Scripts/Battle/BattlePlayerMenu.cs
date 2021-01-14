@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using Ares;
 using TMPro;
 
@@ -226,9 +227,10 @@ public class BattlePlayerMenu : MonoBehaviour
         submenuButton = AddSubmenuButton("Run", "Run away from battle");
         // TODO: Run?
         submenuButton = AddSubmenuButton("Swap", "Swap turns with your partner");
-        submenuButton.ButtonComponent.onClick.AddListener(m_battleManager.SwapTurns);
+        submenuButton.ClickEvent.AddListener(m_battleManager.SwapTurns);
         submenuButton = AddSubmenuButton("Skip", "Skip your turn");
-        submenuButton.ButtonComponent.onClick.AddListener(delegate { m_actionInput.SkipCallback(); });
+        Debug.Log("Adding listener to the button!");
+        submenuButton.ClickEvent.AddListener(delegate { m_actionInput.SkipCallback(); });
 
         ShowSubmenu();
     }
@@ -435,8 +437,8 @@ public class BattlePlayerMenu : MonoBehaviour
         submenuButton.ButtonDesc = description;
 
         // Remove all previous listeners, and add any onclick listeners that all buttons would have.
-        submenuButton.ClickEvent.RemoveAllListeners();
-        submenuButton.SelectEvent.RemoveAllListeners();
+        submenuButton.ClickEvent = new UnityEvent();
+        submenuButton.SelectEvent = new UnityEvent();
 
         submenuButton.ClickEvent.AddListener(ClearSubmenu);
         submenuButton.ClickEvent.AddListener(HideSubmenu);
@@ -474,6 +476,11 @@ public class BattlePlayerMenu : MonoBehaviour
         foreach (Transform child in m_content.transform)
         {
             child.gameObject.SetActive(false);
+        }
+        foreach (BattleSubmenuButton item in m_subMenuButtons)
+        {
+            item.ClickEvent = new UnityEvent();
+            item.SelectEvent = new UnityEvent();
         }
     }
 }
