@@ -13,6 +13,8 @@ public class BattlePlayerMenu : MonoBehaviour
     [SerializeField]
     private BattleManager m_battleManager = null;
 
+    [SerializeField]
+    private BattleCameraManager m_battleCamera = null;
 
     [Header("Main menu items")]
     [SerializeField]
@@ -75,6 +77,8 @@ public class BattlePlayerMenu : MonoBehaviour
         get { return m_actionTargets; }
     }
 
+    private Vector3 enemyCenter = Vector3.zero;
+
 
     private enum BattleMenuState
     {
@@ -106,7 +110,7 @@ public class BattlePlayerMenu : MonoBehaviour
 
         m_battleManager.CurrentBattle.OnTurnStart.AddListener(SetCurrentTurnIndicator);
 
-        foreach(Actor actor in m_battleManager.CurrentBattle.Actors)
+        foreach (Actor actor in m_battleManager.CurrentBattle.Actors)
         {
             GameObject gameObj = null;
             HealthIndicator indicator = null;
@@ -122,6 +126,18 @@ public class BattlePlayerMenu : MonoBehaviour
             indicator.Actor = actor;
             indicator.BattleStart();
         }
+
+        enemyCenter = Vector3.zero;
+        int totalEnemies = 0;
+        foreach (Actor enemy in m_battleManager.CurrentBattle.Actors)
+        {
+            if (enemy.Group.Name != "Player")
+            {
+                enemyCenter += enemy.transform.position;
+                totalEnemies += 1;
+            }
+        }
+        enemyCenter /= totalEnemies;
     }
 
     private void OnDestroy()
@@ -139,7 +155,7 @@ public class BattlePlayerMenu : MonoBehaviour
     {
         if (m_currentTurnIndicator && actor)
         {
-            m_currentTurnIndicator.transform.position = actor.gameObject.transform.position + Vector3.down;
+            m_currentTurnIndicator.transform.position = actor.gameObject.transform.position;
         }
     }
 
@@ -152,6 +168,9 @@ public class BattlePlayerMenu : MonoBehaviour
     {
         m_actionInput = actionInput;
         m_currentActor = actor;
+
+
+        m_battleCamera.SetCameraOverShoulder(actor.transform.position, enemyCenter);
         ReturnToMainMenu();
     }
 
@@ -268,7 +287,7 @@ public class BattlePlayerMenu : MonoBehaviour
                 {
                     submenuButton = AddSubmenuButton(actor.DisplayName, null);
                     submenuButton.ClickEvent.AddListener(delegate { SetTarget(actor); });
-                    submenuButton.SelectEvent.AddListener( delegate {SetArrowIndicator(actor); });
+                    submenuButton.SelectEvent.AddListener(delegate { SetArrowIndicator(actor); });
                 }
                 break;
             case BattleInteractorData.TargetType.NumberOfActors:
@@ -281,7 +300,7 @@ public class BattlePlayerMenu : MonoBehaviour
                         SetTarget(actor);
                         submenuButton.gameObject.SetActive(false);
                     });
-                    submenuButton.SelectEvent.AddListener( delegate {SetArrowIndicator(actor); });
+                    submenuButton.SelectEvent.AddListener(delegate { SetArrowIndicator(actor); });
                 }
                 break;
             case BattleInteractorData.TargetType.AllActorsInGroup:
@@ -317,11 +336,13 @@ public class BattlePlayerMenu : MonoBehaviour
         {
             case BattleInteractorData.TargetType.SingleActor:
                 m_actionInput.AbilitySelectCallback(m_currentAbility);
+                m_battleCamera.ResetCamera();
                 break;
             case BattleInteractorData.TargetType.NumberOfActors:
                 if (m_actionTargets.Count >= m_currentAbility.Data.NumberOfTargets)
                 {
                     m_actionInput.AbilitySelectCallback(m_currentAbility);
+                    m_battleCamera.ResetCamera();
                 }
                 break;
         }
@@ -419,7 +440,7 @@ public class BattlePlayerMenu : MonoBehaviour
 
         submenuButton.ClickEvent.AddListener(ClearSubmenu);
         submenuButton.ClickEvent.AddListener(HideSubmenu);
-        submenuButton.SelectEvent.AddListener( delegate {SetDescription(description); });
+        submenuButton.SelectEvent.AddListener(delegate { SetDescription(description); });
         return submenuButton;
     }
 

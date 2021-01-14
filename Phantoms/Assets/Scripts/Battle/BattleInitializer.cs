@@ -73,7 +73,6 @@ public class BattleInitializer : MonoBehaviour
         // spawn each actor using our list of positions.
         for (int i = 0; i < numToSpawn; i++)
         {
-            Debug.Log(i);
             GameObject spawnedObject = Instantiate(combatants[i].Data.BattlePrefab, spawnPoints[i], Quaternion.identity);
             Actor actorComponent = spawnedObject.GetComponent<Actor>();
             if (actorComponent == null)

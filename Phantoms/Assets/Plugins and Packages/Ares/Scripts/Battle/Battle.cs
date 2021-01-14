@@ -731,7 +731,6 @@ namespace Ares
 					ProgressBattle();
 					break;
             }
-            Debug.Log("Finished!");
         }
 
         List<Actor> CreateAfflictionActorProcessingQueue(RoundMoment roundMoment)
@@ -2335,8 +2334,7 @@ namespace Ares
             yield return null;
 
             actor.OnAbilityStart.Invoke(ability, targets);
-            ability.OnUse(actor, targets);
-
+            
             ability.PrepareForChainEvaluation(actor, targets);
 
             List<Actor> remainingTargets = targets.ToList();
@@ -2357,6 +2355,8 @@ namespace Ares
                     minigameResult = AbilityMinigameManager.CurrentMinigame.Result;
                 }
             }
+
+            ability.OnUse(actor, targets);
 
             foreach (AbilityAction action in ability.Data.Actions.Where(a => !a.IsChildEffect))
             {
