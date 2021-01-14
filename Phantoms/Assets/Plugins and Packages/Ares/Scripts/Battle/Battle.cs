@@ -2347,6 +2347,7 @@ namespace Ares
                 if (AbilityMinigameManager.HasMinigame(ability.Minigame.type))
                 {
                     usedMinigame = true;
+                    yield return new WaitForSeconds(0.5f);
                     AbilityMinigameManager.StartMinigame(ability.Minigame);
                     while (AbilityMinigameManager.CurrentMinigame.State != AbilityMinigame.MinigameState.FINISHED)
                     {
