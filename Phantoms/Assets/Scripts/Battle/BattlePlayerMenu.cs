@@ -226,8 +226,14 @@ public class BattlePlayerMenu : MonoBehaviour
         BattleSubmenuButton submenuButton = null;
         submenuButton = AddSubmenuButton("Run", "Run away from battle");
         // TODO: Run?
-        submenuButton = AddSubmenuButton("Swap", "Swap turns with your partner");
-        submenuButton.ClickEvent.AddListener(m_battleManager.SwapTurns);
+
+        // Check if swapping turns is an option first.
+        if (CanSwap())
+        {
+            submenuButton = AddSubmenuButton("Swap", "Swap turns with your partner");
+            submenuButton.ClickEvent.AddListener(m_battleManager.SwapTurns);
+        }
+
         submenuButton = AddSubmenuButton("Skip", "Skip your turn");
         Debug.Log("Adding listener to the button!");
         submenuButton.ClickEvent.AddListener(delegate { m_actionInput.SkipCallback(); });
@@ -482,5 +488,18 @@ public class BattlePlayerMenu : MonoBehaviour
             item.ClickEvent = new UnityEvent();
             item.SelectEvent = new UnityEvent();
         }
+    }
+
+    private bool CanSwap()
+    {
+        BattleGroup group = m_currentActor.Group;
+        foreach (Actor actor in group.Actors)
+        {
+            if (actor != m_currentActor && m_battleManager.CurrentBattle.HasRemainingTurns(actor))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

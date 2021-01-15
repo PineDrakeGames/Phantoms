@@ -2149,18 +2149,35 @@ namespace Ares
             }
         }
 
+        // Used to swap turn to the next actor of the same group
         public void SwapTurn()
         {
-            Actor nextActor = queuedActors[currentActorIndex + 1];
-            if (ActorInfo[nextActor].Group == ActorInfo[currentActor].Group)
+            for (int i = 1; (i + currentActorIndex) < queuedActors.Count; i++)
             {
-                queuedActors.Remove(currentActor);
-                queuedActors.Insert(currentActorIndex + 1, currentActor);
-                currentRoundState = RoundState.InProgress;
-                currentActor = nextActor;
+                Actor nextActor = queuedActors[currentActorIndex + i];
+                if (ActorInfo[nextActor].Group == ActorInfo[currentActor].Group)
+                {
+                    queuedActors.Remove(currentActor);
+                    queuedActors.Insert(currentActorIndex + i, currentActor);
+                    currentRoundState = RoundState.InProgress;
+                    currentActor = nextActor;
 
-                ProgressBattle();
+                    ProgressBattle();
+                }
             }
+        }
+
+        // Used to check if a given actor has any more current turns in this round.
+        public bool HasRemainingTurns(Actor actor)
+        {
+            for(int i = currentActorIndex; i < queuedActors.Count; i++)
+            {
+                if (queuedActors[i] == actor)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         Ability[] GetValidAbilities(Actor actor)
