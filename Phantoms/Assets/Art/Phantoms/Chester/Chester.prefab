@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8204084981896941957}
   - component: {fileID: 2250769355225287387}
+  - component: {fileID: 7967938685519826347}
   m_Layer: 0
   m_Name: Chester
   m_TagString: Untagged
@@ -51,6 +52,24 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &7967938685519826347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3028977243553465498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12a8206a437c2da43b0f485305323d88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_renderer: {fileID: 5520703524713379698}
+  m_toonHelper: {fileID: 838513035517035824}
+  m_materialIndex: 0
+  m_materials:
+  - {fileID: 2100000, guid: f3758a50e4a8da2478b6d5166f44b507, type: 2}
+  - {fileID: 2100000, guid: bebf473888ed0994cb8929aeaa50c8ca, type: 2}
 --- !u!114 &838513035517035824
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,6 +229,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_RootOrder
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6b510df2c31250f42933463ec03b95bb,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6b510df2c31250f42933463ec03b95bb,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6b510df2c31250f42933463ec03b95bb,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6b510df2c31250f42933463ec03b95bb,
         type: 3}
@@ -768,6 +802,12 @@ Transform:
 --- !u!1 &5975483694020038216 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 635547659545568360, guid: 6b510df2c31250f42933463ec03b95bb,
+    type: 3}
+  m_PrefabInstance: {fileID: 6502289631935949344}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &5520703524713379698 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1630794972795428178, guid: 6b510df2c31250f42933463ec03b95bb,
     type: 3}
   m_PrefabInstance: {fileID: 6502289631935949344}
   m_PrefabAsset: {fileID: 0}

@@ -26,7 +26,7 @@ namespace AwesomeToon {
     public class AwesomeToonHelper : MonoBehaviour {
 
         // Params
-        [SerializeField] Material material = null;
+        [SerializeField] public Material material = null;
         [SerializeField] bool instanceMaterial = true;
         [SerializeField] Vector3 meshCenter = Vector3.zero;
         [SerializeField] int maxLights = 6;
@@ -55,7 +55,7 @@ namespace AwesomeToon {
             Update();
         }
 
-        void Init() {
+        public void Init() {
             if (!material) return;
             if (instanceMaterial) {
                 materialInstance = new Material(material);
