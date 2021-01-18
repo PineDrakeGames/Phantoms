@@ -29,9 +29,12 @@ public class BattleCameraManager : MonoBehaviour
     private const float DEFAULT_TRANSITION_TIME = 0.4f;
 
     // For over the should things, some variables.
-    private const float DISTANCE_BEHIND_PLAYER = 4.5f;
-    private const float SIDE_ROTATION = -35f;
-    private const float UP_ROTATION = -25f;
+    [SerializeField]
+    private float DISTANCE_BEHIND_PLAYER = 4.5f;
+    [SerializeField]
+    private float SIDE_ROTATION = -35f;
+    [SerializeField]
+    private float UP_ROTATION = -25f;
 
 
     ///////////////////////
