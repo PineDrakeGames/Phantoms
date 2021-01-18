@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Ares;
 
 public class BattleCameraManager : MonoBehaviour
 {
@@ -36,12 +37,42 @@ public class BattleCameraManager : MonoBehaviour
     [SerializeField]
     private float UP_ROTATION = -25f;
 
+    // static instance stuff
+    private static BattleCameraManager s_instance = null;
+    public static BattleCameraManager Instance
+    {
+        get 
+        {
+            if (s_instance == null)
+            {
+                s_instance = FindObjectOfType<BattleCameraManager>();
+                if (s_instance)
+                {
+                    GameObject cameraObject = Instantiate(new GameObject());
+                    s_instance = cameraObject.AddComponent<BattleCameraManager>();
+                    s_instance.m_cameraTransform = Camera.main.transform;
+                    s_instance.m_cameraTransitionCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+                }
+            }
+            return s_instance;
+        }
+    }
+
 
     ///////////////////////
     /// Unity Functions ///
     ///////////////////////
     private void Awake()
     {
+        if (s_instance == null)
+        {
+            s_instance = this;
+        }
+        else if (s_instance != this)
+        {
+            Destroy(this);
+            return;
+        }
         m_cameraTransform.position = m_defaultCameraPosition.position;
         m_cameraTransform.rotation = m_defaultCameraPosition.rotation;
     }
@@ -68,18 +99,50 @@ public class BattleCameraManager : MonoBehaviour
         }
     }
 
+    /////////////////////////////////////////////////////////
+    /// Public functions to handle specific battle events ///
+    /////////////////////////////////////////////////////////
+    public void OnTurnEnd(Actor currentActor)
+    {
+        if (currentActor.Group.Name != "Player")
+        {
+            return;
+        }
+
+        BattleGroup group = currentActor.Group;
+        foreach (Actor actor in group.Actors)
+        {
+            if (actor != currentActor && BattleManager.Instance.CurrentBattle.HasRemainingTurns(actor))
+            {
+                // If an actor in the player group still has turn(s) left, then the player turn is not done.
+                return;
+            }
+        }
+
+        // If we reach this point, the player team's turn is over - should also reset the camera in this case.
+        ResetCamera();
+    }
+
+
     ///////////////////////////////////////////////////////////////
     /// Public functions to set the camera to various positions ///    
     ///////////////////////////////////////////////////////////////
 
     public void ResetCamera()
     {
+        
         SetCamera(m_defaultCameraPosition.position, m_defaultCameraPosition.rotation);
     }
 
     // Setting the camera using an explicit position and rotation
     public void SetCamera(Vector3 targetPosition, Quaternion targetRotation, float transitionDuration = DEFAULT_TRANSITION_TIME)
     {
+        if (m_targetposition == targetPosition && m_targetRotation == targetRotation)
+        {
+            // If already approximately heading to the given position and rotation, just keep goin.
+            return;
+        }
+
         m_targetposition = targetPosition;
         m_targetRotation = targetRotation;
 

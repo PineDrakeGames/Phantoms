@@ -31,9 +31,30 @@ public class BattleManager : MonoBehaviour
         get { return battle; }
     }
 
+    private static BattleManager s_instance = null;
+    public static BattleManager Instance
+    {
+        get 
+        {
+            if (s_instance == null)
+            {
+                s_instance = FindObjectOfType<BattleManager>();
+                if (s_instance)
+                {
+                    GameObject managerObject = Instantiate(new GameObject());
+                    s_instance = managerObject.AddComponent<BattleManager>();
+                }
+            }
+            return s_instance;
+        }
+    }
+
     void Awake()
     {
-        // Spawn all dynamic actors and set up their Actor* components here.
+        if (s_instance == null)
+        {
+            s_instance = this;
+        }
     }
 
     public void StartBattle(Actor[] playerActors, Actor[] enemyActors)
@@ -55,6 +76,9 @@ public class BattleManager : MonoBehaviour
         battle.OnActorNeedsGroupTargetInput.AddListener(ShowTargetInput);
         battle.OnActorHasGivenAllNeededInput.AddListener(HideInput);
         battle.OnBattleEnd.AddListener(OnBattleEnd);
+        
+        // Set up battle Camera manager's events
+        battle.OnTurnEnd.AddListener(BattleCameraManager.Instance.OnTurnEnd);
 
         // Set up groups and win conditions
         BattleGroup group1 = battle.AddGroup("Player");
