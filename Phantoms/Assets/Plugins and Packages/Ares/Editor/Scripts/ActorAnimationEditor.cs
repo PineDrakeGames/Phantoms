@@ -8,7 +8,7 @@ using Ares.ActorComponents;
 namespace Ares.Editor {
 	[CustomEditor(typeof(ActorAnimation)), CanEditMultipleObjects]
 	public class ActorAnimationEditor : ActorComponentEditor {
-		public static Animator animator;
+		public static Animator[] animators;
 
 		List<string> excludedProperties;
 		int missingParamsReenableCounter;
@@ -60,17 +60,29 @@ namespace Ares.Editor {
 
 			excludedProperties = new List<string>();
 
-			SerializedProperty spAnimator = serializedObject.FindProperty("animator");
-			animator = (Animator)spAnimator.objectReferenceValue;
+			SerializedProperty spAnimators = serializedObject.FindProperty("animators");
+			animators = new Animator[spAnimators.arraySize];
+			for (int i = 0; i < spAnimators.arraySize; i++)
+			{
+				animators[i] = (Animator)spAnimators.GetArrayElementAtIndex(i).objectReferenceValue;
+			}
+
 
 			targetGameObject = ((ActorAnimation)serializedObject.targetObject).gameObject;
-			hasAnimatorParams = targetGameObject.activeSelf && animator != null && animator.runtimeAnimatorController != null && animator.parameters.Length > 0;
+			foreach(Animator animator in animators)
+			{
+				hasAnimatorParams = targetGameObject.activeSelf && animator != null && animator.runtimeAnimatorController != null && animator.parameters.Length > 0;
+				if (hasAnimatorParams) { break; }
+			}
 			missingParamsReenableCounter = 0;
 		}
 		
 		public override void OnInspectorGUI(){
 			if(resetAnimatorEnabledState){
-				animator.enabled = !animator.enabled;
+				foreach(Animator animator in animators)
+				{
+					animator.enabled = !animator.enabled;
+				}
 				resetAnimatorEnabledState = false;
 				EditorUtility.SetDirty(target);
 				return;
@@ -102,50 +114,58 @@ namespace Ares.Editor {
 
 			DrawPropertiesExcluding(serializedObject, hiddenProperties.Concat(excludedProperties).ToArray());
 
-			SerializedProperty spAnimator = serializedObject.FindProperty("animator");
-			animator = (Animator)spAnimator.objectReferenceValue;
-
-			if(animator == null || animator.runtimeAnimatorController == null){
-				EditorGUILayout.HelpBox("Please create and attach an Animator Controller to the Animator component.", MessageType.Error, true);
-
-				serializedObject.ApplyModifiedProperties();
-				return;
+			SerializedProperty spAnimators = serializedObject.FindProperty("animators");
+			animators = new Animator[spAnimators.arraySize];
+			for (int i = 0; i < spAnimators.arraySize; i++)
+			{
+				animators[i] = (Animator)spAnimators.GetArrayElementAtIndex(i).objectReferenceValue;
 			}
 
-			if(!targetGameObject.activeSelf){
-				EditorGUILayout.HelpBox("Animator Parameters can not be shown on a disabled gameobject.",
-					MessageType.Warning, true);
+			foreach(Animator animator in animators)
+			{
 
-				serializedObject.ApplyModifiedProperties();
-				return;
-			}
-			else if(!animator.enabled){
-				EditorGUILayout.HelpBox("Animator Parameters can not be shown when the Animator component is disabled.",
-					MessageType.Warning, true);
+				if(animator == null || animator.runtimeAnimatorController == null){
+					EditorGUILayout.HelpBox("Please create and attach an Animator Controller to the Animator component.", MessageType.Error, true);
 
-				serializedObject.ApplyModifiedProperties();
-				return;
-			}
-
-			if(animator.parameterCount == 0){
-				// There is an internal Unity bug that makes animator params unreadable after a scene save.
-				// Toggling the Gameobject to be non-active and back clears the animator cache and "fixes" it.
-
-				missingParamsReenableCounter++;
-
-				if(hasAnimatorParams || missingParamsReenableCounter == 1){ //allow for one-time retry as well in case params are freshly added
-					animator.enabled = !animator.enabled;
 					serializedObject.ApplyModifiedProperties();
-					resetAnimatorEnabledState = true;
 					return;
 				}
-				else{
-					EditorGUILayout.HelpBox("No parameters found on the Animator Controller.\n\n" +
-					"(If paramaters do exist, enter and exit Play mode to refresh the Animator Controller. This is an internal Unity bug.)",
+
+				if(!targetGameObject.activeSelf){
+					EditorGUILayout.HelpBox("Animator Parameters can not be shown on a disabled gameobject.",
 						MessageType.Warning, true);
 
 					serializedObject.ApplyModifiedProperties();
 					return;
+				}
+				else if(!animator.enabled){
+					EditorGUILayout.HelpBox("Animator Parameters can not be shown when the Animator component is disabled.",
+						MessageType.Warning, true);
+
+					serializedObject.ApplyModifiedProperties();
+					return;
+				}
+
+				if(animator.parameterCount == 0){
+					// There is an internal Unity bug that makes animator params unreadable after a scene save.
+					// Toggling the Gameobject to be non-active and back clears the animator cache and "fixes" it.
+
+					missingParamsReenableCounter++;
+
+					if(hasAnimatorParams || missingParamsReenableCounter == 1){ //allow for one-time retry as well in case params are freshly added
+						animator.enabled = !animator.enabled;
+						serializedObject.ApplyModifiedProperties();
+						resetAnimatorEnabledState = true;
+						return;
+					}
+					else{
+						EditorGUILayout.HelpBox("No parameters found on the Animator Controller.\n\n" +
+						"(If paramaters do exist, enter and exit Play mode to refresh the Animator Controller. This is an internal Unity bug.)",
+							MessageType.Warning, true);
+
+						serializedObject.ApplyModifiedProperties();
+						return;
+					}
 				}
 			}
 
@@ -167,22 +187,39 @@ namespace Ares.Editor {
 
 			int parameterNameIndex = 0;
 
-			for(int j=0; j<ActorAnimationEditor.animator.parameters.Length; j++){
-				if(ActorAnimationEditor.animator.parameters[j].name == spElemParameterName.stringValue){
-					parameterNameIndex = j;
-					break;
+			// NOTE(CJ): Needed to change this section up a bit - now just finds the first animator
+			// that has the given parameter, and uses that - otherwise uses the first one.
+			Animator animator = null;
+			foreach(Animator animatorInList in ActorAnimationEditor.animators)
+			{
+				bool foundParameterName = false;
+				for(int j=0; j< animatorInList.parameters.Length; j++){
+					if(animatorInList.parameters[j].name == spElemParameterName.stringValue){
+						parameterNameIndex = j;
+						foundParameterName = true;
+						break;
+					}
 				}
+				if (foundParameterName) 
+				{ 
+					animator = animatorInList;
+					break; 
+				}
+			}
+			if (animator == null)
+			{
+				animator = ActorAnimationEditor.animators[0];
 			}
 
 			float paramEnumX = position.x + thirdWidth + 88 - paramWidthShift;
 			curPosition = new Rect(paramEnumX, position.y, Mathf.Min(140, position.width - paramEnumX - 20), EditorGUIUtility.singleLineHeight);
 
-			string[] parameterNames = ActorAnimationEditor.animator.parameters.Select(p => p.name).ToArray();
+			string[] parameterNames = animator.parameters.Select(p => p.name).ToArray();
 			
 			GUI.enabled = spElemEnabled.boolValue;
 
 			parameterNameIndex = EditorGUI.Popup(curPosition, "Param", parameterNameIndex, parameterNames);
-			spElemParameterName.stringValue = ActorAnimationEditor.animator.parameters[parameterNameIndex].name;
+			spElemParameterName.stringValue = animator.parameters[parameterNameIndex].name;
 
 			SerializedProperty spDelayType = property.FindPropertyRelative("effect.delayType");
 			EditorGUI.PropertyField(new Rect(curPosition.x, curPosition.y + EditorGUIUtility.singleLineHeight + 2, curPosition.width, curPosition.height), spDelayType, new GUIContent("Delay"));
@@ -208,7 +245,7 @@ namespace Ares.Editor {
 					break;
 			}
 
-			switch(ActorAnimationEditor.animator.parameters[parameterNameIndex].type){
+			switch(animator.parameters[parameterNameIndex].type){
 				case UnityEngine.AnimatorControllerParameterType.Bool:
 					curPosition.x = position.x + position.width - (showValueLabel ? 82 : 42);
 					curPosition.width = 60f;
