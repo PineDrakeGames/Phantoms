@@ -178,5 +178,10 @@ public class BattleInitializer : MonoBehaviour
         ActorAnimationEventElement deathCallback = actorAnimation.GetEventCallback(EventCallbackType.Die);
         deathCallback.Effect.SetAsTrigger("Dead");
         deathCallback.Enabled = true;
+
+        foreach(ActorAnimationAbilityElement abilityElement in actorAnimation.AbilityCallbacks)
+        {
+            abilityElement.Enabled = true;
+        }
     }
 }

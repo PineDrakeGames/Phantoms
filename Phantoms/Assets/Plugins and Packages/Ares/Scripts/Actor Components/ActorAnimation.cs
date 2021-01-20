@@ -8,7 +8,7 @@ namespace Ares.ActorComponents
     [System.Serializable]
     public class ActorAnimationAbilityElement : ActorAbilityCallbackElementBase
     {
-        public AnimationEffect Effect { get { return effect; } }
+        public AnimationEffect Effect { get { return effect; } set { effect = value; } }
 
         public bool Enabled { get { return effect.enabled; } set { effect.enabled = value; } }// Convenience wrapper for Effect.Enabled
 
@@ -136,7 +136,8 @@ namespace Ares.ActorComponents
             for (int i = 0; i < Actor.Abilities.Length; i++)
             {
                 abilityCallbacks[i] = new ActorAnimationAbilityElement();
-                abilityCallbacks[i].Effect.Reset();
+                Ability ability = Actor.Abilities[i];
+                abilityCallbacks[i].Effect= ability.Data.Animation;
             }
 
             SetupEventCallbacks();

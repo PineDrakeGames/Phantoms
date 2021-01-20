@@ -2350,12 +2350,7 @@ namespace Ares
 
             yield return null;
 
-            actor.OnAbilityStart.Invoke(ability, targets);
             
-            ability.PrepareForChainEvaluation(actor, targets);
-
-            List<Actor> remainingTargets = targets.ToList();
-            AbilityResults abilityResults = new AbilityResults(ability);
 
             AbilityMinigame.MinigameResult minigameResult = AbilityMinigame.MinigameResult.FAIL;
             bool usedMinigame = false;
@@ -2373,6 +2368,13 @@ namespace Ares
                     minigameResult = AbilityMinigameManager.CurrentMinigame.Result;
                 }
             }
+
+            actor.OnAbilityStart.Invoke(ability, targets);
+            
+            ability.PrepareForChainEvaluation(actor, targets);
+
+            List<Actor> remainingTargets = targets.ToList();
+            AbilityResults abilityResults = new AbilityResults(ability);
 
             ability.OnUse(actor, targets);
 

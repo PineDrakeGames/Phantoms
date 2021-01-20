@@ -31,7 +31,6 @@ public class AnimationSetMaterial : MonoBehaviour
     public void UpdateCurrentMaterial(int newMaterial)
     {
         CurrentMaterial = newMaterial;
-        Debug.Log("Update that shhizzz");
     }
 
     public void UpdateCurrentMaterial()
