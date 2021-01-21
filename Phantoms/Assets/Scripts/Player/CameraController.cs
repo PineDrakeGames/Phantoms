@@ -37,11 +37,12 @@ public class CameraController : MonoBehaviour
     private Vector3 m_prevPlayerPosition = Vector3.zero;
 
     // Variables used to set the Y position of the player.
-
     private float m_currentYPosition = 0f;
 
     // The focus position of the camera.
     private Vector3 m_focusPosition = Vector3.zero;
+
+    private const float SPEED_LEAD_SCALE = 0.1f;
 
     private void OnValidate() {
         m_cameraForward.y = 0;
@@ -92,8 +93,13 @@ public class CameraController : MonoBehaviour
         Vector3 distance = (Player.position - m_prevPlayerPosition);
         Vector3 offsetDirection =  Quaternion.Euler(0, -90, 0) * m_cameraForward;
 
-        float lead = Vector3.Dot(offsetDirection, distance) / m_leadDelay;
-        m_currentLead += lead;
+        float targetLead = Vector3.Dot(offsetDirection.normalized, distance.normalized);
+
+        float leadSpeed = (PlayerMotor.Velocity.magnitude * SPEED_LEAD_SCALE) / m_leadDelay;
+
+        float leadChange = targetLead - m_currentLead;
+        m_currentLead += leadChange * leadSpeed * Time.deltaTime;
+
         m_currentLead = Mathf.Clamp(m_currentLead, -1f, 1f);
 
         return (offsetDirection * m_leadDistance * Mathf.SmoothStep(-1f, 1f, (m_currentLead + 1f) / 2f));
