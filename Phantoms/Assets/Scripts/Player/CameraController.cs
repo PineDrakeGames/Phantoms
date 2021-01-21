@@ -105,6 +105,11 @@ public class CameraController : MonoBehaviour
         float distance = Mathf.Abs(m_currentYPosition - newYPosition);
         if (PlayerMotor.GroundingStatus.FoundAnyGround || (newYPosition < m_currentYPosition) || (distance > m_maxHeightDifference))
         {
+            if (!PlayerMotor.GroundingStatus.FoundAnyGround && distance > m_maxHeightDifference && newYPosition > m_currentYPosition)
+            {
+                distance -= m_maxHeightDifference;
+                newYPosition -= m_maxHeightDifference; 
+            }
             float progress =  Mathf.Sqrt(distance / m_maxHeightDifference);
             progress -= (Time.deltaTime / m_heightApproachTime);
             progress = Mathf.Clamp01(progress);
