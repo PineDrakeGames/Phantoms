@@ -41,6 +41,7 @@ public class Player : MonoBehaviour
         characterInputs.JumpDown = Input.GetKeyDown(KeyCode.Space);
         characterInputs.JumpHeld = Input.GetKey(KeyCode.Space);
         characterInputs.InteractDown = Input.GetKeyDown(KeyCode.E);
+        characterInputs.AttackDown = Input.GetMouseButtonDown(0);
 
         // Apply inputs to character
         Character.SetInputs(ref characterInputs);

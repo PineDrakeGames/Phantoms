@@ -10,6 +10,7 @@ public class PlayerStateFall : PlayerMovementState
     public override void TickInput(PlayerCharacterInputs input)
     {
         CheckForJumpInput();
+        CheckForAttackInput();
     }
 
     public override void TickRotation(ref Quaternion currentRotation, float deltaTime)

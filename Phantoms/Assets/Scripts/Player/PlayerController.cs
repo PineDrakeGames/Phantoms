@@ -13,6 +13,7 @@ public struct PlayerCharacterInputs
     public bool JumpDown;
     public bool JumpHeld;
     public bool InteractDown;
+    public bool AttackDown;
 }
 
 public struct AICharacterInputs
@@ -41,6 +42,14 @@ public class PlayerController : MonoBehaviour, ICharacterController
     public float JumpPreGroundingGraceTime = 0f;
     public float JumpPostGroundingGraceTime = 0f;
 
+    [Header("Attack Info")]
+    public float AttackDuration = 0.35f;
+    [MinMaxRange(0f, 1f)]
+    public RangedFloat AttackActiveTime = new RangedFloat();
+    public GameObject AttackHitbox = null;
+    public float AttackInputLingerTime = 0.15f;
+    public float AttackMaxMoveSpeed = 1f;
+
     [Header("Art stuff")]
     [SerializeField]
     private Animator m_characterAnimator = null;
@@ -60,8 +69,11 @@ public class PlayerController : MonoBehaviour, ICharacterController
     private Vector3 _lookInputVector;
     public Vector3 LookInputVector { get { return _lookInputVector; } }
     private bool _jumpRequested = false;
+    private bool _attackRequested = false;
+    private bool _attackedInAir = false;
     private float _timeSinceJumpRequested = Mathf.Infinity;
     private float _timeSinceLastAbleToJump = 0f;
+    private float _timeSinceAttackRequested = Mathf.Infinity;
     private Vector3 _internalVelocityAdd = Vector3.zero;
 
     private Interactable m_currentInteractable = null;
@@ -87,6 +99,8 @@ public class PlayerController : MonoBehaviour, ICharacterController
 
     private void Start()
     {
+        if (AttackHitbox) { AttackHitbox.SetActive(false); }
+
         // Assign the characterController to the motor
         Motor.CharacterController = this;
 
@@ -140,6 +154,12 @@ public class PlayerController : MonoBehaviour, ICharacterController
         {
             _timeSinceJumpRequested = 0f;
             _jumpRequested = true;
+        }
+
+        if (inputs.AttackDown)
+        {
+            _timeSinceAttackRequested = 0f;
+            _attackRequested = true;
         }
 
         m_currentState.TickInput(inputs);
@@ -224,6 +244,15 @@ public class PlayerController : MonoBehaviour, ICharacterController
                 _timeSinceLastAbleToJump += deltaTime;
             }
         }
+        
+        // Handle Attack-related values
+        {
+            _timeSinceAttackRequested += deltaTime;
+            if (_attackRequested && _timeSinceAttackRequested > AttackInputLingerTime)
+            {
+                _attackRequested = false;
+            }
+        }
     }
 
     public void PostGroundingUpdate(float deltaTime)
@@ -278,7 +307,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
 
     protected void OnLanded()
     {
-
+        _attackedInAir = false;
     }
 
     protected void OnLeaveStableGround()
@@ -308,5 +337,20 @@ public class PlayerController : MonoBehaviour, ICharacterController
     {
         // Calculate jump direction before ungrounding
         _jumpRequested = false;
+    }
+
+    public bool CanAttack()
+    {
+        return (_attackRequested && !_attackedInAir);
+    }
+
+    public void Attack()
+    {
+        // Calculate jump direction before ungrounding
+        _attackRequested = false;
+        if (!Motor.GroundingStatus.IsStableOnGround)
+        {
+            _attackedInAir =  true;
+        }
     }
 }

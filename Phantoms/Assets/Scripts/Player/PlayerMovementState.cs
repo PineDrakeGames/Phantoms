@@ -23,6 +23,14 @@ public abstract class PlayerMovementState
         }
     }
 
+    protected void CheckForAttackInput()
+    {
+        if (Controller.CanAttack())
+        {
+            Controller.SetState(new PlayerStateAttack());
+        }
+    }
+
     /// Movement Functions ///
 
     // Rotates the player towards the controller's look input vector with the given sharpness.

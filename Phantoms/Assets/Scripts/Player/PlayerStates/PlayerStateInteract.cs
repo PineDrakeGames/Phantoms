@@ -26,7 +26,7 @@ public class PlayerStateInteract : PlayerMovementState
         }
         else
         {
-            AirStrafeMovement(ref currentVelocity, Controller.MoveInputVector, deltaTime);
+            AirStrafeMovement(ref currentVelocity, Vector3.zero, deltaTime);
             ApplyGravity(ref currentVelocity, deltaTime);
             ApplyDrag(ref currentVelocity, deltaTime);
         }

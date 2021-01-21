@@ -14,6 +14,7 @@ public class PlayerStateJump : PlayerMovementState
     public override void TickInput(PlayerCharacterInputs input)
     {
         m_holdingJump = input.JumpHeld;
+        CheckForAttackInput();
     }
 
     public override void TickRotation(ref Quaternion currentRotation, float deltaTime)
