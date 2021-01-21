@@ -352,5 +352,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
         {
             _attackedInAir =  true;
         }
+
+        AttackManager.StartAttack();
     }
 }
