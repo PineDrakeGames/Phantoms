@@ -34,28 +34,57 @@ public class DataManager : MonoBehaviour
         get { return Instance.m_phantomData; }
     }
 
-    private Dictionary<string, PhantomData> m_IdToData = null;
+    [SerializeField]
+    private ItemDataTable m_itemData = null;
+    public static ItemDataTable ItemData
+    {
+        get { return Instance.m_itemData; }
+    }
+
+    private Dictionary<string, PhantomData> m_phantomIdToData = null;
+    private Dictionary<string, ItemData> m_ItemIdToData = null;
 
     public void Initialize()
     {
         // Any initialization things
         DontDestroyOnLoad(this.gameObject);
 
-        if (m_IdToData == null)
+        if (m_phantomIdToData == null)
         {
-            m_IdToData = new Dictionary<string, PhantomData>();
+            m_phantomIdToData = new Dictionary<string, PhantomData>();
             foreach (PhantomData data in PhantomData.Data)
             {
-                m_IdToData.Add(data.PhantomID, data);
+                m_phantomIdToData.Add(data.PhantomID, data);
+            }
+        }
+
+        if (m_ItemIdToData == null)
+        {
+            m_ItemIdToData = new Dictionary<string, ItemData>();
+            foreach (ItemData data in ItemData.Data)
+            {
+                m_ItemIdToData.Add(data.ItemID, data);
             }
         }
     }
 
     public PhantomData TryGetPhantomData(string phantomID)
     {
-        if (m_IdToData.ContainsKey(phantomID))
+        if (m_phantomIdToData.ContainsKey(phantomID))
         {
-            return m_IdToData[phantomID];
+            return m_phantomIdToData[phantomID];
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public ItemData TryGetItemData(string itemID)
+    {
+        if (m_ItemIdToData.ContainsKey(itemID))
+        {
+            return m_ItemIdToData[itemID];
         }
         else
         {

@@ -49,6 +49,10 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    // Other private variables
+    BattleGroup playerGroup = null;
+    BattleGroup enemyGroup = null;
+
     void Awake()
     {
         if (s_instance == null)
@@ -81,20 +85,20 @@ public class BattleManager : MonoBehaviour
         battle.OnTurnEnd.AddListener(BattleCameraManager.Instance.OnTurnEnd);
 
         // Set up groups and win conditions
-        BattleGroup group1 = battle.AddGroup("Player");
-        BattleGroup group2 = battle.AddGroup("Enemies");
+        playerGroup = battle.AddGroup("Player", PlayerInventoryManager.Instance.CreateBattleInventory());
+        enemyGroup = battle.AddGroup("Enemies");
 
-        group1.OnDefeat.AddListener(() => EndBattle(false));
-        group2.OnDefeat.AddListener(() => EndBattle(true));
+        playerGroup.OnDefeat.AddListener(() => EndBattle(false));
+        enemyGroup.OnDefeat.AddListener(() => EndBattle(true));
 
         // Add all actors to their respective groups
         foreach (Actor actor in playerTeam)
         {
-            group1.AddActor(actor, true);
+            playerGroup.AddActor(actor, true);
         }
         foreach (Actor actor in enemies)
         {
-            group2.AddActor(actor, true);
+            enemyGroup.AddActor(actor, true);
         }
 
 
@@ -175,6 +179,8 @@ public class BattleManager : MonoBehaviour
         {
             // Show tie screen or determine winner
         }
+
+        PlayerInventoryManager.Instance.SaveBattleInventory(playerGroup.Inventory as StackedInventory);
 
         // For now, just loading back to the test scene
         LoadingManager.LoadSceneByPath(m_testReturnScene);
