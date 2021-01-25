@@ -294,7 +294,7 @@ public class BattlePlayerMenu : MonoBehaviour
                 foreach (Actor actor in validTargets)
                 {
                     submenuButton = AddSubmenuButton(actor.DisplayName, null);
-                    submenuButton.ClickEvent.AddListener(delegate { SetTarget(actor); });
+                    submenuButton.ClickEvent.AddListener(delegate { SetAbilityTarget(actor); });
                     submenuButton.SelectEvent.AddListener(delegate { SetArrowIndicator(actor); });
                 }
                 break;
@@ -305,7 +305,7 @@ public class BattlePlayerMenu : MonoBehaviour
                     submenuButton = AddSubmenuButton(actor.DisplayName, null);
                     submenuButton.ClickEvent.AddListener(delegate
                     {
-                        SetTarget(actor);
+                        SetAbilityTarget(actor);
                         submenuButton.gameObject.SetActive(false);
                     });
                     submenuButton.SelectEvent.AddListener(delegate { SetArrowIndicator(actor); });
@@ -328,16 +328,67 @@ public class BattlePlayerMenu : MonoBehaviour
     {
         SetState(BattleMenuState.TARGETING);
 
+        m_actionTargets.Clear();
+
         ClearSubmenu();
 
         m_currentItem = item;
 
         Actor[] validTargets = m_battleManager.CurrentBattle.GetValidTargets(m_currentActor, item);
 
+        BattleSubmenuButton submenuButton = null;
+
+        switch (item.Data.TargetType)
+        {
+            case BattleInteractorData.TargetType.SingleActor:
+                // Add a button for each actor, for now.
+                foreach (Actor actor in validTargets)
+                {
+                    submenuButton = AddSubmenuButton(actor.DisplayName, null);
+                    submenuButton.ClickEvent.AddListener(delegate { SetItemTarget(actor); });
+                    submenuButton.SelectEvent.AddListener(delegate { SetArrowIndicator(actor); });
+                }
+                break;
+            case BattleInteractorData.TargetType.NumberOfActors:
+                // Add a button for each actor, with the addition of removing the button when used.
+                foreach (Actor actor in validTargets)
+                {
+                    submenuButton = AddSubmenuButton(actor.DisplayName, null);
+                    submenuButton.ClickEvent.AddListener(delegate
+                    {
+                        SetItemTarget(actor);
+                        submenuButton.gameObject.SetActive(false);
+                    });
+                    submenuButton.SelectEvent.AddListener(delegate { SetArrowIndicator(actor); });
+                }
+                break;
+            case BattleInteractorData.TargetType.AllActorsInGroup:
+                // TODO
+                m_actionTargets.AddRange(validTargets);
+                /*
+                switch(item.Data.ValidTargetGroups)
+                {
+                    case BattleInteractorData.TargetGroupGroups.Allies:
+                        break;
+                    case BattleInteractorData.TargetGroupGroups.Opponents:
+                        break;
+                    case BattleInteractorData.TargetGroupGroups.All:
+                        break;
+                }
+                */
+                m_actionInput.ItemSelectCallback(item);
+                break;
+            case BattleInteractorData.TargetType.AllActors:
+                // Just add all valid targets then do the ability select callback.
+                m_actionTargets.AddRange(validTargets);
+                m_actionInput.ItemSelectCallback(item);
+                break;
+        }
+
         ShowSubmenu();
     }
 
-    public void SetTarget(Actor actor)
+    public void SetAbilityTarget(Actor actor)
     {
         m_actionTargets.Add(actor);
         switch (m_currentAbility.Data.TargetType)
@@ -350,6 +401,24 @@ public class BattlePlayerMenu : MonoBehaviour
                 if (m_actionTargets.Count >= m_currentAbility.Data.NumberOfTargets)
                 {
                     m_actionInput.AbilitySelectCallback(m_currentAbility);
+                    m_battleCamera.ResetCamera();
+                }
+                break;
+        }
+    }
+    public void SetItemTarget(Actor actor)
+    {
+        m_actionTargets.Add(actor);
+        switch (m_currentItem.Data.TargetType)
+        {
+            case BattleInteractorData.TargetType.SingleActor:
+                m_actionInput.ItemSelectCallback(m_currentItem);
+                m_battleCamera.ResetCamera();
+                break;
+            case BattleInteractorData.TargetType.NumberOfActors:
+                if (m_actionTargets.Count >= m_currentAbility.Data.NumberOfTargets)
+                {
+                    m_actionInput.ItemSelectCallback(m_currentItem);
                     m_battleCamera.ResetCamera();
                 }
                 break;
