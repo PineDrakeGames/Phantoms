@@ -77,6 +77,11 @@ public class BattlePlayerMenu : MonoBehaviour
     {
         get { return m_actionTargets; }
     }
+    private List<BattleGroup> m_actionGroupTargets = new List<BattleGroup>();
+    public List<BattleGroup> ActionGroupTargets
+    {
+        get { return m_actionGroupTargets; }
+    }
 
     private Vector3 enemyCenter = Vector3.zero;
 
@@ -278,6 +283,7 @@ public class BattlePlayerMenu : MonoBehaviour
         SetState(BattleMenuState.TARGETING);
 
         m_actionTargets.Clear();
+        m_actionGroupTargets.Clear();
 
         ClearSubmenu();
 
@@ -329,6 +335,7 @@ public class BattlePlayerMenu : MonoBehaviour
         SetState(BattleMenuState.TARGETING);
 
         m_actionTargets.Clear();
+        m_actionGroupTargets.Clear();
 
         ClearSubmenu();
 
@@ -348,6 +355,7 @@ public class BattlePlayerMenu : MonoBehaviour
                     submenuButton.ClickEvent.AddListener(delegate { SetItemTarget(actor); });
                     submenuButton.SelectEvent.AddListener(delegate { SetArrowIndicator(actor); });
                 }
+                ShowSubmenu();
                 break;
             case BattleInteractorData.TargetType.NumberOfActors:
                 // Add a button for each actor, with the addition of removing the button when used.
@@ -361,31 +369,22 @@ public class BattlePlayerMenu : MonoBehaviour
                     });
                     submenuButton.SelectEvent.AddListener(delegate { SetArrowIndicator(actor); });
                 }
+                ShowSubmenu();
                 break;
             case BattleInteractorData.TargetType.AllActorsInGroup:
                 // TODO
-                m_actionTargets.AddRange(validTargets);
-                /*
-                switch(item.Data.ValidTargetGroups)
-                {
-                    case BattleInteractorData.TargetGroupGroups.Allies:
-                        break;
-                    case BattleInteractorData.TargetGroupGroups.Opponents:
-                        break;
-                    case BattleInteractorData.TargetGroupGroups.All:
-                        break;
-                }
-                */
+                Debug.Log("Setting targets");
+                m_actionGroupTargets.Add(m_currentActor.Group);
                 m_actionInput.ItemSelectCallback(item);
+                m_battleCamera.ResetCamera();
                 break;
             case BattleInteractorData.TargetType.AllActors:
                 // Just add all valid targets then do the ability select callback.
                 m_actionTargets.AddRange(validTargets);
                 m_actionInput.ItemSelectCallback(item);
+                m_battleCamera.ResetCamera();
                 break;
         }
-
-        ShowSubmenu();
     }
 
     public void SetAbilityTarget(Actor actor)

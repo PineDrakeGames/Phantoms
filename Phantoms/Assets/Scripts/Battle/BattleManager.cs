@@ -157,7 +157,7 @@ public class BattleManager : MonoBehaviour
         // When a target is selected, call `actionInput.TargetSelectCallback(chosenBattleGroup)`.
         // This callback will return a `success` bool.
         
-        // TODO
+        targetInput.TargetSelectCallback(m_playerMenu.ActionGroupTargets[0]);
     }
 
     void HideInput(Actor actor)
