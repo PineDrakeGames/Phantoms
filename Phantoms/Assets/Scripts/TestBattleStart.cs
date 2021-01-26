@@ -21,7 +21,7 @@ public class TestBattleStart : MonoBehaviour
     {
         List<CombatantInstanceData> playerCombatants = new List<CombatantInstanceData>();
         playerCombatants.Add(m_playerData);
-        playerCombatants.AddRange(m_playerPhantoms);
+        playerCombatants.AddRange(PlayerInventoryManager.Instance.Phantoms);
 
         List<CombatantInstanceData> enemyCombatants = new List<CombatantInstanceData>();
         enemyCombatants.AddRange(m_enemyPhantoms);

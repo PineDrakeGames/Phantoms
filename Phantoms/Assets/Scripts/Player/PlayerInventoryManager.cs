@@ -83,6 +83,6 @@ public class PlayerInventoryManager : MonoBehaviour
     //////////////////////////////////////////////////////
     public void AddPhantom(PhantomInstanceData newPhantom)
     {
-
+        Phantoms.Add(newPhantom);
     }
 }
