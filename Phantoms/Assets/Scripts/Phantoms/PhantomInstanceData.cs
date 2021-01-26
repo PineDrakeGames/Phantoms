@@ -60,4 +60,38 @@ public class PhantomInstanceData : CombatantInstanceData
 
         CurrentStats = startingStats;
     }
+
+    public List<BattleStatType> LevelUpOptions()
+    {
+        List<BattleStatType> levelUpOptions = new List<BattleStatType>();
+        BackgroundStats backStats = PhantomDataUtility.BackgroundToStats[Background];
+
+        foreach(BattleStatType statType in (System.Enum.GetValues(typeof(BattleStatType)) as BattleStatType[]))
+        {
+            int statLevels = LevelUps.GetStat(statType);
+            if (statType == backStats.Decrease)
+            {
+                if (statLevels < 2)
+                {
+                    levelUpOptions.Add(statType);
+                }
+            }
+            else if (statType == backStats.Increase)
+            {
+                if (statLevels < 7)
+                {
+                    levelUpOptions.Add(statType);
+                }
+            }
+            else
+            {
+                if (statLevels < 3)
+                {
+                    levelUpOptions.Add(statType);
+                }
+            }
+        }
+
+        return levelUpOptions;
+    }
 }

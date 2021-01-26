@@ -44,6 +44,7 @@ public static class PhantomDataUtility
 {
     public static Dictionary<PhantomBackground, BackgroundStats> BackgroundToStats = new Dictionary<PhantomBackground, BackgroundStats>
     {
+        { (PhantomBackground)0, new BackgroundStats(BattleStatType.MAXHP,  BattleStatType.MAXHP) },
         { (PhantomBackground)1, new BackgroundStats(BattleStatType.MAXHP,  BattleStatType.ATTACK) },
         { (PhantomBackground)2, new BackgroundStats(BattleStatType.MAXHP,  BattleStatType.DEFENSE) },
         { (PhantomBackground)3, new BackgroundStats(BattleStatType.MAXHP,  BattleStatType.MANA) },
@@ -91,6 +92,64 @@ public static class PhantomDataUtility
         phantomActor.Init(displayName, instanceData.CurrentStats.MaxHP, instanceData.CurrentStats.MaxHP, stats, instanceData.Data.Abilities, phantomActor.FallbackAbility, phantomActor.Afflictions, phantomActor.inventory);
         phantomActor.MainType = instanceData.PhanData.MainType;
         phantomActor.SecondType = instanceData.PhanData.SecondType;
+    }
 
+    public static PhantomInstanceData GenerateRandomPhantom(string phantomID, int level = 0)
+    {
+        return GenerateRandomPhantom(DataManager.Instance.TryGetPhantomData(phantomID), level);
+    }
+
+    public static PhantomInstanceData GenerateRandomPhantom(PhantomData phantomData, int level = 0)
+    {
+        if (phantomData == null)
+        {
+            return null;
+        }
+
+
+        PhantomInstanceData instanceData = new PhantomInstanceData();
+        instanceData.Data = phantomData;
+
+        // Get random background
+        PhantomBackground[] valuesAsArray = System.Enum.GetValues(typeof(PhantomBackground)) as PhantomBackground[];
+        int randomBackground = Random.Range(1, valuesAsArray.Length);
+        instanceData.Background = valuesAsArray[randomBackground];
+
+        // Get some level ups in there
+        instanceData.Level = level;
+        List<BattleStatType> randomPool = new List<BattleStatType>();
+        BackgroundStats backStats = BackgroundToStats[instanceData.Background];
+        for(int i = 0; i < level; i++)
+        {
+            List<BattleStatType> statOption = instanceData.LevelUpOptions();
+            randomPool.Clear();
+            foreach(BattleStatType statType in statOption)
+            {
+                if (statType == backStats.Increase)
+                {
+                    randomPool.Add(statType);
+                    randomPool.Add(statType);
+                    randomPool.Add(statType);
+                    randomPool.Add(statType);
+                }
+                else if (statType == backStats.Decrease)
+                {
+                    randomPool.Add(statType);
+                }
+                else
+                {
+                    randomPool.Add(statType);
+                    randomPool.Add(statType);
+                }
+            }
+
+            int randomIndex = Random.Range(0, randomPool.Count);
+            instanceData.LevelUps.SetStat(randomPool[randomIndex], instanceData.LevelUps.GetStat(randomPool[randomIndex]) + 1);
+        }
+
+        // Set initial nickname
+        instanceData.NickName = phantomData.PhantomDisplayName;
+
+        return instanceData;
     }
 }

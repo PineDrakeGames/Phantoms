@@ -24,6 +24,7 @@ public class PlayerInventoryManager : MonoBehaviour
 
     // Stuff stored in the inventory
     public List<ItemInstanceData> Items = new List<ItemInstanceData>();
+    public List<PhantomInstanceData> Phantoms = new List<PhantomInstanceData>();
 
     public void Initialize()
     {
@@ -75,5 +76,13 @@ public class PlayerInventoryManager : MonoBehaviour
             // TODO: Update inventory!
             Debug.Log(item.Item.Data.DisplayName);
         }
+    }
+
+    //////////////////////////////////////////////////////
+    /// Public functions relating to phantoms captured ///
+    //////////////////////////////////////////////////////
+    public void AddPhantom(PhantomInstanceData newPhantom)
+    {
+
     }
 }
