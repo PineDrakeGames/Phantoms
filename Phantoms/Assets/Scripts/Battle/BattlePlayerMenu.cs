@@ -118,19 +118,22 @@ public class BattlePlayerMenu : MonoBehaviour
 
         foreach (Actor actor in m_battleManager.CurrentBattle.Actors)
         {
-            GameObject gameObj = null;
-            HealthIndicator indicator = null;
-            if (actor.Group.Name == "Player")
+            if (m_battleManager.CurrentBattle.ActorInfo[actor].IsParticipating)
             {
-                gameObj = Instantiate(m_healthIndicator, m_playerHealthIndicators);
+                GameObject gameObj = null;
+                HealthIndicator indicator = null;
+                if (actor.Group.Name == "Player")
+                {
+                    gameObj = Instantiate(m_healthIndicator, m_playerHealthIndicators);
+                }
+                else
+                {
+                    gameObj = Instantiate(m_healthIndicator, m_enemyHealthIndicators);
+                }
+                indicator = gameObj.GetComponent<HealthIndicator>();
+                indicator.Actor = actor;
+                indicator.BattleStart();
             }
-            else
-            {
-                gameObj = Instantiate(m_healthIndicator, m_enemyHealthIndicators);
-            }
-            indicator = gameObj.GetComponent<HealthIndicator>();
-            indicator.Actor = actor;
-            indicator.BattleStart();
         }
 
         enemyCenter = Vector3.zero;

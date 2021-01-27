@@ -27,9 +27,17 @@ public class BattleInitializer : MonoBehaviour
 
 
     // Start is called before the first frame update
-    public void InitializeBattle(List<CombatantInstanceData> playerCombatants, List<CombatantInstanceData> enemyCombatants)
+    public void InitializeBattle(List<CombatantInstanceData> playerCombatants, List<CombatantInstanceData> inactivePlayerCombatants, List<CombatantInstanceData> enemyCombatants)
     {
         List<Actor> PlayerActors = SpawnActorsInLine(true, playerCombatants, m_playerSpawnPoint1.position, m_playerSpawnPoint2.position, m_maxDistanceBetweenPlayers);
+
+        List<Actor> InactivePlayerActors = SpawnActors(true, inactivePlayerCombatants, PlayerActors[PlayerActors.Count - 1].transform.position);
+        foreach(Actor actor in InactivePlayerActors)
+        {
+            actor.gameObject.SetActive(false);
+        }
+        PlayerActors.AddRange(InactivePlayerActors);
+
         List<Actor> EnemyActors = SpawnActorsInLine(false, enemyCombatants, m_enemySpawnPoint1.position, m_enemySpawnPoint2.position, m_maxDistanceBetweenEnemies);
 
         SetInitialRotations(PlayerActors, EnemyActors);
@@ -62,6 +70,18 @@ public class BattleInitializer : MonoBehaviour
         }
 
         // Now, spawn each actor using our list of positions.
+        return SpawnActors(isPlayer, combatants, spawnPoints);
+    }
+
+    // To just spawn a bunch of combatants in a single place.
+    private List<Actor> SpawnActors(bool isPlayer, List<CombatantInstanceData> combatants, Vector3 spawnPoint)
+    {
+        Vector3[] spawnPoints = new Vector3[combatants.Count];
+        for(int i = 0; i < spawnPoints.Length; i++)
+        {
+            spawnPoints[i] = spawnPoint;
+        }
+
         return SpawnActors(isPlayer, combatants, spawnPoints);
     }
 

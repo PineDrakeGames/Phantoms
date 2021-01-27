@@ -21,10 +21,21 @@ public class TestBattleStart : MonoBehaviour
     {
         List<CombatantInstanceData> playerCombatants = new List<CombatantInstanceData>();
         playerCombatants.Add(m_playerData);
-        playerCombatants.AddRange(PlayerInventoryManager.Instance.Phantoms);
+
+        // For now, just assume that the first in the list is the current phantom.
+        if (PlayerInventoryManager.Instance.Phantoms.Count >= 1)
+        playerCombatants.Add(PlayerInventoryManager.Instance.Phantoms[0]);
+
+        List<CombatantInstanceData> playerInactiveCombatants = new List<CombatantInstanceData>();
+        playerInactiveCombatants.AddRange(PlayerInventoryManager.Instance.Phantoms);
+        if (playerInactiveCombatants.Count > 0)
+        {
+            playerInactiveCombatants.RemoveAt(0);
+        }
+
 
         List<CombatantInstanceData> enemyCombatants = new List<CombatantInstanceData>();
         enemyCombatants.AddRange(m_enemyPhantoms);
-        m_battleInitializer.InitializeBattle(playerCombatants, enemyCombatants);
+        m_battleInitializer.InitializeBattle(playerCombatants, playerInactiveCombatants, enemyCombatants);
     }
 }

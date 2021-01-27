@@ -95,10 +95,26 @@ public class BattleManager : MonoBehaviour
         foreach (Actor actor in playerTeam)
         {
             playerGroup.AddActor(actor, true);
+            if (!actor.gameObject.activeSelf)
+            {
+                battle.SetParticipation(actor, false);
+            }
+            else
+            {
+                battle.SetParticipation(actor, true);
+            }
         }
         foreach (Actor actor in enemies)
         {
             enemyGroup.AddActor(actor, true);
+            if (!actor.gameObject.activeSelf)
+            {
+                battle.SetParticipation(actor, false);
+            }
+            else
+            {
+                battle.SetParticipation(actor, true);
+            }
         }
 
 
