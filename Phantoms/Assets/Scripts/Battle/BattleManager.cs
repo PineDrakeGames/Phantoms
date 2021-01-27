@@ -4,6 +4,8 @@
  */
 
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using Ares;
 
 public class BattleManager : MonoBehaviour
@@ -52,6 +54,8 @@ public class BattleManager : MonoBehaviour
     // Other private variables
     BattleGroup playerGroup = null;
     BattleGroup enemyGroup = null;
+
+    public Dictionary<Actor, CombatantInstanceData> ActorToData = new Dictionary<Actor, CombatantInstanceData>();
 
     void Awake()
     {
@@ -204,10 +208,42 @@ public class BattleManager : MonoBehaviour
 
     /// Public functions ///
 
+    public void CatchPhantom()
+    {
+        if (!CanCatch()) { return; }
+
+        Actor phantomToCatch = null;
+        foreach(Actor actor in enemyGroup.Actors)
+        {
+            if (actor.HP > 0)
+            {
+                phantomToCatch = actor;
+                break;
+            }
+        }
+
+        // In the end, actually do a minigame and have a whole process, for now just add it to the player inventory and end the battle.
+        PhantomInstanceData phantomData = ActorToData[phantomToCatch] as PhantomInstanceData;
+        PlayerInventoryManager.Instance.AddPhantom(phantomData);
+        CurrentBattle.EndBattle(Battle.EndReason.WinLoseConditionMet);
+    }
+
     public void SwapTurns()
     {
         battle.SwapTurn();
     }
 
-    
+    public bool CanCatch()
+    {
+        int remainingEnemies = 0;
+        foreach(Actor actor in enemyGroup.Actors)
+        {
+            if (actor.HP > 0)
+            {
+                remainingEnemies += 1;
+            }
+        }
+
+        return (remainingEnemies == 1);
+    }    
 }

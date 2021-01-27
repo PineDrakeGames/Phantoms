@@ -232,8 +232,13 @@ public class BattlePlayerMenu : MonoBehaviour
         ClearSubmenu();
 
         BattleSubmenuButton submenuButton = null;
-        submenuButton = AddSubmenuButton("Run", "Run away from battle");
-        // TODO: Run?
+        
+        // Catch button (if available)
+        if (CanCatch())
+        {
+            submenuButton = AddSubmenuButton("Catch", "Catch that phantom!");
+            submenuButton.ClickEvent.AddListener(m_battleManager.CatchPhantom);
+        }
 
         // Check if swapping turns is an option first.
         if (CanSwap())
@@ -242,9 +247,13 @@ public class BattlePlayerMenu : MonoBehaviour
             submenuButton.ClickEvent.AddListener(m_battleManager.SwapTurns);
         }
 
+        // Just to skip a turn
         submenuButton = AddSubmenuButton("Skip", "Skip your turn");
         Debug.Log("Adding listener to the button!");
         submenuButton.ClickEvent.AddListener(delegate { m_actionInput.SkipCallback(); });
+
+        // TODO: Run button
+        submenuButton = AddSubmenuButton("Run", "Run away from battle");
 
         ShowSubmenu();
     }
@@ -572,5 +581,10 @@ public class BattlePlayerMenu : MonoBehaviour
             }
         }
         return false;
+    }
+
+    private bool CanCatch()
+    {
+        return m_battleManager.CanCatch();
     }
 }

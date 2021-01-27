@@ -151,6 +151,8 @@ public class BattleInitializer : MonoBehaviour
             }
 
             spawnedActors.Add(actorComponent);
+
+            BattleManager.Instance.ActorToData[actorComponent] = combatants[i];
         }
 
         return spawnedActors;
