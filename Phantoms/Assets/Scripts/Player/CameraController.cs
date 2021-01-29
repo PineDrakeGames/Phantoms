@@ -25,6 +25,14 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private float m_leadDelay = 3f;
 
+    [Header("Camera Restrictions")]
+    [SerializeField]
+    private bool m_restrictZMovement = true;
+    [SerializeField]
+    private float m_minZPosition = -15f;
+    [SerializeField]
+    private float m_maxZPosition = -15f;
+
 
     [HideInInspector]
     public Transform Player = null;
@@ -76,14 +84,24 @@ public class CameraController : MonoBehaviour
     {
 
         // Note: Assuming that the camera up will always just be Vector3.up
-
         Vector3 cameraOffset = Vector3.RotateTowards(m_cameraForward * -1f, Vector3.up, Mathf.Deg2Rad * m_angleUp, 0f) * m_distanceFromFocus;
-
         transform.position = m_focusPosition + cameraOffset;
-
 
         // The camera should now be in the right position, so just have it look at the focus point.
         transform.LookAt(m_focusPosition);
+
+        // Add in any camera restrictions at this point
+        if (m_restrictZMovement)
+        {
+            if (transform.position.z < m_minZPosition)
+            {
+                transform.position = new Vector3(transform.position.x, transform.position.y, m_minZPosition);
+            }
+            else if (transform.position.z > m_maxZPosition)
+            {
+                transform.position = new Vector3(transform.position.x, transform.position.y, m_maxZPosition);
+            }
+        }
     }
 
 

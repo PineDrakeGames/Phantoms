@@ -35,6 +35,7 @@ public class PlayerStateJump : PlayerMovementState
             // Makes the character skip ground probing/snapping on its next update. 
             // If this line weren't here, the character would remain snapped to the ground when trying to jump. Try commenting this line out and see.
             Controller.Motor.ForceUnground();
+            Controller.Motor.SetGroundSolvingActivation(false);
 
             // Add to the return velocity and reset jump state
             currentVelocity += (jumpDirection * Controller.JumpUpSpeed) - Vector3.Project(currentVelocity, Controller.Motor.CharacterUp);
@@ -44,6 +45,7 @@ public class PlayerStateJump : PlayerMovementState
             return;
         }
 
+        /*
         if (Controller.Motor.GroundingStatus.IsStableOnGround)
         {
             if (Controller.MoveInputVector.sqrMagnitude > 0f)
@@ -55,6 +57,7 @@ public class PlayerStateJump : PlayerMovementState
                 Controller.SetState(new PlayerStateIdle());
             }
         }
+        */
         else
         {
             AirStrafeMovement(ref currentVelocity, Controller.MoveInputVector, deltaTime);
@@ -81,6 +84,6 @@ public class PlayerStateJump : PlayerMovementState
 
     public override void StateExit()
     {
-
+        Controller.Motor.SetGroundSolvingActivation(true);
     }
 }
