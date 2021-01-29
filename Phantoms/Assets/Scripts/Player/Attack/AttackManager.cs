@@ -13,7 +13,10 @@ public class AttackManager : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // Check both the object with the collider itself, the parent and then the children.
         AttackTarget attackedTarget = other.GetComponent<AttackTarget>();
+        if (attackedTarget == null) { attackedTarget = other.GetComponentInParent<AttackTarget>(); }
+        if (attackedTarget == null) { attackedTarget = other.GetComponentInChildren<AttackTarget>(); }
         if (attackedTarget != null && !AttackedTargets.Contains(attackedTarget))
         {
             AttackedTargets.Add(attackedTarget);
