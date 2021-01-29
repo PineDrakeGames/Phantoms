@@ -1,20 +1,23 @@
 fileFormatVersion: 2
-guid: 66b11289e9ca69843b96ee2744f7092b
+guid: e0f8816d338d0a14f9893f4b87c05df0
 ModelImporter:
-  serializedVersion: 19301
+  serializedVersion: 20101
   internalIDToNameTable:
   - first:
-      74: -6087385912660086837
-    second: Main Body|MainBodyFullAnims
+      74: -173902535149149278
+    second: RunCycle
   - first:
-      74: 7883760213714272836
-    second: Main Body|RunCycle.001
+      74: 6395036051539478402
+    second: Main Body|IDLE_001
   - first:
-      74: -3100369314251171874
-    second: Idle
+      74: -1170192705189236688
+    second: Main Body|KEYING_000
   - first:
-      74: 5522812681064789136
-    second: Run
+      74: 2467155899726288787
+    second: Main Body|RUN_002
+  - first:
+      74: 9047336006299345217
+    second: Main Body|RUN_D3_003
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -44,40 +47,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Main Body|MainBodyFullAnims
-      takeName: Main Body|MainBodyFullAnims
+      name: Main Body|IDLE_001
+      takeName: Main Body|IDLE_001
       internalID: 0
       firstFrame: 0
-      lastFrame: 92
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: Idle
-      takeName: Main Body|MainBodyFullAnims
-      internalID: 0
-      firstFrame: 0
-      lastFrame: 58
+      lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -102,11 +76,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Run
-      takeName: Main Body|MainBodyFullAnims
+      name: Main Body|RUN_D3_003
+      takeName: Main Body|RUN_D3_003
       internalID: 0
-      firstFrame: 71
-      lastFrame: 91
+      firstFrame: 0
+      lastFrame: 23
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -133,7 +107,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 0.25
+    globalScale: 0.3
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -148,6 +122,7 @@ ModelImporter:
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1
+    bakeAxisConversion: 0
     preserveHierarchy: 0
     skinWeightsMode: 0
     maxBonesPerVertex: 4
@@ -157,6 +132,9 @@ ModelImporter:
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
   tangentSpace:
@@ -180,7 +158,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.25
+    globalScale: 0.3
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
