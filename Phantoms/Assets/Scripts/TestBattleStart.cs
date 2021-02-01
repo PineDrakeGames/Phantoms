@@ -12,9 +12,6 @@ public class TestBattleStart : MonoBehaviour
     private PlayerBattleInstanceData m_playerData = null;
 
     [SerializeField]
-    private PhantomInstanceData[] m_playerPhantoms = null;
-
-    [SerializeField]
     private PhantomInstanceData[] m_enemyPhantoms = null;
     // Start is called before the first frame update
     void Start()

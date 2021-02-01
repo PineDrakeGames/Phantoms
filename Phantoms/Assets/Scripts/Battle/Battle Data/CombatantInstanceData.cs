@@ -7,5 +7,7 @@ public abstract class CombatantInstanceData
 {
     public CombatantData Data;
 
+    public int CurrentHP = 0;
+
     public BattleStats CurrentStats = new BattleStats();
 }

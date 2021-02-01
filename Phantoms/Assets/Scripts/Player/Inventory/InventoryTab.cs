@@ -1,0 +1,20 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public abstract class InventoryTab : MonoBehaviour
+{
+    [Header("Tab References")]
+    [SerializeField]
+    protected GameObject m_tabParent = null;
+
+    public virtual void OpenTab()
+    {
+        m_tabParent.SetActive(true);
+    }
+
+    public virtual void CloseTab()
+    {
+        m_tabParent.SetActive(false);
+    }
+}
