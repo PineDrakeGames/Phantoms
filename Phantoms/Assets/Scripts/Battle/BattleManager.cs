@@ -228,6 +228,19 @@ public class BattleManager : MonoBehaviour
         CurrentBattle.EndBattle(Battle.EndReason.WinLoseConditionMet);
     }
 
+    public void SwapPhantoms(Actor newPhantom)
+    {
+        foreach(KeyValuePair<Actor, CombatantInstanceData> keyValuePair in ActorToData)
+        {
+            if (keyValuePair.Value == PlayerInventoryManager.Instance.GetCurrentPhantom())
+            {
+                CurrentBattle.SwapParticipant(keyValuePair.Key, newPhantom);
+                PlayerInventoryManager.Instance.SetCurrentPhantom(ActorToData[newPhantom] as PhantomInstanceData);
+                return;
+            }
+        }
+    }
+
     public void SwapTurns()
     {
         battle.SwapTurn();

@@ -254,6 +254,12 @@ public class BattlePlayerMenu : MonoBehaviour
             submenuButton.ClickEvent.AddListener(m_battleManager.SwapTurns);
         }
 
+        if (CanSwitchPhantom())
+        {
+            submenuButton = AddSubmenuButton("Switch Phantom", "Switch out your current phantom partner");
+            submenuButton.ClickEvent.AddListener(SwitchPhantomsMenu);
+        }
+
         // Just to skip a turn
         submenuButton = AddSubmenuButton("Skip", "Skip your turn");
         Debug.Log("Adding listener to the button!");
@@ -294,6 +300,24 @@ public class BattlePlayerMenu : MonoBehaviour
         {
             submenuButton = AddSubmenuButton(item.Data.DisplayName, item.Data.Description);
             submenuButton.ClickEvent.AddListener(delegate { TargetMenuItem(item); });
+        }
+
+        ShowSubmenu();
+    }
+
+    public void SwitchPhantomsMenu()
+    {
+        SetState(BattleMenuState.TARGETING);
+        ClearSubmenu();
+
+        BattleSubmenuButton submenuButton = null;
+        foreach(Actor actor in m_currentActor.Group.Actors)
+        {
+            if (!m_battleManager.CurrentBattle.ActorInfo[actor].IsParticipating && actor.HP > 0)
+            {
+                submenuButton = AddSubmenuButton(actor.DisplayName, "Switch to " + actor.DisplayName);
+                submenuButton.ClickEvent.AddListener(delegate { m_battleManager.SwapPhantoms(actor); });
+            }
         }
 
         ShowSubmenu();

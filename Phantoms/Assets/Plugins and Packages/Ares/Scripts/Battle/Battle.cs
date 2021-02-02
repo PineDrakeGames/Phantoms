@@ -2150,6 +2150,29 @@ namespace Ares
         }
 
         // Used to swap turn to the next actor of the same group
+        public void SwapParticipant(Actor prevActor, Actor newActor)
+        {
+            SetParticipation(prevActor, false);
+            SetParticipation(newActor, true);
+            prevActor.gameObject.SetActive(false);
+            newActor.gameObject.SetActive(true);
+
+            for (int i = currentActorIndex; i < queuedActors.Count; i++)
+            {
+                Actor nextActor = queuedActors[i];
+                if (nextActor == prevActor)
+                {
+                    queuedActors.Remove(prevActor);
+                    queuedActors.Insert(i, newActor);
+                    currentRoundState = RoundState.InProgress;
+                    currentActor = nextActor;
+
+                    ProgressBattle();
+                }
+            }
+        }
+
+        // Used to swap turn to the next actor of the same group
         public void SwapTurn()
         {
             for (int i = 1; (i + currentActorIndex) < queuedActors.Count; i++)
