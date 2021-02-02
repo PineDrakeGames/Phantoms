@@ -90,6 +90,14 @@ public class InventoryUIPhantoms : InventoryTab
         }
     }
 
+    public void SetCurrentPhantom()
+    {
+        if (m_currentPhantom != null)
+        {
+            PlayerInventoryManager.Instance.SetCurrentPhantom(m_currentPhantom);
+        }
+    }
+
     // Private Helper Functions
     private InventoryPhantomButton GetButton()
     {

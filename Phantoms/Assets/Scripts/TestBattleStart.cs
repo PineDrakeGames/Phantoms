@@ -21,13 +21,13 @@ public class TestBattleStart : MonoBehaviour
 
         // For now, just assume that the first in the list is the current phantom.
         if (PlayerInventoryManager.Instance.Phantoms.Count >= 1)
-        playerCombatants.Add(PlayerInventoryManager.Instance.Phantoms[0]);
+        playerCombatants.Add(PlayerInventoryManager.Instance.GetCurrentPhantom());
 
         List<CombatantInstanceData> playerInactiveCombatants = new List<CombatantInstanceData>();
         playerInactiveCombatants.AddRange(PlayerInventoryManager.Instance.Phantoms);
         if (playerInactiveCombatants.Count > 0)
         {
-            playerInactiveCombatants.RemoveAt(0);
+            playerInactiveCombatants.RemoveAt(PlayerInventoryManager.Instance.CurrentActivePhantom);
         }
 
 

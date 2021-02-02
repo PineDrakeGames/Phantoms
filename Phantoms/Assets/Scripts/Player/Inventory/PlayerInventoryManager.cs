@@ -26,6 +26,28 @@ public class PlayerInventoryManager : MonoBehaviour
     public List<ItemInstanceData> Items = new List<ItemInstanceData>();
     public List<PhantomInstanceData> Phantoms = new List<PhantomInstanceData>();
 
+    private int m_currentActivePhantom = 0;
+    public int CurrentActivePhantom
+    {
+        get { return m_currentActivePhantom; }
+        set
+        {
+            if (value >= Phantoms.Count) 
+            {
+                m_currentActivePhantom = Phantoms.Count - 1; 
+            }
+            else
+            {
+                m_currentActivePhantom = value;
+            }
+
+            if (m_currentActivePhantom < 0) 
+            { 
+                m_currentActivePhantom = 0; 
+            }
+        }
+    }
+
     public void Initialize()
     {
         // Any stuff that we gotta do first
@@ -84,5 +106,30 @@ public class PlayerInventoryManager : MonoBehaviour
     public void AddPhantom(PhantomInstanceData newPhantom)
     {
         Phantoms.Add(newPhantom);
+    }
+
+    public PhantomInstanceData GetCurrentPhantom()
+    {
+        if (CurrentActivePhantom < Phantoms.Count)
+        {
+            return Phantoms[CurrentActivePhantom];
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public void SetCurrentPhantom(PhantomInstanceData phanData)
+    {
+        for (int i = 0; i < Phantoms.Count; i++)
+        {
+            PhantomInstanceData data = Phantoms[i];
+            if (data == phanData)
+            {
+                CurrentActivePhantom = i;
+                return;
+            }
+        }
     }
 }
