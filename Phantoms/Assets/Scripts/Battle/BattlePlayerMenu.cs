@@ -98,6 +98,12 @@ public class BattlePlayerMenu : MonoBehaviour
     private BattleMenuState m_prevState = BattleMenuState.INACTIVE;
     private BattleMenuState m_currentState = BattleMenuState.MAIN;
 
+    private enum ActionType
+    {
+        ABILITY,
+        ITEM
+    }
+
     private static BattlePlayerMenu s_instance = null;
     public static BattlePlayerMenu Instance { get { return s_instance; } }
 
@@ -225,6 +231,7 @@ public class BattlePlayerMenu : MonoBehaviour
     /// Functions called by the main menu buttons to load the different submenus. ///
     /////////////////////////////////////////////////////////////////////////////////
 
+    // Sets up the tactics menu - adds options based on what's available.
     public void TacticsMenu()
     {
         SetState(BattleMenuState.TACTICS);
@@ -241,7 +248,7 @@ public class BattlePlayerMenu : MonoBehaviour
         }
 
         // Check if swapping turns is an option first.
-        if (CanSwap())
+        if (CanSwapTurn())
         {
             submenuButton = AddSubmenuButton("Swap", "Swap turns with your partner");
             submenuButton.ClickEvent.AddListener(m_battleManager.SwapTurns);
@@ -258,6 +265,7 @@ public class BattlePlayerMenu : MonoBehaviour
         ShowSubmenu();
     }
 
+    // Shows all the abilities available for the current actor
     public void AbilitiesMenu()
     {
         SetState(BattleMenuState.ABILITIES);
@@ -274,6 +282,7 @@ public class BattlePlayerMenu : MonoBehaviour
         ShowSubmenu();
     }
 
+    // Shows all the items available for the current actor
     public void ItemsMenu()
     {
         SetState(BattleMenuState.ITEMS);
@@ -290,115 +299,21 @@ public class BattlePlayerMenu : MonoBehaviour
         ShowSubmenu();
     }
 
+    // Sets up the targeting menu for an ability.
     public void TargetMenuAbility(Ability ability)
     {
-        SetState(BattleMenuState.TARGETING);
-
-        m_actionTargets.Clear();
-        m_actionGroupTargets.Clear();
-
-        ClearSubmenu();
-
         m_currentAbility = ability;
-
-        Actor[] validTargets = m_battleManager.CurrentBattle.GetValidTargets(m_currentActor, ability);
-
-        BattleSubmenuButton submenuButton = null;
-
-        switch (ability.Data.TargetType)
-        {
-            case BattleInteractorData.TargetType.SingleActor:
-                // Add a button for each actor, for now.
-                foreach (Actor actor in validTargets)
-                {
-                    submenuButton = AddSubmenuButton(actor.DisplayName, null);
-                    submenuButton.ClickEvent.AddListener(delegate { SetAbilityTarget(actor); });
-                    submenuButton.SelectEvent.AddListener(delegate { SetArrowIndicator(actor); });
-                }
-                break;
-            case BattleInteractorData.TargetType.NumberOfActors:
-                // Add a button for each actor, with the addition of removing the button when used.
-                foreach (Actor actor in validTargets)
-                {
-                    submenuButton = AddSubmenuButton(actor.DisplayName, null);
-                    submenuButton.ClickEvent.AddListener(delegate
-                    {
-                        SetAbilityTarget(actor);
-                        submenuButton.gameObject.SetActive(false);
-                    });
-                    submenuButton.SelectEvent.AddListener(delegate { SetArrowIndicator(actor); });
-                }
-                break;
-            case BattleInteractorData.TargetType.AllActorsInGroup:
-                // TODO
-                break;
-            case BattleInteractorData.TargetType.AllActors:
-                // Just add all valid targets then do the ability select callback.
-                m_actionTargets.AddRange(validTargets);
-                m_actionInput.AbilitySelectCallback(ability);
-                break;
-        }
-
-        ShowSubmenu();
+        TargetMenuGeneric(ActionType.ABILITY);
     }
 
+    // Sets up the targeting menu for an item.
     public void TargetMenuItem(Item item)
     {
-        SetState(BattleMenuState.TARGETING);
-
-        m_actionTargets.Clear();
-        m_actionGroupTargets.Clear();
-
-        ClearSubmenu();
-
         m_currentItem = item;
-
-        Actor[] validTargets = m_battleManager.CurrentBattle.GetValidTargets(m_currentActor, item);
-
-        BattleSubmenuButton submenuButton = null;
-
-        switch (item.Data.TargetType)
-        {
-            case BattleInteractorData.TargetType.SingleActor:
-                // Add a button for each actor, for now.
-                foreach (Actor actor in validTargets)
-                {
-                    submenuButton = AddSubmenuButton(actor.DisplayName, null);
-                    submenuButton.ClickEvent.AddListener(delegate { SetItemTarget(actor); });
-                    submenuButton.SelectEvent.AddListener(delegate { SetArrowIndicator(actor); });
-                }
-                ShowSubmenu();
-                break;
-            case BattleInteractorData.TargetType.NumberOfActors:
-                // Add a button for each actor, with the addition of removing the button when used.
-                foreach (Actor actor in validTargets)
-                {
-                    submenuButton = AddSubmenuButton(actor.DisplayName, null);
-                    submenuButton.ClickEvent.AddListener(delegate
-                    {
-                        SetItemTarget(actor);
-                        submenuButton.gameObject.SetActive(false);
-                    });
-                    submenuButton.SelectEvent.AddListener(delegate { SetArrowIndicator(actor); });
-                }
-                ShowSubmenu();
-                break;
-            case BattleInteractorData.TargetType.AllActorsInGroup:
-                // TODO
-                Debug.Log("Setting targets");
-                m_actionGroupTargets.Add(m_currentActor.Group);
-                m_actionInput.ItemSelectCallback(item);
-                m_battleCamera.ResetCamera();
-                break;
-            case BattleInteractorData.TargetType.AllActors:
-                // Just add all valid targets then do the ability select callback.
-                m_actionTargets.AddRange(validTargets);
-                m_actionInput.ItemSelectCallback(item);
-                m_battleCamera.ResetCamera();
-                break;
-        }
+        TargetMenuGeneric(ActionType.ITEM);
     }
 
+    // Called when a target is selected for an ability
     public void SetAbilityTarget(Actor actor)
     {
         m_actionTargets.Add(actor);
@@ -417,6 +332,8 @@ public class BattlePlayerMenu : MonoBehaviour
                 break;
         }
     }
+
+    // Called when a target is selected for an item
     public void SetItemTarget(Actor actor)
     {
         m_actionTargets.Add(actor);
@@ -436,6 +353,7 @@ public class BattlePlayerMenu : MonoBehaviour
         }
     }
 
+    // Used to navigate menues
     public void ReturnToPrevMenu()
     {
         switch (m_currentState)
@@ -465,7 +383,7 @@ public class BattlePlayerMenu : MonoBehaviour
         }
     }
 
-
+    // Returns to the main menu for the player.
     public void ReturnToMainMenu()
     {
         SetState(BattleMenuState.MAIN);
@@ -493,12 +411,14 @@ public class BattlePlayerMenu : MonoBehaviour
     /// Private helper functions to manage the battle menu. ///
     ///////////////////////////////////////////////////////////
 
+    // Updates the battle menu state - should have any logic required for entering a new state here
     private void SetState(BattleMenuState newState)
     {
         m_prevState = m_currentState;
         m_currentState = newState;
     }
 
+    // Either grabs a pooled button or makes a new one, depening on needs - and sets up the button.
     private BattleSubmenuButton AddSubmenuButton(string name, string description)
     {
         BattleSubmenuButton submenuButton = null;
@@ -570,7 +490,98 @@ public class BattlePlayerMenu : MonoBehaviour
         }
     }
 
-    private bool CanSwap()
+    // Some delegates used only in this function
+    delegate void SelectCallback();
+    private void TargetMenuGeneric(ActionType actionType)
+    {
+        SetState(BattleMenuState.TARGETING);
+
+        m_actionTargets.Clear();
+        m_actionGroupTargets.Clear();
+
+        ClearSubmenu();
+
+        // Set things up based on the action type
+        Actor[] validTargets;
+        BattleInteractorData.TargetType targetType;
+        SelectCallback callback;
+
+        if (actionType == ActionType.ABILITY)
+        {
+            validTargets = m_battleManager.CurrentBattle.GetValidTargets(m_currentActor, m_currentAbility);
+            targetType = m_currentAbility.Data.TargetType;
+            callback = (delegate { m_actionInput.AbilitySelectCallback(m_currentAbility); });
+        }
+        else
+        {
+            validTargets = m_battleManager.CurrentBattle.GetValidTargets(m_currentActor, m_currentItem);
+            targetType = m_currentItem.Data.TargetType;
+            callback = (delegate { m_actionInput.ItemSelectCallback(m_currentItem); });
+        }
+
+        BattleSubmenuButton submenuButton = null;
+
+        switch (targetType)
+        {
+            case BattleInteractorData.TargetType.SingleActor:
+                // Add a button for each actor, for now.
+                foreach (Actor actor in validTargets)
+                {
+                    submenuButton = AddSubmenuButton(actor.DisplayName, null);
+                    if (actionType == ActionType.ABILITY)
+                    {
+                        submenuButton.ClickEvent.AddListener(delegate { SetAbilityTarget(actor); });
+                    }
+                    else
+                    {
+                        submenuButton.ClickEvent.AddListener(delegate { SetItemTarget(actor); });
+
+                    }
+                    submenuButton.SelectEvent.AddListener(delegate { SetArrowIndicator(actor); });
+                }
+                ShowSubmenu();
+                break;
+            case BattleInteractorData.TargetType.NumberOfActors:
+                // Add a button for each actor, with the addition of removing the button when used.
+                foreach (Actor actor in validTargets)
+                {
+                    submenuButton = AddSubmenuButton(actor.DisplayName, null);
+                    if (actionType == ActionType.ABILITY)
+                    {
+                        submenuButton.ClickEvent.AddListener(delegate { SetAbilityTarget(actor); });
+                    }
+                    else
+                    {
+                        submenuButton.ClickEvent.AddListener(delegate { SetItemTarget(actor); });
+                    }
+                    submenuButton.ClickEvent.AddListener(delegate
+                    {
+                        submenuButton.gameObject.SetActive(false);
+                    });
+                    submenuButton.SelectEvent.AddListener(delegate { SetArrowIndicator(actor); });
+                }
+                ShowSubmenu();
+                break;
+            case BattleInteractorData.TargetType.AllActorsInGroup:
+                // TODO
+                Debug.Log("Setting targets");
+                m_actionGroupTargets.Add(m_currentActor.Group);
+                callback();
+                m_battleCamera.ResetCamera();
+                break;
+            case BattleInteractorData.TargetType.AllActors:
+                // Just add all valid targets then do the ability select callback.
+                m_actionTargets.AddRange(validTargets);
+                callback();
+                m_battleCamera.ResetCamera();
+                break;
+        }
+    }
+
+    // Private functions to check if certain options should be available
+
+    // Checks if the player can swap turns between them and their phantom
+    private bool CanSwapTurn()
     {
         BattleGroup group = m_currentActor.Group;
         foreach (Actor actor in group.Actors)
@@ -583,8 +594,16 @@ public class BattlePlayerMenu : MonoBehaviour
         return false;
     }
 
+    // Checks if the player can catch in the current fight
     private bool CanCatch()
     {
         return m_battleManager.CanCatch();
+    }
+
+    // Checks if the player can swap out their current phantom for another one
+    private bool CanSwitchPhantom()
+    {
+        // Really, just check if there is at least 2 phantoms that the player owns...
+        return (PlayerInventoryManager.Instance.Phantoms.Count > 1);
     }
 }
