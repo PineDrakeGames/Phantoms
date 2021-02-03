@@ -236,6 +236,12 @@ public class BattleManager : MonoBehaviour
             {
                 CurrentBattle.SwapParticipant(keyValuePair.Key, newPhantom);
                 PlayerInventoryManager.Instance.SetCurrentPhantom(ActorToData[newPhantom] as PhantomInstanceData);
+                HealthIndicator prevIndicator =  m_playerMenu.ActorToHealthIndicator[keyValuePair.Key];
+                m_playerMenu.ActorToHealthIndicator.Remove(keyValuePair.Key);
+                prevIndicator.Actor = newPhantom;
+                prevIndicator.BattleStart();
+                m_playerMenu.ActorToHealthIndicator.Add(newPhantom, prevIndicator);
+
                 return;
             }
         }

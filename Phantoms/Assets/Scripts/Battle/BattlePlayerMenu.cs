@@ -65,6 +65,7 @@ public class BattlePlayerMenu : MonoBehaviour
     [SerializeField]
     private TextMeshPro m_damageIndicatorText = null;
 
+    public Dictionary<Actor, HealthIndicator> ActorToHealthIndicator = new Dictionary<Actor, HealthIndicator>();
 
     private List<BattleSubmenuButton> m_subMenuButtons = new List<BattleSubmenuButton>();
     private ActionInput m_actionInput;
@@ -139,6 +140,7 @@ public class BattlePlayerMenu : MonoBehaviour
                 indicator = gameObj.GetComponent<HealthIndicator>();
                 indicator.Actor = actor;
                 indicator.BattleStart();
+                ActorToHealthIndicator.Add(actor, indicator);
             }
         }
 
