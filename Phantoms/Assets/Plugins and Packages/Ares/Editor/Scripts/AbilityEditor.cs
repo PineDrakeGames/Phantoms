@@ -6,12 +6,13 @@ using System.Linq;
 namespace Ares.Editor {
 	[CustomEditor(typeof(AbilityData), true)]
 	public class AbilityEditor : BattleInteractorEditor {
-		readonly string[] customProperties = {"priority"};
+		readonly string[] customProperties = {"priority", "manacost"};
 
 		protected override string[] GetPropertyGroup1(){
 			List<string> propertyGroup1 = base.GetPropertyGroup1().ToList();
 
 			propertyGroup1.Insert(4, "priority");
+			propertyGroup1.Insert(2, "manacost");
 
 			return propertyGroup1.ToArray();
 		}

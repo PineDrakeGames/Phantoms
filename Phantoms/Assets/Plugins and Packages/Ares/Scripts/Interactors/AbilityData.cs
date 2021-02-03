@@ -6,9 +6,11 @@ namespace Ares {
 	public class AbilityData : BattleInteractorData<AbilityAction> {
 		public override string FullCategoryPath {get{ return InteractorCategories.GetCategoryForId(InteractorCategories.CategoryType.Ability, category);}}
 		public int Priority {get{return priority;}}
+		public int ManaCost {get{return manacost;}}
 
 		[SerializeField, InteractorCategoryAttribute(InteractorCategories.CategoryType.Ability)] int category = 0;
 		[SerializeField, Tooltip("Determines whether an ability holds priority over others. Higher priority abilities get evaluated before lower ones.")] int priority = 0;
+		[SerializeField, Tooltip("The manacost of the given ability.")] int manacost = 0;
 	}
 
 	[System.Serializable] //Gets serialized on Actors
