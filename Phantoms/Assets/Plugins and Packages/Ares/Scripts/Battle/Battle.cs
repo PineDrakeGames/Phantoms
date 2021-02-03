@@ -2220,7 +2220,9 @@ namespace Ares
 			 * 
 			 * For example, a simple mana filter might look like the following:
 			 *     validAbilities = validAbilities.Where(ability => actor.Mana >= ability.ManaCost);
+             *                                  lol, almost - just adding the data part
 			*/
+            validAbilities = validAbilities.Where(ability => actor.Mana >= ability.Data.ManaCost);
 
             return validAbilities.ToArray();
         }
@@ -2373,7 +2375,8 @@ namespace Ares
 
             yield return null;
 
-            
+            // Not sure if this is the place to do it, but using the mana here...
+            actor.SpendMana(ability.Data.ManaCost);
 
             AbilityMinigame.MinigameResult minigameResult = AbilityMinigame.MinigameResult.FAIL;
             bool usedMinigame = false;
