@@ -143,6 +143,16 @@ namespace Ares {
 			}
 		}
 
+		public bool CheckAbilityBlocked(Ability ability, Actor caster)
+		{
+			foreach(BattleInteractorModifier filter in Data.Filters){
+				if(filter.IsBlocked(ability, caster, Setter)){
+					return true;
+				}
+			}
+			return false;
+		}
+
 		public IEnumerable<Ability> FilterBlockedAbilities(IEnumerable<Ability> abilities, Actor caster){
 			HashSet<Ability> blockedAbilities = new HashSet<Ability>();
 

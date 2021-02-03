@@ -285,6 +285,16 @@ public class BattlePlayerMenu : MonoBehaviour
             submenuButton.ClickEvent.AddListener(delegate { TargetMenuAbility(ability); });
         }
 
+        List<Ability> validAbilities = new List<Ability>(m_actionInput.ValidAbilities);
+        foreach(Ability ability in m_currentActor.Abilities)
+        {
+            if (m_battleManager.CurrentBattle.IsAbilityValidWithoutMana(m_currentActor, ability))
+            {
+                submenuButton = AddSubmenuButton(ability.Data.DisplayName, ability.Data.Description);
+                submenuButton.ButtonComponent.interactable = false;
+            }
+        }
+
         ShowSubmenu();
     }
 
@@ -465,6 +475,7 @@ public class BattlePlayerMenu : MonoBehaviour
         submenuButton.BattleMenu = this;
         submenuButton.ButtonName = name;
         submenuButton.ButtonDesc = description;
+        submenuButton.ButtonComponent.interactable = true;
 
         // Remove all previous listeners, and add any onclick listeners that all buttons would have.
         submenuButton.ClickEvent = new UnityEvent();

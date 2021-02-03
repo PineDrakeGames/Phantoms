@@ -2227,6 +2227,21 @@ namespace Ares
             return validAbilities.ToArray();
         }
 
+        public bool IsAbilityValidWithoutMana(Actor actor, Ability ability)
+        {
+            if (!ability.Enabled || !Actors.Any(ac => ability.CanUse(ActorInfo[actor], ActorInfo[ac])))
+            {
+                return false;
+            }
+            foreach (EnvironmentVariable envVar in EnvironmentVariables)
+            {
+                if (envVar.CheckAbilityBlocked(ability, actor)) { return false; }
+            }
+            
+            // Nothing else makes the ability invalid, just return if the mana does now.
+            return (actor.Mana < ability.Data.ManaCost);
+        }
+
         Item[] GetValidItems(Actor actor)
         {
             IEnumerable<Item> validItems;
