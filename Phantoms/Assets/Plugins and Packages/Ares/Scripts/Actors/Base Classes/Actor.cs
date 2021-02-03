@@ -10,6 +10,8 @@ namespace Ares {
 		//Events
 		public IntEvent OnHPChange {get; private set;}
 		public UnityEvent OnHPDeplete {get; private set;}
+		public IntEvent OnManaChange {get; private set;}
+		public UnityEvent OnManaDeplete {get; private set;}
 
 		public Ability_StringEvent OnAbilityPreparationStart {get; private set;}
 		public Ability_Int_StringEvent OnAbilityPreparationUpdate {get; private set;}
@@ -57,6 +59,7 @@ namespace Ares {
 		//Getters for serialized fields (to keep Editor UI functionality)
 		public string DisplayName {get{return displayName;}}
 		public int MaxHP {get{return maxHP;}}
+		public int MaxMana {get{return maxMana;}}
 		public Ability[] Abilities {get{return abilities;}}
 		public HashSet<Affliction> Afflictions {get{return afflictions;}}
 		public List<TemporaryBuff> TemporaryBuffs {get{return temporaryBuffs;}}
@@ -85,6 +88,23 @@ namespace Ares {
 			}
 		}
 
+		public int Mana {
+			get{
+				return mana;
+			}
+			private set{
+				int newMana = Mathf.Clamp (value, 0, maxMana);
+
+				OnManaChange.Invoke(newMana);
+
+				mana = newMana;
+
+				if(mana == 0){
+					OnManaDeplete.Invoke();
+				}
+			}
+		}
+
 		public PhantomType MainType {get{return mainType;} set{mainType = value;}}
 		public PhantomType SecondType{get{return secondType;} set{secondType = value;}}
 		
@@ -99,6 +119,8 @@ namespace Ares {
 		[SerializeField] string displayName = "Actor Name";
 		[SerializeField] int hp;
 		[SerializeField] int maxHP;
+		[SerializeField] int mana;
+		[SerializeField] int maxMana;
 		[SerializeField] Ability[] abilities;
 		[SerializeField] Ability fallbackAbility;
 		[SerializeField] List<Stat> stats;
@@ -115,10 +137,13 @@ namespace Ares {
 		void OnValidate(){
 			maxHP = Mathf.Max(0, maxHP);
 			hp = Mathf.Clamp(hp, 0, maxHP);
+			maxMana = Mathf.Max(0, maxMana);
+			mana = Mathf.Clamp(mana, 0, maxMana);
 		}
 		
 		void Reset(){
 			hp = maxHP = 100;
+			mana = maxMana = 100;
 			abilities = new Ability[0];
 		}
 		#endif
@@ -126,6 +151,8 @@ namespace Ares {
 		void Awake(){
 			OnHPChange = new IntEvent();
 			OnHPDeplete = new UnityEvent();
+			OnManaChange = new IntEvent();
+			OnManaDeplete = new UnityEvent();
 
 			OnAbilityPreparationStart = new Ability_StringEvent();
 			OnAbilityPreparationUpdate = new Ability_Int_StringEvent();
@@ -225,11 +252,13 @@ namespace Ares {
 			}
 		}
 
-		public void Init(string displayName, int hp, int maxHP, Dictionary<string, int> stats, Ability[] abilities,
+		public void Init(string displayName, int hp, int maxHP, int mana, int maxMana, Dictionary<string, int> stats, Ability[] abilities,
 		                 Ability fallbackAbility, HashSet<Affliction> afflictions, Inventory inventory){
 			this.displayName = displayName;
 			this.hp = hp;
 			this.maxHP = maxHP;
+			this.mana = mana;
+			this.maxMana = maxMana;
 			this.fallbackAbility = fallbackAbility;
 			this.abilities = abilities == null ? new Ability[0] : abilities;
 			this.afflictions = afflictions == null ? new HashSet<Affliction>() : afflictions;
@@ -258,6 +287,22 @@ namespace Ares {
 			HP += Mathf.Max(0, power);
 
 			return HP - oldHP;
+		}
+
+		public int SpendMana(int manaCost){
+			int oldMana = Mana;
+
+			Mana -= Mathf.Max(0, manaCost);
+
+			return oldMana - Mana;
+		}
+
+		public int RecoverMana(int manaCost){
+			int oldMana = Mana;
+
+			Mana += Mathf.Max(0, manaCost);
+
+			return Mana - oldMana;
 		}
 		
 		public int BuffStat(StatData statData, int stages){

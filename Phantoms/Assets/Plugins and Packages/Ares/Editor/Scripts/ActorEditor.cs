@@ -9,7 +9,7 @@ using Ares.ActorComponents;
 namespace Ares.Editor {
 	[CustomEditor(typeof(Actor), true)]
 	public class ActorEditor : AresEditor {
-		readonly string[] propertyGroup1 = {"displayName", "hp", "maxHP", "mainType", "secondType" };
+		readonly string[] propertyGroup1 = {"displayName", "hp", "maxHP", "mana", "maxMana", "mainType", "secondType" };
 		readonly string[] propertyGroup2 = {};
 		readonly string[] hiddenProperties = {"m_Script", "stats", "abilities", "fallbackAbility"};
 //		readonly Color fallbackFieldBackground = new Color(.894f, .894f, .894f, 1f);

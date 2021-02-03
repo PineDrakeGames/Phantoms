@@ -89,7 +89,7 @@ public static class PhantomDataUtility
             displayName = instanceData.PhanData.PhantomDisplayName;
         }
 
-        phantomActor.Init(displayName, instanceData.CurrentStats.MaxHP, instanceData.CurrentStats.MaxHP, stats, instanceData.Data.Abilities, phantomActor.FallbackAbility, phantomActor.Afflictions, phantomActor.inventory);
+        phantomActor.Init(displayName, instanceData.CurrentStats.MaxHP, instanceData.CurrentStats.MaxHP, instanceData.CurrentStats.Mana, instanceData.CurrentStats.Mana, stats, instanceData.Data.Abilities, phantomActor.FallbackAbility, phantomActor.Afflictions, phantomActor.inventory);
         phantomActor.MainType = instanceData.PhanData.MainType;
         phantomActor.SecondType = instanceData.PhanData.SecondType;
     }
