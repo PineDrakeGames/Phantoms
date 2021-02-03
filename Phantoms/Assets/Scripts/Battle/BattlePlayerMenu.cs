@@ -281,7 +281,7 @@ public class BattlePlayerMenu : MonoBehaviour
         BattleSubmenuButton submenuButton = null;
         foreach (Ability ability in m_actionInput.ValidAbilities)
         {
-            submenuButton = AddSubmenuButton(ability.Data.DisplayName, ability.Data.Description);
+            submenuButton = AddSubmenuButton(ability.Data.DisplayName, ability.Data.Description, ability.Data.ManaCost.ToString() + " Mana");
             submenuButton.ClickEvent.AddListener(delegate { TargetMenuAbility(ability); });
         }
 
@@ -290,7 +290,7 @@ public class BattlePlayerMenu : MonoBehaviour
         {
             if (m_battleManager.CurrentBattle.IsAbilityValidWithoutMana(m_currentActor, ability))
             {
-                submenuButton = AddSubmenuButton(ability.Data.DisplayName, ability.Data.Description);
+                submenuButton = AddSubmenuButton(ability.Data.DisplayName, ability.Data.Description, ability.Data.ManaCost.ToString() + " Mana");
                 submenuButton.ButtonComponent.interactable = false;
             }
         }
@@ -308,7 +308,7 @@ public class BattlePlayerMenu : MonoBehaviour
         BattleSubmenuButton submenuButton = null;
         foreach (Item item in m_actionInput.ValidItems)
         {
-            submenuButton = AddSubmenuButton(item.Data.DisplayName, item.Data.Description);
+            submenuButton = AddSubmenuButton(item.Data.DisplayName, item.Data.Description, "x" + item.RemainingUses.ToString());
             submenuButton.ClickEvent.AddListener(delegate { TargetMenuItem(item); });
         }
 
@@ -325,7 +325,7 @@ public class BattlePlayerMenu : MonoBehaviour
         {
             if (!m_battleManager.CurrentBattle.ActorInfo[actor].IsParticipating && actor.HP > 0)
             {
-                submenuButton = AddSubmenuButton(actor.DisplayName, "Switch to " + actor.DisplayName);
+                submenuButton = AddSubmenuButton(actor.DisplayName, "Switch to " + actor.DisplayName, actor.HP.ToString() + "/" + actor.MaxHP.ToString() + " HP");
                 submenuButton.ClickEvent.AddListener(delegate { m_battleManager.SwapPhantoms(actor); });
             }
         }
@@ -453,7 +453,7 @@ public class BattlePlayerMenu : MonoBehaviour
     }
 
     // Either grabs a pooled button or makes a new one, depening on needs - and sets up the button.
-    private BattleSubmenuButton AddSubmenuButton(string name, string description)
+    private BattleSubmenuButton AddSubmenuButton(string name, string description, string info = "")
     {
         BattleSubmenuButton submenuButton = null;
         foreach (BattleSubmenuButton item in m_subMenuButtons)
@@ -475,6 +475,7 @@ public class BattlePlayerMenu : MonoBehaviour
         submenuButton.BattleMenu = this;
         submenuButton.ButtonName = name;
         submenuButton.ButtonDesc = description;
+        submenuButton.ButtonInfo = info;
         submenuButton.ButtonComponent.interactable = true;
 
         // Remove all previous listeners, and add any onclick listeners that all buttons would have.

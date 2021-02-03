@@ -10,6 +10,8 @@ public class BattleSubmenuButton : MonoBehaviour, ISelectHandler, IPointerEnterH
     [Header("References to items on button.")]
     [SerializeField]
     private TextMeshProUGUI m_buttonText = null;
+    [SerializeField]
+    private TextMeshProUGUI m_buttonInfoText = null;
 
     [HideInInspector]
     public BattlePlayerMenu BattleMenu = null;
@@ -18,6 +20,7 @@ public class BattleSubmenuButton : MonoBehaviour, ISelectHandler, IPointerEnterH
     public UnityEvent SelectEvent = new UnityEvent();
 
     private string m_buttonName = null;
+    private string m_buttonInfo = null;
     private string m_buttonDesc = null;
     public string ButtonName
     {
@@ -26,6 +29,15 @@ public class BattleSubmenuButton : MonoBehaviour, ISelectHandler, IPointerEnterH
         {
             m_buttonName = value;
             if (m_buttonText) { m_buttonText.text = value; }
+        }
+    }
+    public string ButtonInfo
+    {
+        get { return m_buttonInfo; }
+        set
+        {
+            m_buttonInfo = value;
+            if (m_buttonInfoText) { m_buttonInfoText.text = value; }
         }
     }
     public string ButtonDesc
