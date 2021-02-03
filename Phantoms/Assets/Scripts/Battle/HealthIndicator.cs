@@ -9,9 +9,15 @@ public class HealthIndicator : MonoBehaviour
 
     [Header("References to UI Elements")]
     [SerializeField]
+    private TMP_Text m_actorName = null;
+    [SerializeField]
     private TMP_Text m_maxHP = null;
     [SerializeField]
     private TMP_Text m_currentHP = null;
+    [SerializeField]
+    private TMP_Text m_maxMana = null;
+    [SerializeField]
+    private TMP_Text m_currentMana = null;
 
     int prevHP = 0;
 
@@ -22,8 +28,13 @@ public class HealthIndicator : MonoBehaviour
         {
             m_maxHP.text = Actor.MaxHP.ToString();
             m_currentHP.text = Actor.HP.ToString();
+            m_maxMana.text = Actor.MaxMana.ToString();
+            m_currentMana.text = Actor.Mana.ToString();
+            m_actorName.text = Actor.DisplayName;
+
             prevHP = Actor.HP;
             Actor.OnHPChange.AddListener(UpdateActorHP);
+            Actor.OnManaChange.AddListener(UpdateActorMana);
         }
     }
 
@@ -43,5 +54,10 @@ public class HealthIndicator : MonoBehaviour
             BattlePlayerMenu.Instance.SetDamageIndicator(Actor.gameObject.transform.position, (prevHP - newHP));
         }
         prevHP = newHP;
+    }
+
+    private void UpdateActorMana(int newMana)
+    {
+        m_currentMana.text = newMana.ToString();
     }
 }
