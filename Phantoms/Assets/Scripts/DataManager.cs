@@ -92,6 +92,18 @@ public class DataManager : MonoBehaviour
         }
     }
 
+    public ItemData TryGetItemData(Ares.ItemData aresItem)
+    {
+        foreach (ItemData itemData in ItemData.Data)
+        {
+            if (itemData.AresData == aresItem)
+            {
+                return itemData;
+            }
+        }
+        return null;
+    }
+
     public PlayerBattleData GetPlayerBattleData()
     {
         return m_playerBattleData;

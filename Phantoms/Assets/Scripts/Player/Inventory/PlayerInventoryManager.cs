@@ -81,14 +81,35 @@ public class PlayerInventoryManager : MonoBehaviour
         }
     }
 
+    public void UseItem(string itemID, int numUsed = 1)
+    {
+        foreach(ItemInstanceData item in Items)
+        {
+            if (item.Data.ItemID == itemID)
+            {
+                item.Quantity -= numUsed;
+                return;
+            }
+        }
+    }
+
     public Ares.Inventory CreateBattleInventory()
     {
         Ares.Inventory battleInventory = new Ares.StackedInventory();
+        battleInventory.OnItemAdd.AddListener(SetupBattleItem);
         foreach (ItemInstanceData item in Items)
         {
             battleInventory.AddItem(item.AresData, item.Quantity);
         }
         return battleInventory;
+    }
+
+    public void SetupBattleItem(Ares.Item item, int quantity)
+    {
+        item.OnConsumed.AddListener(oldRemainingUses => {
+            string itemID = DataManager.Instance.TryGetItemData(item.Data).ItemID;
+            UseItem(itemID);
+		});
     }
 
     public void SaveBattleInventory(Ares.StackedInventory battleInventory)

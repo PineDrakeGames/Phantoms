@@ -89,7 +89,7 @@ public static class PhantomDataUtility
             displayName = instanceData.PhanData.PhantomDisplayName;
         }
 
-        phantomActor.Init(displayName, instanceData.CurrentStats.MaxHP, instanceData.CurrentStats.MaxHP, instanceData.CurrentStats.Mana, instanceData.CurrentStats.Mana, stats, instanceData.Data.Abilities, phantomActor.FallbackAbility, phantomActor.Afflictions, phantomActor.inventory);
+        phantomActor.Init(displayName, instanceData.CurrentHP, instanceData.CurrentStats.MaxHP, instanceData.CurrentMana, instanceData.CurrentStats.Mana, stats, instanceData.Data.Abilities, phantomActor.FallbackAbility, phantomActor.Afflictions, phantomActor.inventory);
         phantomActor.MainType = instanceData.PhanData.MainType;
         phantomActor.SecondType = instanceData.PhanData.SecondType;
     }
@@ -146,6 +146,11 @@ public static class PhantomDataUtility
             int randomIndex = Random.Range(0, randomPool.Count);
             instanceData.LevelUps.SetStat(randomPool[randomIndex], instanceData.LevelUps.GetStat(randomPool[randomIndex]) + 1);
         }
+
+        instanceData.SetCurrentStats();
+
+        instanceData.CurrentHP = instanceData.CurrentStats.MaxHP;
+        instanceData.CurrentMana = instanceData.CurrentStats.Mana;
 
         // Set initial nickname
         instanceData.NickName = phantomData.PhantomDisplayName;

@@ -119,7 +119,7 @@ public class BattleInitializer : MonoBehaviour
 
                 string displayName = "Player";
 
-                actorComponent.Init(displayName, data.CurrentStats.MaxHP, data.CurrentStats.MaxHP, data.CurrentStats.Mana, data.CurrentStats.Mana, stats, data.Data.Abilities, actorComponent.FallbackAbility, actorComponent.Afflictions, actorComponent.inventory);
+                actorComponent.Init(displayName, data.CurrentHP, data.CurrentStats.MaxHP, data.CurrentMana, data.CurrentStats.Mana, stats, data.Data.Abilities, actorComponent.FallbackAbility, actorComponent.Afflictions, actorComponent.inventory);
                 actorComponent.MainType = PhantomType.NONE;
                 actorComponent.SecondType = PhantomType.NONE;
             }
@@ -145,7 +145,7 @@ public class BattleInitializer : MonoBehaviour
                 stats.Add("defense", data.CurrentStats.Defense);
 
                 // TODO: ACtor name?
-                actorComponent.Init("TODO REPLACE THIS", data.CurrentStats.MaxHP, data.CurrentStats.MaxHP, data.CurrentStats.Mana, data.CurrentStats.Mana, stats, data.Data.Abilities, actorComponent.FallbackAbility, actorComponent.Afflictions, actorComponent.inventory);
+                actorComponent.Init("TODO REPLACE THIS", data.CurrentHP, data.CurrentStats.MaxHP, data.CurrentMana, data.CurrentStats.Mana, stats, data.Data.Abilities, actorComponent.FallbackAbility, actorComponent.Afflictions, actorComponent.inventory);
                 actorComponent.MainType = PhantomType.NONE;
                 actorComponent.SecondType = PhantomType.NONE;
             }

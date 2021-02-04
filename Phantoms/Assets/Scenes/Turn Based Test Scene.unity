@@ -1011,6 +1011,8 @@ MonoBehaviour:
   displayName: Phantom
   hp: 20
   maxHP: 20
+  mana: 0
+  maxMana: 0
   abilities:
   - data: {fileID: 11400000, guid: 4f7eefe919b2ea241b715b3d3de98c82, type: 2}
     preparationTurnsRemaining: 0
@@ -2285,57 +2287,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 566357276}
   m_CullTransparentMesh: 0
---- !u!21 &571561638
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Instance of Jacket
-  m_Shader: {fileID: -6465566751694194690, guid: 99d76b858f6e2234c9818a9f514f835d,
-    type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - Texture2D_5166454E:
-        m_Texture: {fileID: 2800000, guid: b7b112567666ac249a9c242eadea4c55, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - Texture2D_9B4BA08B:
-        m_Texture: {fileID: 2800000, guid: 0dab8a6cbeb89f047b001be801de6f3c, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - Vector1_464CC92B: 20
-    - Vector1_A9CF7714: 0.1
-    - Vector1_DF86F427: 10
-    - Vector1_FA202C0D: -1
-    m_Colors:
-    - Color_52BFB6F5: {r: 1, g: 1, b: 1, a: 1}
-    - Color_6A5748D: {r: 1, g: 1, b: 1, a: 0}
-    - Color_816F9FC3: {r: 1, g: 1, b: 1, a: 0}
-    - Color_D14924AC: {r: 0, g: 0, b: 0, a: 0}
-    - _L1_color: {r: 1, g: 1, b: 1, a: 0.99}
-    - _L1_dir: {r: 0.6468651, g: 0.63813835, b: -0.41754645, a: 0}
-    - _L2_color: {r: 0, g: 0.029275104, b: 0.06191811, a: 0.6191811}
-    - _L2_dir: {r: 0.01797041, g: -0.99142116, b: -0.12946472, a: 0}
-    - _L3_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L3_dir: {r: 0, g: 1, b: 0, a: 0}
-    - _L4_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L4_dir: {r: 0, g: 1, b: 0, a: 0}
-    - _L5_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L5_dir: {r: 0, g: 1, b: 0, a: 0}
-    - _L6_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L6_dir: {r: 0, g: 1, b: 0, a: 0}
-  m_BuildTextureStacks: []
 --- !u!1 &620176828
 GameObject:
   m_ObjectHideFlags: 0
@@ -2617,6 +2568,8 @@ MonoBehaviour:
   displayName: Player
   hp: 20
   maxHP: 20
+  mana: 0
+  maxMana: 0
   abilities:
   - data: {fileID: 11400000, guid: 4f7eefe919b2ea241b715b3d3de98c82, type: 2}
     preparationTurnsRemaining: 0
@@ -3656,6 +3609,8 @@ MonoBehaviour:
   displayName: Enemy
   hp: 20
   maxHP: 20
+  mana: 0
+  maxMana: 0
   abilities:
   - data: {fileID: 11400000, guid: 3e544f2037cca6b4da49e3f77079ed24, type: 2}
     preparationTurnsRemaining: 0
@@ -4433,6 +4388,8 @@ MonoBehaviour:
   displayName: Enemy
   hp: 20
   maxHP: 20
+  mana: 0
+  maxMana: 0
   abilities:
   - data: {fileID: 11400000, guid: 3e544f2037cca6b4da49e3f77079ed24, type: 2}
     preparationTurnsRemaining: 0
@@ -5145,7 +5102,8 @@ MonoBehaviour:
   m_battleInitializer: {fileID: 245611251}
   m_playerData:
     Data: {fileID: 11400000, guid: a708a189b2ae25c46b42f8247c265da0, type: 2}
-    CurrentHP: 0
+    CurrentHP: 20
+    CurrentMana: 5
     CurrentStats:
       MaxHP: 20
       Attack: 3
@@ -5155,6 +5113,7 @@ MonoBehaviour:
   m_enemyPhantoms:
   - Data: {fileID: 11400000, guid: b768596f6691c36409599a966f18ea48, type: 2}
     CurrentHP: 0
+    CurrentMana: 0
     CurrentStats:
       MaxHP: 0
       Attack: 0
@@ -5173,6 +5132,7 @@ MonoBehaviour:
       Relic: 0
   - Data: {fileID: 11400000, guid: b768596f6691c36409599a966f18ea48, type: 2}
     CurrentHP: 0
+    CurrentMana: 0
     CurrentStats:
       MaxHP: 0
       Attack: 0
@@ -5191,6 +5151,7 @@ MonoBehaviour:
       Relic: 0
   - Data: {fileID: 11400000, guid: b768596f6691c36409599a966f18ea48, type: 2}
     CurrentHP: 0
+    CurrentMana: 0
     CurrentStats:
       MaxHP: 0
       Attack: 0
@@ -6909,6 +6870,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1814156889}
   m_CullTransparentMesh: 0
+--- !u!21 &1826265256
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Instance of Jacket
+  m_Shader: {fileID: -6465566751694194690, guid: 99d76b858f6e2234c9818a9f514f835d,
+    type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - Texture2D_5166454E:
+        m_Texture: {fileID: 2800000, guid: b7b112567666ac249a9c242eadea4c55, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_9B4BA08B:
+        m_Texture: {fileID: 2800000, guid: 0dab8a6cbeb89f047b001be801de6f3c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - Vector1_464CC92B: 20
+    - Vector1_A9CF7714: 0.1
+    - Vector1_DF86F427: 10
+    - Vector1_FA202C0D: -1
+    m_Colors:
+    - Color_52BFB6F5: {r: 1, g: 1, b: 1, a: 1}
+    - Color_6A5748D: {r: 1, g: 1, b: 1, a: 0}
+    - Color_816F9FC3: {r: 1, g: 1, b: 1, a: 0}
+    - Color_D14924AC: {r: 0, g: 0, b: 0, a: 0}
+    - _L1_color: {r: 1, g: 1, b: 1, a: 0.99}
+    - _L1_dir: {r: 0.6468651, g: 0.63813835, b: -0.41754645, a: 0}
+    - _L2_color: {r: 0, g: 0.029275104, b: 0.06191811, a: 0.6191811}
+    - _L2_dir: {r: 0.01797041, g: -0.99142116, b: -0.12946472, a: 0}
+    - _L3_color: {r: 0, g: 0, b: 0, a: 1}
+    - _L3_dir: {r: 0, g: 1, b: 0, a: 0}
+    - _L4_color: {r: 0, g: 0, b: 0, a: 1}
+    - _L4_dir: {r: 0, g: 1, b: 0, a: 0}
+    - _L5_color: {r: 0, g: 0, b: 0, a: 1}
+    - _L5_dir: {r: 0, g: 1, b: 0, a: 0}
+    - _L6_color: {r: 0, g: 0, b: 0, a: 1}
+    - _L6_dir: {r: 0, g: 1, b: 0, a: 0}
+  m_BuildTextureStacks: []
 --- !u!1 &1835384224
 GameObject:
   m_ObjectHideFlags: 0
@@ -12027,6 +12039,8 @@ MonoBehaviour:
   displayName: Enemy
   hp: 20
   maxHP: 20
+  mana: 0
+  maxMana: 0
   abilities:
   - data: {fileID: 11400000, guid: 3e544f2037cca6b4da49e3f77079ed24, type: 2}
     preparationTurnsRemaining: 0

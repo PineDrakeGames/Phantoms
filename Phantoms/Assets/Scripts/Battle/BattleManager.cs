@@ -200,13 +200,23 @@ public class BattleManager : MonoBehaviour
             // Show tie screen or determine winner
         }
 
+        // UPDATE ALL THE DATA BASED ON THE RESULTS OF THE BATTLE
+        foreach (Actor actor in playerTeam)
+        {
+            CombatantInstanceData data = ActorToData[actor];
+            data.CurrentHP = actor.HP;
+            data.CurrentMana = actor.Mana;
+        }
+
         PlayerInventoryManager.Instance.SaveBattleInventory(playerGroup.Inventory as StackedInventory);
 
         // For now, just loading back to the test scene
         LoadingManager.LoadSceneByPath(m_testReturnScene);
     }
 
+    ////////////////////////
     /// Public functions ///
+    ////////////////////////
 
     public void CatchPhantom()
     {

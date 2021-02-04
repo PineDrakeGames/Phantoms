@@ -32,7 +32,14 @@ public class TestBattleStart : MonoBehaviour
 
 
         List<CombatantInstanceData> enemyCombatants = new List<CombatantInstanceData>();
+        foreach(PhantomInstanceData phantomData in m_enemyPhantoms)
+        {
+            phantomData.SetCurrentStats();
+            phantomData.CurrentHP = phantomData.CurrentStats.MaxHP;
+            phantomData.CurrentMana = phantomData.CurrentStats.Mana;
+        }
         enemyCombatants.AddRange(m_enemyPhantoms);
+
         m_battleInitializer.InitializeBattle(playerCombatants, playerInactiveCombatants, enemyCombatants);
     }
 }
