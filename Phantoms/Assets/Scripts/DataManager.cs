@@ -44,6 +44,9 @@ public class DataManager : MonoBehaviour
     private Dictionary<string, PhantomData> m_phantomIdToData = null;
     private Dictionary<string, ItemData> m_ItemIdToData = null;
 
+    // Current player data
+    private PlayerBattleInstanceData m_playerBattleInstanceData = null;
+
     public void Initialize()
     {
         // Any initialization things
@@ -66,6 +69,10 @@ public class DataManager : MonoBehaviour
                 m_ItemIdToData.Add(data.ItemID, data);
             }
         }
+
+        m_playerBattleInstanceData = new PlayerBattleInstanceData(m_playerBattleData);
+        m_playerBattleInstanceData.SetCurrentStats();
+        m_playerBattleInstanceData.FullRestore();
     }
 
     public PhantomData TryGetPhantomData(string phantomID)
@@ -107,5 +114,10 @@ public class DataManager : MonoBehaviour
     public PlayerBattleData GetPlayerBattleData()
     {
         return m_playerBattleData;
+    }
+
+    public PlayerBattleInstanceData GetPlayerBattleInstanceData()
+    {
+        return m_playerBattleInstanceData;
     }
 }

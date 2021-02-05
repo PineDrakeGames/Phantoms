@@ -5,4 +5,5 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Phantoms/Player Combat Data")]
 public class PlayerBattleData : CombatantData
 {
+    public BattleStats DefaultStats;
 }

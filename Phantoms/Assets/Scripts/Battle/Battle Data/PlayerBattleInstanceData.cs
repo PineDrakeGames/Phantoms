@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class PlayerBattleInstanceData : CombatantInstanceData
 {
-    public PlayerBattleData PhanData
+    public PlayerBattleData PlayerData
     {
         get
         { 
@@ -15,5 +15,15 @@ public class PlayerBattleInstanceData : CombatantInstanceData
             }
             return (PlayerBattleData)Data;
         }
+    }
+
+    public PlayerBattleInstanceData(PlayerBattleData playerData)
+    {
+        Data = playerData;
+    }
+
+    public void SetCurrentStats()
+    {
+        CurrentStats = new BattleStats(PlayerData.DefaultStats);
     }
 }

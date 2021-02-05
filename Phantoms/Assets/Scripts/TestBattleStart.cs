@@ -9,19 +9,18 @@ public class TestBattleStart : MonoBehaviour
     private BattleInitializer m_battleInitializer = null;
 
     [SerializeField]
-    private PlayerBattleInstanceData m_playerData = null;
-
-    [SerializeField]
     private PhantomInstanceData[] m_enemyPhantoms = null;
     // Start is called before the first frame update
     void Start()
     {
         List<CombatantInstanceData> playerCombatants = new List<CombatantInstanceData>();
-        playerCombatants.Add(m_playerData);
+        playerCombatants.Add(DataManager.Instance.GetPlayerBattleInstanceData());
 
         // For now, just assume that the first in the list is the current phantom.
         if (PlayerInventoryManager.Instance.Phantoms.Count >= 1)
-        playerCombatants.Add(PlayerInventoryManager.Instance.GetCurrentPhantom());
+        {
+            playerCombatants.Add(PlayerInventoryManager.Instance.GetCurrentPhantom());
+        }
 
         List<CombatantInstanceData> playerInactiveCombatants = new List<CombatantInstanceData>();
         playerInactiveCombatants.AddRange(PlayerInventoryManager.Instance.Phantoms);

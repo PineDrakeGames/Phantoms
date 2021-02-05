@@ -11,4 +11,20 @@ public abstract class CombatantInstanceData
     public int CurrentMana = 0;
 
     public BattleStats CurrentStats = new BattleStats();
+
+    public void FullRestore()
+    {
+        RestoreHealth();
+        RestoreMana();
+    }
+
+    public void RestoreHealth()
+    {
+        CurrentHP = CurrentStats.MaxHP;
+    }
+
+    public void RestoreMana()
+    {
+        CurrentMana = CurrentStats.Mana;
+    }
 }
