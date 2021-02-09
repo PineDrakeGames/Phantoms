@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42f68f56351e0af4198d028a153a3094, type: 3}
+  m_Name: Anger Starter
+  m_EditorClassIdentifier: 
+  BattlePrefab: {fileID: 5420083219713576611, guid: 0a7812c0264f1d44ba210b7257a765db,
+    type: 3}
+  Abilities:
+  - data: {fileID: 11400000, guid: 3e544f2037cca6b4da49e3f77079ed24, type: 2}
+    preparationTurnsRemaining: 0
+    recoveryTurnsRemaining: 0
+    enabled: 1
+    overrideBaseDuration: 0
+    baseDuration: 0
+    overrideUseMinigame: 1
+    minigame: {fileID: 11400000, guid: ee6da0ae13bb5f1409868c3815ebdfa0, type: 2}
+  PhantomID: BAT
+  PhantomDisplayName: Bat Boy
+  PhantomDescription: A fluffy boi
+  MainType: 2
+  SecondType: 0
+  StartingStats:
+    MaxHP: 7
+    Attack: 2
+    Defense: 1
+    Mana: 4
+    Relic: 1
+  LevelUpAmounts:
+    MaxHP: 3
+    Attack: 2
+    Defense: 1
+    Mana: 2
+    Relic: 2
