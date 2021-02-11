@@ -542,18 +542,21 @@ public class BattlePlayerMenu : MonoBehaviour
         // Set things up based on the action type
         Actor[] validTargets;
         BattleInteractorData.TargetType targetType;
+        BattleInteractorData.TargetGroupGroups targetGroup;
         SelectCallback callback;
 
         if (actionType == ActionType.ABILITY)
         {
             validTargets = m_battleManager.CurrentBattle.GetValidTargets(m_currentActor, m_currentAbility);
             targetType = m_currentAbility.Data.TargetType;
+            targetGroup = m_currentAbility.Data.ValidTargetGroups;
             callback = (delegate { m_actionInput.AbilitySelectCallback(m_currentAbility); });
         }
         else
         {
             validTargets = m_battleManager.CurrentBattle.GetValidTargets(m_currentActor, m_currentItem);
             targetType = m_currentItem.Data.TargetType;
+            targetGroup = m_currentItem.Data.ValidTargetGroups;
             callback = (delegate { m_actionInput.ItemSelectCallback(m_currentItem); });
         }
 
@@ -603,7 +606,18 @@ public class BattlePlayerMenu : MonoBehaviour
             case BattleInteractorData.TargetType.AllActorsInGroup:
                 // TODO
                 Debug.Log("Setting targets");
-                m_actionGroupTargets.Add(m_currentActor.Group);
+                switch(targetGroup)
+                {
+                    case BattleInteractorData.TargetGroupGroups.Allies:
+                        m_actionGroupTargets.Add(m_currentActor.Group);
+                        break;
+                    case BattleInteractorData.TargetGroupGroups.Opponents:
+                        m_actionGroupTargets.Add(validTargets[0].Group);
+                        break;
+                    case BattleInteractorData.TargetGroupGroups.All:
+                        m_actionGroupTargets.AddRange(m_battleManager.CurrentBattle.Groups);
+                        break;
+                }
                 callback();
                 m_battleCamera.ResetCamera();
                 break;
