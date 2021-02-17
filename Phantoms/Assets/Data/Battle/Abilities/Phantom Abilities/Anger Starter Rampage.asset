@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b60d24c9ad2814f8e90f8f3866760da3, type: 3}
-  m_Name: Shame Starter Default
+  m_Name: Anger Starter Rampage
   m_EditorClassIdentifier: 
-  displayName: Claw
-  description: Attack an opponent
+  displayName: Rampage
+  description: Deal damage to all other participants - including your allies
   baseDuration: 0
   preparation:
     turns: 0
@@ -29,20 +29,20 @@ MonoBehaviour:
     audios: []
     instantiations: []
     interrupt: 1
-  targetType: 0
+  targetType: 2
   numberOfTargets: 1
   validTargets: 3
   isTargetable: 1
-  validTargetGroups: 0
+  validTargetGroups: 1
   validTargetStates: 0
   validTargetParticipants: 0
   turnTowardsTarget: 0
   actions:
   - action: 0
     powerType: 2
-    actionType: 8
+    actionType: 3
     specialType: 0
-    stat: {fileID: 11400000, guid: 0d454f7f579254d5999e01dddb71c21c, type: 2}
+    stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
     environmentVariable: {fileID: 0}
     environmentVariableSetType: 0
     affliction: {fileID: 11400000, guid: 30b929e4025904ad3a16c59cd432ee42, type: 2}
@@ -50,14 +50,34 @@ MonoBehaviour:
     duration: 2
     normalizedProcessTime: 0.2
     chance: 1
-    power1: 0
+    power1: 3
     power2: 0
     powerFormula: CASTER_ATTACK + 1
     breaksChainOnMiss: 0
-    special1: 3
+    special1: 0
     special2: 0
     specialFormula: 
     targetType: 0
+  - action: 0
+    powerType: 2
+    actionType: 3
+    specialType: 0
+    stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
+    environmentVariable: {fileID: 0}
+    environmentVariableSetType: 0
+    affliction: {fileID: 11400000, guid: 30b929e4025904ad3a16c59cd432ee42, type: 2}
+    isChildEffect: 0
+    duration: 1
+    normalizedProcessTime: 1
+    chance: 1
+    power1: 3
+    power2: 0
+    powerFormula: CASTER_ATTACK + 1
+    breaksChainOnMiss: 0
+    special1: 0
+    special2: 0
+    specialFormula: 
+    targetType: 3
   animation:
     enabled: 1
     parameterName: Attack
@@ -89,4 +109,4 @@ MonoBehaviour:
   actionTokens: []
   category: 0
   priority: 0
-  manacost: 0
+  manacost: 2

@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b60d24c9ad2814f8e90f8f3866760da3, type: 3}
-  m_Name: Shame Starter Default
+  m_Name: Fear Starter Cower
   m_EditorClassIdentifier: 
-  displayName: Claw
-  description: Attack an opponent
+  displayName: Cower
+  description: Buffs the caster's speed by 2 for 3 turns
   baseDuration: 0
   preparation:
     turns: 0
@@ -38,9 +38,9 @@ MonoBehaviour:
   validTargetParticipants: 0
   turnTowardsTarget: 0
   actions:
-  - action: 0
-    powerType: 2
-    actionType: 8
+  - action: 2
+    powerType: 0
+    actionType: 2
     specialType: 0
     stat: {fileID: 11400000, guid: 0d454f7f579254d5999e01dddb71c21c, type: 2}
     environmentVariable: {fileID: 0}
@@ -50,9 +50,9 @@ MonoBehaviour:
     duration: 2
     normalizedProcessTime: 0.2
     chance: 1
-    power1: 0
+    power1: 2
     power2: 0
-    powerFormula: CASTER_ATTACK + 1
+    powerFormula: 2
     breaksChainOnMiss: 0
     special1: 3
     special2: 0

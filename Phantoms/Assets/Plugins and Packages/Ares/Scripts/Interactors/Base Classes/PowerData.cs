@@ -52,7 +52,7 @@ namespace Ares {
 		}
 
 		float GetPowerLinear(float basePower, int stage){
-			return basePower + stage * powerIncrement;
+			return basePower + stage * powerMultiplier;
 		}
 
 		float GetPowerExponentialSimple(float basePower, int stage){

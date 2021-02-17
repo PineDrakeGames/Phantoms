@@ -84,7 +84,7 @@ namespace Ares.Editor {
 				}
 
 				if(powerData.PowerScalingMode == PowerScaling.Linear){
-					EditorGUILayout.HelpBox(string.Format("Power is {0} + [stage - 1] * {1}\n\n", basePower, powerData.PowerIncrement) + string.Join("\n", lines),
+					EditorGUILayout.HelpBox(string.Format("Power is {0} + [stage - 1] * {1}\n\n", basePower, powerData.PowerMultiplier) + string.Join("\n", lines),
 						MessageType.Info);
 				}
 				else if(powerData.PowerScalingMode == PowerScaling.ExponentialSimple){

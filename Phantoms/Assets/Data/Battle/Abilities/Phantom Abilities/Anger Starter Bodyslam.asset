@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b60d24c9ad2814f8e90f8f3866760da3, type: 3}
-  m_Name: Anger Starte Rampage
+  m_Name: Anger Starter Bodyslam
   m_EditorClassIdentifier: 
-  displayName: Rampage
-  description: Deal damage to all other participants - including your allies
+  displayName: Body Slam
+  description: Deal double damage to a single opponent - while dealing normal damage
+    to yourself.
   baseDuration: 0
   preparation:
     turns: 0
@@ -52,7 +53,7 @@ MonoBehaviour:
     chance: 1
     power1: 3
     power2: 0
-    powerFormula: CASTER_ATTACK + 1
+    powerFormula: (CASTER_ATTACK * 2) + 1
     breaksChainOnMiss: 0
     special1: 0
     special2: 0
@@ -60,7 +61,7 @@ MonoBehaviour:
     targetType: 0
   - action: 0
     powerType: 2
-    actionType: 3
+    actionType: 0
     specialType: 0
     stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
     environmentVariable: {fileID: 0}
@@ -77,7 +78,7 @@ MonoBehaviour:
     special1: 0
     special2: 0
     specialFormula: 
-    targetType: 3
+    targetType: 1
   animation:
     enabled: 1
     parameterName: Attack
@@ -109,4 +110,4 @@ MonoBehaviour:
   actionTokens: []
   category: 0
   priority: 0
-  manacost: 2
+  manacost: 1

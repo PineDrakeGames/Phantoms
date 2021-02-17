@@ -10,33 +10,35 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d6af41aef462a40ab8f855f3b6ccada5, type: 3}
-  m_Name: Lifelink
+  m_Name: Burn
   m_EditorClassIdentifier: 
-  powerIncrement: 5
-  powerMultiplier: 1
-  powerFormula: 
-  powerScalingMode: 2
+  powerIncrement: 1.2
+  powerMultiplier: 1.2
+  powerFormula: ABS(STAGE)
+  powerScalingMode: 0
   minStage: 1
-  maxStage: 5
-  displayName: Lifelink
-  description: Steals some of your HP each turn, and restores it to the character
-    that gave you this affliction.
+  maxStage: 1
+  displayName: Burn
+  description: A nasty burn that hurts the user every turn.
   baseDuration: 0
-  power: 5
+  power: 10
   cureCondition: 0
-  duration1: 0
-  duration2: 0
-  cureChance: 0
-  cureOnAfflictedDeath: 0
+  duration1: 3
+  duration2: 6
+  cureChance: 1
+  cureOnAfflictedDeath: 1
   cureOnAfflicterDeath: 0
   canAfflictDefeatedActors: 0
-  effectProcessingMoment: 4
-  durationProcessingMoment: 4
+  effectProcessingMoment: 2
+  durationProcessingMoment: 2
   doubleSetStageBehaviour: 0
   doubleSetDurationBehaviour: 0
+  actionTokens: []
   actions:
   - action: 0
-    powerType: 0
+    powerType: 2
+    actionType: 0
+    specialType: 0
     stat: {fileID: 0}
     environmentVariable: {fileID: 0}
     environmentVariableSetType: 0
@@ -46,25 +48,13 @@ MonoBehaviour:
     normalizedProcessTime: 0.8
     chance: 1
     power1: 1
-    power2: 0
+    power2: 2
     powerFormula: 
     breaksChainOnMiss: 0
+    special1: 0
+    special2: 0
+    specialFormula: 
     targetType: 0
-  - action: 1
-    powerType: 2
-    stat: {fileID: 0}
-    environmentVariable: {fileID: 0}
-    environmentVariableSetType: 0
-    affliction: {fileID: 0}
-    isChildEffect: 1
-    duration: 1
-    normalizedProcessTime: 0.8
-    chance: 1
-    power1: 1
-    power2: 0
-    powerFormula: DAMAGE1
-    breaksChainOnMiss: 0
-    targetType: 1
   obtainAnimation:
     enabled: 0
     parameterName: 
@@ -113,62 +103,67 @@ MonoBehaviour:
   obtainInstantiation:
     enabled: 0
     effect: {fileID: 0}
-    targetMode: 0
+    targetMode: 1
     targetActor: 0
     targetName: root
     targetTransform: {fileID: 0}
     parentToTarget: 1
+    inheritParentScale: 0
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
-    scale: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
     delay: 0
   triggerInstantiation:
     enabled: 0
     effect: {fileID: 0}
-    targetMode: 0
+    targetMode: 1
     targetActor: 0
     targetName: root
     targetTransform: {fileID: 0}
     parentToTarget: 1
+    inheritParentScale: 0
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
-    scale: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
     delay: 0
   stageIncreaseInstantiation:
     enabled: 0
     effect: {fileID: 0}
-    targetMode: 0
+    targetMode: 1
     targetActor: 0
-    targetName: 
+    targetName: root
     targetTransform: {fileID: 0}
-    parentToTarget: 0
+    parentToTarget: 1
+    inheritParentScale: 0
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
-    scale: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
     delay: 0
   stageDecreaseInstantiation:
     enabled: 0
     effect: {fileID: 0}
-    targetMode: 0
+    targetMode: 1
     targetActor: 0
-    targetName: 
+    targetName: root
     targetTransform: {fileID: 0}
-    parentToTarget: 0
+    parentToTarget: 1
+    inheritParentScale: 0
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
-    scale: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
     delay: 0
   endInstantiation:
     enabled: 0
     effect: {fileID: 0}
     targetMode: 0
     targetActor: 0
-    targetName: 
+    targetName: root
     targetTransform: {fileID: 0}
-    parentToTarget: 0
+    parentToTarget: 1
+    inheritParentScale: 0
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
-    scale: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
     delay: 0
   obtainAudio:
     enabled: 0
@@ -186,17 +181,17 @@ MonoBehaviour:
     enabled: 0
     clip: {fileID: 0}
     playPosition: 0
-    volume: 0
+    volume: 1
     delay: 0
   stageDecreaseAudio:
     enabled: 0
     clip: {fileID: 0}
     playPosition: 0
-    volume: 0
+    volume: 1
     delay: 0
   endAudio:
     enabled: 0
     clip: {fileID: 0}
     playPosition: 0
-    volume: 0
+    volume: 1
     delay: 0
