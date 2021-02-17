@@ -171,6 +171,7 @@ namespace Ares.Editor {
 				newAction.FindPropertyRelative("special2").floatValue = 0f;
 				newAction.FindPropertyRelative("specialFormula").stringValue = "";
 				newAction.FindPropertyRelative("chance").floatValue = 1f;
+				newAction.FindPropertyRelative("ignoreDefence").boolValue = false;
 				newAction.FindPropertyRelative("duration").floatValue = 1f;
 				newAction.FindPropertyRelative("normalizedProcessTime").floatValue = 1f;
 				newAction.FindPropertyRelative("affliction").objectReferenceValue = afflictionDatas.FirstOrDefault();
@@ -187,6 +188,7 @@ namespace Ares.Editor {
 				SerializedProperty spTargetType = element.FindPropertyRelative("targetType");
 				SerializedProperty spSetType = element.FindPropertyRelative("environmentVariableSetType");
 				SerializedProperty spChance = element.FindPropertyRelative("chance");
+				SerializedProperty spIgnoreDefense = element.FindPropertyRelative("ignoreDefence");
 				SerializedProperty spIsChildEffect = element.FindPropertyRelative("isChildEffect");
 				SerializedProperty spNPT = element.FindPropertyRelative("normalizedProcessTime");
 
@@ -365,6 +367,14 @@ namespace Ares.Editor {
 					xOffset += sliderWidth + 6;
 
 					DrawField(rect, ref xOffset, 40, spChance);
+
+					// Ignore armor stuff
+					if (type == ChainEvaluator.ActionType.Damage)
+					{
+						xOffset += propertySpacingHorizontal + 8;
+						DrawLabel(rect, ref xOffset, 85, "Ignore Defense");
+						DrawField(rect, ref xOffset, 20, spIgnoreDefense);
+					}
 
 					// Line 4
 					rect.y += EditorGUIUtility.singleLineHeight + 2;

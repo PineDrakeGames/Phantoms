@@ -16,6 +16,7 @@ namespace Ares {
 		public EnvironmentVariableData EnvironmentVariable {get{return environmentVariable;}}
 		public EnvironmentVariableSetType EnvironmentVariableSetMode {get{return environmentVariableSetType;}}
 		public float HitChance {get{return chance;}}
+		public bool IgnoreDefence {get{return ignoreDefence;}}
 		public bool IsChildEffect {get{return isChildEffect;}}
 		public float Duration {get{return duration;}}
 		public float NormalizedProcessTime {get{return normalizedProcessTime;}}
@@ -33,6 +34,7 @@ namespace Ares {
 		[SerializeField] float duration = 1f;
 		[SerializeField, Range(0f, 1f)] float normalizedProcessTime = 1f;
 		[SerializeField, Range(0f, 1f)] float chance = 1f;
+		[SerializeField] bool ignoreDefence = false;
 		[SerializeField] float power1 = 0f;
 		[SerializeField] float power2 = 0f;
 		[SerializeField] string powerFormula = null;
