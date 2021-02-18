@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b60d24c9ad2814f8e90f8f3866760da3, type: 3}
-  m_Name: Anger Starter Bodyslam
+  m_Name: Calm Starter Nap
   m_EditorClassIdentifier: 
-  displayName: Body Slam
-  description: Deal double damage to a single opponent - while dealing normal damage
-    to yourself.
+  displayName: Nap
+  description: Restores yourself to full, and raises attack and defense - but puts
+    you to sleep.
   baseDuration: 0
   preparation:
     turns: 0
@@ -30,18 +30,18 @@ MonoBehaviour:
     audios: []
     instantiations: []
     interrupt: 1
-  targetType: 2
+  targetType: 0
   numberOfTargets: 1
-  validTargets: 3
+  validTargets: 1
   isTargetable: 1
-  validTargetGroups: 1
+  validTargetGroups: 0
   validTargetStates: 0
   validTargetParticipants: 0
   turnTowardsTarget: 0
   actions:
-  - action: 0
+  - action: 1
     powerType: 2
-    actionType: 3
+    actionType: 5
     specialType: 0
     stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
     environmentVariable: {fileID: 0}
@@ -52,17 +52,17 @@ MonoBehaviour:
     normalizedProcessTime: 0.2
     chance: 1
     ignoreDefence: 0
-    power1: 3
+    power1: 1
     power2: 0
-    powerFormula: (CASTER_ATTACK * 2) + 1
+    powerFormula: CASTER_MAX_HP
     breaksChainOnMiss: 0
     special1: 0
     special2: 0
     specialFormula: 
     targetType: 0
-  - action: 0
-    powerType: 2
-    actionType: 0
+  - action: 2
+    powerType: 0
+    actionType: 5
     specialType: 0
     stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
     environmentVariable: {fileID: 0}
@@ -73,14 +73,56 @@ MonoBehaviour:
     normalizedProcessTime: 1
     chance: 1
     ignoreDefence: 0
-    power1: 3
+    power1: 1
     power2: 0
-    powerFormula: CASTER_ATTACK + 1
+    powerFormula: 
     breaksChainOnMiss: 0
     special1: 0
     special2: 0
     specialFormula: 
-    targetType: 1
+    targetType: 0
+  - action: 2
+    powerType: 0
+    actionType: 5
+    specialType: 0
+    stat: {fileID: 11400000, guid: 0d454f7f579254d5999e01dddb71c21c, type: 2}
+    environmentVariable: {fileID: 0}
+    environmentVariableSetType: 0
+    affliction: {fileID: 11400000, guid: 30b929e4025904ad3a16c59cd432ee42, type: 2}
+    isChildEffect: 0
+    duration: 1
+    normalizedProcessTime: 1
+    chance: 1
+    ignoreDefence: 0
+    power1: 1
+    power2: 0
+    powerFormula: 
+    breaksChainOnMiss: 0
+    special1: 0
+    special2: 0
+    specialFormula: 
+    targetType: 0
+  - action: 3
+    powerType: 0
+    actionType: 0
+    specialType: 0
+    stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
+    environmentVariable: {fileID: 0}
+    environmentVariableSetType: 0
+    affliction: {fileID: 11400000, guid: d7a06d36ddea9714584d939109be3cd4, type: 2}
+    isChildEffect: 0
+    duration: 1
+    normalizedProcessTime: 1
+    chance: 1
+    ignoreDefence: 0
+    power1: 0
+    power2: 0
+    powerFormula: 
+    breaksChainOnMiss: 0
+    special1: 0
+    special2: 0
+    specialFormula: 
+    targetType: 0
   animation:
     enabled: 1
     parameterName: Attack
@@ -112,4 +154,4 @@ MonoBehaviour:
   actionTokens: []
   category: 0
   priority: 0
-  manacost: 1
+  manacost: 2

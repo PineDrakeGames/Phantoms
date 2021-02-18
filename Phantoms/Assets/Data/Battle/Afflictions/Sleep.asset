@@ -10,56 +10,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d6af41aef462a40ab8f855f3b6ccada5, type: 3}
-  m_Name: Lower Defense
+  m_Name: Sleep
   m_EditorClassIdentifier: 
   powerIncrement: 1
   powerMultiplier: 1
   powerFormula: 
   powerScalingMode: 0
-  minStage: -5
-  maxStage: 5
-  displayName: New Affliction
-  description: 
+  minStage: 0
+  maxStage: 0
+  displayName: Sleep
+  afflicitonID: SLEEP
+  description: Puts the target to sleep for a max of 3 turns
   baseDuration: 0
   power: 0
   cureCondition: 0
-  duration1: 0
-  duration2: 0
+  duration1: 3
+  duration2: 3
   cureChance: 0
-  cureOnAfflictedDeath: 0
+  cureOnAfflictedDeath: 1
   cureOnAfflicterDeath: 0
   canAfflictDefeatedActors: 0
-  effectProcessingMoment: 4
-  durationProcessingMoment: 4
+  effectProcessingMoment: 2
+  durationProcessingMoment: 2
   doubleSetStageBehaviour: 0
-  doubleSetDurationBehaviour: 0
-  actionTokens:
-  - id: 
-    valueType: 0
-    value1: 0
-    value2: 0
-    valueFormula: 
-  actions:
-  - action: 2
-    powerType: 0
-    actionType: 0
-    specialType: 0
-    stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
-    environmentVariable: {fileID: 0}
-    environmentVariableSetType: 0
-    affliction: {fileID: 11400000, guid: 30b929e4025904ad3a16c59cd432ee42, type: 2}
-    isChildEffect: 0
-    duration: 1
-    normalizedProcessTime: 1
-    chance: 1
-    power1: 0
-    power2: 0
-    powerFormula: 
-    breaksChainOnMiss: 0
-    special1: 0
-    special2: 0
-    specialFormula: 
-    targetType: 0
+  doubleSetDurationBehaviour: 2
+  actionTokens: []
+  actions: []
   obtainAnimation:
     enabled: 0
     parameterName: 

@@ -19,6 +19,7 @@ MonoBehaviour:
   minStage: 1
   maxStage: 5
   displayName: Lifelink
+  afflicitonID: LIFELINK
   description: Steals some of your HP each turn, and restores it to the character
     that gave you this affliction.
   baseDuration: 0
@@ -48,6 +49,7 @@ MonoBehaviour:
     duration: 1
     normalizedProcessTime: 0.8
     chance: 1
+    ignoreDefence: 0
     power1: 1
     power2: 0
     powerFormula: 
@@ -68,6 +70,7 @@ MonoBehaviour:
     duration: 1
     normalizedProcessTime: 0.8
     chance: 1
+    ignoreDefence: 0
     power1: 1
     power2: 0
     powerFormula: DAMAGE1
