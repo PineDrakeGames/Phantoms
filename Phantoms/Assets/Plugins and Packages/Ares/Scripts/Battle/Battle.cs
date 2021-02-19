@@ -797,6 +797,7 @@ namespace Ares
                     () => { ProgressAfflictionEffectQueue(processingMoment, actorsToProcess, i, processedAfflictions); }));
                 return;
             }
+            VerboseLogger.Log("Progress!");
 
             ProgressBattle();
         }
@@ -2862,14 +2863,12 @@ namespace Ares
 				}
 			}
 
-            VerboseLogger.Log("Finished Processing Affliction");
-
-
 			EndPerformAffliction (actor, afflictionResults);
 		}
 
 		void EndPerformAffliction(Actor actor, AfflictionResults afflictionResults){
 			OnAfflictionResults.Invoke(actor, afflictionResults);
+            VerboseLogger.Log("Finished Processing Affliction");
 			ProcessAfflictionEnd(actor, afflictionResults);
 		}
 
@@ -2906,6 +2905,7 @@ namespace Ares
 					}
 				}
 			}
+            VerboseLogger.Log("Finished Processing Affliction");
 		}
 
         IEnumerator CRRestoreActorRotation(Actor actor)
