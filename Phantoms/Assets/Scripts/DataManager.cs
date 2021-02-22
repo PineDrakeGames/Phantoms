@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class DataManager : MonoBehaviour
 {
+    // Reference to the data manager prefab in resources, so that we can load it into any scene.
     private const string DATA_MANAGER_PREFAB = "Data Manager";
 
+    // Stuff for the static instance of data manager - will create a data manager if one does not exist.
     private static DataManager s_instance = null;
     public static DataManager Instance
     {
@@ -14,6 +17,7 @@ public class DataManager : MonoBehaviour
             if (s_instance == null)
             {
                 GameObject instance = Instantiate(Resources.Load(DATA_MANAGER_PREFAB, typeof(GameObject))) as GameObject;
+                instance.name = "Data Manager";
                 s_instance = instance.GetComponent<DataManager>();
                 if (s_instance)
                 {
@@ -24,6 +28,10 @@ public class DataManager : MonoBehaviour
         }
     }
 
+
+    //////////////////////////////////
+    /// Serialized fields for data ///
+    //////////////////////////////////
     [SerializeField]
     private PlayerBattleData m_playerBattleData = null;
 
@@ -41,12 +49,45 @@ public class DataManager : MonoBehaviour
         get { return Instance.m_itemData; }
     }
 
+    /////////////////////
+    /// Public events ///
+    /////////////////////
+    public UnityEvent<int> CurrentDropChange = new UnityEvent<int>();
+
+    ////////////////////
+    /// Runtime Data ///
+    ////////////////////
+
+    // Converting the data into dictionaries to more easily access it
     private Dictionary<string, PhantomData> m_phantomIdToData = null;
     private Dictionary<string, ItemData> m_ItemIdToData = null;
 
     // Current player data
     private PlayerBattleInstanceData m_playerBattleInstanceData = null;
 
+    // Variables for drops, the currency.
+    private int m_currentDrops = 0;
+    public static int CurrentDrops
+    {
+        get
+        {
+            return Instance.m_currentDrops;
+        }
+        set
+        {
+            // Update current drops, make sure we have at minimum 0, then invoke the event with the new total amount of drops.
+            Instance.m_currentDrops = value;
+            if (Instance.m_currentDrops < 0) { Instance.m_currentDrops = 0; }
+            Instance.CurrentDropChange.Invoke(Instance.m_currentDrops);
+        }
+    }
+
+
+    ////////////////////////
+    /// Public functions ///
+    ////////////////////////
+
+    // Initialize function, called when a data manager is created
     public void Initialize()
     {
         // Any initialization things
