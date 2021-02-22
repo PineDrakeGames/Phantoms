@@ -10,79 +10,36 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d6af41aef462a40ab8f855f3b6ccada5, type: 3}
-  m_Name: Poison
+  m_Name: Sleep
   m_EditorClassIdentifier: 
-  powerIncrement: 2
+  powerIncrement: 1
   powerMultiplier: 1
   powerFormula: 
-  powerScalingMode: 2
-  minStage: 1
-  maxStage: 4
-  displayName: Poison
-  afflicitonID: POISON
-  description: A deadly affliction that gets progressively worse. Don't let it get
-    out of hand!
+  powerScalingMode: 0
+  minStage: 0
+  maxStage: 0
+  displayName: Sleep
+  afflicitonID: SLEEP
+  description: Puts the target to sleep for a max of 3 turns
   baseDuration: 0
-  power: 5
+  power: 0
   cureCondition: 0
-  duration1: 0
-  duration2: 0
+  duration1: 3
+  duration2: 3
   cureChance: 0
-  cureOnAfflictedDeath: 0
+  cureOnAfflictedDeath: 1
   cureOnAfflicterDeath: 0
   canAfflictDefeatedActors: 0
-  effectProcessingMoment: 4
-  durationProcessingMoment: 4
-  doubleSetStageBehaviour: 1
+  effectProcessingMoment: 2
+  durationProcessingMoment: 2
+  doubleSetStageBehaviour: 0
   doubleSetDurationBehaviour: 2
   actionTokens: []
-  actions:
-  - action: 0
-    powerType: 0
-    actionType: 0
-    specialType: 0
-    stat: {fileID: 0}
-    environmentVariable: {fileID: 0}
-    environmentVariableSetType: 0
-    affliction: {fileID: 0}
-    isChildEffect: 0
-    duration: 1
-    normalizedProcessTime: 0.8
-    chance: 1
-    ignoreDefence: 1
-    power1: 1
-    power2: 0
-    powerFormula: 
-    breaksChainOnMiss: 0
-    special1: 0
-    special2: 0
-    specialFormula: 
-    targetType: 0
-  - action: 3
-    powerType: 2
-    actionType: 0
-    specialType: 0
-    stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
-    environmentVariable: {fileID: 0}
-    environmentVariableSetType: 0
-    affliction: {fileID: 11400000}
-    isChildEffect: 0
-    duration: 2
-    normalizedProcessTime: 1
-    chance: 1
-    ignoreDefence: 0
-    power1: 1
-    power2: 0
-    powerFormula: 1
-    breaksChainOnMiss: 0
-    special1: 0
-    special2: 0
-    specialFormula: 
-    targetType: 0
+  actions: []
   obtainAnimation:
     enabled: 0
     parameterName: 
-    parameterType: 0
+    parameterType: 9
     valueBool: 1
     valueFloat: 1
     delayType: 0
@@ -91,7 +48,7 @@ MonoBehaviour:
   triggerAnimation:
     enabled: 0
     parameterName: 
-    parameterType: 0
+    parameterType: 9
     valueBool: 1
     valueFloat: 1
     delayType: 0
@@ -100,7 +57,7 @@ MonoBehaviour:
   stageIncreaseAnimation:
     enabled: 0
     parameterName: 
-    parameterType: 0
+    parameterType: 9
     valueBool: 1
     valueFloat: 1
     delayType: 0
@@ -109,7 +66,7 @@ MonoBehaviour:
   stageDecreaseAnimation:
     enabled: 0
     parameterName: 
-    parameterType: 0
+    parameterType: 9
     valueBool: 1
     valueFloat: 1
     delayType: 0
@@ -118,33 +75,34 @@ MonoBehaviour:
   endAnimation:
     enabled: 0
     parameterName: 
-    parameterType: 0
+    parameterType: 9
     valueBool: 1
     valueFloat: 1
     delayType: 0
     delayTime: 0
     delayAnimationLayer: 0
   obtainInstantiation:
-    enabled: 0
-    effect: {fileID: 0}
-    targetMode: 0
-    targetActor: 0
-    targetName: root
+    enabled: 1
+    effect: {fileID: 2558316399700759498, guid: 679ae62acfdd1bb41977f1a21faaa91a,
+      type: 3}
+    targetMode: 2
+    targetActor: 1
+    targetName: 
     targetTransform: {fileID: 0}
     parentToTarget: 1
     inheritParentScale: 0
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
-    scale: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
     delay: 0
   triggerInstantiation:
     enabled: 0
     effect: {fileID: 0}
-    targetMode: 0
+    targetMode: 1
     targetActor: 0
-    targetName: root
+    targetName: 
     targetTransform: {fileID: 0}
-    parentToTarget: 1
+    parentToTarget: 0
     inheritParentScale: 0
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
@@ -193,13 +151,13 @@ MonoBehaviour:
     enabled: 0
     clip: {fileID: 0}
     playPosition: 0
-    volume: 1
+    volume: 0
     delay: 0
   triggerAudio:
     enabled: 0
     clip: {fileID: 0}
     playPosition: 0
-    volume: 1
+    volume: 0
     delay: 0
   stageIncreaseAudio:
     enabled: 0

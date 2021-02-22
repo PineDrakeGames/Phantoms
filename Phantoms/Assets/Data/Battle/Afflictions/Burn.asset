@@ -12,16 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6af41aef462a40ab8f855f3b6ccada5, type: 3}
   m_Name: Burn
   m_EditorClassIdentifier: 
-  powerIncrement: 1.2
+  powerIncrement: 1
   powerMultiplier: 1.2
   powerFormula: ABS(STAGE)
   powerScalingMode: 0
   minStage: 1
-  maxStage: 1
+  maxStage: 5
   displayName: Burn
+  afflicitonID: BURN
   description: A nasty burn that hurts the user every turn.
   baseDuration: 0
-  power: 10
+  power: 0
   cureCondition: 0
   duration1: 3
   duration2: 6
@@ -36,7 +37,7 @@ MonoBehaviour:
   actionTokens: []
   actions:
   - action: 0
-    powerType: 2
+    powerType: 0
     actionType: 0
     specialType: 0
     stat: {fileID: 0}
@@ -47,6 +48,7 @@ MonoBehaviour:
     duration: 1
     normalizedProcessTime: 0.8
     chance: 1
+    ignoreDefence: 1
     power1: 1
     power2: 2
     powerFormula: 

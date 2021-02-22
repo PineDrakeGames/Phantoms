@@ -9,6 +9,7 @@ namespace Ares {
 		public enum ProcessingMoment {Never, StartOfRound, EndOfRound, StartOfAfflictedActorTurn, EndOfAfflictedActorTurn}//, OnCure
 
 		public string DisplayName {get{return displayName;}}
+		public string AfflictionID {get{return afflicitonID;}}
 		public string Description {get{return description;}}
 		public float BaseDuration {get{return baseDuration;}}
 		public Cure CureCondition {get{return cureCondition;}}
@@ -41,6 +42,7 @@ namespace Ares {
 		public AudioEffect EndAudio {get{return endAudio;}}
 		
 		[SerializeField, Header("Info")] string displayName = "New Affliction";
+		[SerializeField] string afflicitonID = "AFFLICTION";
 		[SerializeField, Multiline(3)] string description = null;
 		[SerializeField, Tooltip("The base duration of this ability, before any effects are executed."), Header("Timing")] float baseDuration = 0f;
 		[SerializeField] int power = 0;

@@ -312,6 +312,15 @@ namespace Ares
                         return;
                     }
 
+                    foreach(Affliction affliction in currentActor.Afflictions)
+                    {
+                        if (affliction.Data.AfflictionID == "SLEEP")
+                        {
+                            OnSkipSelect(QueueSkip);
+                            return;
+                        }
+                    }
+
                     ActionInput actionInput = new ActionInput(GetValidAbilities(currentActor), GetValidItems(currentActor),
                         ab => { return OnAbilitySelect(ab, QueueActionWithAbility); },
                         it => { return OnItemSelect(it, QueueActionWithItem); },
@@ -581,6 +590,15 @@ namespace Ares
 
                     if (actorInfo.blockingAction == null)
                     {
+                        foreach(Affliction affliction in currentActor.Afflictions)
+                        {
+                            if (affliction.Data.AfflictionID == "SLEEP")
+                            {
+                                OnSkipSelect(QueueSkip);
+                                CurrentRoundState = RoundState.EndOfTurn;
+                                return;
+                            }
+                        }
                         ActionInput actionInput = new ActionInput(validAbilities, GetValidItems(currentActor),
                             ab => { return OnAbilitySelect(ab, ContinueWithAbility); },
                             it => { return OnItemSelect(it, ContinueWithItem); },
@@ -695,7 +713,7 @@ namespace Ares
 
         void DoCurrentTimedProcess(RoundMoment roundMoment)
         {
-            Debug.Log("Starting Timed Process " + Rules.TimedProcessesOrder[currentTimedProcessCounter].ToString());
+            VerboseLogger.Log("Starting Timed Process " + Rules.TimedProcessesOrder[currentTimedProcessCounter].ToString());
             switch (Rules.TimedProcessesOrder[currentTimedProcessCounter])
             {
                 case BattleRules.TimedProcess.AfflictionEffect:
@@ -730,6 +748,9 @@ namespace Ares
 
 					ProgressBattle();
 					break;
+                default:
+                    ProgressBattle();
+                    break;
             }
         }
 
@@ -754,6 +775,7 @@ namespace Ares
 
             if (!canContinue)
             {
+                VerboseLogger.Log("Can't continue!");
                 return;
             }
 
@@ -769,10 +791,13 @@ namespace Ares
 
                 processedAfflictions.Add(currentAffliction);
 
+                VerboseLogger.Log("AHHH");
+
                 BattleMonoBehaviour.Instance.StartCoroutine(CRProcessAffliction(actor, currentAffliction,
                     () => { ProgressAfflictionEffectQueue(processingMoment, actorsToProcess, i, processedAfflictions); }));
                 return;
             }
+            VerboseLogger.Log("Progress!");
 
             ProgressBattle();
         }
@@ -805,6 +830,8 @@ namespace Ares
                 {
                     actor.Cure(currentAffliction, -1);
                 }
+
+                
 
                 BattleMonoBehaviour.Instance.StartCoroutine(CRProgressBattleAsSoonAsAllowed(ProgressType.AfflictionDuration,
                     () => { ProgressAfflictionDurationQueue(processingMoment, actorsToProcess, i, processedAfflictions); }));
@@ -2788,6 +2815,7 @@ namespace Ares
         IEnumerator CRProcessAffliction(Actor actor, Affliction affliction, System.Action progressAction){
 			actor.OnAfflictionStart.Invoke(affliction);
 
+
 			affliction.OnTrigger(actor);
 			affliction.PrepareForChainEvaluation(affliction.Afflicter, new Actor[]{actor});
 
@@ -2840,6 +2868,7 @@ namespace Ares
 
 		void EndPerformAffliction(Actor actor, AfflictionResults afflictionResults){
 			OnAfflictionResults.Invoke(actor, afflictionResults);
+            VerboseLogger.Log("Finished Processing Affliction");
 			ProcessAfflictionEnd(actor, afflictionResults);
 		}
 
@@ -2876,6 +2905,7 @@ namespace Ares
 					}
 				}
 			}
+            VerboseLogger.Log("Finished Processing Affliction");
 		}
 
         IEnumerator CRRestoreActorRotation(Actor actor)
