@@ -52,7 +52,7 @@ public class DataManager : MonoBehaviour
     /////////////////////
     /// Public events ///
     /////////////////////
-    public UnityEvent<int> CurrentDropChange = new UnityEvent<int>();
+    public static UnityEvent<int> CurrentDropChange = new UnityEvent<int>();
 
     ////////////////////
     /// Runtime Data ///
@@ -78,7 +78,7 @@ public class DataManager : MonoBehaviour
             // Update current drops, make sure we have at minimum 0, then invoke the event with the new total amount of drops.
             Instance.m_currentDrops = value;
             if (Instance.m_currentDrops < 0) { Instance.m_currentDrops = 0; }
-            Instance.CurrentDropChange.Invoke(Instance.m_currentDrops);
+            CurrentDropChange.Invoke(Instance.m_currentDrops);
         }
     }
 

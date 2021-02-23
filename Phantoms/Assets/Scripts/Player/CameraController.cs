@@ -52,6 +52,10 @@ public class CameraController : MonoBehaviour
 
     private const float SPEED_LEAD_SCALE = 0.1f;
 
+    ///////////////////////
+    /// Unity Functions ///
+    ///////////////////////
+
     private void OnValidate() {
         m_cameraForward.y = 0;
         m_cameraForward.Normalize();
@@ -59,8 +63,7 @@ public class CameraController : MonoBehaviour
 
     private void Start() 
     {
-        m_prevPlayerPosition = Player.position;
-        m_currentYPosition = Player.position.y;
+        ResetCameraPosition();
     }
 
     private void LateUpdate()
@@ -71,7 +74,21 @@ public class CameraController : MonoBehaviour
         UpdateCamera();
     }
 
+    ////////////////////////
+    /// Public Functions ///
+    ////////////////////////
+    public void ResetCameraPosition()
+    {
+        m_focusPosition = Player.position;
+        m_prevPlayerPosition = Player.position;
+        m_currentYPosition = Player.position.y;
+        m_currentLead = 0f;
+        UpdateCamera();
+    }
 
+    ////////////////////////////////
+    /// Private Helper Functions ///
+    ////////////////////////////////
     private void UpdateFocus()
     {
         m_focusPosition = Player.position + GetLead();

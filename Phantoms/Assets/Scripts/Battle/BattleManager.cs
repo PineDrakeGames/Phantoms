@@ -211,7 +211,7 @@ public class BattleManager : MonoBehaviour
         PlayerInventoryManager.Instance.SaveBattleInventory(playerGroup.Inventory as StackedInventory);
 
         // For now, just loading back to the test scene
-        LoadingManager.LoadSceneByPath(m_testReturnScene);
+        LoadingManager.LoadScene(m_testReturnScene, LoadingManager.SceneType.OVERWORLD);
     }
 
     ////////////////////////

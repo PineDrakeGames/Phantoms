@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2514369327489410342
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3868093064474449363}
+  - component: {fileID: 7956441579641057352}
+  m_Layer: 0
+  m_Name: Overworld Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3868093064474449363
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2514369327489410342}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7956441579641057352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2514369327489410342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27b42296240b27d4e9f8cb4674f5a949, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerInstance: {fileID: 0}
+  CanvasInstance: {fileID: 0}
+  CameraInstance: {fileID: 0}
+  PersistantInstances: []
+  m_playerPrefab: {fileID: 5473203216250634317, guid: d8c22c1724e58664ab57e21749779ed8,
+    type: 3}
+  m_canvasPrefab: {fileID: 2055677281445460126, guid: 880766bcb4f227c4a9ee490a14209bb1,
+    type: 3}
+  m_cameraPrefab: {fileID: 6511516839034078184, guid: 6d4ef3844623cfd48b9fb97d8c6ba664,
+    type: 3}
+  m_persistentPrefabs:
+  - {fileID: 6240653467494876944, guid: c849265b3beb84f439280d082a384a3d, type: 3}
+  - {fileID: 1836365668857058, guid: db4097b20021a3642952143d934e1c92, type: 3}

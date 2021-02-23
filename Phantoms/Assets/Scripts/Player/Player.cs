@@ -13,9 +13,17 @@ public class Player : MonoBehaviour
     private const string HorizontalInput = "Horizontal";
     private const string VerticalInput = "Vertical";
 
-    private void Awake()
+    private void Start()
     {
         //Cursor.lockState = CursorLockMode.Locked;
+        if (Character == null)
+        {
+            Character = FindObjectOfType<PlayerController>();
+        }
+        if (CharacterCamera == null)
+        {
+            CharacterCamera = FindObjectOfType<CameraController>();
+        }
         CharacterCamera.Player = Character.CameraFollowPoint;
         CharacterCamera.PlayerMotor = Character.Motor;
     }

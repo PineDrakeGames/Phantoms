@@ -37,14 +37,14 @@ public class CurrentDropCounter : MonoBehaviour
     // Listen to the drop total change in the data manager, update the UI when this happens.
     private void Start()
     {
-        DataManager.Instance.CurrentDropChange.AddListener(DropTotalChange);
+        DataManager.CurrentDropChange.AddListener(DropTotalChange);
         m_currentDropCountText.text = DataManager.CurrentDrops.ToString();
     }
     private void OnDestroy()
     {
-        if (DataManager.Instance && DataManager.Instance.CurrentDropChange != null)
+        if (DataManager.CurrentDropChange != null)
         {
-            DataManager.Instance.CurrentDropChange.RemoveListener(DropTotalChange);
+            DataManager.CurrentDropChange.RemoveListener(DropTotalChange);
         }
     }
 
@@ -147,7 +147,7 @@ public class CurrentDropCounter : MonoBehaviour
             }
         }
 
-        Debug.Log(string.Format("Changed from {0} to {1} with target {2}, with the biggest change being the {3} index", m_displayedDropCount, newDisplayNumber, m_targetDropCount, biggestDigitChange));
+        //Debug.Log(string.Format("Changed from {0} to {1} with target {2}, with the biggest change being the {3} index", m_displayedDropCount, newDisplayNumber, m_targetDropCount, biggestDigitChange));
         if (m_counterAnimator)
         {
             if (biggestDigitChange >= 3)

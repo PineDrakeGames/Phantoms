@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LoadingTrigger : MonoBehaviour
+public class BattleLoadingTrigger : MonoBehaviour
 {
     [Scene]
     [SerializeField]
@@ -12,7 +12,7 @@ public class LoadingTrigger : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            LoadingManager.LoadSceneByPath(scene);
+            LoadingManager.LoadScene(scene, LoadingManager.SceneType.BATTLE);
         }
     }
 }

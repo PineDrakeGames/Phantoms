@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace AwesomeToon {
     struct LightSet {
@@ -48,6 +49,7 @@ namespace AwesomeToon {
         void Start() {
             Init();
             GetLights();
+            SceneManager.activeSceneChanged += OnSceneChange;
         }
 
         void OnValidate() {
@@ -68,6 +70,11 @@ namespace AwesomeToon {
             meshRenderer = GetComponent<MeshRenderer>();
             if (skinRenderer) skinRenderer.sharedMaterial = materialInstance;
             if (meshRenderer) meshRenderer.sharedMaterial = materialInstance;
+        }
+
+        public void OnSceneChange(Scene previousScene, Scene newScene)
+        {
+            GetLights();
         }
 
         // NOTE: If your game loads lights dynamically, this should be called to init new lights

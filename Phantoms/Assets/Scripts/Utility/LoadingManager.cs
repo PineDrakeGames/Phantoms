@@ -5,7 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class LoadingManager : MonoBehaviour
 {
-
+    /////////////////////////////
+    /// Static Instance Stuff ///
+    /////////////////////////////
     private static LoadingManager s_instance = null;
     public static LoadingManager Instance
     {
@@ -26,6 +28,9 @@ public class LoadingManager : MonoBehaviour
         }
     }
 
+    /////////////////////////
+    /// Private variables ///
+    /////////////////////////
     private const string LOADING_SCENE = "Assets/Scenes/Loading Scene.unity";
     private const string LOADING_SCREEN_PREFAB = "Loading Screen";
 
@@ -36,6 +41,19 @@ public class LoadingManager : MonoBehaviour
 
     private GameObject m_loadingScreen = null;
 
+    ///////////////////////////////////////////////
+    /// Enum and values to identify scene types ///
+    ///////////////////////////////////////////////
+
+    public enum SceneType
+    {
+        OTHER = 0,
+        OVERWORLD = 1,
+        BATTLE = 2
+    }
+
+    private SceneType m_currentSceneType = SceneType.OTHER;
+
     ////////////////////////////////////////////////////////////////
     /// Public functions to be called for scene loading behavior ///
     ////////////////////////////////////////////////////////////////
@@ -43,24 +61,23 @@ public class LoadingManager : MonoBehaviour
     // Public static function called to load into a scene, with a given scene index.
     public static void LoadScene(int sceneIndex)
     {
-        Instance.LoadSceneInternal(sceneIndex, true);
+        Instance.LoadSceneInternal(sceneIndex);
     }
 
-    // Public static function called to load into a scene, with a given scene name.
-    public static void LoadSceneByName(string sceneName)
+    public static void LoadScene(int sceneIndex, SceneType newSceneType)
     {
-        //LoadScene( .GetSceneByName(sceneName).buildIndex);
+        Instance.LoadSceneInternal(sceneIndex, newSceneType);
     }
 
-    // Public static function called to load into a scene, with a given scene name.
-    public static void LoadSceneByPath(string scenePath)
+    // Public static function called to load into a scene, with a given scene path.
+    public static void LoadScene(string scenePath)
     {
         LoadScene(SceneUtility.GetBuildIndexByScenePath(scenePath));
     }
 
-    public static void LoadSceneNoAnimation(string scenePath)
+    public static void LoadScene(string scenePath, SceneType newSceneType)
     {
-        Instance.LoadSceneInternal(SceneUtility.GetBuildIndexByScenePath(scenePath), false);
+        LoadScene(SceneUtility.GetBuildIndexByScenePath(scenePath), newSceneType);
     }
 
 
@@ -90,16 +107,16 @@ public class LoadingManager : MonoBehaviour
         }
     }
 
-    private void LoadSceneInternal(int sceneIndex, bool showLoadingScreen)
+    private void LoadSceneInternal(int sceneIndex, SceneType newSceneType = SceneType.OTHER, bool showLoadingScreen = true)
     {
         if (!m_loading)
         {
             m_loading = true;
-            StartCoroutine(LoadSceneBackend(sceneIndex, showLoadingScreen));
+            StartCoroutine(LoadSceneBackend(sceneIndex,newSceneType, showLoadingScreen));
         }
     }
 
-    private IEnumerator LoadSceneBackend(int sceneIndex, bool showLoadingScreen = true)
+    private IEnumerator LoadSceneBackend(int sceneIndex, SceneType newSceneType = SceneType.OTHER, bool showLoadingScreen = true)
     {
         PixelCrushers.DialogueSystem.DialogueManager.StopConversation();
         //PixelCrushers.DialogueSystem.DialogueManager.instance.displaySettings.subtitleSettings.continueButton = PixelCrushers.DialogueSystem.DisplaySettings.SubtitleSettings.ContinueButtonMode.Always;
@@ -109,8 +126,11 @@ public class LoadingManager : MonoBehaviour
             m_loadingScreen.SetActive(true);
         }
 
-        SceneManager.LoadScene(m_loadingSceneIndex);
+        // Disabling all things from all types of scenes
+        OverworldManager.Instance.SetOverworldActive(false);
 
+
+        SceneManager.LoadScene(m_loadingSceneIndex);
         while (SceneManager.GetActiveScene().buildIndex != m_loadingSceneIndex)
         {
             yield return null;
@@ -118,6 +138,18 @@ public class LoadingManager : MonoBehaviour
 
         AsyncOperation load = SceneManager.LoadSceneAsync(sceneIndex);
         yield return load;
+
+        switch(newSceneType)
+        {
+            case SceneType.OTHER:
+                break;
+            case SceneType.OVERWORLD:
+                OverworldManager.Instance.PlaceOverworldObjects();
+                OverworldManager.Instance.SetOverworldActive(true);
+                break;
+            case SceneType.BATTLE:
+                break;
+        }
 
         yield return null;
 
