@@ -213,6 +213,7 @@ public class OverworldManager : MonoBehaviour
         m_cameraController.ResetCameraPosition();
     }
 
+#if UNITY_EDITOR
     /////////////////////////////
     /// Editor Only Functions ///
     /////////////////////////////
@@ -222,20 +223,25 @@ public class OverworldManager : MonoBehaviour
     {
         if (PlayerInstance == null)
         {
-            PlayerInstance = Instantiate(m_playerPrefab);
+            PlayerInstance = PrefabUtility.InstantiatePrefab(m_playerPrefab) as GameObject;
         }
         if (CanvasInstance == null)
         {
-            CanvasInstance = Instantiate(m_canvasPrefab);
+            CanvasInstance = PrefabUtility.InstantiatePrefab(m_canvasPrefab) as GameObject;
         }
         if (CameraInstance == null)
         {
-            CameraInstance = Instantiate(m_cameraPrefab);
+            CameraInstance = PrefabUtility.InstantiatePrefab(m_cameraPrefab) as GameObject;
         }
         foreach(GameObject persistant in m_persistentPrefabs)
         {
-            GameObject instance = Instantiate(persistant);
+            GameObject instance;
+            instance = PrefabUtility.InstantiatePrefab(persistant) as GameObject;
             PersistantInstances.Add(instance);
         }
+
+        EditorUtility.SetDirty(this);
+        UnityEditor.SceneManagement.EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
     }
+#endif
 }

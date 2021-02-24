@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEditor;
 
 [CustomEditor(typeof(OverworldSceneExitTrigger))]
-public class OverworldSceneExitTriggerEditor : Editor 
+public class OverworldSceneExitTriggerEditor : Editor
 {
 
     SerializedProperty sceneToLoad;
@@ -20,8 +20,28 @@ public class OverworldSceneExitTriggerEditor : Editor
         sceneToLoad = serializedObject.FindProperty("m_sceneToLoad");
         loadLocationID = serializedObject.FindProperty("m_loadLocationID");
 
+        GetLocationOptions();
+    }
+
+    public override void OnInspectorGUI()
+    {
+        EditorGUI.BeginChangeCheck();
+        EditorGUILayout.PropertyField(sceneToLoad);
+        if (EditorGUI.EndChangeCheck())
+        {
+            GetLocationOptions();
+        }
+
+        IDIndex = EditorGUILayout.Popup(IDIndex, locationIDOptions);
+        loadLocationID.stringValue = locationIDOptions[IDIndex];
+
+        serializedObject.ApplyModifiedProperties();
+    }
+
+    private void GetLocationOptions()
+    {
         OverworldSceneTable table = Resources.Load<OverworldSceneTable>("Overworld Scene Table");
-        string currentScene = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().path;
+        string currentScene = sceneToLoad.stringValue;
 
         if (table.SceneToLocations.ContainsKey(currentScene))
         {
@@ -51,17 +71,6 @@ public class OverworldSceneExitTriggerEditor : Editor
             locationIDOptions[0] = "No Locations Available";
             IDIndex = 0;
         }
-    }
-
-    public override void OnInspectorGUI()
-    {
-
-        EditorGUILayout.PropertyField(sceneToLoad);
-
-        IDIndex = EditorGUILayout.Popup(IDIndex, locationIDOptions);
-        loadLocationID.stringValue = locationIDOptions[IDIndex];
-
-        serializedObject.ApplyModifiedProperties();
     }
 }
 

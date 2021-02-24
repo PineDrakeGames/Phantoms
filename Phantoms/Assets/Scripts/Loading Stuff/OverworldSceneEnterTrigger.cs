@@ -35,7 +35,10 @@ public class OverworldSceneEnterTrigger : MonoBehaviour
             // If the previous location ID was not empty, and there's not another location with the same name, safely remove it from the table.
             if (!string.IsNullOrEmpty(m_storedLocationID) && !otherLocations.Contains(m_storedLocationID))
             {
-                table.SceneToLocations[currentScene].Remove(m_storedLocationID);
+                if (table.SceneToLocations.ContainsKey(currentScene))
+                {
+                    table.SceneToLocations[currentScene].Remove(m_storedLocationID);
+                }
             }
 
             // If the new location ID is not empty, check if we need to add a dictionary entry, and add it in.
