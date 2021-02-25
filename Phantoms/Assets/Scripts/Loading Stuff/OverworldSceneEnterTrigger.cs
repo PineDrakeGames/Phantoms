@@ -56,6 +56,7 @@ public class OverworldSceneEnterTrigger : MonoBehaviour
             }
 
             m_storedLocationID = string.Copy(LocationID);
+            UnityEditor.EditorUtility.SetDirty(table);
         }
     }
 #endif
