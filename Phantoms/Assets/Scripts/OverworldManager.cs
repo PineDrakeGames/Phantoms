@@ -96,7 +96,7 @@ public class OverworldManager : MonoBehaviour
             s_instance = this;
             Initialize();
         }
-        else
+        else if (s_instance != this)
         {
             DeInitialize();
         }

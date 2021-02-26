@@ -33,6 +33,13 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private float m_maxZPosition = -15f;
 
+    [SerializeField]
+    private bool m_restrictXMovement = false;
+    [SerializeField]
+    private float m_minXPosition = -15f;
+    [SerializeField]
+    private float m_maxXPosition = 15f;
+
 
     [HideInInspector]
     public Transform Player = null;
@@ -108,17 +115,16 @@ public class CameraController : MonoBehaviour
         transform.LookAt(m_focusPosition);
 
         // Add in any camera restrictions at this point
+        Vector3 clampedPosition = transform.position;
         if (m_restrictZMovement)
         {
-            if (transform.position.z < m_minZPosition)
-            {
-                transform.position = new Vector3(transform.position.x, transform.position.y, m_minZPosition);
-            }
-            else if (transform.position.z > m_maxZPosition)
-            {
-                transform.position = new Vector3(transform.position.x, transform.position.y, m_maxZPosition);
-            }
+            clampedPosition.z = Mathf.Clamp(clampedPosition.z, m_minZPosition, m_maxZPosition);
         }
+        if (m_restrictXMovement)
+        {
+            clampedPosition.x = Mathf.Clamp(clampedPosition.x, m_minXPosition, m_maxXPosition);
+        }
+        transform.position = clampedPosition;
     }
 
 
