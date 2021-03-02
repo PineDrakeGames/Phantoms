@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Ares;
 
-public class TestBattleStart : MonoBehaviour
+public class BattleStartManager : MonoBehaviour
 {
     [SerializeField]
     private BattleInitializer m_battleInitializer = null;
 
-    [SerializeField]
-    private PhantomInstanceData[] m_enemyPhantoms = null;
+    // List of enemies to fight in 
+    public static List<PhantomInstanceData> EnemyPhantoms = null;
     // Start is called before the first frame update
     void Start()
     {
@@ -31,13 +31,13 @@ public class TestBattleStart : MonoBehaviour
 
 
         List<CombatantInstanceData> enemyCombatants = new List<CombatantInstanceData>();
-        foreach(PhantomInstanceData phantomData in m_enemyPhantoms)
+        foreach(PhantomInstanceData phantomData in EnemyPhantoms)
         {
             phantomData.SetCurrentStats();
             phantomData.CurrentHP = phantomData.CurrentStats.MaxHP;
             phantomData.CurrentMana = phantomData.CurrentStats.Mana;
         }
-        enemyCombatants.AddRange(m_enemyPhantoms);
+        enemyCombatants.AddRange(EnemyPhantoms);
 
         m_battleInitializer.InitializeBattle(playerCombatants, playerInactiveCombatants, enemyCombatants);
     }
