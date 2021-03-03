@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 public class LoadingManager : MonoBehaviour
 {
@@ -38,8 +39,15 @@ public class LoadingManager : MonoBehaviour
 
     private bool m_loading = false;
     public static bool Loading { get { return Instance.m_loading; } }
+    public static UnityEvent NewSceneLoaded = new UnityEvent();
 
     private GameObject m_loadingScreen = null;
+
+    // Stuff for the current overworld
+    private int m_lastOverworldSceneIndex = 0;
+    private List<GameObject> m_overworldSceneItems = new List<GameObject>();
+    private Scene m_lastOverworldScene;
+
 
     ///////////////////////////////////////////////
     /// Enum and values to identify scene types ///
@@ -80,6 +88,21 @@ public class LoadingManager : MonoBehaviour
         LoadScene(SceneUtility.GetBuildIndexByScenePath(scenePath), newSceneType);
     }
 
+    public static void LoadBattle(string scenePath)
+    {
+        LoadBattle(SceneUtility.GetBuildIndexByScenePath(scenePath));
+    }
+
+    public static void LoadBattle(int sceneIndex)
+    {
+        Instance.LoadBattleInternal(sceneIndex);
+    }
+
+    public static void ReturnFromBattle()
+    {
+        Instance.ReturnFromBattleInternal();
+    }
+
 
     //////////////////////////////////////////////////////////////////
     /// private functions for internal scene loading functionality ///
@@ -116,6 +139,37 @@ public class LoadingManager : MonoBehaviour
         }
     }
 
+    private void LoadBattleInternal(int sceneIndex)
+    {
+        if (!m_loading)
+        {
+            m_loading = true;
+            StartCoroutine(LoadIntoBattleBackend(sceneIndex));
+        }
+    }
+
+    private void ReturnFromBattleInternal()
+    {
+        if (!m_loading)
+        {
+            m_loading = true;
+            StartCoroutine(ReturnFromBattleBackend());
+        }
+    }
+
+    private Scene GetLoadedSceneByIndex(int buildIndex)
+    {
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            Scene scene = SceneManager.GetSceneAt(i);
+            if (scene.buildIndex == buildIndex)
+            {
+                return scene;
+            }
+        }
+        return SceneManager.GetActiveScene();;
+    }
+
     private IEnumerator LoadSceneBackend(int sceneIndex, SceneType newSceneType = SceneType.OTHER, bool showLoadingScreen = true)
     {
         PixelCrushers.DialogueSystem.DialogueManager.StopConversation();
@@ -129,8 +183,8 @@ public class LoadingManager : MonoBehaviour
         // Disabling all things from all types of scenes
         OverworldManager.Instance.SetOverworldActive(false);
 
-
         SceneManager.LoadScene(m_loadingSceneIndex);
+
         while (SceneManager.GetActiveScene().buildIndex != m_loadingSceneIndex)
         {
             yield return null;
@@ -139,6 +193,7 @@ public class LoadingManager : MonoBehaviour
         AsyncOperation load = SceneManager.LoadSceneAsync(sceneIndex);
         yield return load;
 
+        // Check what to do for specific new scene types
         switch(newSceneType)
         {
             case SceneType.OTHER:
@@ -151,12 +206,78 @@ public class LoadingManager : MonoBehaviour
                 break;
         }
 
-        yield return null;
+        m_currentSceneType = newSceneType;
 
         if (showLoadingScreen)
         {
             m_loadingScreen.SetActive(false);
         }
         m_loading = false;
+        NewSceneLoaded.Invoke();
+    }
+
+    private IEnumerator LoadIntoBattleBackend(int sceneIndex, bool showLoadingScreen = true)
+    {
+        if (showLoadingScreen)
+        {
+            m_loadingScreen.SetActive(true);
+        }
+        yield return null;
+
+        OverworldManager.Instance.SetOverworldActive(false);
+
+        m_overworldSceneItems.Clear();
+
+        foreach(GameObject rootObject in SceneManager.GetActiveScene().GetRootGameObjects())
+        {
+            if (rootObject.activeSelf)
+            {
+                rootObject.SetActive(false);
+                Debug.Log(rootObject.name);
+                m_overworldSceneItems.Add(rootObject);
+            }
+        }
+
+        m_lastOverworldScene = SceneManager.GetActiveScene();
+
+        yield return SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Additive);
+
+        SceneManager.SetActiveScene(GetLoadedSceneByIndex(sceneIndex));
+
+        m_currentSceneType = SceneType.BATTLE;
+        if (showLoadingScreen)
+        {
+            m_loadingScreen.SetActive(false);
+        }
+
+        m_loading = false;
+        NewSceneLoaded.Invoke();
+    }
+
+    private IEnumerator ReturnFromBattleBackend()
+    {
+        m_loadingScreen.SetActive(true);
+
+        yield return null;
+
+        AsyncOperation unload = SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
+
+        yield return unload;
+
+        OverworldManager.Instance.SetOverworldActive(true);
+        foreach(GameObject rootObject in m_overworldSceneItems)
+        {
+            if (rootObject != null)
+            {
+                rootObject.SetActive(true);
+            }
+        }
+
+        SceneManager.SetActiveScene(m_lastOverworldScene);
+        m_currentSceneType = SceneType.OVERWORLD;
+        m_loadingScreen.SetActive(false);
+
+        m_loading = false;
+        NewSceneLoaded.Invoke();
     }
 }

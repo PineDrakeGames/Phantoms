@@ -49,7 +49,7 @@ namespace AwesomeToon {
         void Start() {
             Init();
             GetLights();
-            SceneManager.activeSceneChanged += OnSceneChange;
+            LoadingManager.NewSceneLoaded.AddListener(OnSceneChange);
         }
 
         void OnValidate() {
@@ -72,7 +72,7 @@ namespace AwesomeToon {
             if (meshRenderer) meshRenderer.sharedMaterial = materialInstance;
         }
 
-        public void OnSceneChange(Scene previousScene, Scene newScene)
+        public void OnSceneChange()
         {
             GetLights();
         }

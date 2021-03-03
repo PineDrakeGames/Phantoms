@@ -20,7 +20,8 @@ public class BattleLoadingTrigger : MonoBehaviour
             if (encounterPhantoms.Count > 0)
             {
                 BattleStartManager.EnemyPhantoms = encounterPhantoms;
-                LoadingManager.LoadScene(scene, LoadingManager.SceneType.BATTLE);
+                LoadingManager.LoadBattle(scene);
+                transform.parent.gameObject.SetActive(false);
             }
         }
     }

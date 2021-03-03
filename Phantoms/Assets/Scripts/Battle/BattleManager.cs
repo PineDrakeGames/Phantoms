@@ -211,12 +211,18 @@ public class BattleManager : MonoBehaviour
         PlayerInventoryManager.Instance.SaveBattleInventory(playerGroup.Inventory as StackedInventory);
 
         // For now, just loading back to the test scene
-        LoadingManager.LoadScene(m_testReturnScene, LoadingManager.SceneType.OVERWORLD);
+        LoadingManager.ReturnFromBattle();
     }
 
     ////////////////////////
     /// Public functions ///
     ////////////////////////
+
+    public void TryRun()
+    {
+        // For now, just always run and end the battle
+        CurrentBattle.EndBattle(Battle.EndReason.WinLoseConditionMet);
+    }
 
     public void CatchPhantom()
     {

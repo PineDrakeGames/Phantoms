@@ -264,11 +264,12 @@ public class BattlePlayerMenu : MonoBehaviour
 
         // Just to skip a turn
         submenuButton = AddSubmenuButton("Skip", "Skip your turn");
-        Debug.Log("Adding listener to the button!");
         submenuButton.ClickEvent.AddListener(delegate { m_actionInput.SkipCallback(); });
 
-        // TODO: Run button
+        // Run Button
+        // TODO: Have only chance to run, just always runs for now
         submenuButton = AddSubmenuButton("Run", "Run away from battle");
+        submenuButton.ClickEvent.AddListener(m_battleManager.TryRun);
 
         ShowSubmenu();
     }
