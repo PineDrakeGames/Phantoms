@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2012022389461753275}
   - component: {fileID: 834075121019104901}
   m_Layer: 9
-  m_Name: GameObject
+  m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -55,6 +55,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7471816474198572302}
   - component: {fileID: 8240764775357118636}
+  - component: {fileID: 1675172171179745543}
   - component: {fileID: 7873629325824859218}
   m_Layer: 0
   m_Name: Grass
@@ -107,6 +108,44 @@ MonoBehaviour:
           m_StringArgument: Cut
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1675172171179745543}
+        m_TargetAssemblyTypeName: LootDrop, Assembly-CSharp
+        m_MethodName: DropLoot
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 156636364169017197}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1675172171179745543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5176940343690166278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23004bdc6305e124fa4954a77978b400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_lootDropData: {fileID: 0}
+  m_dropLocation: {fileID: 0}
 --- !u!95 &7873629325824859218
 Animator:
   serializedVersion: 3

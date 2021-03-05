@@ -32,6 +32,7 @@ public class DataManager : MonoBehaviour
     //////////////////////////////////
     /// Serialized fields for data ///
     //////////////////////////////////
+    [Header("Data Serialize Fields")]
     [SerializeField]
     private PlayerBattleData m_playerBattleData = null;
 
@@ -48,6 +49,18 @@ public class DataManager : MonoBehaviour
     {
         get { return Instance.m_itemData; }
     }
+
+    /////////////////////////////////////////////////////////////
+    /// Prefabs that can be instantiated pretty much anywhere ///
+    /////////////////////////////////////////////////////////////
+    [Header("Prefab references needed commonly")]
+    [SerializeField]
+    private GameObject m_dropLootPrefab;
+    public static GameObject DropLootPrefab { get { return Instance.m_dropLootPrefab; } }
+
+    [SerializeField]
+    private GameObject m_itemLootPrefab;
+    public static GameObject ItemLootPrefab { get { return Instance.m_itemLootPrefab; } }
 
     /////////////////////
     /// Public events ///
