@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b60d24c9ad2814f8e90f8f3866760da3, type: 3}
+  m_Name: Slash
+  m_EditorClassIdentifier: 
+  displayName: Slash
+  description: Attack an Opponent
+  baseDuration: 0
+  preparation:
+    turns: 0
+    texts: []
+    animations: []
+    audios: []
+    instantiations: []
+    interrupt: 2
+  recovery:
+    turns: 0
+    texts: []
+    animations: []
+    audios: []
+    instantiations: []
+    interrupt: 1
+  targetType: 0
+  numberOfTargets: 1
+  validTargets: 3
+  isTargetable: 1
+  validTargetGroups: 0
+  validTargetStates: 0
+  validTargetParticipants: 0
+  turnTowardsTarget: 0
+  actions:
+  - action: 0
+    powerType: 2
+    actionType: 0
+    specialType: 0
+    stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
+    environmentVariable: {fileID: 0}
+    environmentVariableSetType: 0
+    affliction: {fileID: 11400000, guid: 30b929e4025904ad3a16c59cd432ee42, type: 2}
+    isChildEffect: 0
+    duration: 1
+    normalizedProcessTime: 1
+    chance: 1
+    ignoreDefence: 0
+    power1: 0
+    power2: 0
+    powerFormula: CASTER_ATTACK + 1
+    breaksChainOnMiss: 0
+    special1: 0
+    special2: 0
+    specialFormula: 
+    targetType: 0
+  animation:
+    enabled: 0
+    parameterName: 
+    parameterType: 9
+    valueBool: 1
+    valueFloat: 1
+    delayType: 0
+    delayTime: 0
+    delayAnimationLayer: 0
+  instantiation:
+    enabled: 0
+    effect: {fileID: 0}
+    targetMode: 1
+    targetActor: 0
+    targetName: 
+    targetTransform: {fileID: 0}
+    parentToTarget: 0
+    inheritParentScale: 0
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    delay: 0
+  audio:
+    enabled: 0
+    clip: {fileID: 0}
+    playPosition: 0
+    volume: 1
+    delay: 0
+  actionTokens: []
+  category: 0
+  priority: 0
+  manacost: 0
