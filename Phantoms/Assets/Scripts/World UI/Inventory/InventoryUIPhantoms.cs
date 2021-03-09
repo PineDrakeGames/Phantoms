@@ -82,10 +82,11 @@ public class InventoryUIPhantoms : InventoryTab
             string description = "";
             description += m_currentPhantom.PhanData.PhantomDescription + "\n\n";
             description += "HP: " + m_currentPhantom.CurrentHP + "/" + m_currentPhantom.CurrentStats.MaxHP + " (Level ups: " + m_currentPhantom.LevelUps.MaxHP + ")\n";
-            description += "Attack: " + m_currentPhantom.CurrentStats.Attack + " (Level ups: " + m_currentPhantom.LevelUps.Attack + ")\n";
-            description += "Defense: " + m_currentPhantom.CurrentStats.Defense + " (Level ups: " + m_currentPhantom.LevelUps.Defense + ")\n";
+            
             description += "Mana: " + m_currentPhantom.CurrentStats.Mana + " (Level ups: " + m_currentPhantom.LevelUps.Mana + ")\n";
             description += "Relic: " + m_currentPhantom.CurrentStats.Relic + " (Level ups: " + m_currentPhantom.LevelUps.Relic + ")\n";
+            description += "Attack: " + m_currentPhantom.CurrentStats.Attack;
+            description += " - Defense: " + m_currentPhantom.CurrentStats.Defense + "\n";
             m_phantomDescriptionText.text = description;
         }
     }

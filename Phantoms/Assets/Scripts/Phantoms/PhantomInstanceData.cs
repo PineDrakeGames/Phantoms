@@ -13,7 +13,7 @@ public class PhantomInstanceData : CombatantInstanceData
 
     public PhantomBackground Background = PhantomBackground.None;
 
-    public BattleStats LevelUps = new BattleStats();
+    public LevelUpStats LevelUps = new LevelUpStats();
     
     public PhantomData PhanData
     {
@@ -33,7 +33,7 @@ public class PhantomInstanceData : CombatantInstanceData
         NickName = string.Empty;
         Level = 0;
         Background = PhantomBackground.None;
-        LevelUps = new BattleStats();
+        LevelUps = new LevelUpStats();
         LevelUps.SetToZero();
         CurrentStats = new BattleStats();
     }

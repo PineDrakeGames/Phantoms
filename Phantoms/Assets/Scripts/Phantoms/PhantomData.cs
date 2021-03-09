@@ -19,5 +19,5 @@ public class PhantomData : CombatantData
     public BattleStats StartingStats;
 
     [Tooltip("The amount that each stat increases when leveled for this phantom")]
-    public BattleStats LevelUpAmounts;
+    public LevelUpStats LevelUpAmounts;
 }
