@@ -1,10 +1,13 @@
-﻿using UnityEngine;
+﻿#define DEBUG_BATTLE_LOG
+
+using UnityEngine;
 using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Ares.Extensions;
 using Ares.Development;
+
 
 namespace Ares
 {

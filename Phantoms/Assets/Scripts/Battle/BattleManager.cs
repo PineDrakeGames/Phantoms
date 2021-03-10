@@ -127,6 +127,8 @@ public class BattleManager : MonoBehaviour
 
         m_playerMenu.OnBattleStart();
 
+        BattleLog.Instance.AddBattleListeners(battle);
+
         // If we'd started the battle with `progressAutomatically = false`, we could wait a while here to open menus etc.
         // before manually progressing to the first round by calling `battle.ProgressBattle()`.
     }
