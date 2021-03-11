@@ -52,5 +52,10 @@ namespace Ares {
 		public void Debuff(int stages){
 			stage = Mathf.Clamp(stage - stages, data.MinStage, data.MaxStage);
 		}
+
+		public void Reset()
+		{
+			stage = 0;
+		}
 	}
 }

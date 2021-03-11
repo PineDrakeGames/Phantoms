@@ -2028,6 +2028,8 @@ namespace Ares
 					}
 
 					return target.BuffStat(action.Stat, power);
+                case ChainEvaluator.ActionType.ClearBuff:
+                    return target.ClearBuff(action.ClearBuff, action.ClearBuffTempOnly, action.Stat);
 				case ChainEvaluator.ActionType.Cure:
 					return target.Cure(action.Affliction, power);
 				case ChainEvaluator.ActionType.Environment:

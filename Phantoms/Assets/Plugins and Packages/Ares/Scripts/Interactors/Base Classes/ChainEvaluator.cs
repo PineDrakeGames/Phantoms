@@ -4,7 +4,7 @@ using System.Linq;
 namespace Ares {
 	[System.Serializable]
 	public abstract class ChainEvaluator {
-		public enum ActionType {Damage, Heal, Buff, Afflict, Cure, Environment}
+		public enum ActionType {Damage, Heal, Buff, ClearBuff, Afflict, Cure, Environment}
 
 		/* Evaluated action values are stored per target actor. This allows for each
 		 * target to use their own stats linked to the keywords. It also leaves the

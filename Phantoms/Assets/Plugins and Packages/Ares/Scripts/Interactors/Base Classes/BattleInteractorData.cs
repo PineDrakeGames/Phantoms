@@ -274,6 +274,8 @@ namespace Ares {
 					break;
 				case ActionType.Buff:
 					break;
+				case ActionType.ClearBuff:
+					break;
 				case ActionType.Environment:
 					break;
 			}

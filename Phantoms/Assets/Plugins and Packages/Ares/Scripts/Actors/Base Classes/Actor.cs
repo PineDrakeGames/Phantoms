@@ -374,6 +374,92 @@ namespace Ares
             return stat.Stage - oldStage;
         }
 
+        public int ClearBuff(ChainableAction.ClearBuffType clearBuffType, bool tempOnly, StatData stat = null)
+        {
+            switch (clearBuffType)
+            {
+                case ChainableAction.ClearBuffType.Single:
+                    ClearTempBuffs(stat, 0);
+                    break;
+                case ChainableAction.ClearBuffType.SingleNegative:
+                    ClearTempBuffs(stat, -1);
+                    break;
+                case ChainableAction.ClearBuffType.SinglePosotive:
+                    ClearTempBuffs(stat, 1);
+                    break;
+                case ChainableAction.ClearBuffType.All:
+                    stat = null;
+                    ClearTempBuffs(null, 0);
+                    break;
+                case ChainableAction.ClearBuffType.AllNegative:
+                    stat = null;
+                    ClearTempBuffs(null, -1);
+                    break;
+                case ChainableAction.ClearBuffType.AllPositive:
+                    stat = null;
+                    ClearTempBuffs(null, 1);
+                    break;
+            }
+
+            if (!tempOnly)
+            {
+                if (stat != null)
+                {
+                    Stats[stat.name].Reset();
+                }
+                else
+                {
+                    foreach(Stat stat1 in Stats.Values)
+                    {
+                        stat1.Reset();
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+        public int ClearTempBuffs(StatData stat, int sign)
+        {
+            int removedBuffs = 0;
+            List<TemporaryBuff> buffsToRemove = new List<TemporaryBuff>();
+
+            foreach (TemporaryBuff tempBuff in temporaryBuffs)
+            {
+                if (stat == null || Stats[stat.name] == Stats[tempBuff.Stat.name])
+                {
+                    if (sign == 0 || sign == Mathf.Sign(tempBuff.Stages))
+                    {
+                        buffsToRemove.Add(tempBuff);
+                    }
+                }
+            }
+
+            for (int i = 0; i < buffsToRemove.Count; i++)
+            {
+                TemporaryBuff tempBuff = buffsToRemove[i];
+                if (temporaryBuffs.Contains(tempBuff))
+                {
+                    Stat oldStat = Stats[tempBuff.Stat.name];
+                    // Do the inverse of the buff
+                    if (tempBuff.Stages > 0)
+                    {
+                        OnStatDebuff.Invoke(oldStat, Mathf.Min(oldStat.Stage + tempBuff.Stages, oldStat.Data.MaxStage));
+                        oldStat.Debuff(tempBuff.Stages);
+                    }
+                    else
+                    {
+                        OnStatBuff.Invoke(oldStat, Mathf.Max(oldStat.Stage - tempBuff.Stages, oldStat.Data.MinStage));
+                        oldStat.Buff(-tempBuff.Stages);
+                    }
+                    temporaryBuffs.Remove(tempBuff);
+                    removedBuffs += 1;
+                }
+            }
+
+            return removedBuffs;
+        }
+
         public int Afflict(AfflictionData afflictionData, int stage, int currentBattleTurn, Actor inflicter)
         {
             Affliction affliction = afflictions.FirstOrDefault(a => a.Data == afflictionData);

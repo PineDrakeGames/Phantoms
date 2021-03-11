@@ -6,6 +6,7 @@ namespace Ares {
 	[Serializable]
 	public class ChainableAction : ActionChainValueEvaluator {
 		public enum EnvironmentVariableSetType {Set, Unset}
+		public enum ClearBuffType {SinglePosotive, AllPositive, SingleNegative, AllNegative, Single, All}
 
 		public ChainEvaluator.ActionType Action {get{return action;}}
 		public PowerType PowerMode {get{return powerType;}}
@@ -15,6 +16,8 @@ namespace Ares {
 		public StatData Stat {get{return stat;}}
 		public EnvironmentVariableData EnvironmentVariable {get{return environmentVariable;}}
 		public EnvironmentVariableSetType EnvironmentVariableSetMode {get{return environmentVariableSetType;}}
+		public ClearBuffType ClearBuff {get{return clearBuffType;}}
+		public bool ClearBuffTempOnly {get{return clearBuffTempOnly;}}
 		public float HitChance {get{return chance;}}
 		public bool IgnoreDefence {get{return ignoreDefence;}}
 		public bool IsChildEffect {get{return isChildEffect;}}
@@ -29,6 +32,8 @@ namespace Ares {
 		[SerializeField] StatData stat = null;
 		[SerializeField] EnvironmentVariableData environmentVariable = null;
 		[SerializeField] EnvironmentVariableSetType environmentVariableSetType = EnvironmentVariableSetType.Set;
+		[SerializeField] ClearBuffType clearBuffType = ClearBuffType.All;
+		[SerializeField] bool clearBuffTempOnly = true;
 		[SerializeField] AfflictionData affliction = null;
 		[SerializeField] bool isChildEffect = false;
 		[SerializeField] float duration = 1f;
