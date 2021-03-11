@@ -5,6 +5,9 @@ using UnityEngine;
 public class TestAddPhantomScript : MonoBehaviour
 {
     [SerializeField]
+    private GameObject m_objectToDisable = null;
+
+    [SerializeField]
     private string m_phantomID = null;
 
     [SerializeField]
@@ -12,6 +15,14 @@ public class TestAddPhantomScript : MonoBehaviour
 
     [SerializeField]
     private int m_phantomLevel = 0;
+
+    private void Start()
+    {
+        if (m_objectToDisable == null)
+        {
+            m_objectToDisable = this.gameObject;
+        }
+    }
 
     private void OnTriggerEnter(Collider other) 
     {
@@ -26,7 +37,7 @@ public class TestAddPhantomScript : MonoBehaviour
                 PlayerInventoryManager.Instance.AddPhantom(PhantomDataUtility.GenerateRandomPhantom(m_phantomID, m_phantomLevel));
             }
 
-            gameObject.SetActive(false);
+            m_objectToDisable.SetActive(false);
         }
     }
 }
