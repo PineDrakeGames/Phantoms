@@ -1072,6 +1072,7 @@ namespace Ares
                     HandleTargetInput(ability, new TargetInputGroup(validTargets.Select(a => a.Group).Distinct().ToArray(),
                         t => { return OnTargetSelect(ability, t, QueueActionWithTargets); }));
                     break;
+                case BattleInteractorData.TargetType.AllOtherActors:
                 case BattleInteractorData.TargetType.AllActors:
                     QueueActionWithTargets(ability, validTargets);
                     break;
@@ -1132,6 +1133,7 @@ namespace Ares
                 case BattleInteractorData.TargetType.AllActorsInGroup:
                     HandleTargetInput(item, new TargetInputGroup(validTargets.Select(a => a.Group).Distinct().ToArray(), t => { return OnTargetSelect(item, t, QueueActionWithTargets); }));
                     break;
+                case BattleInteractorData.TargetType.AllOtherActors:
                 case BattleInteractorData.TargetType.AllActors:
                     QueueActionWithTargets(item, validTargets);
                     break;
@@ -1305,6 +1307,7 @@ namespace Ares
                         HandleTargetInput(ability, new TargetInputGroup(validTargets.Select(a => a.Group).Distinct().ToArray(),
                             t => { return OnTargetSelect(ability, t, ContinueWithTargets); }));
                         break;
+                    case BattleInteractorData.TargetType.AllOtherActors:
                     case BattleInteractorData.TargetType.AllActors:
                         ContinueWithTargets(ability, validTargets);
                         break;
@@ -1369,6 +1372,7 @@ namespace Ares
                         HandleTargetInput(item, new TargetInputGroup(validTargets.Select(a => a.Group).Distinct().ToArray(),
                             t => { return OnTargetSelect(item, t, ContinueWithTargets); }));
                         break;
+                    case BattleInteractorData.TargetType.AllOtherActors:
                     case BattleInteractorData.TargetType.AllActors:
                         ContinueWithTargets(item, validTargets);
                         break;

@@ -59,13 +59,11 @@ public class BattlePlayerMenu : MonoBehaviour
     [SerializeField]
     private GameObject m_currentTurnIndicator = null;
     [SerializeField]
-    private GameObject m_damageIndicator = null;
-    [SerializeField]
-    private Animator m_damageIndicatorAnimation = null;
-    [SerializeField]
-    private TextMeshPro m_damageIndicatorText = null;
+    private GameObject m_damageIndicatorPrefab = null;
 
     public Dictionary<Actor, HealthIndicator> ActorToHealthIndicator = new Dictionary<Actor, HealthIndicator>();
+
+    private List<DamageIndicator> m_damageIndicators = new List<DamageIndicator>();
 
     private List<BattleSubmenuButton> m_subMenuButtons = new List<BattleSubmenuButton>();
     private ActionInput m_actionInput;
@@ -223,11 +221,8 @@ public class BattlePlayerMenu : MonoBehaviour
 
     public void SetDamageIndicator(Vector3 position, int damage)
     {
-        m_damageIndicator.transform.position = position;
-        m_damageIndicatorText.text = damage.ToString();
-        m_damageIndicatorAnimation.SetTrigger("Play");
+        GetDamageIndicator().SetDamageIndicator(position, damage);
     }
-
 
     /////////////////////////////////////////////////////////////////////////////////
     /// Functions called by the main menu buttons to load the different submenus. ///
@@ -444,6 +439,26 @@ public class BattlePlayerMenu : MonoBehaviour
     }
 
 
+    ////////////////////////////////////////
+    /// Private functions for Indicators ///
+    ////////////////////////////////////////
+
+    private DamageIndicator GetDamageIndicator()
+    {
+        foreach (DamageIndicator indicator in m_damageIndicators)
+        {
+            if (indicator.Ready)
+            {
+                return indicator;
+            }
+        }
+        GameObject newIndicatorObject = Instantiate(m_damageIndicatorPrefab);
+        DamageIndicator newIndicator = newIndicatorObject.GetComponent<DamageIndicator>();
+        m_damageIndicators.Add(newIndicator);
+        return newIndicator;
+    }
+
+
     ///////////////////////////////////////////////////////////
     /// Private helper functions to manage the battle menu. ///
     ///////////////////////////////////////////////////////////
@@ -622,6 +637,7 @@ public class BattlePlayerMenu : MonoBehaviour
                 callback();
                 m_battleCamera.ResetCamera();
                 break;
+            case BattleInteractorData.TargetType.AllOtherActors:
             case BattleInteractorData.TargetType.AllActors:
                 // Just add all valid targets then do the ability select callback.
                 m_actionTargets.AddRange(validTargets);
@@ -631,7 +647,9 @@ public class BattlePlayerMenu : MonoBehaviour
         }
     }
 
-    // Private functions to check if certain options should be available
+    /////////////////////////////////////////////////////////////////////////
+    /// Private functions to check if certain options should be available ///
+    /////////////////////////////////////////////////////////////////////////
 
     // Checks if the player can swap turns between them and their phantom
     private bool CanSwapTurn()

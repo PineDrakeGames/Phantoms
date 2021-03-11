@@ -76,6 +76,7 @@ namespace Ares.Editor {
 				case BattleInteractorData.TargetType.SingleActor:		targetProps = new string[]{"targetType", "validTargets"};						break;
 				case BattleInteractorData.TargetType.NumberOfActors:	targetProps = new string[]{"targetType", "numberOfTargets", "validTargets"};	break;
 				case BattleInteractorData.TargetType.AllActorsInGroup:	targetProps = new string[]{"targetType", "validTargetGroups"};					break;
+                case BattleInteractorData.TargetType.AllOtherActors:	targetProps = new string[]{"targetType", "validTargetGroups"};					break;
 				case BattleInteractorData.TargetType.AllActors:			targetProps = new string[]{"targetType", "validTargetGroups"};					break;
 			}
 

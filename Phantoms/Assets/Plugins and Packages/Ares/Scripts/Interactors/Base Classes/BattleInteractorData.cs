@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Ares {
 	public static class BattleInteractorData {
-		public enum TargetType {SingleActor, NumberOfActors, AllActorsInGroup, AllActors}
+		public enum TargetType {SingleActor, NumberOfActors, AllActorsInGroup, AllOtherActors, AllActors}
 		public enum TargetGroupActors {All, Self, Allies, Opponents, AlliesAndOpponents, AlliesAndSelf}
 		public enum TargetGroupGroups {Allies, Opponents, All}
 		public enum TargetAliveState {Alive, Defeated, All}
@@ -174,6 +174,10 @@ namespace Ares {
 					case BattleInteractorData.TargetGroupActors.Opponents:				return user.Group != target.Group;
 					case BattleInteractorData.TargetGroupActors.All:					return true;
 				}
+			}
+			else if (Data.TargetType == BattleInteractorData.TargetType.AllOtherActors)
+			{
+				return user.Actor != target.Actor;
 			}
 			else{
 				switch(Data.ValidTargetGroups){
