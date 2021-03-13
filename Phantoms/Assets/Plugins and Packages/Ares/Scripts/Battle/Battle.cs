@@ -739,7 +739,7 @@ namespace Ares
 							buff.TurnsRemaining--;
 
 							if(buff.TurnsRemaining == 0){
-								currentActor.BuffStat(buff.Stat, -buff.Stages);
+								currentActor.RemoveBuff(buff.Stat, buff.BuffID);
 								clearedBuffs.Add(buff);
 							}
 						}
@@ -778,7 +778,6 @@ namespace Ares
 
             if (!canContinue)
             {
-                VerboseLogger.Log("Can't continue!");
                 return;
             }
 
@@ -794,13 +793,10 @@ namespace Ares
 
                 processedAfflictions.Add(currentAffliction);
 
-                VerboseLogger.Log("AHHH");
-
                 BattleMonoBehaviour.Instance.StartCoroutine(CRProcessAffliction(actor, currentAffliction,
                     () => { ProgressAfflictionEffectQueue(processingMoment, actorsToProcess, i, processedAfflictions); }));
                 return;
             }
-            VerboseLogger.Log("Progress!");
 
             ProgressBattle();
         }
@@ -1890,7 +1886,10 @@ namespace Ares
 
                     int power = Mathf.RoundToInt(ability.EvaluatePower(currentActor, chosenAbilityTarget, actionTarget, currentAction));
 					int special = Mathf.RoundToInt(ability.EvaluateSpecial(currentActor, chosenAbilityTarget, actionTarget, currentAction));
-					int result = ProcessChainAction(ability, currentAction, currentActor, actionTarget, power, special);
+
+                    // The ID associated with this specific action - based on ability, target, and action index.
+                    string actionID = ability.Data.name + chosenAbilityTarget.name + ability.GetActionIdentifier(action);
+					int result = ProcessChainAction(ability, currentAction, currentActor, actionTarget, power, special, actionID);
 
                     ability.SetActionResult(currentAction, chosenAbilityTarget, result);
                 }
@@ -1924,7 +1923,9 @@ namespace Ares
 
                     int power = Mathf.RoundToInt(item.EvaluatePower(currentActor, chosenItemTarget, actionTarget, currentAction));
 					int special = Mathf.RoundToInt(item.EvaluateSpecial(currentActor, chosenItemTarget, actionTarget, currentAction));
-					int result = ProcessChainAction(item, currentAction, currentActor, actionTarget, power, special);
+
+                    string actionID = item.Data.name + chosenItemTarget.name + item.GetActionIdentifier(action);
+					int result = ProcessChainAction(item, currentAction, currentActor, actionTarget, power, special, actionID);
 
                     item.SetActionResult(currentAction, chosenItemTarget, result);
                 }
@@ -1996,8 +1997,10 @@ namespace Ares
 			}
 		}
 
-        int ProcessChainAction(object evaluater, ChainableAction action, Actor caster, Actor target, int power, int special)
+        int ProcessChainAction(object evaluater, ChainableAction action, Actor caster, Actor target, int power, int special, string chainActionID = "")
         {
+            // To log the chain action ID stuff
+            // if (!string.IsNullOrEmpty(chainActionID)) { Debug.Log(chainActionID); }
             foreach(EnvironmentVariable envVar in EnvironmentVariables){
 				power = Mathf.RoundToInt(envVar.Filter(evaluater, action, caster, target, power));
 			}
@@ -2024,10 +2027,10 @@ namespace Ares
 					return target.Heal(power);
 				case ChainEvaluator.ActionType.Buff:
 					if(special > 0){
-						target.TemporaryBuffs.Add(new TemporaryBuff(action.Stat, power, special));
+						target.TemporaryBuffs.Add(new TemporaryBuff(action.Stat, chainActionID, power, special));
 					}
 
-					return target.BuffStat(action.Stat, power);
+					return target.BuffStat(action.Stat, chainActionID, power);
                 case ChainEvaluator.ActionType.ClearBuff:
                     return target.ClearBuff(action.ClearBuff, action.ClearBuffTempOnly, action.Stat);
 				case ChainEvaluator.ActionType.Cure:

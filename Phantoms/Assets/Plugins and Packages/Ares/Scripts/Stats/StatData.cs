@@ -1,8 +1,15 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Ares {
+	public enum StatStackingType
+	{
+		Scaling,
+		PercentMultipliers
+	}
+
 	[CreateAssetMenu(fileName="New Ares Stat", menuName="Ares/Stat", order=30)]
 	public class StatData : PowerData {
 		public static StatData[] All{
@@ -22,35 +29,88 @@ namespace Ares {
 		static StatData[] all;
 
 		public string DisplayName {get{return displayName;}}
+		public StatStackingType StackingType {get{return stackingType;}}
 
 		public float GetValue(int baseValue, int stage){
 			return GetScaledPowerFloat(baseValue, stage, true);
 		}
 
 		[SerializeField] string displayName = null;
+		[SerializeField] StatStackingType stackingType = StatStackingType.Scaling;
 	}
 
 	[System.Serializable]
 	public class Stat {
-		public int Stage {get{return stage;}}
-		public StatData Data {get{return data;}}
-		public float Value {get{return data.GetValue(baseValue, stage);}}
 
+		public class StatBuffData
+		{
+			public int Amount = 0;
+			public string BuffID = "";
+
+			public StatBuffData(string buffID, int amount)
+			{
+				BuffID = buffID;
+				Amount = amount;
+			}
+		}
+
+		public StatData Data {get{return data;}}
+		public float Value {
+			get
+			{
+				switch(data.StackingType)
+				{
+					case StatStackingType.Scaling:
+						return data.GetValue(baseValue, stage);
+					case StatStackingType.PercentMultipliers:
+						return GetMultipliedValue();
+				}
+				return 0;
+			}
+		}
+
+		// Scaling stacking values
+		public int Stage {get{return Mathf.Clamp(stage, data.MinStage, data.MaxStage);}}
 		public int baseValue = 50;
 
 		[SerializeField] StatData data = null;
 		[SerializeField] int stage = 0;
 
+		[SerializeField] List<StatBuffData> statBuffs = new List<StatBuffData>();
+
 		public Stat(StatData data){
 			this.data = data;
 		}
 
-		public void Buff(int stages){
-			stage = Mathf.Clamp(stage + stages, data.MinStage, data.MaxStage);
+		public void Buff(string buffID, int stages){
+			statBuffs.Add(new StatBuffData(buffID, stages));
+			stage = stage + stages;
 		}
 
-		public void Debuff(int stages){
-			stage = Mathf.Clamp(stage - stages, data.MinStage, data.MaxStage);
+		public int ClearBuff(string buffID){
+			for (int i = 0; i < statBuffs.Count; i++)
+			{
+				StatBuffData buffData = statBuffs[i];
+				if (buffData.BuffID == buffID)
+				{
+					statBuffs.Remove(buffData);
+					stage = stage - buffData.Amount;
+					return buffData.Amount;
+				}
+			}
+			return 0;
+		}
+
+		public float GetMultipliedValue()
+		{
+			float finalValue = 100f;
+
+			foreach(StatBuffData buffData in statBuffs)
+			{
+				finalValue = finalValue - (finalValue * ((float)buffData.Amount / 100f));
+			}
+
+			return finalValue;
 		}
 
 		public void Reset()

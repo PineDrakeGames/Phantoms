@@ -4,69 +4,86 @@ using UnityEditorInternal;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Ares.Editor {
-	[CustomEditor(typeof(StatData), true)]
-	public class StatDataEditor : AresEditor {
-		readonly string[] propertyGroup1 = {"minStage", "maxStage"};
-		readonly string[] hiddenProperties = {"m_Script", "displayName", "powerIncrement", "powerMultiplier", "powerFormula", "powerScalingMode"};
+namespace Ares.Editor
+{
+    [CustomEditor(typeof(StatData), true)]
+    public class StatDataEditor : AresEditor
+    {
+        readonly string[] propertyGroup1 = { "minStage", "maxStage" };
+        readonly string[] hiddenProperties = { "m_Script", "displayName", "powerIncrement", "powerMultiplier", "powerFormula", "powerScalingMode" };
 
-		int debugBasePower = 50;
-		
-		public override void OnInspectorGUI(){
-			serializedObject.Update();
+        int debugBasePower = 50;
 
-			SerializedProperty spPowerScalingMode = serializedObject.FindProperty("powerScalingMode");
-			PowerScaling powerScalingMode = (PowerScaling)spPowerScalingMode.enumValueIndex;
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update();
 
-			EditorGUILayout.LabelField("Info", EditorStyles.boldLabel);
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("displayName"));
+            SerializedProperty spStatStackingType = serializedObject.FindProperty("stackingType");
 
-			EditorGUILayout.LabelField("Scaling", EditorStyles.boldLabel);
-			EditorGUILayout.PropertyField(spPowerScalingMode);
+            SerializedProperty spPowerScalingMode = serializedObject.FindProperty("powerScalingMode");
+            PowerScaling powerScalingMode = (PowerScaling)spPowerScalingMode.enumValueIndex;
 
-			if(powerScalingMode == PowerScaling.Linear || powerScalingMode == PowerScaling.ExponentialComplex || powerScalingMode == PowerScaling.ExponentialComplexSymmetric){
-				EditorGUILayout.PropertyField(serializedObject.FindProperty("powerMultiplier"));
-			}
+            EditorGUILayout.LabelField("Info", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("displayName"));
 
-			if(powerScalingMode == PowerScaling.ExponentialSimple || powerScalingMode == PowerScaling.ExponentialSimpleSymmetric ||
-			   powerScalingMode == PowerScaling.ExponentialComplex || powerScalingMode == PowerScaling.ExponentialComplexSymmetric){
-				EditorGUILayout.PropertyField(serializedObject.FindProperty("powerIncrement"));
-			}
-			else if(powerScalingMode == PowerScaling.Custom){
-				EditorGUILayout.PropertyField(serializedObject.FindProperty("powerFormula"));
+            EditorGUILayout.LabelField("Stacking Type", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(spStatStackingType);
 
-					EditorGUILayout.Space();
-				EditorGUILayout.HelpBox("Default formula tokens:\tFunctions:\nSTAGE\t\t\tABS()\n" +
-					"\t\t\tMIN()\n\t\t\tMAX()\n\nMacros:\n#D# (dice, i.e. 1D6)",
-					MessageType.Info);
-			}
+            StatStackingType stackingType = (StatStackingType)spStatStackingType.enumValueIndex;
 
-			EditorGUILayout.Space();
-			foreach(string prop in propertyGroup1){
-				EditorGUILayout.PropertyField(serializedObject.FindProperty(prop));
-			}
+            if (stackingType == StatStackingType.Scaling)
+            {
+                EditorGUILayout.LabelField("Scaling", EditorStyles.boldLabel);
+                EditorGUILayout.PropertyField(spPowerScalingMode);
 
-			DrawMiscProperties(propertyGroup1.Concat(hiddenProperties).ToArray());
+                if (powerScalingMode == PowerScaling.Linear || powerScalingMode == PowerScaling.ExponentialComplex || powerScalingMode == PowerScaling.ExponentialComplexSymmetric)
+                {
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("powerMultiplier"));
+                }
 
-			EditorGUILayout.Space();
-			EditorGUILayout.LabelField("Debug", EditorStyles.boldLabel);
+                if (powerScalingMode == PowerScaling.ExponentialSimple || powerScalingMode == PowerScaling.ExponentialSimpleSymmetric ||
+                   powerScalingMode == PowerScaling.ExponentialComplex || powerScalingMode == PowerScaling.ExponentialComplexSymmetric)
+                {
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("powerIncrement"));
+                }
+                else if (powerScalingMode == PowerScaling.Custom)
+                {
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("powerFormula"));
 
-			Rect rect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight);
-			int xOffset = 0;
+                    EditorGUILayout.Space();
+                    EditorGUILayout.HelpBox("Default formula tokens:\tFunctions:\nSTAGE\t\t\tABS()\n" +
+                        "\t\t\tMIN()\n\t\t\tMAX()\n\nMacros:\n#D# (dice, i.e. 1D6)",
+                        MessageType.Info);
+                }
 
-			DrawLabel(rect, ref xOffset, "Results for base power");
+                EditorGUILayout.Space();
+                foreach (string prop in propertyGroup1)
+                {
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty(prop));
+                }
 
-			xOffset -= 4;
+                DrawMiscProperties(propertyGroup1.Concat(hiddenProperties).ToArray());
 
-			debugBasePower = EditorGUI.IntField(new Rect(rect.x + xOffset, rect.y, 30f, rect.height), debugBasePower);
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Debug", EditorStyles.boldLabel);
 
-			xOffset += 30;
+                Rect rect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight);
+                int xOffset = 0;
 
-			DrawLabel(rect, ref xOffset, " are as follows:");
+                DrawLabel(rect, ref xOffset, "Results for base power");
 
-			DrawPowerHelpBox(debugBasePower, (PowerData)target);
+                xOffset -= 4;
 
-			serializedObject.ApplyModifiedProperties();
-		}
-	}
+                debugBasePower = EditorGUI.IntField(new Rect(rect.x + xOffset, rect.y, 30f, rect.height), debugBasePower);
+
+                xOffset += 30;
+
+                DrawLabel(rect, ref xOffset, " are as follows:");
+
+                DrawPowerHelpBox(debugBasePower, (PowerData)target);
+            }
+
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
 }

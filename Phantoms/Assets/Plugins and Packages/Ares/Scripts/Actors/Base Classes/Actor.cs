@@ -351,27 +351,36 @@ namespace Ares
             return Mana - oldMana;
         }
 
-        public int BuffStat(StatData statData, int stages)
+        public int BuffStat(StatData statData, string buffID, int stages)
         {
-            return BuffStat(Stats[statData.name], stages);
+            return BuffStat(Stats[statData.name], buffID, stages);
         }
 
-        public int BuffStat(Stat stat, int stages)
+        public int BuffStat(Stat stat, string buffID, int stages)
         {
             int oldStage = stat.Stage;
 
             if (stages > 0)
             {
                 OnStatBuff.Invoke(stat, Mathf.Min(stat.Stage + stages, stat.Data.MaxStage));
-                stat.Buff(stages);
             }
             else
             {
                 OnStatDebuff.Invoke(stat, Mathf.Max(stat.Stage - stages, stat.Data.MinStage));
-                stat.Debuff(-stages);
             }
+            stat.Buff(buffID, stages);
 
             return stat.Stage - oldStage;
+        }
+
+        public int RemoveBuff(StatData statData, string buffID)
+        {
+            return RemoveBuff(Stats[statData.name], buffID);
+        }
+
+        public int RemoveBuff(Stat stat, string buffID)
+        {
+            return stat.ClearBuff(buffID);
         }
 
         public int ClearBuff(ChainableAction.ClearBuffType clearBuffType, bool tempOnly, StatData stat = null)
@@ -445,13 +454,12 @@ namespace Ares
                     if (tempBuff.Stages > 0)
                     {
                         OnStatDebuff.Invoke(oldStat, Mathf.Min(oldStat.Stage + tempBuff.Stages, oldStat.Data.MaxStage));
-                        oldStat.Debuff(tempBuff.Stages);
                     }
                     else
                     {
                         OnStatBuff.Invoke(oldStat, Mathf.Max(oldStat.Stage - tempBuff.Stages, oldStat.Data.MinStage));
-                        oldStat.Buff(-tempBuff.Stages);
                     }
+                    oldStat.ClearBuff(tempBuff.BuffID);
                     temporaryBuffs.Remove(tempBuff);
                     removedBuffs += 1;
                 }

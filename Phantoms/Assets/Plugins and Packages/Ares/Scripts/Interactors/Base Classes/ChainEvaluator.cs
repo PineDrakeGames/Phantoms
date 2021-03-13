@@ -71,6 +71,15 @@ namespace Ares {
 			return evaluatedActionValues[target][actionIdentifiers[action]];
 		}
 
+		public string GetActionIdentifier(ChainableAction action)
+		{
+			if (actionIdentifiers.ContainsKey(action))
+			{
+				return string.Copy(actionIdentifiers[action]);
+			}
+			return string.Empty;
+		}
+
 		public abstract void PrepareForChainEvaluation(Actor caster, Actor[] targets);
 		protected abstract void AddUninitializedDefaultTokens(Actor caster, Actor[] targets);
 	}
