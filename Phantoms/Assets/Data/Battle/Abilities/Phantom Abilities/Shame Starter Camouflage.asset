@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b60d24c9ad2814f8e90f8f3866760da3, type: 3}
-  m_Name: Shame Starter Camoflouge
+  m_Name: Shame Starter Camouflage
   m_EditorClassIdentifier: 
-  displayName: 
+  displayName: Camouflage
   description: 
   baseDuration: 0
   preparation:
@@ -37,9 +37,32 @@ MonoBehaviour:
   validTargetStates: 0
   validTargetParticipants: 0
   turnTowardsTarget: 0
-  actions: []
+  actions:
+  - action: 2
+    powerType: 0
+    actionType: 0
+    specialType: 0
+    stat: {fileID: 11400000, guid: 7dbb60c46613e7f468c07376b6c2f6dd, type: 2}
+    environmentVariable: {fileID: 0}
+    environmentVariableSetType: 0
+    clearBuffType: 0
+    clearBuffTempOnly: 0
+    affliction: {fileID: 11400000, guid: 30b929e4025904ad3a16c59cd432ee42, type: 2}
+    isChildEffect: 0
+    duration: 1
+    normalizedProcessTime: 1
+    chance: 1
+    ignoreDefence: 0
+    power1: 30
+    power2: 0
+    powerFormula: 
+    breaksChainOnMiss: 0
+    special1: 3
+    special2: 0
+    specialFormula: 
+    targetType: 0
   animation:
-    enabled: 0
+    enabled: 1
     parameterName: 
     parameterType: 9
     valueBool: 1
@@ -69,4 +92,4 @@ MonoBehaviour:
   actionTokens: []
   category: 0
   priority: 0
-  manacost: 0
+  manacost: 3
