@@ -7,6 +7,7 @@ namespace Ares {
 	public class ChainableAction : ActionChainValueEvaluator {
 		public enum EnvironmentVariableSetType {Set, Unset}
 		public enum ClearBuffType {SinglePosotive, AllPositive, SingleNegative, AllNegative, Single, All}
+		public enum ActorResourceType {Health, Mana}
 
 		public ChainEvaluator.ActionType Action {get{return action;}}
 		public PowerType PowerMode {get{return powerType;}}
@@ -18,6 +19,7 @@ namespace Ares {
 		public EnvironmentVariableSetType EnvironmentVariableSetMode {get{return environmentVariableSetType;}}
 		public ClearBuffType ClearBuff {get{return clearBuffType;}}
 		public bool ClearBuffTempOnly {get{return clearBuffTempOnly;}}
+		public ActorResourceType TargetResource {get{return targetResource;}}
 		public float HitChance {get{return chance;}}
 		public bool IgnoreDefence {get{return ignoreDefence;}}
 		public bool IsChildEffect {get{return isChildEffect;}}
@@ -34,6 +36,7 @@ namespace Ares {
 		[SerializeField] EnvironmentVariableSetType environmentVariableSetType = EnvironmentVariableSetType.Set;
 		[SerializeField] ClearBuffType clearBuffType = ClearBuffType.All;
 		[SerializeField] bool clearBuffTempOnly = true;
+		[SerializeField] ActorResourceType targetResource = ActorResourceType.Health;
 		[SerializeField] AfflictionData affliction = null;
 		[SerializeField] bool isChildEffect = false;
 		[SerializeField] float duration = 1f;

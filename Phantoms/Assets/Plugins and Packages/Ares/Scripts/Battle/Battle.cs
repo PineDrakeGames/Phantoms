@@ -2024,12 +2024,18 @@ namespace Ares
 
 					return damageDealt;
 				case ChainEvaluator.ActionType.Heal:
-					return target.Heal(power);
+                    switch (action.TargetResource)
+                    {
+                        case ChainableAction.ActorResourceType.Mana:
+                            return target.RecoverMana(power);
+                        case ChainableAction.ActorResourceType.Health:
+                        default:
+                            return target.Heal(power);
+                    }
 				case ChainEvaluator.ActionType.Buff:
 					if(special > 0){
 						target.TemporaryBuffs.Add(new TemporaryBuff(action.Stat, chainActionID, power, special));
 					}
-
 					return target.BuffStat(action.Stat, chainActionID, power);
                 case ChainEvaluator.ActionType.ClearBuff:
                     return target.ClearBuff(action.ClearBuff, action.ClearBuffTempOnly, action.Stat);

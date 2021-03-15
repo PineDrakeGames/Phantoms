@@ -641,6 +641,20 @@ namespace Ares
         {
             //Speed, evasiveness, type immunity, etc. can be incorporated here
 
+            // Thanks notes, let's add evasion here!
+            
+            if (statsMap.ContainsKey("Evasion") && action.Action == ChainEvaluator.ActionType.Damage)
+            {
+                float evasion = statsMap["Evasion"].Value;
+                if (evasion > 0f)
+                {
+                    if (Random.Range(0f, 100f) < evasion)
+                    {
+                        return BattleInteractorData.HitStatus.Evade;
+                    }
+                }
+            }
+
             if (Random.Range(0f, 1f) <= action.HitChance)
             {
                 return BattleInteractorData.HitStatus.Hit;

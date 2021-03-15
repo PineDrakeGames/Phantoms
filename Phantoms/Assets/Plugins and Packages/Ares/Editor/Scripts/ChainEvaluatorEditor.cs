@@ -325,6 +325,15 @@ namespace Ares.Editor
 
                     xOffset += enumFieldWidth;
                 }
+                else if (type == ChainEvaluator.ActionType.Heal)
+                {
+                    SerializedProperty spTargetResource = element.FindPropertyRelative("targetResource");
+                    int enumIndex = spTargetResource.enumValueIndex;
+                    enumIndex = EditorGUI.Popup(new Rect(rect.x + xOffset, rect.y, enumFieldWidth, EditorGUIUtility.singleLineHeight), enumIndex, System.Enum.GetNames(typeof(ChainableAction.ActorResourceType)));
+                    spTargetResource.enumValueIndex = enumIndex;
+
+                    xOffset += enumFieldWidth;
+                }
 
                 int refLabelX = xOffset + 94;
 

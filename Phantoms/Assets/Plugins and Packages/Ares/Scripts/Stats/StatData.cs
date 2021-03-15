@@ -103,14 +103,14 @@ namespace Ares {
 
 		public float GetMultipliedValue()
 		{
-			float finalValue = 100f;
+			float hitChance = 100f;
 
 			foreach(StatBuffData buffData in statBuffs)
 			{
-				finalValue = finalValue - (finalValue * ((float)buffData.Amount / 100f));
+				hitChance = hitChance - (hitChance * ((float)buffData.Amount / 100f));
 			}
 
-			return finalValue;
+			return (100f - hitChance);
 		}
 
 		public void Reset()
