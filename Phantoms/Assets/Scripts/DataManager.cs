@@ -174,4 +174,14 @@ public class DataManager : MonoBehaviour
     {
         return m_playerBattleInstanceData;
     }
+
+    public void FullHeal()
+    {
+        m_playerBattleInstanceData.FullRestore();
+
+        foreach (PhantomInstanceData phantom in PlayerInventoryManager.Instance.Phantoms)
+        {
+            phantom.FullRestore();
+        }
+    }
 }

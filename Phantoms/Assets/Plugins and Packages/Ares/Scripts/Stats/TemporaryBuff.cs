@@ -5,7 +5,7 @@ namespace Ares {
 		public StatData Stat {get{return stat;}}
 
 		public int Stages {get{return stages;}}
-		public string BuffID { get{return BuffID;}}
+		public string BuffID { get{return buffID;}}
 		public int TurnsRemaining {get{return turnsRemaining;} set{turnsRemaining = Mathf.Max(0, value);}}
 
 		[SerializeField] StatData stat;
