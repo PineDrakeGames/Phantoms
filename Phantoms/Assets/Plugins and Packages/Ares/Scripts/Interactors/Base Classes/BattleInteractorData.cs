@@ -260,16 +260,18 @@ namespace Ares {
 				case ActionType.Damage:
 					string battleLog = "   " + caster.DisplayName + " hit " + actionTarget.DisplayName + " for ";
 					float modifier = PhantomTypes.GetTypeMultiplier(action.ActionType, actionTarget.MainType) * PhantomTypes.GetTypeMultiplier(action.ActionType, actionTarget.SecondType);
+					battleLog += "(" + result + " x "+ modifier +")";
+
 					result *= modifier;
 					if (!action.IgnoreDefence)
 					{
-						battleLog += result + " - " + actionTarget.Stats["defense"].Value;
+						battleLog +=  " - " + actionTarget.Stats["defense"].Value;
 						result -= actionTarget.Stats["defense"].Value;
 						battleLog += " = " + result + " damage.";
 					}
 					else
 					{
-						battleLog += result + " damage (no defense).";
+						battleLog += " = " + result + " damage (no defense).";
 					}
 					if (result < 1)
 					{ 
