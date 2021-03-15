@@ -233,7 +233,6 @@ public class LoadingManager : MonoBehaviour
             if (rootObject.activeSelf)
             {
                 rootObject.SetActive(false);
-                Debug.Log(rootObject.name);
                 m_overworldSceneItems.Add(rootObject);
             }
         }

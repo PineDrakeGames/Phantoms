@@ -258,13 +258,25 @@ namespace Ares {
 
 			switch(action.Action){
 				case ActionType.Damage:
+					string battleLog = "   " + caster.DisplayName + " hit " + actionTarget.DisplayName + " for ";
 					float modifier = PhantomTypes.GetTypeMultiplier(action.ActionType, actionTarget.MainType) * PhantomTypes.GetTypeMultiplier(action.ActionType, actionTarget.SecondType);
 					result *= modifier;
 					if (!action.IgnoreDefence)
 					{
+						battleLog += result + " - " + actionTarget.Stats["defense"].Value;
 						result -= actionTarget.Stats["defense"].Value;
+						battleLog += " = " + result + " damage.";
 					}
-					if (result < 1) { result = 1;}
+					else
+					{
+						battleLog += result + " damage (no defense).";
+					}
+					if (result < 1)
+					{ 
+						result = 1;
+						battleLog += "Set to min 1 damage.";
+					}
+					BattleLog.Instance.AddLog(battleLog);
 					break;
 				case ActionType.Heal:
 					break;

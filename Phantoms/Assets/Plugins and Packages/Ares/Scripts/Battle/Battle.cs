@@ -2009,19 +2009,53 @@ namespace Ares
 
 			InterruptBlockerIfNeeded(casterActorInfo, null, BattleInteractorData.RecoveryInterrupt.OnTargetHit);
 
+            #if DEBUG_BATTLE_LOG
+            switch(action.Action){
+				case ChainEvaluator.ActionType.Damage:
+                    break;
+				case ChainEvaluator.ActionType.Heal:
+                    switch (action.TargetResource)
+                    {
+                        case ChainableAction.ActorResourceType.Mana:
+                            BattleLog.Instance.AddLog(string.Format("   {0} restores {1} MP to {2}", caster.DisplayName, power, target.DisplayName));
+                            break;
+                        case ChainableAction.ActorResourceType.Health:
+                        default:
+                            BattleLog.Instance.AddLog(string.Format("   {0} heals {1} for {2} HP", caster.DisplayName, target.DisplayName, power));
+                            break;
+                    }
+                    break;
+				case ChainEvaluator.ActionType.Buff:
+                    string log = "";
+                    if (power > 0) { log = string.Format("   {0} Buffs {1}'s {2} by {3}", caster.DisplayName, target.DisplayName, action.Stat.DisplayName, power);}
+                    else { log = string.Format("   {0} Debuffs {1}'s {2} by {3}", caster.DisplayName, target.DisplayName, action.Stat.DisplayName, power); }
+					if(special > 0) { log += " for " + special + " turns"; }
+					BattleLog.Instance.AddLog(log);
+                    break;
+                case ChainEvaluator.ActionType.ClearBuff:
+					BattleLog.Instance.AddLog(string.Format("   {0} Clears buffs from {1}", caster.DisplayName, target.DisplayName));
+                    break;
+				case ChainEvaluator.ActionType.Cure:
+					BattleLog.Instance.AddLog(string.Format("   {0} Afflicts {1} with {2}", caster.DisplayName, target.DisplayName, action.Affliction.DisplayName));
+                    break;
+				case ChainEvaluator.ActionType.Environment:
+					break;
+				case ChainEvaluator.ActionType.Afflict:
+					BattleLog.Instance.AddLog(string.Format("   {0} Cures {1} of {2}", caster.DisplayName, target.DisplayName, action.Affliction.DisplayName));
+                    break;
+			}
+            #endif
+
 			switch(action.Action){
 				case ChainEvaluator.ActionType.Damage:
 					ActorInfo targetActorInfo = ActorInfo[target];
 					InterruptBlockerIfNeeded(casterActorInfo, null, BattleInteractorData.RecoveryInterrupt.OnTargetDamage);
 					InterruptBlockerIfNeeded(targetActorInfo, BattleInteractorData.PreparationInterrupt.OnDamage, BattleInteractorData.RecoveryInterrupt.OnDamage);
-
 					int damageDealt = target.TakeDamage(power);
-
 					if(target.HP == 0){
 						InterruptBlockerIfNeeded(casterActorInfo, null, BattleInteractorData.RecoveryInterrupt.OnTargetDeath);
 						InterruptBlockerIfNeeded(targetActorInfo, BattleInteractorData.PreparationInterrupt.OnDeath, BattleInteractorData.RecoveryInterrupt.OnDeath);
 					}
-
 					return damageDealt;
 				case ChainEvaluator.ActionType.Heal:
                     switch (action.TargetResource)
