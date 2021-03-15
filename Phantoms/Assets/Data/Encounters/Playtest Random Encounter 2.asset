@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd7d178490c081442b95d030d943269e, type: 3}
+  m_Name: Playtest Random Encounter 2
+  m_EditorClassIdentifier: 
+  RandomEnemyEncounters:
+  - EncounterTypeName: Lovely Lad
+    EncounterWeight: 1
+    PercentageChance: 50
+    PercentageMin: 0
+    PercentageMax: 50
+    Enemies:
+    - PhantomLevel: 3
+      Phantom: {fileID: 11400000, guid: 94721678f94b69c47ab5807e25371ace, type: 2}
+  - EncounterTypeName: Shame Boy
+    EncounterWeight: 1
+    PercentageChance: 50
+    PercentageMin: 50
+    PercentageMax: 100
+    Enemies:
+    - PhantomLevel: 3
+      Phantom: {fileID: 11400000, guid: cf6bc88056e9ac74e80eb96cf168260c, type: 2}

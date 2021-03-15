@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd7d178490c081442b95d030d943269e, type: 3}
+  m_Name: Playtest Random Encounter 1
+  m_EditorClassIdentifier: 
+  RandomEnemyEncounters:
+  - EncounterTypeName: Anger Boy
+    EncounterWeight: 1
+    PercentageChance: 33.333332
+    PercentageMin: 0
+    PercentageMax: 33.333332
+    Enemies:
+    - PhantomLevel: 3
+      Phantom: {fileID: 11400000, guid: 603fd9aa978c5994f91b437758473a1e, type: 2}
+  - EncounterTypeName: Sad Boy
+    EncounterWeight: 1
+    PercentageChance: 33.333332
+    PercentageMin: 33.333332
+    PercentageMax: 66.666664
+    Enemies:
+    - PhantomLevel: 3
+      Phantom: {fileID: 11400000, guid: 7ebae04438a581b448d6313ddde91314, type: 2}
+  - EncounterTypeName: Calm Boy
+    EncounterWeight: 1
+    PercentageChance: 33.333332
+    PercentageMin: 66.666664
+    PercentageMax: 100
+    Enemies:
+    - PhantomLevel: 3
+      Phantom: {fileID: 11400000, guid: 197658ef15abe914a8fa1dfbbfcecd3e, type: 2}

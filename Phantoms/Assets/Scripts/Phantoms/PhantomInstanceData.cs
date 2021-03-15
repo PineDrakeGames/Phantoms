@@ -46,8 +46,8 @@ public class PhantomInstanceData : CombatantInstanceData
         BackgroundStats backStats = PhantomDataUtility.BackgroundToStats[Background];
         BattleStatType increase = backStats.Increase;
         BattleStatType decrease = backStats.Decrease;
-        startingStats.SetStat(increase, startingStats.GetStat(increase) + PhanData.LevelUpAmounts.GetStat(increase));
-        startingStats.SetStat(decrease, startingStats.GetStat(decrease) - PhanData.LevelUpAmounts.GetStat(decrease));
+        startingStats.SetStat(increase, startingStats.GetStat(increase) + (PhanData.LevelUpAmounts.GetStat(increase)/2));
+        startingStats.SetStat(decrease, startingStats.GetStat(decrease) - (PhanData.LevelUpAmounts.GetStat(decrease)/2));
 
         // Add in level ups!
         foreach(BattleStatType type in PhantomDataUtility.LevelUpStats)
