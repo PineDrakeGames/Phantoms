@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5767138815270924770
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 2
 --- !u!21 &2100000
 Material:
   serializedVersion: 6
@@ -7,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: BatBoy_Body
-  m_Shader: {fileID: -6465566751694194690, guid: 4b3a33ef23cc2b04fbfa505bda3ea02b,
+  m_Name: Shame_Lily
+  m_Shader: {fileID: -6465566751694194690, guid: 99d76b858f6e2234c9818a9f514f835d,
     type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -20,12 +33,16 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _BaseMap:
-        m_Texture: {fileID: 0}
+    - Texture2D_5166454E:
+        m_Texture: {fileID: 2800000, guid: 97985061f4b3cda48b8b061cd4d55144, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _BaseTexture:
-        m_Texture: {fileID: 2800000, guid: 4fc0e917277b8894c90008c176da6cf5, type: 3}
+    - Texture2D_9B4BA08B:
+        m_Texture: {fileID: 2800000, guid: e572587f7fa03114eab0fb0435b7b60f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BaseMap:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -48,29 +65,23 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _ShadingGradient:
-        m_Texture: {fileID: 2800000, guid: 471b99d1b56e09b4585da1c024311f17, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - Vector1_464CC92B: 2.5
+    - Vector1_A9CF7714: 0.1
+    - Vector1_DF86F427: 10
+    - Vector1_FA202C0D: -1
     - _AlphaClip: 0
-    - _AmbientIntensity: 1
     - _Blend: 0
     - _BumpScale: 1
     - _Cull: 2
     - _Cutoff: 0.5
-    - _DissolveAmount: 0
-    - _DissolveLineThickness: 0.01
     - _DstBlend: 0
     - _EnvironmentReflections: 1
-    - _FresnelAngle: -12.1
-    - _FresnelSize: 10
     - _GlossMapScale: 0
-    - _GlossSize: 20
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
@@ -85,16 +96,17 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
+    - Color_52BFB6F5: {r: 1, g: 1, b: 1, a: 0}
+    - Color_6A5748D: {r: 1, g: 1, b: 1, a: 0}
+    - Color_816F9FC3: {r: 1, g: 1, b: 1, a: 0}
+    - Color_D14924AC: {r: 0, g: 0, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _DissolveColor: {r: 1, g: 1, b: 1, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelIntensity: {r: 1, g: 1, b: 1, a: 0}
-    - _GlossIntensity: {r: 1, g: 1, b: 1, a: 0}
     - _L1_color: {r: 1.13, g: 1.1199512, b: 1.0074056, a: 0.99}
     - _L1_dir: {r: 0.46344113, g: 0.7660432, b: -0.44542137, a: 0}
-    - _L2_color: {r: 0.5922522, g: 0.56670403, b: 0.49702737, a: 0.524117}
-    - _L2_dir: {r: 0.06164094, g: 0.076875046, b: -0.99513346, a: 0}
+    - _L2_color: {r: 0, g: 0, b: 0, a: 1}
+    - _L2_dir: {r: 0, g: 1, b: 0, a: 0}
     - _L3_color: {r: 0, g: 0, b: 0, a: 1}
     - _L3_dir: {r: 0, g: 1, b: 0, a: 0}
     - _L4_color: {r: 0, g: 0, b: 0, a: 1}
@@ -103,20 +115,5 @@ Material:
     - _L5_dir: {r: 0, g: 1, b: 0, a: 0}
     - _L6_color: {r: 0, g: 0, b: 0, a: 1}
     - _L6_dir: {r: 0, g: 1, b: 0, a: 0}
-    - _ShadingBlacks: {r: 0, g: 0, b: 0, a: 0}
-    - _ShadingWhites: {r: 1, g: 1, b: 1, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
---- !u!114 &6860685553694981871
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 2
