@@ -317,6 +317,7 @@ namespace Ares
                 float roll = Random.Range(0f, 1f);
                 if (roll >= 0.5f)
                 {
+                    BattleLog.Instance.AddLog(DisplayName + " woke up from damage!");
                     Cure(currentAffliction, 1);
                 }
             }
@@ -554,6 +555,7 @@ namespace Ares
                     OnAfflictionCure.Invoke(affliction);
                     affliction.OnEnd(this);
                     afflictions.Remove(affliction);
+                    BattleLog.Instance.AddLog(DisplayName + " is cured of " + affliction.Data.DisplayName + "!");
 
                     return affliction.Stage;
                 }
@@ -587,6 +589,7 @@ namespace Ares
                         OnAfflictionCure.Invoke(affliction);
                         affliction.OnEnd(this);
                         afflictions.Remove(affliction);
+                        BattleLog.Instance.AddLog(DisplayName + " is cured of " + affliction.Data.DisplayName + "!");
                     }
 
                     return oldStage - affliction.Stage;

@@ -319,6 +319,7 @@ namespace Ares
                     {
                         if (affliction.Data.AfflictionID == "SLEEP")
                         {
+                            BattleLog.Instance.AddLog(currentActor.DisplayName + " skipped turn due to sleep!");
                             OnSkipSelect(QueueSkip);
                             return;
                         }
@@ -597,6 +598,7 @@ namespace Ares
                         {
                             if (affliction.Data.AfflictionID == "SLEEP")
                             {
+                                BattleLog.Instance.AddLog(currentActor.DisplayName + " skipped turn due to sleep!");
                                 OnSkipSelect(QueueSkip);
                                 CurrentRoundState = RoundState.EndOfTurn;
                                 return;
@@ -2036,12 +2038,12 @@ namespace Ares
 					BattleLog.Instance.AddLog(string.Format("   {0} Clears buffs from {1}", caster.DisplayName, target.DisplayName));
                     break;
 				case ChainEvaluator.ActionType.Cure:
-					BattleLog.Instance.AddLog(string.Format("   {0} Afflicts {1} with {2}", caster.DisplayName, target.DisplayName, action.Affliction.DisplayName));
+					BattleLog.Instance.AddLog(string.Format("   {0} Cures {1} of {2}", caster.DisplayName, target.DisplayName, action.Affliction.DisplayName));
                     break;
 				case ChainEvaluator.ActionType.Environment:
 					break;
 				case ChainEvaluator.ActionType.Afflict:
-					BattleLog.Instance.AddLog(string.Format("   {0} Cures {1} of {2}", caster.DisplayName, target.DisplayName, action.Affliction.DisplayName));
+					BattleLog.Instance.AddLog(string.Format("   {0} Afflicts {1} with {2}", caster.DisplayName, target.DisplayName, action.Affliction.DisplayName));
                     break;
 			}
             #endif
