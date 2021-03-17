@@ -53,6 +53,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
     [Header("Art stuff")]
     [SerializeField]
     private Animator m_characterAnimator = null;
+    public Animator CharacterAnimator { get { return m_characterAnimator; }}
     public float RunSpeedScale = 0.5f;
 
     [Header("Misc")]

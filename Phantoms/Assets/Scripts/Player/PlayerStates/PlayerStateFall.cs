@@ -4,7 +4,7 @@ public class PlayerStateFall : PlayerMovementState
 {
     public override void StateEnter()
     {
-
+        Controller.CharacterAnimator.SetTrigger("Fall");
     }
 
     public override void TickInput(PlayerCharacterInputs input)
@@ -41,6 +41,6 @@ public class PlayerStateFall : PlayerMovementState
 
     public override void StateExit()
     {
-
+        Controller.CharacterAnimator.SetTrigger("Landed");
     }
 }

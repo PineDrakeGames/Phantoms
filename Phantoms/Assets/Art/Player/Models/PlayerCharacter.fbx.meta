@@ -22,11 +22,17 @@ ModelImporter:
       74: -3529270472044073027
     second: Main Body|004_WALK
   - first:
-      74: -285960360014825136
-    second: Main Body|005-SITTING
-  - first:
       74: -3004392959350854659
     second: Main Body|005_ATTACK
+  - first:
+      74: 7872395832446326968
+    second: Main Body|006_SITTING
+  - first:
+      74: 4117701873366269753
+    second: Main Body|007_JUMP
+  - first:
+      74: -7058724126454786727
+    second: Main Body|008-FALL
   - first:
       74: 2170503195174730634
     second: Main Body|CubeAction
@@ -146,8 +152,8 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Main Body|005-SITTING
-      takeName: Main Body|005-SITTING
+      name: Main Body|006_SITTING
+      takeName: Main Body|006_SITTING
       internalID: 0
       firstFrame: 0
       lastFrame: 360
@@ -175,18 +181,47 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Main Body|005_ATTACK
-      takeName: Main Body|005_ATTACK
+      name: Main Body|007_JUMP
+      takeName: Main Body|007_JUMP
       internalID: 0
       firstFrame: 0
-      lastFrame: 8
+      lastFrame: 1
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Main Body|008-FALL
+      takeName: Main Body|008-FALL
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 1
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -257,7 +292,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.3
+    globalScale: 0.003
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0

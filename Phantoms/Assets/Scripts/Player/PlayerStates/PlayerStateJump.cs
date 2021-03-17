@@ -9,6 +9,8 @@ public class PlayerStateJump : PlayerMovementState
     {
         m_holdingJump = true;
         m_SetInitialForce = true;
+        Controller.CharacterAnimator.SetTrigger("Jump");
+
     }
 
     public override void TickInput(PlayerCharacterInputs input)
