@@ -66,7 +66,7 @@ public class PhantomInstanceData : CombatantInstanceData
         List<BattleStatType> levelUpOptions = new List<BattleStatType>();
         BackgroundStats backStats = PhantomDataUtility.BackgroundToStats[Background];
 
-        foreach(BattleStatType statType in (System.Enum.GetValues(typeof(BattleStatType)) as BattleStatType[]))
+        foreach(BattleStatType statType in (PhantomDataUtility.LevelUpStats))
         {
             int statLevels = LevelUps.GetStat(statType);
             if (statType == backStats.Decrease)

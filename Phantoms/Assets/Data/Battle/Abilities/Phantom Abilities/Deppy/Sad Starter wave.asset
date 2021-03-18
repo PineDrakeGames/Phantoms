@@ -45,6 +45,9 @@ MonoBehaviour:
     stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
     environmentVariable: {fileID: 0}
     environmentVariableSetType: 0
+    clearBuffType: 5
+    clearBuffTempOnly: 1
+    targetResource: 0
     affliction: {fileID: 11400000, guid: 30b929e4025904ad3a16c59cd432ee42, type: 2}
     isChildEffect: 0
     duration: 2
@@ -53,7 +56,7 @@ MonoBehaviour:
     ignoreDefence: 0
     power1: 0
     power2: 0
-    powerFormula: CASTER_ATTACK / 2
+    powerFormula: (CASTER_ATTACK / 2 )+ 1
     breaksChainOnMiss: 0
     special1: 0
     special2: 0

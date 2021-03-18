@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Ares;
 
+/*
+// OLD Backgrounds.
 public enum PhantomBackground
 {
     None = 0,
@@ -27,6 +29,18 @@ public enum PhantomBackground
     Entertainer = 19,
     Artist = 20
 }
+*/
+
+public enum PhantomBackground
+{
+    None = 0,
+    Soldier = 1,
+    Athlete = 2,
+    Scientist = 3,
+    Theologist = 4,
+    Thief = 5,
+    Artist = 6,
+}
 
 public struct BackgroundStats
 {
@@ -42,6 +56,8 @@ public struct BackgroundStats
 
 public static class PhantomDataUtility
 {
+    /*
+    // OLD background stuff.
     public static Dictionary<PhantomBackground, BackgroundStats> BackgroundToStats = new Dictionary<PhantomBackground, BackgroundStats>
     {
         { (PhantomBackground)0, new BackgroundStats(BattleStatType.MAXHP,  BattleStatType.MAXHP) },
@@ -66,13 +82,23 @@ public static class PhantomDataUtility
         { (PhantomBackground)19, new BackgroundStats(BattleStatType.RELIC,  BattleStatType.DEFENSE) },
         { (PhantomBackground)20, new BackgroundStats(BattleStatType.RELIC,  BattleStatType.MANA) }
     };
+    */
+
+    public static Dictionary<PhantomBackground, BackgroundStats> BackgroundToStats = new Dictionary<PhantomBackground, BackgroundStats>
+    {
+        { (PhantomBackground)0, new BackgroundStats(BattleStatType.MAXHP,  BattleStatType.MAXHP) },
+        { (PhantomBackground)1, new BackgroundStats(BattleStatType.MAXHP,  BattleStatType.MANA) },
+        { (PhantomBackground)2, new BackgroundStats(BattleStatType.MAXHP,  BattleStatType.RELIC) },
+        { (PhantomBackground)3, new BackgroundStats(BattleStatType.MANA,  BattleStatType.MAXHP) },
+        { (PhantomBackground)4, new BackgroundStats(BattleStatType.MANA,  BattleStatType.RELIC) },
+        { (PhantomBackground)5, new BackgroundStats(BattleStatType.RELIC,  BattleStatType.MAXHP) },
+        { (PhantomBackground)6, new BackgroundStats(BattleStatType.RELIC,  BattleStatType.MANA) },
+    };
 
 
-    public static BattleStatType[] LevelUpStats = new BattleStatType[5]
+    public static BattleStatType[] LevelUpStats = new BattleStatType[3]
     {
         BattleStatType.MAXHP,
-        BattleStatType.ATTACK,
-        BattleStatType.DEFENSE,
         BattleStatType.MANA,
         BattleStatType.RELIC
     };
