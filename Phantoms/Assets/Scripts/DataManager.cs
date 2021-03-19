@@ -115,7 +115,7 @@ public class DataManager : MonoBehaviour
             m_phantomIdToData = new Dictionary<string, PhantomData>();
             foreach (PhantomData data in PhantomData.Data)
             {
-                m_phantomIdToData.Add(data.PhantomID, data);
+                m_phantomIdToData.Add(data.ID, data);
             }
         }
 

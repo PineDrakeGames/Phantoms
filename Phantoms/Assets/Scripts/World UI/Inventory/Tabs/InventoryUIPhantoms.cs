@@ -70,7 +70,7 @@ public class InventoryUIPhantoms : InventoryTab
             // Set name
             string name = "No Name";
             if (!string.IsNullOrEmpty(m_currentPhantom.NickName)) { name = m_currentPhantom.NickName; }
-            else if (!string.IsNullOrEmpty(m_currentPhantom.PhanData.PhantomDisplayName)) { name = m_currentPhantom.PhanData.PhantomDisplayName; }
+            else if (!string.IsNullOrEmpty(m_currentPhantom.PhanData.DisplayName)) { name = m_currentPhantom.PhanData.DisplayName; }
             name += " - " + m_currentPhantom.Level;
             m_phantomNicknameText.text = name;
 
@@ -80,7 +80,7 @@ public class InventoryUIPhantoms : InventoryTab
             // Set Description
             /// Mostly just filling this with a bunch of info for now to see how things are working.
             string description = "";
-            description += m_currentPhantom.PhanData.PhantomDescription + "\n\n";
+            description += m_currentPhantom.PhanData.Description + "\n\n";
             description += "HP: " + m_currentPhantom.CurrentHP + "/" + m_currentPhantom.CurrentStats.MaxHP + " (Level ups: " + m_currentPhantom.LevelUps.MaxHP + ")\n";
             
             description += "Mana: " + m_currentPhantom.CurrentStats.Mana + " (Level ups: " + m_currentPhantom.LevelUps.Mana + ")\n";

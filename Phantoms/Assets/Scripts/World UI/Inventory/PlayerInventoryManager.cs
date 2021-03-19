@@ -99,7 +99,10 @@ public class PlayerInventoryManager : MonoBehaviour
         battleInventory.OnItemAdd.AddListener(SetupBattleItem);
         foreach (ItemInstanceData item in Items)
         {
-            battleInventory.AddItem(item.AresData, item.Quantity);
+            if (item.Quantity > 0)
+            {
+                battleInventory.AddItem(item.AresData, item.Quantity);
+            }
         }
         return battleInventory;
     }

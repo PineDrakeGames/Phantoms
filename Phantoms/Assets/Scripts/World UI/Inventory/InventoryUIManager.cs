@@ -50,7 +50,7 @@ public class InventoryUIManager : MonoBehaviour
         {
             tab.CloseTab();
         }
-
+        m_isInventoryOpen = true;
         CloseInventory();
     }
 

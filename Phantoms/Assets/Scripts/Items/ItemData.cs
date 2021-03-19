@@ -11,6 +11,13 @@ public class ItemData : ScriptableObject
 
     public Sprite Sprite = null;
 
+    [Header("Overworld Item Use")]
+    public bool CanUseOutOfBattle = false;
+    public bool HealsAll = false;
+    public int HP = 0;
+    public int Mana = 0;
+
+    [Header("For Shop Stuff")]
     public int BuyPrice = 10;
     public int SellPrice = 5;
 }

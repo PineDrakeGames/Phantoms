@@ -112,7 +112,7 @@ public static class PhantomDataUtility
         string displayName = instanceData.NickName;
         if (string.IsNullOrEmpty(displayName))
         {
-            displayName = instanceData.PhanData.PhantomDisplayName;
+            displayName = instanceData.PhanData.DisplayName;
         }
 
         phantomActor.Init(displayName, instanceData.CurrentHP, instanceData.CurrentStats.MaxHP, instanceData.CurrentMana, instanceData.CurrentStats.Mana, stats, instanceData.Data.Abilities, phantomActor.FallbackAbility, phantomActor.Afflictions, phantomActor.inventory);
@@ -179,7 +179,7 @@ public static class PhantomDataUtility
         instanceData.CurrentMana = instanceData.CurrentStats.Mana;
 
         // Set initial nickname
-        instanceData.NickName = phantomData.PhantomDisplayName;
+        instanceData.NickName = phantomData.DisplayName;
 
         return instanceData;
     }

@@ -6,14 +6,18 @@ using UnityEngine.EventSystems;
 using TMPro;
 
 [RequireComponent(typeof(Button))]
-public class InventoryPhantomButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class InventoryItemTargetButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Button References")]
     [SerializeField]
-    private TextMeshProUGUI m_buttonText = null;
+    private TextMeshProUGUI m_combatantNameText = null;
+    [SerializeField]
+    private TextMeshProUGUI m_currentHPText = null;
+    [SerializeField]
+    private TextMeshProUGUI m_currentMPText = null;
 
-    public InventoryUIPhantoms PhantomsInventory = null;
-    public PhantomInstanceData Data = null;
+    public InventoryUIItemsTab ItemsInventory = null;
+    public CombatantInstanceData Data = null;
 
     private Button m_buttonComponent = null;
 
@@ -39,9 +43,9 @@ public class InventoryPhantomButton : MonoBehaviour, IPointerEnterHandler, IPoin
     ///////////////////////////////////////////////////////////////////////////
     public void OnClick()
     {
-        if (PhantomsInventory && Data != null)
+        if (ItemsInventory && Data != null)
         {
-            PhantomsInventory.SelectPhantom(Data);
+            ItemsInventory.UseItemWithTarget(Data);
         }
     }
 
@@ -49,10 +53,18 @@ public class InventoryPhantomButton : MonoBehaviour, IPointerEnterHandler, IPoin
     {
         if (Data != null)
         {
-            string name = "No Name";
-            if (!string.IsNullOrEmpty(Data.NickName)) { name = Data.NickName; }
-            else if (!string.IsNullOrEmpty(Data.PhanData.PhantomDisplayName)) { name = Data.PhanData.PhantomDisplayName; }
-            m_buttonText.text = name;
+            if (m_combatantNameText != null)
+            {
+                m_combatantNameText.text = Data.Data.DisplayName;
+            }
+            if (m_currentHPText != null)
+            {
+                m_currentHPText.text = string.Format("<b>HP</b> <color=red>{0}/{1}</color>", Data.CurrentHP, Data.CurrentStats.MaxHP);
+            }
+            if (m_currentMPText != null)
+            {
+                m_currentMPText.text = string.Format("<b>MP</b> <color=blue>{0}/{1}</color>", Data.CurrentMana, Data.CurrentStats.Mana);
+            }
         }
     }
 

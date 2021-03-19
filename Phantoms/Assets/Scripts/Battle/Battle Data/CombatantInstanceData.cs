@@ -27,4 +27,22 @@ public abstract class CombatantInstanceData
     {
         CurrentMana = CurrentStats.Mana;
     }
+
+    public void RestoreHealth(int amount)
+    {
+        if (amount > 0)
+        {
+            CurrentHP += amount;
+            CurrentHP = Mathf.Clamp(CurrentHP, 0, CurrentStats.MaxHP);
+        }
+    }
+
+    public void RestoreMana(int amount)
+    {
+        if (amount > 0)
+        {
+            CurrentMana += amount;
+            CurrentMana = Mathf.Clamp(CurrentMana, 0, CurrentStats.Mana);
+        }
+    }
 }
