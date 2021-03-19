@@ -98,13 +98,6 @@ public class DataManager : MonoBehaviour
     ///////////////////////
     /// Unity Functions ///
     ///////////////////////
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Application.Quit();
-        }
-    }
 
 
     ////////////////////////

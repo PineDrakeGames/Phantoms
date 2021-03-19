@@ -2917,6 +2917,11 @@ namespace Ares
 				}
 			}
 
+            if(affliction.Data.Actions.Where(a => !a.IsChildEffect).Count() == 0 && Rules.ProgressAutomatically) {
+                VerboseLogger.Log("Progressing battle automatically after 0-action affliction", VerboseLoggerSettings.RegularColor);
+                BattleMonoBehaviour.Instance.StartCoroutine(CRProgressBattleAsSoonAsAllowed(ProgressType.Turn, progressAction));
+            }
+
 			EndPerformAffliction (actor, afflictionResults);
 		}
 

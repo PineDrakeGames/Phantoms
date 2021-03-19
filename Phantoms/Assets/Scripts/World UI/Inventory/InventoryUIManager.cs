@@ -10,8 +10,39 @@ public class InventoryUIManager : MonoBehaviour
     [SerializeField]
     private List<InventoryTab> m_tabs = null;
 
+
+    private static InventoryUIManager s_instance = null;
+    public static InventoryUIManager Instance
+    {
+        get
+        {
+            if (s_instance == null)
+            {
+                s_instance = FindObjectOfType<InventoryUIManager>();
+            }
+            return s_instance;
+        }
+    }
+
+    public static InventoryTab CurrentTab
+    {
+        get { return Instance.m_tabs[Instance.m_currentTabIndex]; }
+    }
+
     private bool m_isInventoryOpen = false;
     private int m_currentTabIndex = 0;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            s_instance = this;
+        }
+    }
 
     private void Start() 
     {
@@ -30,6 +61,18 @@ public class InventoryUIManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             ToggleInventory();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (m_isInventoryOpen)
+            {
+                CloseInventory();
+            }
+            else
+            {
+                Application.Quit();
+            }
         }
     }
 
@@ -61,5 +104,30 @@ public class InventoryUIManager : MonoBehaviour
         m_isInventoryOpen = false;
         m_inventoryParent.SetActive(false);
         m_tabs[m_currentTabIndex].CloseTab();
+    }
+
+    public void SetTab(int newTabIndex)
+    {
+        if (newTabIndex == m_currentTabIndex) { return; }
+
+        m_tabs[m_currentTabIndex].CloseTab();
+        if (newTabIndex < m_tabs.Count)
+        {
+            m_currentTabIndex = newTabIndex;
+            m_tabs[m_currentTabIndex].OpenTab();
+        }
+    }
+
+    public void SetTab(InventoryTab newTab)
+    {
+        if (newTab == null)
+        {
+            return;
+        }
+        if (!m_tabs.Contains(newTab))
+        {
+            m_tabs.Add(newTab);
+        }
+        SetTab(m_tabs.IndexOf(newTab));
     }
 }

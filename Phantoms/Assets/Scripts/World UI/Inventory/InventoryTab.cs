@@ -11,6 +11,10 @@ public abstract class InventoryTab : MonoBehaviour
     public virtual void OpenTab()
     {
         m_tabParent.SetActive(true);
+        if (InventoryUIManager.CurrentTab != this)
+        {
+            InventoryUIManager.Instance.SetTab(this);
+        }
     }
 
     public virtual void CloseTab()
