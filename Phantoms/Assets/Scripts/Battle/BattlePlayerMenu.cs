@@ -222,6 +222,10 @@ public class BattlePlayerMenu : MonoBehaviour
     public void SetDamageIndicator(Vector3 position, int damage)
     {
         GetDamageIndicator().SetDamageIndicator(position, damage);
+
+        float damageIntensity = ((float)damage / 10f);
+
+        CameraShakeBattle.Instance.SetShake(Mathf.Lerp(0.3f, 0.6f, damageIntensity));
     }
 
     /////////////////////////////////////////////////////////////////////////////////
