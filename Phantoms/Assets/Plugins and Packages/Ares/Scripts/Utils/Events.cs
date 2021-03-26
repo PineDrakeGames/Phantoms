@@ -24,6 +24,8 @@ namespace Ares {
 	public class Affliction_AfflictionActionEvent : UnityEvent<Affliction, AfflictionAction> {}
 	public class AfflictionEvent : UnityEvent<Affliction> {}
 	public class Affliction_IntEvent : UnityEvent<Affliction, int> {}
+
+	public class TempBuffEvent : UnityEvent<TemporaryBuff> {}
 	
 	public class EndReasonEvent : UnityEvent<Battle.EndReason> {}
 

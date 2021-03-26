@@ -1,12 +1,9 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using TMPro;
 
 public class HealthIndicator : MonoBehaviour
 {
-    [Header("Reference to actor to show HP for.")]
-    public Ares.Actor Actor = null;
-
     [Header("References to UI Elements")]
     [SerializeField]
     private TMP_Text m_actorName = null;
@@ -19,30 +16,73 @@ public class HealthIndicator : MonoBehaviour
     [SerializeField]
     private TMP_Text m_currentMana = null;
 
+    [Header("Buffs & Afflictions")]
+    [SerializeField]
+    private Transform m_statusEffectsList = null;
+
+    [SerializeField]
+    private GameObject m_buffStatusEffectPrefab = null;
+
+    private Ares.Actor m_actor = null;
+    public Ares.Actor Actor
+    {
+        get { return m_actor;}
+        set
+        {
+            SetActor(value);
+        }
+    }
+
     int prevHP = 0;
 
-    // Start is called before the first frame update
-    public void BattleStart()
-    {
-        if (Actor)
-        {
-            m_maxHP.text = Actor.MaxHP.ToString();
-            m_currentHP.text = Actor.HP.ToString();
-            m_maxMana.text = Actor.MaxMana.ToString();
-            m_currentMana.text = Actor.Mana.ToString();
-            m_actorName.text = Actor.DisplayName;
+    private List<StatusEffectBuffIndicator> buffEffects = new List<StatusEffectBuffIndicator>();
 
-            prevHP = Actor.HP;
-            Actor.OnHPChange.AddListener(UpdateActorHP);
-            Actor.OnManaChange.AddListener(UpdateActorMana);
+    public void SetActor(Ares.Actor newActor)
+    {
+        if (m_actor != null)
+        {
+            m_actor.OnRecieveTempBuff.RemoveListener(AddTempBuff);
+            m_actor.OnHPChange.RemoveListener(UpdateActorHP);
+            m_actor.OnManaChange.RemoveListener(UpdateActorMana);
+
+            foreach(StatusEffectBuffIndicator statBuff in buffEffects)
+            {
+                statBuff.gameObject.SetActive(false);
+            }
         }
+
+        if (newActor != null)
+        {
+            m_maxHP.text = newActor.MaxHP.ToString();
+            m_currentHP.text = newActor.HP.ToString();
+            m_maxMana.text = newActor.MaxMana.ToString();
+            m_currentMana.text = newActor.Mana.ToString();
+            m_actorName.text = newActor.DisplayName;
+
+            prevHP = newActor.HP;
+            newActor.OnRecieveTempBuff.AddListener(AddTempBuff);
+            newActor.OnHPChange.AddListener(UpdateActorHP);
+            newActor.OnManaChange.AddListener(UpdateActorMana);
+
+            foreach(Ares.TemporaryBuff tempBuff in newActor.TemporaryBuffs)
+            {
+                if (tempBuff.TurnsRemaining > 0)
+                {
+                    AddTempBuff(tempBuff);
+                }
+            }
+        }
+
+        m_actor = newActor;
     }
 
     private void OnDestroy()
     {
         if (Actor)
         {
+            Actor.OnRecieveTempBuff.RemoveListener(AddTempBuff);
             Actor.OnHPChange.RemoveListener(UpdateActorHP);
+            Actor.OnManaChange.RemoveListener(UpdateActorMana);
         }
     }
 
@@ -59,5 +99,32 @@ public class HealthIndicator : MonoBehaviour
     private void UpdateActorMana(int newMana)
     {
         m_currentMana.text = newMana.ToString();
+    }
+
+    private void AddTempBuff(Ares.TemporaryBuff tempBuff)
+    {
+        StatusEffectBuffIndicator statBuff = GetBuffStatusEffect();
+        statBuff.SetBuff(tempBuff);
+    }
+
+    ////////////////////////
+    /// Helper Functions ///
+    ////////////////////////
+    private StatusEffectBuffIndicator GetBuffStatusEffect()
+    {
+        foreach(StatusEffectBuffIndicator statBuff in buffEffects)
+        {
+            if (!statBuff.gameObject.activeSelf)
+            {
+                statBuff.transform.SetSiblingIndex(buffEffects.Count - 1);
+                return statBuff;
+            }
+        }
+
+        GameObject newStatBuffObject = Instantiate(m_buffStatusEffectPrefab, m_statusEffectsList);
+        StatusEffectBuffIndicator newStatBuffComponent = newStatBuffObject.GetComponent<StatusEffectBuffIndicator>();
+        buffEffects.Add(newStatBuffComponent);
+        newStatBuffObject.transform.SetSiblingIndex(buffEffects.Count - 1);
+        return newStatBuffComponent;
     }
 }

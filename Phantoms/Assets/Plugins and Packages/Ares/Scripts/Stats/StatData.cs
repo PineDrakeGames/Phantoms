@@ -29,6 +29,8 @@ namespace Ares {
 		static StatData[] all;
 
 		public string DisplayName {get{return displayName;}}
+		public Sprite StatIcon {get{return statIcon;}}
+		public Color StatColor {get{return statColor;}}
 		public StatStackingType StackingType {get{return stackingType;}}
 
 		public float GetValue(int baseValue, int stage){
@@ -36,6 +38,8 @@ namespace Ares {
 		}
 
 		[SerializeField] string displayName = null;
+		[SerializeField] Sprite statIcon = null;
+		[SerializeField] Color statColor = Color.white;
 		[SerializeField] StatStackingType stackingType = StatStackingType.Scaling;
 	}
 

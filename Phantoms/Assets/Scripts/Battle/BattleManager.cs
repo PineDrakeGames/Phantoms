@@ -257,7 +257,6 @@ public class BattleManager : MonoBehaviour
                 HealthIndicator prevIndicator =  m_playerMenu.ActorToHealthIndicator[keyValuePair.Key];
                 m_playerMenu.ActorToHealthIndicator.Remove(keyValuePair.Key);
                 prevIndicator.Actor = newPhantom;
-                prevIndicator.BattleStart();
                 m_playerMenu.ActorToHealthIndicator.Add(newPhantom, prevIndicator);
 
                 return;
