@@ -2070,7 +2070,9 @@ namespace Ares
                     }
 				case ChainEvaluator.ActionType.Buff:
 					if(special > 0){
-						target.TemporaryBuffs.Add(new TemporaryBuff(action.Stat, chainActionID, power, special));
+                        TemporaryBuff tempBuff = new TemporaryBuff(action.Stat, chainActionID, power, special);
+						target.TemporaryBuffs.Add(tempBuff);
+                        target.OnRecieveTempBuff.Invoke(tempBuff);
 					}
 					return target.BuffStat(action.Stat, chainActionID, power);
                 case ChainEvaluator.ActionType.ClearBuff:

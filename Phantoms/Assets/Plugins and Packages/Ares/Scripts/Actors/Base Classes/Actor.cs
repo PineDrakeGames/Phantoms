@@ -57,6 +57,7 @@ namespace Ares
 
         public Stat_IntEvent OnStatBuff { get; private set; }
         public Stat_IntEvent OnStatDebuff { get; private set; }
+        public TempBuffEvent OnRecieveTempBuff { get; private set; }
 
         //Getters for serialized fields (to keep Editor UI functionality)
         public string DisplayName { get { return displayName; } }
@@ -209,6 +210,7 @@ namespace Ares
 
             OnStatBuff = new Stat_IntEvent();
             OnStatDebuff = new Stat_IntEvent();
+            OnRecieveTempBuff = new TempBuffEvent();
 
             afflictions = new HashSet<Affliction>();
             temporaryBuffs = new List<TemporaryBuff>();
@@ -461,6 +463,7 @@ namespace Ares
                         OnStatBuff.Invoke(oldStat, Mathf.Max(oldStat.Stage - tempBuff.Stages, oldStat.Data.MinStage));
                     }
                     oldStat.ClearBuff(tempBuff.BuffID);
+                    tempBuff.TurnsRemaining = 0;
                     temporaryBuffs.Remove(tempBuff);
                     removedBuffs += 1;
                 }

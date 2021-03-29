@@ -51,7 +51,9 @@ public class BattlePlayerMenu : MonoBehaviour
     [SerializeField]
     private Transform m_enemyHealthIndicators = null;
     [SerializeField]
-    private GameObject m_healthIndicator = null;
+    private GameObject m_healthIndicatorPrefab = null;
+    [SerializeField]
+    private GameObject m_enemyHealthIndicatorPrefab = null;
 
     [Header("3D Indicators")]
     [SerializeField]
@@ -129,15 +131,14 @@ public class BattlePlayerMenu : MonoBehaviour
                 HealthIndicator indicator = null;
                 if (actor.Group.Name == "Player")
                 {
-                    gameObj = Instantiate(m_healthIndicator, m_playerHealthIndicators);
+                    gameObj = Instantiate(m_healthIndicatorPrefab, m_playerHealthIndicators);
                 }
                 else
                 {
-                    gameObj = Instantiate(m_healthIndicator, m_enemyHealthIndicators);
+                    gameObj = Instantiate(m_enemyHealthIndicatorPrefab, m_enemyHealthIndicators);
                 }
                 indicator = gameObj.GetComponent<HealthIndicator>();
                 indicator.Actor = actor;
-                indicator.BattleStart();
                 ActorToHealthIndicator.Add(actor, indicator);
             }
         }

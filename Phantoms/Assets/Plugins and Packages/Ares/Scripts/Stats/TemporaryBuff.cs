@@ -6,7 +6,17 @@ namespace Ares {
 
 		public int Stages {get{return stages;}}
 		public string BuffID { get{return buffID;}}
-		public int TurnsRemaining {get{return turnsRemaining;} set{turnsRemaining = Mathf.Max(0, value);}}
+		public int TurnsRemaining 
+		{
+			get{return turnsRemaining;} 
+			set
+			{
+				turnsRemaining = Mathf.Max(0, value);
+				TurnsRemainingUpdate.Invoke(turnsRemaining);
+			}
+		}
+
+		public IntEvent TurnsRemainingUpdate = new IntEvent();
 
 		[SerializeField] StatData stat;
 		[SerializeField] int stages = 0;

@@ -10,7 +10,7 @@ namespace Ares.Editor
     public class StatDataEditor : AresEditor
     {
         readonly string[] propertyGroup1 = { "minStage", "maxStage" };
-        readonly string[] hiddenProperties = { "m_Script", "displayName", "powerIncrement", "powerMultiplier", "powerFormula", "powerScalingMode" };
+        readonly string[] hiddenProperties = { "m_Script", "displayName", "statIcon", "statColor", "stackingType", "powerIncrement", "powerMultiplier", "powerFormula", "powerScalingMode" };
 
         int debugBasePower = 50;
 
@@ -25,6 +25,9 @@ namespace Ares.Editor
 
             EditorGUILayout.LabelField("Info", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("displayName"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("statIcon"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("statColor"));
+
 
             EditorGUILayout.LabelField("Stacking Type", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(spStatStackingType);
