@@ -2,324 +2,386 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Ares {
-	[CreateAssetMenu(fileName="New Ares Ability", menuName="Ares/Affliction", order=52)]
-	public class AfflictionData : PowerData {
-		public enum Cure {ConstantNumberOfTurns, RandomNumberOfTurns, RandomChance}
-		public enum ProcessingMoment {Never, StartOfRound, EndOfRound, StartOfAfflictedActorTurn, EndOfAfflictedActorTurn}//, OnCure
+namespace Ares
+{
+    [CreateAssetMenu(fileName = "New Ares Ability", menuName = "Ares/Affliction", order = 52)]
+    public class AfflictionData : PowerData
+    {
+        public enum Cure { ConstantNumberOfTurns, RandomNumberOfTurns, RandomChance }
+        public enum ProcessingMoment { Never, StartOfRound, EndOfRound, StartOfAfflictedActorTurn, EndOfAfflictedActorTurn }//, OnCure
 
-		public string DisplayName {get{return displayName;}}
-		public string AfflictionID {get{return afflicitonID;}}
-		public string Description {get{return description;}}
-		public Sprite Icon {get{return icon;}}
-		public float BaseDuration {get{return baseDuration;}}
-		public Cure CureCondition {get{return cureCondition;}}
-		public int Power {get{return power;}}
-		public float CureChance {get{return cureChance;}}
-		public bool CureOnAfflictedDeath {get{return cureOnAfflictedDeath;}}
-		public bool CureOnAfflicterDeath {get{return cureOnAfflicterDeath;}}
-		public bool CanAfflictDefeatedActors {get{return canAfflictDefeatedActors;}}
-		public ProcessingMoment EffectProcessingMoment {get{return effectProcessingMoment;}}
-		public ProcessingMoment DurationProcessingMoment {get{return durationProcessingMoment;}}
-		public DoubleSetStageAction DoubleSetStageBehaviour {get{return doubleSetStageBehaviour;}}
-		public DoubleSetDurationAction DoubleSetDurationBehaviour {get{return doubleSetDurationBehaviour;}}
-		public List<ActionToken> ActionTokens {get{return actionTokens;}}
-		public List<AfflictionAction> Actions {get{return actions;}}
+        public string DisplayName { get { return displayName; } }
+        public string AfflictionID { get { return afflicitonID; } }
+        public string Description { get { return description; } }
+        public Sprite Icon { get { return icon; } }
+        public float BaseDuration { get { return baseDuration; } }
+        public Cure CureCondition { get { return cureCondition; } }
+        public int Power { get { return power; } }
+        public float CureChance { get { return cureChance; } }
+        public bool CureOnAfflictedDeath { get { return cureOnAfflictedDeath; } }
+        public bool CureOnAfflicterDeath { get { return cureOnAfflicterDeath; } }
+        public bool CanAfflictDefeatedActors { get { return canAfflictDefeatedActors; } }
+        public ProcessingMoment EffectProcessingMoment { get { return effectProcessingMoment; } }
+        public ProcessingMoment DurationProcessingMoment { get { return durationProcessingMoment; } }
+        public DoubleSetStageAction DoubleSetStageBehaviour { get { return doubleSetStageBehaviour; } }
+        public DoubleSetDurationAction DoubleSetDurationBehaviour { get { return doubleSetDurationBehaviour; } }
+        public List<ActionToken> ActionTokens { get { return actionTokens; } }
+        public List<AfflictionAction> Actions { get { return actions; } }
 
-		public AnimationEffect ObtainAnimation {get{return obtainAnimation;}}
-		public AnimationEffect TriggerAnimation {get{return triggerAnimation;}}
-		public AnimationEffect StageIncreaseAnimation {get{return stageIncreaseAnimation;}}
-		public AnimationEffect StageDecreaseAnimation {get{return stageDecreaseAnimation;}}
-		public AnimationEffect EndAnimation {get{return endAnimation;}}
-		public InstantiationEffect ObtainInstantiation {get{return obtainInstantiation;}}
-		public InstantiationEffect TriggerInstantiation {get{return triggerInstantiation;}}
-		public InstantiationEffect StageIncreaseInstantiation {get{return stageIncreaseInstantiation;}}
-		public InstantiationEffect StageDecreaseInstantiation {get{return stageDecreaseInstantiation;}}
-		public InstantiationEffect EndInstantiation {get{return endInstantiation;}}
-		public AudioEffect ObtainAudio {get{return obtainAudio;}}
-		public AudioEffect TriggerAudio {get{return triggerAudio;}}
-		public AudioEffect StageIncreaseAudio {get{return stageIncreaseAudio;}}
-		public AudioEffect StageDecreaseAudio {get{return stageDecreaseAudio;}}
-		public AudioEffect EndAudio {get{return endAudio;}}
-		
-		[SerializeField, Header("Info")] string displayName = "New Affliction";
-		[SerializeField] string afflicitonID = "AFFLICTION";
-		[SerializeField, Multiline(3)] string description = null;
-		[SerializeField] Sprite icon = null;
-		[SerializeField, Tooltip("The base duration of this ability, before any effects are executed."), Header("Timing")] float baseDuration = 0f;
-		[SerializeField] int power = 0;
-		[SerializeField, Header("Curing")] Cure cureCondition = Cure.ConstantNumberOfTurns;
-		[SerializeField] int duration1 = 0;
-		[SerializeField] int duration2 = 0;
-		[SerializeField, Range(0f, 1f)] float cureChance = 0f;
-		[SerializeField, Tooltip("Remove the affliction when the afflicted actor dies.")] bool cureOnAfflictedDeath = false;
-		[SerializeField, Tooltip("Remove the affliction when the actor who caused it dies.")] bool cureOnAfflicterDeath = false;
-		[SerializeField, Header("Afflicting"), Tooltip("Allow actors who have already been defeated to obtain this affliction.")] bool canAfflictDefeatedActors = false;
+        public AnimationEffect ObtainAnimation { get { return obtainAnimation; } }
+        public AnimationEffect TriggerAnimation { get { return triggerAnimation; } }
+        public AnimationEffect StageIncreaseAnimation { get { return stageIncreaseAnimation; } }
+        public AnimationEffect StageDecreaseAnimation { get { return stageDecreaseAnimation; } }
+        public AnimationEffect EndAnimation { get { return endAnimation; } }
+        public InstantiationEffect ObtainInstantiation { get { return obtainInstantiation; } }
+        public InstantiationEffect TriggerInstantiation { get { return triggerInstantiation; } }
+        public InstantiationEffect StageIncreaseInstantiation { get { return stageIncreaseInstantiation; } }
+        public InstantiationEffect StageDecreaseInstantiation { get { return stageDecreaseInstantiation; } }
+        public InstantiationEffect EndInstantiation { get { return endInstantiation; } }
+        public AudioEffect ObtainAudio { get { return obtainAudio; } }
+        public AudioEffect TriggerAudio { get { return triggerAudio; } }
+        public AudioEffect StageIncreaseAudio { get { return stageIncreaseAudio; } }
+        public AudioEffect StageDecreaseAudio { get { return stageDecreaseAudio; } }
+        public AudioEffect EndAudio { get { return endAudio; } }
 
-		[SerializeField, Tooltip("The moment at which to process the effect and evaluate the action chain.")]
-		ProcessingMoment effectProcessingMoment = ProcessingMoment.EndOfAfflictedActorTurn;
+        [SerializeField, Header("Info")] string displayName = "New Affliction";
+        [SerializeField] string afflicitonID = "AFFLICTION";
+        [SerializeField, Multiline(3)] string description = null;
+        [SerializeField] Sprite icon = null;
+        [SerializeField, Tooltip("The base duration of this ability, before any effects are executed."), Header("Timing")] float baseDuration = 0f;
+        [SerializeField] int power = 0;
+        [SerializeField, Header("Curing")] Cure cureCondition = Cure.ConstantNumberOfTurns;
+        [SerializeField] int duration1 = 0;
+        [SerializeField] int duration2 = 0;
+        [SerializeField, Range(0f, 1f)] float cureChance = 0f;
+        [SerializeField, Tooltip("Remove the affliction when the afflicted actor dies.")] bool cureOnAfflictedDeath = false;
+        [SerializeField, Tooltip("Remove the affliction when the actor who caused it dies.")] bool cureOnAfflicterDeath = false;
+        [SerializeField, Header("Afflicting"), Tooltip("Allow actors who have already been defeated to obtain this affliction.")] bool canAfflictDefeatedActors = false;
 
-		[SerializeField, Tooltip("The moment at which to adjust the affliction's remaining duration if needed.")]
-		ProcessingMoment durationProcessingMoment = ProcessingMoment.EndOfAfflictedActorTurn;
+        [SerializeField, Tooltip("The moment at which to process the effect and evaluate the action chain.")]
+        ProcessingMoment effectProcessingMoment = ProcessingMoment.EndOfAfflictedActorTurn;
 
-		[SerializeField, Tooltip("The adjustment to make to the affliction's stage if an already-afflicted actor tries to get afflicted by it again.")]
-		DoubleSetStageAction doubleSetStageBehaviour = DoubleSetStageAction.Ignore;
+        [SerializeField, Tooltip("The moment at which to adjust the affliction's remaining duration if needed.")]
+        ProcessingMoment durationProcessingMoment = ProcessingMoment.EndOfAfflictedActorTurn;
 
-		[SerializeField, Tooltip("The adjustment to make to the affliction's remaining duration if an already-afflicted actor tries to get afflicted by it again.")]
-		DoubleSetDurationAction doubleSetDurationBehaviour = DoubleSetDurationAction.Ignore;
+        [SerializeField, Tooltip("The adjustment to make to the affliction's stage if an already-afflicted actor tries to get afflicted by it again.")]
+        DoubleSetStageAction doubleSetStageBehaviour = DoubleSetStageAction.Ignore;
 
-		[SerializeField] List<ActionToken> actionTokens = null;
-		[SerializeField] List<AfflictionAction> actions = null;
-		[SerializeField] AnimationEffect obtainAnimation = null;
-		[SerializeField] AnimationEffect triggerAnimation = null;
-		[SerializeField] AnimationEffect stageIncreaseAnimation = null;
-		[SerializeField] AnimationEffect stageDecreaseAnimation = null;
-		[SerializeField] AnimationEffect endAnimation = null;
-		[SerializeField] InstantiationEffect obtainInstantiation = null;
-		[SerializeField] InstantiationEffect triggerInstantiation = null;
-		[SerializeField] InstantiationEffect stageIncreaseInstantiation = null;
-		[SerializeField] InstantiationEffect stageDecreaseInstantiation = null;
-		[SerializeField] InstantiationEffect endInstantiation = null;
-		[SerializeField] AudioEffect obtainAudio = null;
-		[SerializeField] AudioEffect triggerAudio = null;
-		[SerializeField] AudioEffect stageIncreaseAudio = null;
-		[SerializeField] AudioEffect stageDecreaseAudio = null;
-		[SerializeField] AudioEffect endAudio = null;
+        [SerializeField, Tooltip("The adjustment to make to the affliction's remaining duration if an already-afflicted actor tries to get afflicted by it again.")]
+        DoubleSetDurationAction doubleSetDurationBehaviour = DoubleSetDurationAction.Ignore;
 
-		void OnEnable(){
-			if(actions == null){
-				actionTokens = new List<ActionToken>();
-				actions = new List<AfflictionAction>();
-			}
-		}
+        [SerializeField] List<ActionToken> actionTokens = null;
+        [SerializeField] List<AfflictionAction> actions = null;
+        [SerializeField] AnimationEffect obtainAnimation = null;
+        [SerializeField] AnimationEffect triggerAnimation = null;
+        [SerializeField] AnimationEffect stageIncreaseAnimation = null;
+        [SerializeField] AnimationEffect stageDecreaseAnimation = null;
+        [SerializeField] AnimationEffect endAnimation = null;
+        [SerializeField] InstantiationEffect obtainInstantiation = null;
+        [SerializeField] InstantiationEffect triggerInstantiation = null;
+        [SerializeField] InstantiationEffect stageIncreaseInstantiation = null;
+        [SerializeField] InstantiationEffect stageDecreaseInstantiation = null;
+        [SerializeField] InstantiationEffect endInstantiation = null;
+        [SerializeField] AudioEffect obtainAudio = null;
+        [SerializeField] AudioEffect triggerAudio = null;
+        [SerializeField] AudioEffect stageIncreaseAudio = null;
+        [SerializeField] AudioEffect stageDecreaseAudio = null;
+        [SerializeField] AudioEffect endAudio = null;
 
-		public int GetCureDuration(){
-			switch(cureCondition){
-				case Cure.ConstantNumberOfTurns:
-					return duration1;
-				case Cure.RandomNumberOfTurns:
-					return Random.Range(duration1, duration2 + 1);
-			}
+        void OnEnable()
+        {
+            if (actions == null)
+            {
+                actionTokens = new List<ActionToken>();
+                actions = new List<AfflictionAction>();
+            }
+        }
 
-			return -1;
-		}
+        public int GetCureDuration()
+        {
+            switch (cureCondition)
+            {
+                case Cure.ConstantNumberOfTurns:
+                    return duration1;
+                case Cure.RandomNumberOfTurns:
+                    return Random.Range(duration1, duration2 + 1);
+            }
 
-		public float GetScaledPower(int stage){
-			return GetScaledPowerFloat(power, stage);
-		}
-	}
+            return -1;
+        }
 
-	public class Affliction : ChainEvaluator {
-		public AfflictionData Data {get; private set;}
-		public Actor Afflicter {get; private set;}
-		public int Stage {get{return stage;} set{stage = Mathf.Clamp(value, Data.MinStage, Data.MaxStage);}}
-		public int RoundsRemaining {get{return roundsRemaining;} set{roundsRemaining = Mathf.Max(value, -1);}}
-		public int RoundInflicted {get; private set;}
+        public float GetScaledPower(int stage)
+        {
+            return GetScaledPowerFloat(power, stage);
+        }
+    }
 
-		int stage;
-		int roundsRemaining; //in case of random value: only evaluate once at start, else higher value has a lower chance due to repeated evaluations
+    public class Affliction : ChainEvaluator
+    {
+        public AfflictionData Data { get; private set; }
+        public Actor Afflicter { get; private set; }
+        public int Stage
+        {
+            get { return stage; }
+            set
+            {
+                stage = Mathf.Clamp(value, Data.MinStage, Data.MaxStage);
+                StageChange.Invoke(stage);
+            }
+        }
+        public int RoundsRemaining
+        {
+            get { return roundsRemaining; }
+            set
+            {
+                roundsRemaining = Mathf.Max(value, -1);
+				RoundsRemainingChange.Invoke(roundsRemaining);
+            }
+        }
+        public int RoundInflicted { get; private set; }
 
-		public Affliction(AfflictionData afflictionData, int stage, int roundInflicted, Actor afflicter){
-			Data = afflictionData;
-			Afflicter = afflicter;
-			RoundInflicted = roundInflicted;
-			this.stage = stage;
+        int stage;
+        int roundsRemaining; //in case of random value: only evaluate once at start, else higher value has a lower chance due to repeated evaluations
 
-			roundsRemaining = afflictionData.CureCondition == AfflictionData.Cure.RandomChance ? -1 : afflictionData.GetCureDuration();
-		}
+        // Events
+        public IntEvent RoundsRemainingChange = new IntEvent();
+        public IntEvent StageChange = new IntEvent();
 
-		bool animationObtainEventConsumed = false;
-		bool animationTriggerEventConsumed = false;
-		bool animationStageIncreaseEventConsumed = false;
-		bool animationStageDecreaseEventConsumed = false;
-		bool animationEndEventConsumed = false;
-		bool instantiationObtainEventConsumed = false;
-		bool instantiationTriggerEventConsumed = false;
-		bool instantiationStageIncreaseEventConsumed = false;
-		bool instantiationStageDecreaseEventConsumed = false;
-		bool instantiationEndEventConsumed = false;
-		bool audioObtainEventConsumed = false;
-		bool audioTriggerEventConsumed = false;
-		bool audioStageIncreaseEventConsumed = false;
-		bool audioStageDecreaseEventConsumed = false;
-		bool audioEndEventConsumed = false;
+        public Affliction(AfflictionData afflictionData, int stage, int roundInflicted, Actor afflicter)
+        {
+            Data = afflictionData;
+            Afflicter = afflicter;
+            RoundInflicted = roundInflicted;
+            this.stage = stage;
 
-		public void ConsumeAnimationObtainEvent(){animationObtainEventConsumed = true;}
-		public void ConsumeAnimationTriggerEvent(){animationTriggerEventConsumed = true;}
-		public void ConsumeAnimationStageIncreaseEvent(){animationStageIncreaseEventConsumed = true;}
-		public void ConsumeAnimationStageDecreaseEvent(){animationStageDecreaseEventConsumed = true;}
-		public void ConsumeAnimationEndEvent(){animationEndEventConsumed = true;}
-		public void ConsumeInstantiationObtainEvent(){instantiationObtainEventConsumed = true;}
-		public void ConsumeInstantiationTriggerEvent(){instantiationTriggerEventConsumed = true;}
-		public void ConsumeInstantiationStageIncreaseEvent(){instantiationStageIncreaseEventConsumed = true;}
-		public void ConsumeInstantiationStageDecreaseEvent(){instantiationStageDecreaseEventConsumed = true;}
-		public void ConsumeInstantiationEndEvent(){instantiationEndEventConsumed = true;}
-		public void ConsumeAudioObtainEvent(){audioObtainEventConsumed = true;}
-		public void ConsumeAudioTriggerEvent(){audioTriggerEventConsumed = true;}
-		public void ConsumeAudioStageIncreaseEvent(){audioStageIncreaseEventConsumed = true;}
-		public void ConsumeAudioStageDecreaseEvent(){audioStageDecreaseEventConsumed = true;}
-		public void ConsumeAudioEndEvent(){audioEndEventConsumed = true;}
+            roundsRemaining = afflictionData.CureCondition == AfflictionData.Cure.RandomChance ? -1 : afflictionData.GetCureDuration();
+        }
 
-		public virtual void OnObtain(Actor caster, Actor target){
-			if(Data.ObtainAnimation.enabled && !animationObtainEventConsumed){
-				Data.ObtainAnimation.Trigger(caster);
-			}
+        bool animationObtainEventConsumed = false;
+        bool animationTriggerEventConsumed = false;
+        bool animationStageIncreaseEventConsumed = false;
+        bool animationStageDecreaseEventConsumed = false;
+        bool animationEndEventConsumed = false;
+        bool instantiationObtainEventConsumed = false;
+        bool instantiationTriggerEventConsumed = false;
+        bool instantiationStageIncreaseEventConsumed = false;
+        bool instantiationStageDecreaseEventConsumed = false;
+        bool instantiationEndEventConsumed = false;
+        bool audioObtainEventConsumed = false;
+        bool audioTriggerEventConsumed = false;
+        bool audioStageIncreaseEventConsumed = false;
+        bool audioStageDecreaseEventConsumed = false;
+        bool audioEndEventConsumed = false;
 
-			if(Data.ObtainInstantiation.enabled && !instantiationObtainEventConsumed){
-				Data.ObtainInstantiation.Trigger<Affliction>(caster, new Actor[]{target}, this);
-			}
+        public void ConsumeAnimationObtainEvent() { animationObtainEventConsumed = true; }
+        public void ConsumeAnimationTriggerEvent() { animationTriggerEventConsumed = true; }
+        public void ConsumeAnimationStageIncreaseEvent() { animationStageIncreaseEventConsumed = true; }
+        public void ConsumeAnimationStageDecreaseEvent() { animationStageDecreaseEventConsumed = true; }
+        public void ConsumeAnimationEndEvent() { animationEndEventConsumed = true; }
+        public void ConsumeInstantiationObtainEvent() { instantiationObtainEventConsumed = true; }
+        public void ConsumeInstantiationTriggerEvent() { instantiationTriggerEventConsumed = true; }
+        public void ConsumeInstantiationStageIncreaseEvent() { instantiationStageIncreaseEventConsumed = true; }
+        public void ConsumeInstantiationStageDecreaseEvent() { instantiationStageDecreaseEventConsumed = true; }
+        public void ConsumeInstantiationEndEvent() { instantiationEndEventConsumed = true; }
+        public void ConsumeAudioObtainEvent() { audioObtainEventConsumed = true; }
+        public void ConsumeAudioTriggerEvent() { audioTriggerEventConsumed = true; }
+        public void ConsumeAudioStageIncreaseEvent() { audioStageIncreaseEventConsumed = true; }
+        public void ConsumeAudioStageDecreaseEvent() { audioStageDecreaseEventConsumed = true; }
+        public void ConsumeAudioEndEvent() { audioEndEventConsumed = true; }
 
-			if(Data.ObtainAudio.enabled && !audioObtainEventConsumed){
-				Data.ObtainAudio.Trigger(caster, new Actor[]{target});
-			}
+        public virtual void OnObtain(Actor caster, Actor target)
+        {
+            if (Data.ObtainAnimation.enabled && !animationObtainEventConsumed)
+            {
+                Data.ObtainAnimation.Trigger(caster);
+            }
 
-			instantiationObtainEventConsumed = false;
-			audioObtainEventConsumed = false;
-		}
+            if (Data.ObtainInstantiation.enabled && !instantiationObtainEventConsumed)
+            {
+                Data.ObtainInstantiation.Trigger<Affliction>(caster, new Actor[] { target }, this);
+            }
 
-		public virtual void OnTrigger(Actor target){
-			if(Data.TriggerAnimation.enabled && !animationTriggerEventConsumed){
-				Data.TriggerAnimation.Trigger(Afflicter);
-			}
+            if (Data.ObtainAudio.enabled && !audioObtainEventConsumed)
+            {
+                Data.ObtainAudio.Trigger(caster, new Actor[] { target });
+            }
 
-			if(Data.TriggerInstantiation.enabled && !instantiationTriggerEventConsumed){
-				Data.TriggerInstantiation.Trigger<Affliction>(Afflicter, new Actor[]{target}, this);
-			}
+            instantiationObtainEventConsumed = false;
+            audioObtainEventConsumed = false;
+        }
 
-			if(Data.TriggerAudio.enabled && !audioTriggerEventConsumed){
-				Data.TriggerAudio.Trigger(Afflicter, new Actor[]{target});
-			}
+        public virtual void OnTrigger(Actor target)
+        {
+            if (Data.TriggerAnimation.enabled && !animationTriggerEventConsumed)
+            {
+                Data.TriggerAnimation.Trigger(Afflicter);
+            }
 
-			instantiationTriggerEventConsumed = false;
-			audioTriggerEventConsumed = false;
-		}
+            if (Data.TriggerInstantiation.enabled && !instantiationTriggerEventConsumed)
+            {
+                Data.TriggerInstantiation.Trigger<Affliction>(Afflicter, new Actor[] { target }, this);
+            }
 
-		public virtual void OnStageIncrease(Actor target){
-			if(Data.StageIncreaseAnimation.enabled && !animationStageIncreaseEventConsumed){
-				Data.StageIncreaseAnimation.Trigger(Afflicter);
-			}
+            if (Data.TriggerAudio.enabled && !audioTriggerEventConsumed)
+            {
+                Data.TriggerAudio.Trigger(Afflicter, new Actor[] { target });
+            }
 
-			if(Data.StageIncreaseInstantiation.enabled && !instantiationStageIncreaseEventConsumed){
-				Data.StageIncreaseInstantiation.Trigger<Affliction>(Afflicter, new Actor[]{target}, this);
-			}
+            instantiationTriggerEventConsumed = false;
+            audioTriggerEventConsumed = false;
+        }
 
-			if(Data.StageIncreaseAudio.enabled && !audioStageIncreaseEventConsumed){
-				Data.StageIncreaseAudio.Trigger(Afflicter, new Actor[]{target});
-			}
+        public virtual void OnStageIncrease(Actor target)
+        {
+            if (Data.StageIncreaseAnimation.enabled && !animationStageIncreaseEventConsumed)
+            {
+                Data.StageIncreaseAnimation.Trigger(Afflicter);
+            }
 
-			instantiationStageIncreaseEventConsumed = false;
-			audioStageIncreaseEventConsumed = false;
-		}
+            if (Data.StageIncreaseInstantiation.enabled && !instantiationStageIncreaseEventConsumed)
+            {
+                Data.StageIncreaseInstantiation.Trigger<Affliction>(Afflicter, new Actor[] { target }, this);
+            }
 
-		public virtual void OnStageDecrease(Actor target){
-			if(Data.StageDecreaseAnimation.enabled && !animationStageDecreaseEventConsumed){
-				Data.StageDecreaseAnimation.Trigger(Afflicter);
-			}
+            if (Data.StageIncreaseAudio.enabled && !audioStageIncreaseEventConsumed)
+            {
+                Data.StageIncreaseAudio.Trigger(Afflicter, new Actor[] { target });
+            }
 
-			if(Data.StageDecreaseInstantiation.enabled && !instantiationStageDecreaseEventConsumed){
-				Data.StageDecreaseInstantiation.Trigger<Affliction>(Afflicter, new Actor[]{target}, this);
-			}
+            instantiationStageIncreaseEventConsumed = false;
+            audioStageIncreaseEventConsumed = false;
+        }
 
-			if(Data.StageDecreaseAudio.enabled && !audioStageDecreaseEventConsumed){
-				Data.StageDecreaseAudio.Trigger(Afflicter, new Actor[]{target});
-			}
+        public virtual void OnStageDecrease(Actor target)
+        {
+            if (Data.StageDecreaseAnimation.enabled && !animationStageDecreaseEventConsumed)
+            {
+                Data.StageDecreaseAnimation.Trigger(Afflicter);
+            }
 
-			instantiationStageDecreaseEventConsumed = false;
-			audioStageDecreaseEventConsumed = false;
-		}
+            if (Data.StageDecreaseInstantiation.enabled && !instantiationStageDecreaseEventConsumed)
+            {
+                Data.StageDecreaseInstantiation.Trigger<Affliction>(Afflicter, new Actor[] { target }, this);
+            }
 
-		public virtual void OnEnd(Actor target){
-			if(Data.EndAnimation.enabled && !animationEndEventConsumed){
-				Data.EndAnimation.Trigger(Afflicter);
-			}
+            if (Data.StageDecreaseAudio.enabled && !audioStageDecreaseEventConsumed)
+            {
+                Data.StageDecreaseAudio.Trigger(Afflicter, new Actor[] { target });
+            }
 
-			if(Data.EndInstantiation.enabled && !instantiationEndEventConsumed){
-				Data.EndInstantiation.Trigger<Affliction>(Afflicter, new Actor[]{target}, this);
-			}
+            instantiationStageDecreaseEventConsumed = false;
+            audioStageDecreaseEventConsumed = false;
+        }
 
-			if(Data.EndAudio.enabled && !audioEndEventConsumed){
-				Data.EndAudio.Trigger(Afflicter, new Actor[]{target});
-			}
+        public virtual void OnEnd(Actor target)
+        {
+            if (Data.EndAnimation.enabled && !animationEndEventConsumed)
+            {
+                Data.EndAnimation.Trigger(Afflicter);
+            }
 
-			instantiationEndEventConsumed = false;
-			audioEndEventConsumed = false;
-		}
+            if (Data.EndInstantiation.enabled && !instantiationEndEventConsumed)
+            {
+                Data.EndInstantiation.Trigger<Affliction>(Afflicter, new Actor[] { target }, this);
+            }
 
-		public bool ShouldEnd(){
-			switch(Data.CureCondition){
-				case AfflictionData.Cure.RandomChance:
-					return Random.value <= Data.CureChance;
-				default:
-					return roundsRemaining <= 0;
-			}
-		}
+            if (Data.EndAudio.enabled && !audioEndEventConsumed)
+            {
+                Data.EndAudio.Trigger(Afflicter, new Actor[] { target });
+            }
 
-		public void ResetEndTurn(int currentRound){
-			roundsRemaining = currentRound + roundsRemaining - RoundInflicted;
-		}
+            instantiationEndEventConsumed = false;
+            audioEndEventConsumed = false;
+        }
 
-		public override void PrepareForChainEvaluation(Actor caster, Actor[] targets){
-			PrepareForChainEvaluation(Data.ActionTokens, Data.Actions.Cast<ChainableAction>().ToList(), caster, targets);
-		}
+        public bool ShouldEnd()
+        {
+            switch (Data.CureCondition)
+            {
+                case AfflictionData.Cure.RandomChance:
+                    return Random.value <= Data.CureChance;
+                default:
+                    return roundsRemaining <= 0;
+            }
+        }
 
-		protected override void AddUninitializedDefaultTokens(Actor caster, Actor[] targets){
-			// Add special formula identifiers
-			foreach(Actor target in targets){
-				Dictionary<string, float> targetActionValues = new Dictionary<string, float>(targets.Length);
-				targetActionValues.Add("AFFLICTED_HP", 0);
-				targetActionValues.Add("AFFLICTED_MAX_HP", 0);
+        public void ResetEndTurn(int currentRound)
+        {
+            roundsRemaining = currentRound + roundsRemaining - RoundInflicted;
+        }
 
-				targetActionValues.Add("AFFLICTER_HP", 0);
-				targetActionValues.Add("AFFLICTER_MAX_HP", 0);
+        public override void PrepareForChainEvaluation(Actor caster, Actor[] targets)
+        {
+            PrepareForChainEvaluation(Data.ActionTokens, Data.Actions.Cast<ChainableAction>().ToList(), caster, targets);
+        }
 
-				targetActionValues.Add("BASE_POWER", 0);
-				targetActionValues.Add("CURRENT_POWER", 0);
+        protected override void AddUninitializedDefaultTokens(Actor caster, Actor[] targets)
+        {
+            // Add special formula identifiers
+            foreach (Actor target in targets)
+            {
+                Dictionary<string, float> targetActionValues = new Dictionary<string, float>(targets.Length);
+                targetActionValues.Add("AFFLICTED_HP", 0);
+                targetActionValues.Add("AFFLICTED_MAX_HP", 0);
 
-				foreach(string stat in caster.Stats.Keys){
-					targetActionValues.Add("AFFLICTER_" + stat.ToUpper(), 0);
-					targetActionValues.Add("AFFLICTED_" + stat.ToUpper(), 0);
-				}
+                targetActionValues.Add("AFFLICTER_HP", 0);
+                targetActionValues.Add("AFFLICTER_MAX_HP", 0);
 
-				foreach(ActionToken token in Data.ActionTokens){
-					targetActionValues.Add(token.ID, token.EvaluationMode == ActionChainValueEvaluator.PowerType.Formula ? token.Evaluate(targetActionValues) : evaluatedActionTokens[token.ID]);
-				}
+                targetActionValues.Add("BASE_POWER", 0);
+                targetActionValues.Add("CURRENT_POWER", 0);
 
-				evaluatedActionValues.Add(target, targetActionValues);
-			}
-		}
+                foreach (string stat in caster.Stats.Keys)
+                {
+                    targetActionValues.Add("AFFLICTER_" + stat.ToUpper(), 0);
+                    targetActionValues.Add("AFFLICTED_" + stat.ToUpper(), 0);
+                }
 
-		public float EvaluatePower(Actor afflicted, AfflictionAction action){
-			Dictionary<string, float> targetEvaluatedActionValues = evaluatedActionValues[afflicted];
+                foreach (ActionToken token in Data.ActionTokens)
+                {
+                    targetActionValues.Add(token.ID, token.EvaluationMode == ActionChainValueEvaluator.PowerType.Formula ? token.Evaluate(targetActionValues) : evaluatedActionTokens[token.ID]);
+                }
 
-			if(action.PowerMode == AbilityAction.PowerType.Formula){
-				targetEvaluatedActionValues["AFFLICTED_HP"] = afflicted.HP;
-				targetEvaluatedActionValues["AFFLICTED_MAX_HP"] = afflicted.MaxHP;
+                evaluatedActionValues.Add(target, targetActionValues);
+            }
+        }
 
-				targetEvaluatedActionValues["AFFLICTER_HP"] = Afflicter.HP;
-				targetEvaluatedActionValues["AFFLICTER_MAX_HP"] = Afflicter.MaxHP;
+        public float EvaluatePower(Actor afflicted, AfflictionAction action)
+        {
+            Dictionary<string, float> targetEvaluatedActionValues = evaluatedActionValues[afflicted];
 
-				foreach(string stat in afflicted.Stats.Keys){
-					targetEvaluatedActionValues["AFFLICTED_" + stat.ToUpper()] = afflicted.Stats[stat].Value;
-					targetEvaluatedActionValues["AFFLICTER_" + stat.ToUpper()] = Afflicter.Stats[stat].Value;
-				}
-			}
-			
-			targetEvaluatedActionValues["BASE_POWER"] = Data.Power;
-			targetEvaluatedActionValues["CURRENT_POWER"] = Data.GetScaledPower(stage);
+            if (action.PowerMode == AbilityAction.PowerType.Formula)
+            {
+                targetEvaluatedActionValues["AFFLICTED_HP"] = afflicted.HP;
+                targetEvaluatedActionValues["AFFLICTED_MAX_HP"] = afflicted.MaxHP;
 
-			float result = action.EvaluatePower(targetEvaluatedActionValues);
+                targetEvaluatedActionValues["AFFLICTER_HP"] = Afflicter.HP;
+                targetEvaluatedActionValues["AFFLICTER_MAX_HP"] = Afflicter.MaxHP;
 
-			if(action.PowerMode == ChainableAction.PowerType.Constant || action.PowerMode == ChainableAction.PowerType.Random){ //use as multiplier for regular power
-				result *= targetEvaluatedActionValues["CURRENT_POWER"];
-			}
+                foreach (string stat in afflicted.Stats.Keys)
+                {
+                    targetEvaluatedActionValues["AFFLICTED_" + stat.ToUpper()] = afflicted.Stats[stat].Value;
+                    targetEvaluatedActionValues["AFFLICTER_" + stat.ToUpper()] = Afflicter.Stats[stat].Value;
+                }
+            }
 
-			targetEvaluatedActionValues.Add(actionIdentifiers[action]+"_RAW", result);
+            targetEvaluatedActionValues["BASE_POWER"] = Data.Power;
+            targetEvaluatedActionValues["CURRENT_POWER"] = Data.GetScaledPower(stage);
 
-			return result;
-		}
+            float result = action.EvaluatePower(targetEvaluatedActionValues);
 
-		public void SetActionResult(AfflictionAction action, Actor target, int value){
-			evaluatedActionValues[target].Add(actionIdentifiers[action], value);
-		}
-	}
+            if (action.PowerMode == ChainableAction.PowerType.Constant || action.PowerMode == ChainableAction.PowerType.Random)
+            { //use as multiplier for regular power
+                result *= targetEvaluatedActionValues["CURRENT_POWER"];
+            }
+
+            targetEvaluatedActionValues.Add(actionIdentifiers[action] + "_RAW", result);
+
+            return result;
+        }
+
+        public void SetActionResult(AfflictionAction action, Actor target, int value)
+        {
+            evaluatedActionValues[target].Add(actionIdentifiers[action], value);
+        }
+    }
 }
