@@ -7,7 +7,7 @@ using System.Linq;
 namespace Ares.Editor {
 	[CustomEditor(typeof(AfflictionData), true)]
 	public class AfflictionEditor : ChainEvaluatorEditor {
-		readonly string[] propertyGroup1 = {"displayName", "afflicitonID", "description", "baseDuration", "canAfflictDefeatedActors"};
+		readonly string[] propertyGroup1 = {"displayName", "afflicitonID", "description", "icon", "baseDuration", "canAfflictDefeatedActors"};
 		readonly string[] propertyGroup2 = {"obtainAnimation", "obtainInstantiation", "obtainAudio", "triggerAnimation", "triggerInstantiation", "triggerAudio",
 											"stageIncreaseAnimation", "stageIncreaseInstantiation", "stageIncreaseAudio",
 											"stageDecreaseAnimation", "stageDecreaseInstantiation", "stageDecreaseAudio",

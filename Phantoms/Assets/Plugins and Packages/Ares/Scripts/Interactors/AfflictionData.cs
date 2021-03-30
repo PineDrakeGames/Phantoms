@@ -11,6 +11,7 @@ namespace Ares {
 		public string DisplayName {get{return displayName;}}
 		public string AfflictionID {get{return afflicitonID;}}
 		public string Description {get{return description;}}
+		public Sprite Icon {get{return icon;}}
 		public float BaseDuration {get{return baseDuration;}}
 		public Cure CureCondition {get{return cureCondition;}}
 		public int Power {get{return power;}}
@@ -44,6 +45,7 @@ namespace Ares {
 		[SerializeField, Header("Info")] string displayName = "New Affliction";
 		[SerializeField] string afflicitonID = "AFFLICTION";
 		[SerializeField, Multiline(3)] string description = null;
+		[SerializeField] Sprite icon = null;
 		[SerializeField, Tooltip("The base duration of this ability, before any effects are executed."), Header("Timing")] float baseDuration = 0f;
 		[SerializeField] int power = 0;
 		[SerializeField, Header("Curing")] Cure cureCondition = Cure.ConstantNumberOfTurns;
