@@ -29,6 +29,10 @@ public class StatusEffectBuffIndicator : StatusEffectIndicator
 
     public void SetBuff(TemporaryBuff tempBuff)
     {
+        if (m_tempBuff != null)
+        {
+            m_tempBuff.TurnsRemainingUpdate.RemoveListener(UpdateTurnsRemaining);
+        }
         m_tempBuff = tempBuff;
 
         StatData statData = tempBuff.Stat;

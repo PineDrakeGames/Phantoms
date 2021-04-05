@@ -320,7 +320,7 @@ namespace Ares
                 if (roll >= 0.5f)
                 {
                     BattleLog.Instance.AddLog(DisplayName + " woke up from damage!");
-                    Cure(currentAffliction, 1);
+                    Cure(currentAffliction, -1);
                 }
             }
 
