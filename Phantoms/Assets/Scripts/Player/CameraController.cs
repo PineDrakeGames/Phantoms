@@ -3,49 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using KinematicCharacterController;
 
+#if UNITY_EDITOR
+using UnityEditor;
+
+[CustomEditor(typeof(CameraController))]
+public class CameraControllerInspector : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+        CameraController myScript = (CameraController)target;
+        if(GUILayout.Button("Reset Camera"))
+        {
+            myScript.ResetCameraSettings();
+        }
+    }
+}
+#endif
+
 public class CameraController : MonoBehaviour
 {
-    [Header("Player Camera Variables")]
+    [Header("Default Camera Settings")]
     [SerializeField]
-    private float m_distanceFromFocus = 10f;
-    [SerializeField]
-    private Vector3 m_cameraForward = Vector3.forward;
-    [SerializeField]
-    private float m_angleUp = 30f;
-
-    [Header("Camera height variables")]
-    [SerializeField]
-    private float m_maxHeightDifference = 3f;
-    [SerializeField]
-    private float m_heightApproachTime = 0.5f;
-
-    [Header("Lead Player Variables")]
-    [SerializeField]
-    private float m_leadDistance = 2f;
-    [SerializeField]
-    private float m_leadDelay = 3f;
-
-    [Header("Camera Restrictions")]
-    [SerializeField]
-    private bool m_restrictZMovement = true;
-    [SerializeField]
-    private float m_minZPosition = -15f;
-    [SerializeField]
-    private float m_maxZPosition = -15f;
-
-    [SerializeField]
-    private bool m_restrictXMovement = false;
-    [SerializeField]
-    private float m_minXPosition = -15f;
-    [SerializeField]
-    private float m_maxXPosition = 15f;
-
+    private OverworldCameraSettings m_defaultSettings;
 
     [HideInInspector]
     public Transform Player = null;
 
     [HideInInspector]
     public KinematicCharacterMotor PlayerMotor;
+
+    private OverworldCameraSettings m_camSettings = null;
 
     // Variables used to calculate how much the camera should lead the player
     private float m_currentLead = 0f;
@@ -63,9 +51,12 @@ public class CameraController : MonoBehaviour
     /// Unity Functions ///
     ///////////////////////
 
-    private void OnValidate() {
-        m_cameraForward.y = 0;
-        m_cameraForward.Normalize();
+    private void Awake()
+    {
+        if (m_camSettings == null)
+        {
+            m_camSettings = m_defaultSettings;
+        }
     }
 
     private void Start() 
@@ -93,6 +84,24 @@ public class CameraController : MonoBehaviour
         UpdateCamera();
     }
 
+    public void SetCameraSettings(OverworldCameraSettings newSettings)
+    {
+        if (newSettings != null)
+        {
+            m_camSettings = new OverworldCameraSettings(newSettings);
+            ResetCameraPosition();
+        }
+    }
+
+    public void ResetCameraSettings()
+    {
+        if (m_defaultSettings != null)
+        {
+            m_camSettings = new OverworldCameraSettings(m_defaultSettings);
+            ResetCameraPosition();
+        }
+    }
+
     ////////////////////////////////
     /// Private Helper Functions ///
     ////////////////////////////////
@@ -108,7 +117,7 @@ public class CameraController : MonoBehaviour
     {
 
         // Note: Assuming that the camera up will always just be Vector3.up
-        Vector3 cameraOffset = Vector3.RotateTowards(m_cameraForward * -1f, Vector3.up, Mathf.Deg2Rad * m_angleUp, 0f) * m_distanceFromFocus;
+        Vector3 cameraOffset = Vector3.RotateTowards(m_camSettings.CameraForward * -1f, Vector3.up, Mathf.Deg2Rad * m_camSettings.AngleUp, 0f) * m_camSettings.FocusDistance;
         transform.position = m_focusPosition + cameraOffset;
 
         // The camera should now be in the right position, so just have it look at the focus point.
@@ -116,13 +125,13 @@ public class CameraController : MonoBehaviour
 
         // Add in any camera restrictions at this point
         Vector3 clampedPosition = transform.position;
-        if (m_restrictZMovement)
+        if (m_camSettings.RestrictZMovement)
         {
-            clampedPosition.z = Mathf.Clamp(clampedPosition.z, m_minZPosition, m_maxZPosition);
+            clampedPosition.z = Mathf.Clamp(clampedPosition.z, m_camSettings.MinZPosition, m_camSettings.MaxZPosition);
         }
-        if (m_restrictXMovement)
+        if (m_camSettings.RestrictXMovement)
         {
-            clampedPosition.x = Mathf.Clamp(clampedPosition.x, m_minXPosition, m_maxXPosition);
+            clampedPosition.x = Mathf.Clamp(clampedPosition.x, m_camSettings.MinXPosition, m_camSettings.MaxXPosition);
         }
         transform.position = clampedPosition;
     }
@@ -132,36 +141,37 @@ public class CameraController : MonoBehaviour
     private Vector3 GetLead()
     {
         Vector3 distance = (Player.position - m_prevPlayerPosition);
-        Vector3 offsetDirection =  Quaternion.Euler(0, -90, 0) * m_cameraForward;
+        Vector3 offsetDirection =  Quaternion.Euler(0, -90, 0) * m_camSettings.CameraForward;
 
         float targetLead = Vector3.Dot(offsetDirection.normalized, distance.normalized);
 
-        float leadSpeed = (PlayerMotor.Velocity.magnitude * SPEED_LEAD_SCALE) / m_leadDelay;
+        float leadSpeed = (PlayerMotor.Velocity.magnitude * SPEED_LEAD_SCALE) / m_camSettings.LeadDelay;
 
         float leadChange = targetLead - m_currentLead;
         m_currentLead += leadChange * leadSpeed * Time.deltaTime;
 
         m_currentLead = Mathf.Clamp(m_currentLead, -1f, 1f);
 
-        return (offsetDirection * m_leadDistance * Mathf.SmoothStep(-1f, 1f, (m_currentLead + 1f) / 2f));
+        return (offsetDirection * m_camSettings.LeadDistance * Mathf.SmoothStep(-1f, 1f, (m_currentLead + 1f) / 2f));
     }
 
     private float UpdateYPosition()
     {
         float newYPosition = Player.position.y;
         float distance = Mathf.Abs(m_currentYPosition - newYPosition);
-        if (PlayerMotor.GroundingStatus.FoundAnyGround || (newYPosition < m_currentYPosition) || (distance > m_maxHeightDifference))
+        float maxHeightDiff = m_camSettings.MaxHeightDifference;
+        if (PlayerMotor.GroundingStatus.FoundAnyGround || (newYPosition < m_currentYPosition) || (distance > maxHeightDiff))
         {
-            if (!PlayerMotor.GroundingStatus.FoundAnyGround && distance > m_maxHeightDifference && newYPosition > m_currentYPosition)
+            if (!PlayerMotor.GroundingStatus.FoundAnyGround && distance > maxHeightDiff && newYPosition > m_currentYPosition)
             {
-                distance -= m_maxHeightDifference;
-                newYPosition -= m_maxHeightDifference; 
+                distance -= maxHeightDiff;
+                newYPosition -= maxHeightDiff; 
             }
-            float progress =  Mathf.Sqrt(distance / m_maxHeightDifference);
-            progress -= (Time.deltaTime / m_heightApproachTime);
+            float progress =  Mathf.Sqrt(distance / maxHeightDiff);
+            progress -= (Time.deltaTime / m_camSettings.HeightApproachTime);
             progress = Mathf.Clamp01(progress);
 
-            float yDifference = Mathf.Pow(progress, 2f) * m_maxHeightDifference * Mathf.Sign(m_currentYPosition - newYPosition);
+            float yDifference = Mathf.Pow(progress, 2f) * maxHeightDiff * Mathf.Sign(m_currentYPosition - newYPosition);
             m_currentYPosition = newYPosition + yDifference;
         }
         return m_currentYPosition;

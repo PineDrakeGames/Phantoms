@@ -84,7 +84,9 @@ public class OverworldManager : MonoBehaviour
     private string m_loadLocationID;
 
     private CameraController m_cameraController = null;
+    public CameraController CamController { get { return m_cameraController; } }
     private PlayerController m_playerController = null;
+    public PlayerController PlayerController { get { return m_playerController; } }
 
     ///////////////////////
     /// Unity Functions ///
