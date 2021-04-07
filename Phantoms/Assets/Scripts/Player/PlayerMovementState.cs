@@ -31,6 +31,14 @@ public abstract class PlayerMovementState
         }
     }
 
+    protected void CheckForDoubleJump()
+    {
+        if (Controller.CanDoubleJump())
+        {
+            Controller.SetState(new PlayerStateDoubleJump());
+        }
+    }
+
     /// Movement Functions ///
 
     // Rotates the player towards the controller's look input vector with the given sharpness.

@@ -11,6 +11,7 @@ public class PlayerStateFall : PlayerMovementState
     {
         CheckForJumpInput();
         CheckForAttackInput();
+        CheckForDoubleJump();
     }
 
     public override void TickRotation(ref Quaternion currentRotation, float deltaTime)

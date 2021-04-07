@@ -17,6 +17,7 @@ public class PlayerStateJump : PlayerMovementState
     {
         m_holdingJump = input.JumpHeld;
         CheckForAttackInput();
+        CheckForDoubleJump();
     }
 
     public override void TickRotation(ref Quaternion currentRotation, float deltaTime)
@@ -28,21 +29,7 @@ public class PlayerStateJump : PlayerMovementState
     {
         if (m_SetInitialForce)
         {
-            Vector3 jumpDirection = Controller.Motor.CharacterUp;
-            if (Controller.Motor.GroundingStatus.FoundAnyGround && !Controller.Motor.GroundingStatus.IsStableOnGround)
-            {
-                jumpDirection = Controller.Motor.GroundingStatus.GroundNormal;
-            }
-
-            // Makes the character skip ground probing/snapping on its next update. 
-            // If this line weren't here, the character would remain snapped to the ground when trying to jump. Try commenting this line out and see.
-            Controller.Motor.ForceUnground();
-            Controller.Motor.SetGroundSolvingActivation(false);
-
-            // Add to the return velocity and reset jump state
-            currentVelocity += (jumpDirection * Controller.JumpUpSpeed) - Vector3.Project(currentVelocity, Controller.Motor.CharacterUp);
-            currentVelocity += (Controller.MoveInputVector * Controller.JumpScalableForwardSpeed);
-            Controller.Jump();
+            InitialJump(ref currentVelocity);
             m_SetInitialForce = false;
             return;
         }
@@ -62,30 +49,55 @@ public class PlayerStateJump : PlayerMovementState
         */
         else
         {
-            AirStrafeMovement(ref currentVelocity, Controller.MoveInputVector, deltaTime);
-
-            // Gravity
-            if (!m_holdingJump)
-            {
-                ApplyGravity(ref currentVelocity, deltaTime);
-            }
-            else
-            {
-                currentVelocity += Controller.Gravity * deltaTime * 0.5f;
-            }
-
-            // Drag
-            ApplyDrag(ref currentVelocity, deltaTime);
-
-            if (Vector3.Dot(currentVelocity, Controller.Gravity) > 0f)
-            {
-                Controller.SetState(new PlayerStateFall());
-            }
+            JumpingMovement(ref currentVelocity, deltaTime);
         }
     }
 
     public override void StateExit()
     {
         Controller.Motor.SetGroundSolvingActivation(true);
+    }
+
+    // Private Helper Functions
+    protected virtual void InitialJump(ref Vector3 currentVelocity)
+    {
+        Vector3 jumpDirection = Controller.Motor.CharacterUp;
+        if (Controller.Motor.GroundingStatus.FoundAnyGround && !Controller.Motor.GroundingStatus.IsStableOnGround)
+        {
+            jumpDirection = Controller.Motor.GroundingStatus.GroundNormal;
+        }
+
+        // Makes the character skip ground probing/snapping on its next update. 
+        // If this line weren't here, the character would remain snapped to the ground when trying to jump. Try commenting this line out and see.
+        Controller.Motor.ForceUnground();
+        Controller.Motor.SetGroundSolvingActivation(false);
+
+        // Add to the return velocity and reset jump state
+        currentVelocity += (jumpDirection * Controller.JumpUpSpeed) - Vector3.Project(currentVelocity, Controller.Motor.CharacterUp);
+        currentVelocity += (Controller.MoveInputVector * Controller.JumpScalableForwardSpeed);
+        Controller.Jump();
+    }
+
+    protected virtual void JumpingMovement(ref Vector3 currentVelocity, float deltaTime)
+    {
+        AirStrafeMovement(ref currentVelocity, Controller.MoveInputVector, deltaTime);
+
+        // Gravity
+        if (!m_holdingJump)
+        {
+            ApplyGravity(ref currentVelocity, deltaTime);
+        }
+        else
+        {
+            currentVelocity += Controller.Gravity * deltaTime * 0.5f;
+        }
+
+        // Drag
+        ApplyDrag(ref currentVelocity, deltaTime);
+
+        if (Vector3.Dot(currentVelocity, Controller.Gravity) > 0f)
+        {
+            Controller.SetState(new PlayerStateFall());
+        }
     }
 }

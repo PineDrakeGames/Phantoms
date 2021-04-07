@@ -177,7 +177,7 @@ public class OverworldManager : MonoBehaviour
         if (CameraInstance) { CameraInstance.SetActive(active); }
         foreach(GameObject instance in PersistantInstances)
         {
-            if (instance)
+            if (instance != null)
             {
                 instance.SetActive(active);
             }

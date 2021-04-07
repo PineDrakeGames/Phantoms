@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
     public float JumpScalableForwardSpeed = 10f;
     public float JumpPreGroundingGraceTime = 0f;
     public float JumpPostGroundingGraceTime = 0f;
+    public float DoubleJumpSpeed = 10f;
 
     [Header("Attack Info")]
     public float AttackDuration = 0.35f;
@@ -72,6 +73,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
     private bool _jumpRequested = false;
     private bool _attackRequested = false;
     private bool _attackedInAir = false;
+    private bool _doubleJumpedUsed = false;
     private float _timeSinceJumpRequested = Mathf.Infinity;
     private float _timeSinceLastAbleToJump = 0f;
     private float _timeSinceAttackRequested = Mathf.Infinity;
@@ -309,6 +311,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
     protected void OnLanded()
     {
         _attackedInAir = false;
+        _doubleJumpedUsed = false;
     }
 
     protected void OnLeaveStableGround()
@@ -355,5 +358,24 @@ public class PlayerController : MonoBehaviour, ICharacterController
         }
 
         AttackManager.StartAttack();
+    }
+
+    // Extra abilities checking!
+    public bool CanDoubleJump()
+    {
+        if (_jumpRequested && !_doubleJumpedUsed)
+        {
+            if (!Motor.GroundingStatus.IsStableOnGround)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public void DoubleJump()
+    {
+        Jump();
+        _doubleJumpedUsed = true;
     }
 }
