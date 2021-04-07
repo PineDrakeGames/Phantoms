@@ -5,6 +5,7 @@ public class PlayerStateFall : PlayerMovementState
     public override void StateEnter()
     {
         Controller.CharacterAnimator.SetTrigger("Fall");
+        Controller.CharacterAnimator.ResetTrigger("Landed");
     }
 
     public override void TickInput(PlayerCharacterInputs input)

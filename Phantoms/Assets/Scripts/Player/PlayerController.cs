@@ -219,7 +219,15 @@ public class PlayerController : MonoBehaviour, ICharacterController
         }
 
         // Update animator with speed
-        m_characterAnimator.SetFloat("Speed", currentVelocity.magnitude * RunSpeedScale);
+        if (_moveInputVector.magnitude > 0f)
+        {
+            Vector3 horizontalVelocity = currentVelocity - Vector3.Project(currentVelocity, Motor.CharacterUp);
+            m_characterAnimator.SetFloat("Speed", horizontalVelocity.magnitude * RunSpeedScale);
+        }
+        else
+        {
+            m_characterAnimator.SetFloat("Speed", 0f);
+        }
     }
 
     /// <summary>
