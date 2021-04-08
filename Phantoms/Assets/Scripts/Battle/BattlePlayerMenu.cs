@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,7 +8,9 @@ using TMPro;
 
 public class BattlePlayerMenu : MonoBehaviour
 {
+    /////////////////////////
     /// Serialized Fields ///
+    /////////////////////////
 
     [Header("Reference to the main manager")]
     [SerializeField]
@@ -29,7 +31,6 @@ public class BattlePlayerMenu : MonoBehaviour
     [SerializeField]
     private Button m_tacticsButton = null;
 
-
     [Header("Sub-menu items")]
     [SerializeField]
     private GameObject m_subMenuParent = null;
@@ -45,6 +46,10 @@ public class BattlePlayerMenu : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI m_descriptionText = null;
 
+    [Header("Confirm Menu")]
+    [SerializeField]
+    private GameObject m_confirmMenuParent = null;
+
     [Header("UI Items")]
     [SerializeField]
     private Transform m_playerHealthIndicators = null;
@@ -57,35 +62,15 @@ public class BattlePlayerMenu : MonoBehaviour
 
     [Header("3D Indicators")]
     [SerializeField]
-    private GameObject m_arrowIndicator = null;
-    [SerializeField]
     private GameObject m_currentTurnIndicator = null;
+    [SerializeField]
+    private GameObject m_targetIndicatorPrefab = null;
     [SerializeField]
     private GameObject m_damageIndicatorPrefab = null;
 
-    public Dictionary<Actor, HealthIndicator> ActorToHealthIndicator = new Dictionary<Actor, HealthIndicator>();
-
-    private List<DamageIndicator> m_damageIndicators = new List<DamageIndicator>();
-
-    private List<BattleSubmenuButton> m_subMenuButtons = new List<BattleSubmenuButton>();
-    private ActionInput m_actionInput;
-    private Actor m_currentActor = null;
-
-    private Ability m_currentAbility = null;
-    private Item m_currentItem = null;
-    private List<Actor> m_actionTargets = new List<Actor>();
-    public List<Actor> ActionTargets
-    {
-        get { return m_actionTargets; }
-    }
-    private List<BattleGroup> m_actionGroupTargets = new List<BattleGroup>();
-    public List<BattleGroup> ActionGroupTargets
-    {
-        get { return m_actionGroupTargets; }
-    }
-
-    private Vector3 enemyCenter = Vector3.zero;
-
+    /////////////////////
+    /// Private Enums ///
+    /////////////////////
 
     private enum BattleMenuState
     {
@@ -96,19 +81,54 @@ public class BattlePlayerMenu : MonoBehaviour
         ITEMS,
         TARGETING
     }
-    private BattleMenuState m_prevState = BattleMenuState.INACTIVE;
-    private BattleMenuState m_currentState = BattleMenuState.MAIN;
-
     private enum ActionType
     {
         ABILITY,
         ITEM
     }
 
+    /////////////////////////
+    /// Private Variables ///
+    /////////////////////////
+
+    private GameObject m_currentTargetIndicator = null;
+    private List<GameObject> m_targetIndicators = new List<GameObject>();
+    private List<DamageIndicator> m_damageIndicators = new List<DamageIndicator>();
+
+    private List<BattleSubmenuButton> m_subMenuButtons = new List<BattleSubmenuButton>();
+    private ActionInput m_actionInput;
+    private Actor m_currentActor = null;
+
+    private Ability m_currentAbility = null;
+    private Item m_currentItem = null;
+    private List<Actor> m_actionTargets = new List<Actor>();
+
+    private List<BattleGroup> m_actionGroupTargets = new List<BattleGroup>();
+
+    private Vector3 enemyCenter = Vector3.zero;
+
+    private BattleMenuState m_prevState = BattleMenuState.INACTIVE;
+    private BattleMenuState m_currentState = BattleMenuState.MAIN;
+
+    private UnityEvent OnConfirm = new UnityEvent();
+
+    //////////////////////
+    /// Public Getters ///
+    //////////////////////
+
+    public Dictionary<Actor, HealthIndicator> ActorToHealthIndicator = new Dictionary<Actor, HealthIndicator>();
+    public List<Actor> ActionTargets { get { return m_actionTargets; } }
+    public List<BattleGroup> ActionGroupTargets { get { return m_actionGroupTargets; } }
+
+    /////////////////////////////
+    /// Static Instance Stuff ///
+    /////////////////////////////
     private static BattlePlayerMenu s_instance = null;
     public static BattlePlayerMenu Instance { get { return s_instance; } }
 
 
+    // Battle Start function!
+    // Call this to get things set up.
     public void OnBattleStart()
     {
         if (s_instance == null)
@@ -118,10 +138,11 @@ public class BattlePlayerMenu : MonoBehaviour
 
         // Test stuff, making a few buttons.
         m_mainMenuParent.SetActive(false);
-        SetArrowIndicator();
+        HideTargetIndicators();
         HideSubmenu();
 
         m_battleManager.CurrentBattle.OnTurnStart.AddListener(SetCurrentTurnIndicator);
+        m_battleManager.CurrentBattle.OnTurnEnd.AddListener(OnTurnEnd);
 
         foreach (Actor actor in m_battleManager.CurrentBattle.Actors)
         {
@@ -167,6 +188,8 @@ public class BattlePlayerMenu : MonoBehaviour
     /////////////////////////////////
     /// Public UI event Listeners ///
     /////////////////////////////////
+
+    // Updated the current turn indicator to show who's turn it is right now
     public void SetCurrentTurnIndicator(Actor actor)
     {
         if (m_currentTurnIndicator && actor)
@@ -175,48 +198,43 @@ public class BattlePlayerMenu : MonoBehaviour
         }
     }
 
+    // Something just to make sure things are cleaned up at the end of a turn.
+    public void OnTurnEnd(Actor actor)
+    {
+        HideTargetIndicators();
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Public functions to be called by other scripts to update/set data in the battle player menu. ///
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void SetupMenu(Actor actor, ActionInput actionInput)
+    // Called when an actor's turn starts - sets up their menu!
+    public void StartTurn(Actor actor, ActionInput actionInput)
     {
         m_actionInput = actionInput;
         m_currentActor = actor;
-
 
         m_battleCamera.SetCameraOverShoulder(actor.transform.position, enemyCenter);
         ReturnToMainMenu();
     }
 
-    // Used to set the description of the submenu. When given no argument, hides the description box.
-    public void SetDescription(string description = null)
-    {
-        if (string.IsNullOrEmpty(description))
-        {
-            m_descriptionObject.SetActive(false);
-            m_descriptionText.text = string.Empty;
-        }
-        else
-        {
-            m_descriptionObject.SetActive(true);
-            m_descriptionText.text = description;
-        }
-
-    }
-
     public void SetArrowIndicator(Actor actor = null)
     {
+        if (m_currentTargetIndicator == null)
+        {
+            m_currentTargetIndicator = GetTargetIndicator();
+        }
+
         if (actor == null)
         {
-            m_arrowIndicator.SetActive(false);
+            m_currentTargetIndicator.SetActive(false);
         }
         else
         {
-            m_arrowIndicator.SetActive(true);
+            m_currentTargetIndicator.SetActive(true);
             // TODO: Either set offset in prefab or in data
-            m_arrowIndicator.transform.position = actor.transform.position + (Vector3.up * 1.5f);
+            m_currentTargetIndicator.transform.position = actor.transform.position + (Vector3.up * 1.5f);
         }
     }
 
@@ -241,7 +259,7 @@ public class BattlePlayerMenu : MonoBehaviour
         ClearSubmenu();
 
         BattleSubmenuButton submenuButton = null;
-        
+
         // Catch button (if available)
         if (CanCatch())
         {
@@ -289,7 +307,7 @@ public class BattlePlayerMenu : MonoBehaviour
         }
 
         List<Ability> validAbilities = new List<Ability>(m_actionInput.ValidAbilities);
-        foreach(Ability ability in m_currentActor.Abilities)
+        foreach (Ability ability in m_currentActor.Abilities)
         {
             if (m_battleManager.CurrentBattle.IsAbilityValidWithoutMana(m_currentActor, ability))
             {
@@ -324,7 +342,7 @@ public class BattlePlayerMenu : MonoBehaviour
         ClearSubmenu();
 
         BattleSubmenuButton submenuButton = null;
-        foreach(Actor actor in m_currentActor.Group.Actors)
+        foreach (Actor actor in m_currentActor.Group.Actors)
         {
             if (!m_battleManager.CurrentBattle.ActorInfo[actor].IsParticipating && actor.HP > 0)
             {
@@ -366,6 +384,12 @@ public class BattlePlayerMenu : MonoBehaviour
                     m_actionInput.AbilitySelectCallback(m_currentAbility);
                     m_battleCamera.ResetCamera();
                 }
+                else
+                {
+                    // Leave the current target indicator, get a new one.
+                    m_currentTargetIndicator = GetTargetIndicator();
+                    m_currentTargetIndicator.SetActive(false);
+                }
                 break;
         }
     }
@@ -386,6 +410,12 @@ public class BattlePlayerMenu : MonoBehaviour
                     m_actionInput.ItemSelectCallback(m_currentItem);
                     m_battleCamera.ResetCamera();
                 }
+                else
+                {
+                    // Leave the current target indicator, get a new one.
+                    m_currentTargetIndicator = GetTargetIndicator();
+                    m_currentTargetIndicator.SetActive(false);
+                }
                 break;
         }
     }
@@ -403,7 +433,8 @@ public class BattlePlayerMenu : MonoBehaviour
                 ReturnToMainMenu();
                 return;
             case BattleMenuState.TARGETING:
-                SetArrowIndicator();
+                HideTargetIndicators();
+
                 switch (m_prevState)
                 {
                     case BattleMenuState.ABILITIES:
@@ -443,10 +474,39 @@ public class BattlePlayerMenu : MonoBehaviour
         }
     }
 
+    public void ConfirmMove()
+    {
+        OnConfirm.Invoke();
+    }
+
 
     ////////////////////////////////////////
     /// Private functions for Indicators ///
     ////////////////////////////////////////
+
+    private GameObject GetTargetIndicator()
+    {
+        foreach (GameObject indicator in m_targetIndicators)
+        {
+            if (!indicator.activeSelf)
+            {
+                indicator.SetActive(true);
+                return indicator;
+            }
+        }
+        GameObject newIndicatorObject = Instantiate(m_targetIndicatorPrefab);
+        m_targetIndicators.Add(newIndicatorObject);
+        return newIndicatorObject;
+    }
+
+    private void HideTargetIndicators()
+    {
+        foreach (GameObject indicator in m_targetIndicators)
+        {
+            indicator.SetActive(false);
+        }
+        m_currentTargetIndicator = null;
+    }
 
     private DamageIndicator GetDamageIndicator()
     {
@@ -468,12 +528,16 @@ public class BattlePlayerMenu : MonoBehaviour
     /// Private helper functions to manage the battle menu. ///
     ///////////////////////////////////////////////////////////
 
+    /// Functions to handle the states ///
+
     // Updates the battle menu state - should have any logic required for entering a new state here
     private void SetState(BattleMenuState newState)
     {
         m_prevState = m_currentState;
         m_currentState = newState;
     }
+
+    /// Submenu-Related stuff ///
 
     // Either grabs a pooled button or makes a new one, depening on needs - and sets up the button.
     private BattleSubmenuButton AddSubmenuButton(string name, string description, string info = "")
@@ -507,7 +571,7 @@ public class BattlePlayerMenu : MonoBehaviour
 
         submenuButton.ClickEvent.AddListener(ClearSubmenu);
         submenuButton.ClickEvent.AddListener(HideSubmenu);
-        submenuButton.SelectEvent.AddListener(delegate { SetDescription(description); });
+        submenuButton.SelectEvent.AddListener(delegate { SetSubmenuDescription(description); });
         return submenuButton;
     }
 
@@ -527,13 +591,14 @@ public class BattlePlayerMenu : MonoBehaviour
         }
 
         m_backButton.Select();
-        SetDescription();
+        SetSubmenuDescription();
     }
 
     private void HideSubmenu()
     {
         m_subMenuParent.SetActive(false);
         m_descriptionObject.SetActive(false);
+        HideConfirmMenu();
     }
 
     private void ClearSubmenu()
@@ -546,6 +611,34 @@ public class BattlePlayerMenu : MonoBehaviour
         {
             item.ClickEvent = new UnityEvent();
             item.SelectEvent = new UnityEvent();
+        }
+        HideConfirmMenu();
+    }
+
+    /// Confirm Menu Functions ///
+    private void ShowConfirmMenu()
+    {
+        m_confirmMenuParent.SetActive(true);
+    }
+
+    private void HideConfirmMenu()
+    {
+        m_confirmMenuParent.SetActive(false);
+        OnConfirm.RemoveAllListeners();
+    }
+
+    // Used to set the description of the submenu. When given no argument, hides the description box.
+    private void SetSubmenuDescription(string description = null)
+    {
+        if (string.IsNullOrEmpty(description))
+        {
+            m_descriptionObject.SetActive(false);
+            m_descriptionText.text = string.Empty;
+        }
+        else
+        {
+            m_descriptionObject.SetActive(true);
+            m_descriptionText.text = description;
         }
     }
 
@@ -627,7 +720,7 @@ public class BattlePlayerMenu : MonoBehaviour
             case BattleInteractorData.TargetType.AllActorsInGroup:
                 // TODO
                 Debug.Log("Setting targets");
-                switch(targetGroup)
+                switch (targetGroup)
                 {
                     case BattleInteractorData.TargetGroupGroups.Allies:
                         m_actionGroupTargets.Add(m_currentActor.Group);
@@ -639,15 +732,40 @@ public class BattlePlayerMenu : MonoBehaviour
                         m_actionGroupTargets.AddRange(m_battleManager.CurrentBattle.Groups);
                         break;
                 }
-                callback();
-                m_battleCamera.ResetCamera();
+
+                foreach (BattleGroup group in m_actionGroupTargets)
+                {
+                    foreach (Actor actor in group.Actors)
+                    {
+                        GameObject targetIndicator = GetTargetIndicator();
+                        targetIndicator.transform.position = actor.transform.position + (Vector3.up * 1.5f);
+                    }
+                }
+
+                OnConfirm.AddListener(delegate
+               {
+                   callback();
+                   m_battleCamera.ResetCamera();
+               });
+                ShowConfirmMenu();
                 break;
             case BattleInteractorData.TargetType.AllOtherActors:
             case BattleInteractorData.TargetType.AllActors:
                 // Just add all valid targets then do the ability select callback.
                 m_actionTargets.AddRange(validTargets);
-                callback();
-                m_battleCamera.ResetCamera();
+
+                foreach (Actor actor in m_actionTargets)
+                {
+                    GameObject targetIndicator = GetTargetIndicator();
+                    targetIndicator.transform.position = actor.transform.position + (Vector3.up * 1.5f);
+                }
+
+                OnConfirm.AddListener(delegate
+               {
+                   callback();
+                   m_battleCamera.ResetCamera();
+               });
+                ShowConfirmMenu();
                 break;
         }
     }

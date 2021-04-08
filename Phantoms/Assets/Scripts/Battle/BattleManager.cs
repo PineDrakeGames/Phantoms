@@ -151,7 +151,7 @@ public class BattleManager : MonoBehaviour
         // To select an item or ability, call the respective callback method inside `actionInput`.
         // These callbacks will return a `success` bool.
 
-        m_playerMenu.SetupMenu(actor, actionInput);
+        m_playerMenu.StartTurn(actor, actionInput);
     }
 
     void ShowItemInput(Actor actor, StackedItem[] items, ActionInput actionInput)
