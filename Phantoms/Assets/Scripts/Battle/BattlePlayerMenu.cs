@@ -746,6 +746,7 @@ public class BattlePlayerMenu : MonoBehaviour
                {
                    callback();
                    m_battleCamera.ResetCamera();
+                   HideConfirmMenu();
                });
                 ShowConfirmMenu();
                 break;
@@ -764,6 +765,7 @@ public class BattlePlayerMenu : MonoBehaviour
                {
                    callback();
                    m_battleCamera.ResetCamera();
+                   HideConfirmMenu();
                });
                 ShowConfirmMenu();
                 break;

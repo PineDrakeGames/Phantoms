@@ -3,34 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[System.Serializable]
-public class TimingMeterMinigameData
-{
-    public float MeterDuration = 1.5f;
-
-    public float TargetTimeWindow = 0.35f;
-    public float PerfectTimeWindow = 0.05f;
-
-    public int AllowedMisses = 0;
-
-    public List<TimingMeterMinigame.TimingMeterTargetData> Targets = new List<TimingMeterMinigame.TimingMeterTargetData>();
-
-    public TimingMeterMinigameData()
-    {
-        Targets.Add(new TimingMeterMinigame.TimingMeterTargetData());
-        Targets.Add(new TimingMeterMinigame.TimingMeterTargetData());
-    }
-}
-
 public class TimingMeterMinigame : AbilityMinigame
 {
-    [System.Serializable]
-    public class TimingMeterTargetData
-    {
-        [Range(0f, 1f)]
-        public float TargetPercent = 1f;
-        public MinigameInput InputRequired = MinigameInput.DOWN;
-    }
 
     public class TimingMeterTarget
     {

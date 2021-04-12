@@ -87,7 +87,7 @@ public class AbilityMinigameManager : MonoBehaviour
             case AbilityMinigameType.ANGER:
                 try
                 {
-                    (m_currentMinigame as ButtonMashMinigame).Data = JsonUtility.FromJson<ButtonMashMinigameData>(data.MinigameData);
+                    (m_currentMinigame as ButtonMashMinigame).Data = (ButtonMashMinigameData)data;
                 }
                 catch
                 {
@@ -97,7 +97,7 @@ public class AbilityMinigameManager : MonoBehaviour
             case AbilityMinigameType.JOY_METER:
                 try
                 {
-                    (m_currentMinigame as TimingMeterMinigame).Data = JsonUtility.FromJson<TimingMeterMinigameData>(data.MinigameData);
+                    (m_currentMinigame as TimingMeterMinigame).Data = (TimingMeterMinigameData)data;
                 }
                 catch
                 {
