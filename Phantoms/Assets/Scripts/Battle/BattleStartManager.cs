@@ -8,9 +8,41 @@ public class BattleStartManager : MonoBehaviour
     [SerializeField]
     private BattleInitializer m_battleInitializer = null;
 
+    [Header("Editor Only things to help out")]
+    [SerializeField]
+    private EnemyEncounterData m_enemyEncounterData = null;
+
+    [SerializeField]
+    private PhantomInstanceData[] m_playerPhantoms = null;
+
+
     // List of enemies to fight in 
     public static List<PhantomInstanceData> EnemyPhantoms = null;
-    // Start is called before the first frame update
+    
+    #if UNITY_EDITOR
+    private void Awake()
+    {
+        if (EnemyPhantoms == null)
+        {
+            List<PhantomInstanceData> encounterPhantoms = m_enemyEncounterData.GetEnemyPhantoms();
+            if (encounterPhantoms.Count > 0)
+            {
+                BattleStartManager.EnemyPhantoms = encounterPhantoms;
+            }
+        }
+        if (PlayerInventoryManager.Instance.Phantoms.Count == 0)
+        {
+            foreach(PhantomInstanceData phantom in m_playerPhantoms)
+            {
+                phantom.SetCurrentStats();
+                phantom.FullRestore();
+            }
+            PlayerInventoryManager.Instance.Phantoms.AddRange(m_playerPhantoms);
+        }
+    }
+
+    #endif
+
     void Start()
     {
         List<CombatantInstanceData> playerCombatants = new List<CombatantInstanceData>();
