@@ -39,6 +39,14 @@ public abstract class AbilityMinigame : MonoBehaviour
         m_result = MinigameResult.SUCCESS; // Not sure what default should be?
     }
 
+    private void OnEnable()
+    {
+        if (m_startOnEnable && m_state == MinigameState.INACTIVE)
+        {
+            StartMinigame();
+        }
+    }
+
     protected void Update()
     {
         switch (m_state)
