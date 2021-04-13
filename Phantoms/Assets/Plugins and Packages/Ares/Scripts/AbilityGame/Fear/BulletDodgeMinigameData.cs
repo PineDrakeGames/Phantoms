@@ -12,3 +12,10 @@ public class BulletDodgeMinigameData : AbilityMinigameData
     [Tooltip("Units are canvas units/second")]
     public float PlayerSpeed = 500f;
 }
+
+
+[System.Serializable]
+public class BulletSpawner
+{
+    
+}
