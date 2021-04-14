@@ -23,6 +23,9 @@ public class BulletDodgeMinigame : AbilityMinigame
     [SerializeField]
     private BulletDodgeMinigamePlayer m_player;
 
+    [Header("Scene References")]
+    [SerializeField]
+    private MinigameHealthIndicator m_healthIndicator = null;
 
     [Header("Prefabs to Instantiate")]
     [SerializeField]
@@ -47,6 +50,7 @@ public class BulletDodgeMinigame : AbilityMinigame
 
         m_player.PlayerSpeed = Data.PlayerSpeed;
         m_player.AllowMovement = true;
+        m_healthIndicator.SetMaxHearts(Data.Health);
 
         m_state = MinigameState.RUNNING;
     }
@@ -73,6 +77,7 @@ public class BulletDodgeMinigame : AbilityMinigame
     public void HitPlayer(BulletDodgeMinigameBullet bullet = null)
     {
         Debug.Log("Hit");
+        m_healthIndicator.Damage();
     }
 
 
