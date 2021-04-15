@@ -2490,6 +2490,7 @@ namespace Ares
                         yield return null;
                     }
                     minigameResult = AbilityMinigameManager.CurrentMinigame.Result;
+                    AbilityMinigameManager.CurrentMinigame.gameObject.SetActive(false);
                 }
             }
 
@@ -2518,6 +2519,8 @@ namespace Ares
                             case AbilityMinigame.MinigameResult.FAIL:
                                 hitStatus = BattleInteractorData.HitStatus.Evade;
                                 break;
+                            case AbilityMinigame.MinigameResult.SUCCESS:
+                            case AbilityMinigame.MinigameResult.PERFECT:
                             default:
                                 hitStatus = target != null ?
                                 target.PerformHitTest(actor, ability.Data, action) :

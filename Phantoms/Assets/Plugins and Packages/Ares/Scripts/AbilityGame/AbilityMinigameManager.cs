@@ -66,6 +66,10 @@ public class AbilityMinigameManager : MonoBehaviour
         for (int i = 0; i < minigameTypes.Length; i++)
         {
             m_typeToMinigame.Add(minigameTypes[i], m_abilityMinigames[i]);
+            if (m_abilityMinigames[i] != null)
+            {
+                m_abilityMinigames[i].gameObject.SetActive(false);
+            }
         }
     }
 
@@ -104,11 +108,21 @@ public class AbilityMinigameManager : MonoBehaviour
                     Debug.LogError("Minigame data is not valid!");
                 }
                 break;
+            case AbilityMinigameType.FEAR:
+                try
+                {
+                    (m_currentMinigame as BulletDodgeMinigame).Data = (BulletDodgeMinigameData)data;
+                }
+                catch
+                {
+                    Debug.LogError("Minigame data is not valid!");
+                }
+                break;
             default:
                 Debug.Log("No data.");
                 break;
         }
-
+        m_currentMinigame.gameObject.SetActive(true);
         m_currentMinigame.StartMinigame();
     }
 }

@@ -37,6 +37,12 @@ public class BulletDodgeMinigamePlayer : MonoBehaviour
         }
     }
 
+    public void ResetPosition()
+    {
+        // for now, just assume we want to recenter
+        m_playerTransform.anchoredPosition = Vector2.zero;
+    }
+
     public void PlayerMovement()
     {
         // TODO: Make input stuff generic here

@@ -47,6 +47,7 @@ public class BulletDodgeMinigame : AbilityMinigame
     protected override void Restart()
     {
         Spawners.Clear();
+        m_player.ResetPosition();
     }
 
     protected override void InitializingState()
@@ -56,6 +57,7 @@ public class BulletDodgeMinigame : AbilityMinigame
 
         m_player.PlayerSpeed = Data.PlayerSpeed;
         m_player.AllowMovement = true;
+        
         m_healthIndicator.SetMaxHearts(Data.Health);
 
         foreach (BulletSpawnerData data in Data.BulletSpawners)
@@ -81,8 +83,23 @@ public class BulletDodgeMinigame : AbilityMinigame
         m_currentTime += Time.deltaTime;
         if (m_currentTime >= Data.TimerDuration)
         {
-            //m_state = MinigameState.FINISHED;
+            if (m_healthIndicator.CurrentHearts >= Data.Health)
+            {
+                m_result = MinigameResult.PERFECT;
+            }
+            else if (m_healthIndicator.CurrentHearts <= 0)
+            {
+                m_result = MinigameResult.FAIL;
+            }
+            else
+            {
+                m_result = MinigameResult.SUCCESS;
+            }
+            FinishGame();
+            m_state = MinigameState.FINISHED;
         }
+
+        
     }
 
     protected override void FinishedState()
@@ -96,14 +113,28 @@ public class BulletDodgeMinigame : AbilityMinigame
     ////////////////////////
     public void HitPlayer(BulletDodgeMinigameBullet bullet = null)
     {
-        Debug.Log("Hit");
         m_healthIndicator.Damage();
+
+        if (m_healthIndicator.CurrentHearts <= 0)
+        {
+            m_result = MinigameResult.FAIL;
+            FinishGame();
+            m_state = MinigameState.FINISHED;
+        }
     }
 
 
     /////////////////////////
     /// Private Functions ///
     /////////////////////////
+
+    private void FinishGame()
+    {
+        foreach(BulletDodgeMinigameBullet bullet in m_bullets)
+        {
+            bullet.gameObject.SetActive(false);
+        }
+    }
 
     private void UpdateSpawner(BulletSpawner spawner)
     {
