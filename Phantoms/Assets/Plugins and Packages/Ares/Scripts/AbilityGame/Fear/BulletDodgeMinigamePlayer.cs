@@ -52,45 +52,6 @@ public class BulletDodgeMinigamePlayer : MonoBehaviour
 
         Vector3 moveVector = moveInputVector * PlayerSpeed * Time.deltaTime;
 
-        /*
-        // Raycasting in the directions we are going to make sure we can go there.
-        RaycastHit hit;
-        float distance = 0f;
-        Vector3 direction = Vector3.right;
-
-        // First check horizontal movement
-        if (moveVector.x < 0)
-        {
-            direction = Vector3.left;
-        }
-        else
-        {
-            direction = Vector3.right;
-        }
-        
-        distance = Mathf.Abs(moveVector.x) + widthRadius;
-
-        if (Physics.Raycast(m_playerRigidbody.position, direction, out hit, distance))
-        {
-            moveVector.x = (direction.x * hit.distance) - (direction.x * widthRadius);
-        }
-
-        // then check vertical movement.
-        if (moveVector.y < 0)
-        {
-            direction = Vector3.down;
-        }
-        else
-        {
-            direction = Vector3.up;
-        }
-        distance = Mathf.Abs(moveVector.y) + heightRadius;
-        if (Physics.Raycast(m_playerRigidbody.position, direction, out hit, distance))
-        {
-            moveVector.y = (direction.y * hit.distance) - (direction.y * heightRadius);
-        }
-        */
-
         m_playerTransform.Translate(moveVector);
 
         float xPos = Mathf.Clamp(m_playerTransform.anchoredPosition.x, m_playerArea.rect.xMin + widthRadius, m_playerArea.rect.xMax - widthRadius);
