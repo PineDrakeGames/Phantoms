@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BulletDodgeMinigameBullet : MonoBehaviour
 {
-    public BulletDodgeMinigame m_minigame = null;
+    public BulletDodgeMinigame BulletMinigame = null;
 
     public enum BulletMoveType
     {
@@ -17,22 +17,33 @@ public class BulletDodgeMinigameBullet : MonoBehaviour
 
     private Vector2 m_currentDirection = Vector2.zero;
     private float m_currentSpeed = 0f;
+    private float m_remainingLifeTime = 10f;
     private RectTransform m_target = null;
+
+    private const float DEFAULT_SPEED = 500f;
+    private const float DEFAULT_LIFETIME = 4f;
 
     /////////////////////////////////////////
     /// Public Functions for the movement ///
     /////////////////////////////////////////
-    public void SetLinearMovemet(Vector2 direction, float speed)
+    public void SetPosition(Vector2 position)
+    {
+        m_bulletTransform.anchoredPosition = position;
+    }
+
+    public void SetLinearMovemet(Vector2 direction, float speed = DEFAULT_SPEED, float lifetime = DEFAULT_LIFETIME)
     {
         m_currentDirection = direction.normalized;
         m_currentSpeed = speed;
+        m_remainingLifeTime = lifetime;
         m_moveType = BulletMoveType.LINEAR;
     }
 
-    public void SetHomingMovement(Vector2 startDirection, float startSpeed, RectTransform target)
+    public void SetHomingMovement(Vector2 startDirection, float startSpeed, RectTransform target, float lifetime = DEFAULT_LIFETIME)
     {
         m_currentDirection = startDirection.normalized;
         m_currentSpeed = startSpeed;
+        m_remainingLifeTime = lifetime;
         m_target = target;
         m_moveType = BulletMoveType.HOMING;
     }
@@ -43,7 +54,7 @@ public class BulletDodgeMinigameBullet : MonoBehaviour
     ///////////////////////
     private void Awake()
     {
-        m_target = GetComponent<RectTransform>();    
+        m_bulletTransform = GetComponent<RectTransform>();    
     }
 
     private void Update()
@@ -59,7 +70,13 @@ public class BulletDodgeMinigameBullet : MonoBehaviour
                 break;
         }
 
-        m_target.Translate(moveVector);
+        m_bulletTransform.Translate(moveVector);
+
+        m_remainingLifeTime -= Time.deltaTime;
+        if (m_remainingLifeTime <= 0)
+        {
+            this.gameObject.SetActive(false);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -67,11 +84,11 @@ public class BulletDodgeMinigameBullet : MonoBehaviour
         if (other.GetComponent<BulletDodgeMinigamePlayer>() != null)
         {
             // Hit Player
-            if (m_minigame)
+            if (BulletMinigame)
             {
-                m_minigame.HitPlayer(this);
+                BulletMinigame.HitPlayer(this);
             }
-            Destroy(this.gameObject);
+            this.gameObject.SetActive(false);
         }
     }
 

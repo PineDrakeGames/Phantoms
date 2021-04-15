@@ -10,6 +10,12 @@ public class BulletDodgeMinigamePlayer : MonoBehaviour
     [SerializeField]
     private Rigidbody m_playerRigidbody = null;
 
+    [SerializeField]
+    private RectTransform m_playerArea = null;
+
+    [SerializeField]
+    private float m_playerAreaSpacing = 10f;
+
     public bool AllowMovement = false;
 
     public float PlayerSpeed = 0f;
@@ -19,8 +25,8 @@ public class BulletDodgeMinigamePlayer : MonoBehaviour
 
     private void Awake()
     {
-        widthRadius = m_playerTransform.rect.width / 2f;
-        heightRadius = m_playerTransform.rect.width / 2f;
+        widthRadius = (m_playerTransform.rect.width / 2f) + m_playerAreaSpacing;
+        heightRadius = (m_playerTransform.rect.width / 2f) + m_playerAreaSpacing;
     }
 
     private void Update() 
@@ -40,6 +46,7 @@ public class BulletDodgeMinigamePlayer : MonoBehaviour
 
         Vector3 moveVector = moveInputVector * PlayerSpeed * Time.deltaTime;
 
+        /*
         // Raycasting in the directions we are going to make sure we can go there.
         RaycastHit hit;
         float distance = 0f;
@@ -76,7 +83,13 @@ public class BulletDodgeMinigamePlayer : MonoBehaviour
         {
             moveVector.y = (direction.y * hit.distance) - (direction.y * heightRadius);
         }
+        */
 
-        m_playerRigidbody.MovePosition(m_playerRigidbody.position + moveVector);
+        m_playerTransform.Translate(moveVector);
+
+        float xPos = Mathf.Clamp(m_playerTransform.anchoredPosition.x, m_playerArea.rect.xMin + widthRadius, m_playerArea.rect.xMax - widthRadius);
+        float yPos = Mathf.Clamp(m_playerTransform.anchoredPosition.y, m_playerArea.rect.yMin + heightRadius, m_playerArea.rect.yMax - heightRadius);
+
+        m_playerTransform.anchoredPosition = new Vector2(xPos, yPos);
     }
 }
