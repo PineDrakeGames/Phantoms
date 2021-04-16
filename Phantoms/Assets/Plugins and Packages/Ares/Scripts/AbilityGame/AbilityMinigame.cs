@@ -32,6 +32,9 @@ public abstract class AbilityMinigame : MonoBehaviour
     [SerializeField]
     protected bool m_startOnEnable = false;
 
+    /// Other Generic Public things that all minigames will need ///
+    public abstract string MinigameDescription { get; }
+
 
     protected void Awake()
     {

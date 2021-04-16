@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class BulletDodgeMinigame : AbilityMinigame
 {
+    /// Helper Class
     public class ButtonMashInstance
     {
         public MinigameInput Input;
@@ -16,6 +17,7 @@ public class BulletDodgeMinigame : AbilityMinigame
         }
     }
 
+    /// Serialized and Public Variables
     [Header("Minigame Variables")]
     public BulletDodgeMinigameData Data;
 
@@ -33,6 +35,14 @@ public class BulletDodgeMinigame : AbilityMinigame
     [SerializeField]
     private GameObject m_bulletPrefab;
 
+    /// Public Getters
+    public override string MinigameDescription
+    {
+        get
+        {
+            return "Use WASD to avoid the bullets!";
+        }
+    }
 
     /// Private variables
     private float m_currentTime = 0f;

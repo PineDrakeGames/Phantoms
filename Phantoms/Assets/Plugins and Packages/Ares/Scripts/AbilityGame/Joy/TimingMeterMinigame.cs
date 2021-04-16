@@ -37,6 +37,14 @@ public class TimingMeterMinigame : AbilityMinigame
     [SerializeField]
     private GameObject m_inputIndicator;
 
+    /// Public Getters
+    public override string MinigameDescription
+    {
+        get
+        {
+            return "Press the indicated button when it lights up!";
+        }
+    }
 
     /// Private variables
     private float m_currentTime = 0f;

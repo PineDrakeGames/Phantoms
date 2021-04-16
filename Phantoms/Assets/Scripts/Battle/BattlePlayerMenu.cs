@@ -358,6 +358,12 @@ public class BattlePlayerMenu : MonoBehaviour
     public void TargetMenuAbility(Ability ability)
     {
         m_currentAbility = ability;
+
+        if (m_currentAbility.UseMinigame)
+        {
+            AbilityMinigameManager.ShowMinigameDescription(ability.Minigame);
+        }
+
         TargetMenuGeneric(ActionType.ABILITY);
     }
 
@@ -438,6 +444,7 @@ public class BattlePlayerMenu : MonoBehaviour
                 switch (m_prevState)
                 {
                     case BattleMenuState.ABILITIES:
+                        AbilityMinigameManager.HideMinigameDescription();
                         AbilitiesMenu();
                         break;
                     case BattleMenuState.TACTICS:

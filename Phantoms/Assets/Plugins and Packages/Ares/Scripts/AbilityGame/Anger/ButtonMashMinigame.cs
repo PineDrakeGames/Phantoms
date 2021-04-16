@@ -33,6 +33,15 @@ public class ButtonMashMinigame : AbilityMinigame
     [SerializeField]
     private GameObject m_inputIndicator;
 
+    /// Public Getters
+    public override string MinigameDescription
+    {
+        get
+        {
+            return "Mash the buttons above repeatedly!";
+        }
+    }
+
 
     /// Private variables
     private float m_currentTime = 0f;

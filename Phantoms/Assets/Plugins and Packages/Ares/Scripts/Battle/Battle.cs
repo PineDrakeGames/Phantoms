@@ -2490,7 +2490,7 @@ namespace Ares
                         yield return null;
                     }
                     minigameResult = AbilityMinigameManager.CurrentMinigame.Result;
-                    AbilityMinigameManager.CurrentMinigame.gameObject.SetActive(false);
+                    AbilityMinigameManager.EndMinigame();
                 }
             }
 
