@@ -44,7 +44,6 @@ public class LoadingManager : MonoBehaviour
     private GameObject m_loadingScreen = null;
 
     // Stuff for the current overworld
-    private int m_lastOverworldSceneIndex = 0;
     private List<GameObject> m_overworldSceneItems = new List<GameObject>();
     private Scene m_lastOverworldScene;
 

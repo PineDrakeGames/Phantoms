@@ -22,10 +22,9 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private BattlePlayerMenu m_playerMenu = null;
 
-    [Header("Test stuff")]
+    [Header("Results stuff")]
     [SerializeField]
-    [Scene]
-    private string m_testReturnScene = null;
+    private BattleResultsManager m_resultsManager = null;
 
     private Battle battle; // A reference to the actual Battle object
     public Battle CurrentBattle
@@ -190,18 +189,20 @@ public class BattleManager : MonoBehaviour
     void EndBattle(bool playerWon)
     {
         // A win condition has been met; end the battle.
-        battle.EndBattle(Battle.EndReason.WinLoseConditionMet);
+        if (playerWon)
+        {
+            battle.EndBattle(Battle.EndReason.PlayerWin);
+        }
+        else
+        {
+            battle.EndBattle(Battle.EndReason.EnemyWin);
+        }
 
         // Show victory/ defeat animations and UI
     }
 
     void OnBattleEnd(Battle.EndReason endReason)
     {
-        if (endReason == Battle.EndReason.OutOfTurns)
-        {
-            // Show tie screen or determine winner
-        }
-
         // UPDATE ALL THE DATA BASED ON THE RESULTS OF THE BATTLE
         foreach (Actor actor in playerTeam)
         {
@@ -212,8 +213,8 @@ public class BattleManager : MonoBehaviour
 
         PlayerInventoryManager.Instance.SaveBattleInventory(playerGroup.Inventory as StackedInventory);
 
-        // For now, just loading back to the test scene
-        LoadingManager.ReturnFromBattle();
+        // Show them results screen
+        m_resultsManager.ShowResults(endReason);
     }
 
     ////////////////////////
@@ -223,7 +224,7 @@ public class BattleManager : MonoBehaviour
     public void TryRun()
     {
         // For now, just always run and end the battle
-        CurrentBattle.EndBattle(Battle.EndReason.WinLoseConditionMet);
+        CurrentBattle.EndBattle(Battle.EndReason.Ran);
     }
 
     public void CatchPhantom()
@@ -243,7 +244,7 @@ public class BattleManager : MonoBehaviour
         // In the end, actually do a minigame and have a whole process, for now just add it to the player inventory and end the battle.
         PhantomInstanceData phantomData = ActorToData[phantomToCatch] as PhantomInstanceData;
         PlayerInventoryManager.Instance.AddPhantom(phantomData);
-        CurrentBattle.EndBattle(Battle.EndReason.WinLoseConditionMet);
+        CurrentBattle.EndBattle(Battle.EndReason.PhantomCaught);
     }
 
     public void SwapPhantoms(Actor newPhantom)

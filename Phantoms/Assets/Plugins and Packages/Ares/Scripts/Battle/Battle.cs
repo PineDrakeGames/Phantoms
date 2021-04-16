@@ -16,7 +16,7 @@ namespace Ares
 
     public class Battle
     {
-        public enum EndReason { WinLoseConditionMet, OutOfTurns }
+        public enum EndReason { PlayerWin, EnemyWin, PhantomCaught, Ran, WinLoseConditionMet, OutOfTurns }
         public enum RoundState
         {
             Reset, Start, QueueingActions, ProcessingStartOfRoundProcesses, StartOfTurn, ProcessingStartOfTurnProcesses, EndOfTurn, ProcessingEndOfTurnProcesses,
