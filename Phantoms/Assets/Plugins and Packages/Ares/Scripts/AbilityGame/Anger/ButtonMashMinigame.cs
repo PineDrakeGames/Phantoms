@@ -44,7 +44,6 @@ public class ButtonMashMinigame : AbilityMinigame
 
 
     /// Private variables
-    private float m_currentTime = 0f;
     private float m_currentFill = 0f;
 
     private int m_currentTargetIndex = 0;
@@ -89,15 +88,15 @@ public class ButtonMashMinigame : AbilityMinigame
         m_buttonsRequired[0].Indicator.SetState(InputIndicator.IndicatorState.READY_FOR_INPUT);
 
         m_currentTargetIndex = 0;
-        m_currentTime = 0f;
         m_currentFill = 0f;
+
+        AbilityMinigameManager.Timer.StartTimer(Data.TimerDuration);
 
         m_state = MinigameState.RUNNING;
     }
 
     protected override void RunningState()
     {
-        m_currentTime += Time.deltaTime;
         m_currentFill -= Time.deltaTime / Data.DrainRate;
         if (m_currentFill < 0)
         {
@@ -133,7 +132,7 @@ public class ButtonMashMinigame : AbilityMinigame
             m_result = MinigameResult.SUCCESS;
             Finish();
         }
-        else if (m_currentTime >= Data.TimerDuration)
+        else if (!AbilityMinigameManager.Timer.TimerActive)
         {
             m_result = MinigameResult.FAIL;
             Finish();
@@ -148,6 +147,8 @@ public class ButtonMashMinigame : AbilityMinigame
         }
         
         m_meter.SetActive(false);
+
+        AbilityMinigameManager.Timer.StopTimer();
 
         m_state = MinigameState.FINISHED;
     }

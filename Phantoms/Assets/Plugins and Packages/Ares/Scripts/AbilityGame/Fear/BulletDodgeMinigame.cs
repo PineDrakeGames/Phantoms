@@ -45,8 +45,6 @@ public class BulletDodgeMinigame : AbilityMinigame
     }
 
     /// Private variables
-    private float m_currentTime = 0f;
-
     private List<BulletSpawner> Spawners = new List<BulletSpawner>();
 
     private List<BulletDodgeMinigameBullet> m_bullets = new List<BulletDodgeMinigameBullet>();
@@ -62,9 +60,6 @@ public class BulletDodgeMinigame : AbilityMinigame
 
     protected override void InitializingState()
     {
-
-        m_currentTime = 0f;
-
         m_player.PlayerSpeed = Data.PlayerSpeed;
         m_player.AllowMovement = true;
         
@@ -78,6 +73,8 @@ public class BulletDodgeMinigame : AbilityMinigame
             Spawners.Add(spawner);
         }
 
+        AbilityMinigameManager.Timer.StartTimer(Data.TimerDuration);
+
         m_state = MinigameState.RUNNING;
     }
 
@@ -90,8 +87,7 @@ public class BulletDodgeMinigame : AbilityMinigame
 
         Canvas.ForceUpdateCanvases();
 
-        m_currentTime += Time.deltaTime;
-        if (m_currentTime >= Data.TimerDuration)
+        if (!AbilityMinigameManager.Timer.TimerActive)
         {
             if (m_healthIndicator.CurrentHearts >= Data.Health)
             {
@@ -107,9 +103,7 @@ public class BulletDodgeMinigame : AbilityMinigame
             }
             FinishGame();
             m_state = MinigameState.FINISHED;
-        }
-
-        
+        }        
     }
 
     protected override void FinishedState()
@@ -144,6 +138,8 @@ public class BulletDodgeMinigame : AbilityMinigame
         {
             bullet.gameObject.SetActive(false);
         }
+
+        AbilityMinigameManager.Timer.StopTimer();
     }
 
     private void UpdateSpawner(BulletSpawner spawner)
