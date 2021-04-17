@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     private const string HorizontalInput = "Horizontal";
     private const string VerticalInput = "Vertical";
 
-    private void Awake()
+    private void Start()
     {
         //Cursor.lockState = CursorLockMode.Locked;
         if (Character == null)

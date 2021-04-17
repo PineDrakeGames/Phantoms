@@ -116,6 +116,7 @@ public class LoadingManager : MonoBehaviour
         m_loadingScreen = Instantiate(Resources.Load(LOADING_SCREEN_PREFAB, typeof(GameObject))) as GameObject;
         DontDestroyOnLoad(m_loadingScreen);
         m_loadingScreen.SetActive(false);
+        m_lastOverworldScene = SceneManager.GetActiveScene();
     }
 
 
@@ -149,10 +150,18 @@ public class LoadingManager : MonoBehaviour
 
     private void ReturnFromBattleInternal()
     {
+        
         if (!m_loading)
         {
-            m_loading = true;
-            StartCoroutine(ReturnFromBattleBackend());
+            if (m_lastOverworldScene == SceneManager.GetActiveScene())
+            {
+                LoadSceneInternal(0);
+            }
+            else
+            {
+                m_loading = true;
+                StartCoroutine(ReturnFromBattleBackend());
+            }
         }
     }
 
