@@ -167,6 +167,16 @@ public class AbilityMinigameManager : MonoBehaviour
                     Debug.LogError("Minigame data is not valid!");
                 }
                 break;
+            case AbilityMinigameType.LOVE:
+                try
+                {
+                    (m_currentMinigame as LoveMinigame).Data = (LoveMinigameData)data;
+                }
+                catch
+                {
+                    Debug.LogError("Minigame data is not valid!");
+                }
+                break;
             default:
                 Debug.Log("No data.");
                 break;

@@ -25,7 +25,9 @@ public class UISetColliderSize : MonoBehaviour
 
     private void SetColliderSize()
     {
-
-        m_collider.size = new Vector3(m_rectTransform.rect.width, m_rectTransform.rect.height, m_collider.size.z);
+        if (m_collider != null && m_rectTransform != null)
+        {
+            m_collider.size = new Vector3(m_rectTransform.rect.width, m_rectTransform.rect.height, m_collider.size.z);
+        }
     }
 }
