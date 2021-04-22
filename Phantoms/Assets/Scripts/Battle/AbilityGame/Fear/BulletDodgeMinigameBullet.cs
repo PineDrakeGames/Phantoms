@@ -31,7 +31,7 @@ public class BulletDodgeMinigameBullet : MonoBehaviour
         m_bulletTransform.anchoredPosition = position;
     }
 
-    public void SetLinearMovemet(Vector2 direction, float speed = DEFAULT_SPEED, float lifetime = DEFAULT_LIFETIME)
+    public void SetLinearMovement(Vector2 direction, float speed = DEFAULT_SPEED, float lifetime = DEFAULT_LIFETIME)
     {
         m_currentDirection = direction.normalized;
         m_currentSpeed = speed;

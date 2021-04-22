@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class LoveMinigameTarget : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public LoveMinigame Minigame = null;
+    
+    public void Hit()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        this.gameObject.SetActive(false);
     }
 }

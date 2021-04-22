@@ -186,7 +186,7 @@ public class BulletDodgeMinigame : AbilityMinigame
             float speed = spawner.Data.BulletStartSpeed + (Random.Range(-1f, 1f) * spawner.Data.BulletStartSpeedVariance);
             float lifetime = spawner.Data.BulletLifetime + (Random.Range(-1f, 1f) * spawner.Data.BulletLifetimeVariance);
 
-            bullet.SetLinearMovemet(direction, speed, lifetime);
+            bullet.SetLinearMovement(direction, speed, lifetime);
 
             // Set the time to the next bullet
             float spawnDelay = spawner.Data.BulletSpawnInterval + (Random.Range(-1f, 1f) * spawner.Data.BulletSpawnIntervalVariance);
