@@ -85,8 +85,6 @@ public class BulletDodgeMinigame : AbilityMinigame
             UpdateSpawner(spawner);
         }
 
-        Canvas.ForceUpdateCanvases();
-
         if (!AbilityMinigameManager.Timer.TimerActive)
         {
             if (m_healthIndicator.CurrentHearts >= Data.Health)
@@ -103,7 +101,7 @@ public class BulletDodgeMinigame : AbilityMinigame
             }
             FinishGame();
             m_state = MinigameState.FINISHED;
-        }        
+        }
     }
 
     protected override void FinishedState()

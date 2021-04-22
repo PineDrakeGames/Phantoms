@@ -21,12 +21,14 @@ public class MinigameTimer : MonoBehaviour
 
     public bool TimerActive { get { return m_timerActive; } }
 
+    public float TimerProgress { get { return (1f - Mathf.Clamp01(m_currentTime / m_totalTime)); } }
+
     /////////////////////////
     /// Private Variables ///
     /////////////////////////
     private bool m_timerActive = false;
 
-    private float m_totalTime = 0f;
+    private float m_totalTime = 1f;
     private float m_currentTime = 0f;
 
     private const string TIMER_PARAMETER = "Time";

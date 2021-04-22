@@ -35,9 +35,14 @@ public class LoveMinigame : AbilityMinigame
 
     private float m_launcherAngle = 0f;
     private float m_bulletCooldown = 0f;
+    private int m_hitTargets = 0;
 
     private List<LoveMinigameBullet> m_bullets = new List<LoveMinigameBullet>();
     private List<LoveMinigameTarget> m_targets = new List<LoveMinigameTarget>();
+
+    // Specific game private variables
+    private float m_currentLauncherVelocity = 0f;
+    private bool m_fullAimRange = false;
 
     ////////////////////////////////////
     /// Protected override functions ///
@@ -51,6 +56,9 @@ public class LoveMinigame : AbilityMinigame
     {
         SetLauncherPosition();
         SpawnRandomTargets(Data.NumTargets);
+
+        m_fullAimRange = ((Data.AimAngleRange.maxValue - Data.AimAngleRange.minValue) >= 360f);
+        m_hitTargets = 0;
         AbilityMinigameManager.Timer.StartTimer(Data.TimerDuration);
         m_state = MinigameState.RUNNING;
     }
@@ -58,11 +66,47 @@ public class LoveMinigame : AbilityMinigame
     protected override void RunningState()
     {
         ControlLauncher();
+
+        if (!AbilityMinigameManager.Timer.TimerActive)
+        {
+            m_result = MinigameResult.FAIL;
+            FinishGame();
+            m_state = MinigameState.FINISHED;
+        }
     }
 
     protected override void FinishedState()
     {
 
+    }
+
+    private void FinishGame()
+    {
+        ClearBullets();
+        ClearTargets();
+
+        AbilityMinigameManager.Timer.StopTimer();
+    }
+
+    ////////////////////////
+    /// Public Functions ///
+    ////////////////////////
+    public void HitTarget()
+    {
+        m_hitTargets += 1;
+        if (m_hitTargets >= Data.NumTargets)
+        {
+            if (AbilityMinigameManager.Timer.TimerProgress <= 0.7f)
+            {
+                m_result = MinigameResult.PERFECT;
+            }
+            else
+            {
+                m_result = MinigameResult.SUCCESS;
+            }
+            FinishGame();
+            m_state = MinigameState.FINISHED;
+        }
     }
 
     /////////////////////////////////////////
@@ -99,17 +143,31 @@ public class LoveMinigame : AbilityMinigame
 
     private void ControlLauncher()
     {
+        if (Data.AutoAim)
+        {
+            if (m_currentLauncherVelocity == 0f) { m_currentLauncherVelocity = Data.AimSensitivity; }
+
+            m_launcherAngle += m_currentLauncherVelocity * Time.deltaTime;
+
+            if (!m_fullAimRange && (m_launcherAngle <= Data.AimAngleRange.minValue || m_launcherAngle >= Data.AimAngleRange.maxValue))
+            {
+                m_currentLauncherVelocity *= -1f;
+            }
+        }
+        else
+        {
+            // TODO: Launcher controls
+            float verticalMove = Input.GetAxisRaw("Vertical");
+            float horizontalMove = Input.GetAxisRaw("Horizontal") * -1f;
+
+            float clockwiseMove = Mathf.Clamp(verticalMove + horizontalMove, -1f, 1f);
+
+            m_launcherAngle += clockwiseMove * Data.AimSensitivity * Time.deltaTime;
+        }
         
-        // TODO: Launcher controls
-        float verticalMove = Input.GetAxisRaw("Vertical");
-        float horizontalMove = Input.GetAxisRaw("Horizontal") * -1f;
-
-        float clockwiseMove = Mathf.Clamp(verticalMove + horizontalMove, -1f, 1f);
-
-        m_launcherAngle += clockwiseMove * Data.AimSensitivity * Time.deltaTime;
 
         // If the aim angle is >360, just allow full rotation - otherwise just clamp the value.
-        if ((Data.AimAngleRange.maxValue - Data.AimAngleRange.minValue) >= 360f)
+        if (m_fullAimRange)
         {
             while (m_launcherAngle < 0f) { m_launcherAngle += 360f; }
             while (m_launcherAngle > 360f) { m_launcherAngle -= 360f; }
@@ -204,6 +262,7 @@ public class LoveMinigame : AbilityMinigame
 
         GameObject instance = Instantiate(m_targetPrefab, m_targetsParent);
         LoveMinigameTarget targetComponent = instance.GetComponent<LoveMinigameTarget>();
+        targetComponent.Minigame = this;
         m_targets.Add(targetComponent);
 
         return targetComponent;

@@ -15,6 +15,7 @@ public class LoveMinigameData : AbilityMinigameData
     public Vector2 ReticlePosition = new Vector2(-1f, -1f);
     [MinMaxRange(-360f, 360f)] public RangedFloat AimAngleRange = new RangedFloat(0f, 90f);
     [Tooltip("Degrees per second")] public float AimSensitivity = 500f;
+    public bool AutoAim = false;
 
     [Header("Bullet Settings")]
     public LoveMinigameBullet.BulletMoveType BulletType = LoveMinigameBullet.BulletMoveType.LINEAR;

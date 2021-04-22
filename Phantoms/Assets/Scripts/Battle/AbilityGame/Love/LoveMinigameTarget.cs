@@ -18,6 +18,7 @@ public class LoveMinigameTarget : MonoBehaviour
     
     public void Hit()
     {
+        Minigame.HitTarget();
         this.gameObject.SetActive(false);
     }
 
