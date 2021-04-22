@@ -10,7 +10,6 @@ public class LoveMinigameData : AbilityMinigameData
 
     [Header("Overall Settings")]
     public float TimerDuration = 7f;
-    public int NumTargets = 3;
 
     [Header("Aiming Reticle Settings")]
     public Vector2 ReticlePosition = new Vector2(-1f, -1f);
@@ -21,7 +20,9 @@ public class LoveMinigameData : AbilityMinigameData
     public LoveMinigameBullet.BulletMoveType BulletType = LoveMinigameBullet.BulletMoveType.LINEAR;
     public float BulletSpeed = 800f;
     public float BulletDuration = 5f;
+    [Tooltip("Bullets per second")] public float BulletFireRate = 5f;
 
     [Header("Target Settings")]
     public float MinTargetDistance = 200f;
+    public int NumTargets = 5;
 }
