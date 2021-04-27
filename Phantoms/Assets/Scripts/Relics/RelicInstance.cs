@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class RelicInstance : MonoBehaviour
+public class RelicInstance
 {
     public RelicData Data = null;
     public bool Equipped = false;

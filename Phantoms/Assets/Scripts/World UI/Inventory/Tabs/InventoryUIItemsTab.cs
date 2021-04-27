@@ -42,6 +42,7 @@ public class InventoryUIItemsTab : InventoryTab
     void Start()
     {
         m_playerTargetButton.Data = DataManager.Instance.GetPlayerBattleInstanceData();
+        m_playerTargetButton.ItemsInventory = this;
         ResetItemList();
         ResetTargetList();
         HideItemTargetMenu();

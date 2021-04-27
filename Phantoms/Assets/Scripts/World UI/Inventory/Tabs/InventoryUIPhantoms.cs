@@ -36,6 +36,7 @@ public class InventoryUIPhantoms : InventoryTab
     {
         base.OpenTab();
         ResetPhantomList();
+        UpdatePhantomDisplay();
     }
 
     public void ResetPhantomList()

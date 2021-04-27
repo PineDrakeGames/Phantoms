@@ -47,7 +47,7 @@ public class InventoryRelicButton : MonoBehaviour, IPointerEnterHandler, IPointe
     {
         if (RelicsInventory && Data != null)
         {
-            // Select Relic!
+            RelicsInventory.SelectRelic(Data);
         }
     }
 

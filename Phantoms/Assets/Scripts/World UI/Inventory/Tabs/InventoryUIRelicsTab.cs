@@ -42,6 +42,7 @@ public class InventoryUIRelicsTab : InventoryTab
     void Start()
     {
         m_playerTargetButton.Data = DataManager.Instance.GetPlayerBattleInstanceData();
+        m_playerTargetButton.RelicsInventory = this;
         ResetRelicList();
         ResetTargetList();
         HideRelicTargetMenu();
@@ -81,11 +82,11 @@ public class InventoryUIRelicsTab : InventoryTab
         PlayerBattleInstanceData player = DataManager.Instance.GetPlayerBattleInstanceData();
         if (player.CanEquipRelic(m_currentRelic))
         {
-            m_playerTargetButton.Disable();
+            m_playerTargetButton.Enable();
         }
         else
         {
-            m_playerTargetButton.Enable();
+            m_playerTargetButton.Disable();
         }
 
         foreach (PhantomInstanceData data in PlayerInventoryManager.Instance.Phantoms)
@@ -95,11 +96,11 @@ public class InventoryUIRelicsTab : InventoryTab
             relicTargetButton.SetButton();
             if (data.CanEquipRelic(m_currentRelic))
             {
-                relicTargetButton.Disable();
+                relicTargetButton.Enable();
             }
             else
             {
-                relicTargetButton.Enable();
+                relicTargetButton.Disable();
             }
         }
     }
@@ -181,10 +182,12 @@ public class InventoryUIRelicsTab : InventoryTab
             {
                 UserBattleInstanceData user = m_currentRelic.User;
                 user.UnequipRelic(m_currentRelic);
+                ResetRelicList();
                 UpdateRelicDisplay();
             }
             else
             {
+                ResetTargetList();
                 ShowRelicTargetMenu();
             }
         }

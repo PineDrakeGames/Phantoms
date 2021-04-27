@@ -43,7 +43,7 @@ public class InventoryRelicTargetButton : MonoBehaviour, IPointerEnterHandler, I
     {
         if (RelicsInventory && Data != null)
         {
-            // Equip Relic
+            RelicsInventory.EquipRelicWithTarget(Data);
         }
     }
 
@@ -57,7 +57,7 @@ public class InventoryRelicTargetButton : MonoBehaviour, IPointerEnterHandler, I
             }
             if (m_currentRPText != null)
             {
-                m_currentRPText.text = string.Format("<b>Available RP</b> <color=yellow>{0}/{1}</color>", Data.CurrentStats.Relic - Data.CurrentRelicPoints, Data.CurrentStats.Relic);
+                m_currentRPText.text = string.Format("<b>Available RP</b> <color=green>{0}/{1}</color>", Data.CurrentStats.Relic - Data.CurrentRelicPoints, Data.CurrentStats.Relic);
             }
         }
     }
