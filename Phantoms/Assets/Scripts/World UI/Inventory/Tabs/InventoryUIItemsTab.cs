@@ -35,7 +35,7 @@ public class InventoryUIItemsTab : InventoryTab
     // private variables
     private List<InventoryItemButton> m_itemButtons = new List<InventoryItemButton>();
     private List<InventoryItemTargetButton> m_itemTargetButtons = new List<InventoryItemTargetButton>();
-    private List<CombatantInstanceData> m_allCombatants = new List<CombatantInstanceData>();
+    private List<UserBattleInstanceData> m_allCombatants = new List<UserBattleInstanceData>();
     private ItemInstanceData m_currentItem = null;
 
     // Start is called before the first frame update

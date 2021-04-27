@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class PhantomInstanceData : CombatantInstanceData
+public class PhantomInstanceData : UserBattleInstanceData
 {
     public string PhantomID = null;
 
@@ -38,7 +38,7 @@ public class PhantomInstanceData : CombatantInstanceData
         CurrentStats = new BattleStats();
     }
 
-    public void SetCurrentStats()
+    public override void SetCurrentStats()
     {
         BattleStats startingStats = new BattleStats(PhanData.StartingStats);
 
@@ -55,6 +55,19 @@ public class PhantomInstanceData : CombatantInstanceData
             for (int i = 0; i < LevelUps.GetStat(type); i++)
             {
                 startingStats.SetStat(type, startingStats.GetStat(type) + PhanData.LevelUpAmounts.GetStat(type));
+            }
+        }
+
+        // Add in any stat buffs coming from relics.
+        foreach(RelicInstance relic in Relics)
+        {
+            if (relic.Data is StatRelicData)
+            {
+                StatRelicData statRelic = relic.Data as StatRelicData;
+                foreach(StatRelicData.StatBuffData buffData in statRelic.StatBuffs)
+                {
+                    startingStats.SetStat(buffData.Stat, startingStats.GetStat(buffData.Stat) + buffData.Amount);
+                }
             }
         }
 
@@ -93,5 +106,26 @@ public class PhantomInstanceData : CombatantInstanceData
         }
 
         return levelUpOptions;
+    }
+
+    public override string GetDisplayName()
+    {
+        if (!string.IsNullOrEmpty(NickName))
+        {
+            return NickName;
+        }
+        else
+        {
+            return Data.DisplayName;
+        }
+    }
+
+    public override bool CanEquipRelic (RelicInstance relic)
+    {
+        if (base.CanEquipRelic(relic) && relic.Data.EquipType != RelicEquipType.PLAYER_ONLY)
+        {
+            return true;
+        }
+        return false;
     }
 }

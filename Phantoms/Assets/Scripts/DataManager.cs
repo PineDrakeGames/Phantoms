@@ -50,6 +50,13 @@ public class DataManager : MonoBehaviour
         get { return Instance.m_itemData; }
     }
 
+    [SerializeField]
+    private RelicDataTable m_relicData = null;
+    public static RelicDataTable RelicData
+    {
+        get { return Instance.m_relicData; }
+    }
+
     /////////////////////////////////////////////////////////////
     /// Prefabs that can be instantiated pretty much anywhere ///
     /////////////////////////////////////////////////////////////
@@ -74,6 +81,7 @@ public class DataManager : MonoBehaviour
     // Converting the data into dictionaries to more easily access it
     private Dictionary<string, PhantomData> m_phantomIdToData = null;
     private Dictionary<string, ItemData> m_ItemIdToData = null;
+    private Dictionary<string, RelicData> m_RelicIdToData = null;
 
     // Current player data
     private PlayerBattleInstanceData m_playerBattleInstanceData = null;
@@ -128,6 +136,15 @@ public class DataManager : MonoBehaviour
             }
         }
 
+        if (m_RelicIdToData == null)
+        {
+            m_RelicIdToData = new Dictionary<string, RelicData>();
+            foreach (RelicData data in RelicData.Data)
+            {
+                m_RelicIdToData.Add(data.ID, data);
+            }
+        }
+
         m_playerBattleInstanceData = new PlayerBattleInstanceData(m_playerBattleData);
         m_playerBattleInstanceData.SetCurrentStats();
         m_playerBattleInstanceData.FullRestore();
@@ -167,6 +184,18 @@ public class DataManager : MonoBehaviour
             }
         }
         return null;
+    }
+
+    public RelicData TryGetRelicData(string relicID)
+    {
+        if (m_RelicIdToData.ContainsKey(relicID))
+        {
+            return m_RelicIdToData[relicID];
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public PlayerBattleData GetPlayerBattleData()

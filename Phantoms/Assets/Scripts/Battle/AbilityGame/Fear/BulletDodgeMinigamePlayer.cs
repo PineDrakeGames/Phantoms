@@ -8,9 +8,6 @@ public class BulletDodgeMinigamePlayer : MonoBehaviour
     private RectTransform m_playerTransform = null;
 
     [SerializeField]
-    private Rigidbody m_playerRigidbody = null;
-
-    [SerializeField]
     private RectTransform m_playerArea = null;
 
     [SerializeField]

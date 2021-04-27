@@ -25,6 +25,7 @@ public class PlayerInventoryManager : MonoBehaviour
     // Stuff stored in the inventory
     public List<ItemInstanceData> Items = new List<ItemInstanceData>();
     public List<PhantomInstanceData> Phantoms = new List<PhantomInstanceData>();
+    public List<RelicInstance> Relics = new List<RelicInstance>();
 
     private int m_currentActivePhantom = 0;
     public int CurrentActivePhantom
@@ -155,5 +156,61 @@ public class PlayerInventoryManager : MonoBehaviour
                 return;
             }
         }
+    }
+
+    //////////////////////////////////////////
+    /// Public functions related to Relics ///
+    //////////////////////////////////////////
+
+    public void AddRelic(string relicID)
+    {
+        AddRelic(DataManager.Instance.TryGetRelicData(relicID));
+    }
+
+    public void AddRelic(RelicData data)
+    {
+        Relics.Add(new RelicInstance(data));
+    }
+
+    // Equip relic functions
+    public void EquipRelic(RelicInstance relic, CombatantInstanceData combatant)
+    {
+        if (combatant is PhantomInstanceData)
+        {
+            EquipRelic(relic, combatant as PhantomInstanceData);
+        }
+        else if (combatant is PlayerBattleInstanceData)
+        {
+            EquipRelic(relic, combatant as PlayerBattleInstanceData);
+        }
+    }
+    public void EquipRelic(RelicInstance relic, PhantomInstanceData phantom)
+    {
+        phantom.EquipRelic(relic);
+    }
+    public void EquipRelic(RelicInstance relic, PlayerBattleInstanceData player)
+    {
+        player.EquipRelic(relic);
+    }
+
+    // Unequip Relic Functions
+    public void UnequipRelic(RelicInstance relic, CombatantInstanceData combatant)
+    {
+        if (combatant is PhantomInstanceData)
+        {
+            UnequipRelic(relic, combatant as PhantomInstanceData);
+        }
+        else if (combatant is PlayerBattleInstanceData)
+        {
+            UnequipRelic(relic, combatant as PlayerBattleInstanceData);
+        }
+    }
+    public void UnequipRelic(RelicInstance relic, PhantomInstanceData phantom)
+    {
+        phantom.UnequipRelic(relic);
+    }
+    public void UnequipRelic(RelicInstance relic, PlayerBattleInstanceData player)
+    {
+        player.UnequipRelic(relic);
     }
 }

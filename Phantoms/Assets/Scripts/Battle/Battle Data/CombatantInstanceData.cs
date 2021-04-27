@@ -45,4 +45,10 @@ public abstract class CombatantInstanceData
             CurrentMana = Mathf.Clamp(CurrentMana, 0, CurrentStats.Mana);
         }
     }
+
+    /// Public Data getter functions, to be overriden
+    public virtual string GetDisplayName()
+    {
+        return Data.DisplayName;
+    }
 }
