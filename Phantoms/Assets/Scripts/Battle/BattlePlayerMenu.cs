@@ -50,6 +50,10 @@ public class BattlePlayerMenu : MonoBehaviour
     [SerializeField]
     private GameObject m_confirmMenuParent = null;
 
+    [Header("Phantom Catching Menu")]
+    [SerializeField]
+    private BattlePhantomCatchManager m_phantomCatcher = null;
+
     [Header("UI Items")]
     [SerializeField]
     private Transform m_playerHealthIndicators = null;
@@ -79,7 +83,8 @@ public class BattlePlayerMenu : MonoBehaviour
         TACTICS,
         ABILITIES,
         ITEMS,
-        TARGETING
+        TARGETING,
+        CATCHING
     }
     private enum ActionType
     {
@@ -261,10 +266,10 @@ public class BattlePlayerMenu : MonoBehaviour
         BattleSubmenuButton submenuButton = null;
 
         // Catch button (if available)
-        if (CanCatch())
+        if (m_battleManager.ActorToData[m_currentActor] is PlayerBattleInstanceData && CanCatch())
         {
             submenuButton = AddSubmenuButton("Catch", "Catch that phantom!");
-            submenuButton.ClickEvent.AddListener(m_battleManager.CatchPhantom);
+            submenuButton.ClickEvent.AddListener(CatchPhantomMenu);
         }
 
         // Check if swapping turns is an option first.
@@ -352,6 +357,13 @@ public class BattlePlayerMenu : MonoBehaviour
         }
 
         ShowSubmenu();
+    }
+
+    public void CatchPhantomMenu()
+    {
+        SetState(BattleMenuState.CATCHING);
+        ClearSubmenu();
+        m_phantomCatcher.StartCatch(m_currentActor, m_actionInput);
     }
 
     // Sets up the targeting menu for an ability.
@@ -454,6 +466,10 @@ public class BattlePlayerMenu : MonoBehaviour
                         ItemsMenu();
                         break;
                 }
+                return;
+            case BattleMenuState.CATCHING:
+                m_phantomCatcher.StopCatching();
+                TacticsMenu();
                 return;
         }
     }

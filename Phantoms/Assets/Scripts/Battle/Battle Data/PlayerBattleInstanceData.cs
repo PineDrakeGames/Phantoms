@@ -5,7 +5,9 @@ using UnityEngine;
 [System.Serializable]
 public class PlayerBattleInstanceData : UserBattleInstanceData
 {
-    
+    public int Level = 0;
+
+    public LevelUpStats LevelUps = new LevelUpStats();
 
     public PlayerBattleData PlayerData
     {
@@ -26,7 +28,16 @@ public class PlayerBattleInstanceData : UserBattleInstanceData
 
     public override void SetCurrentStats()
     {
-        BattleStats startingStats = new BattleStats(PlayerData.DefaultStats);
+        BattleStats startingStats = new BattleStats(PlayerData.StartingStats);
+
+        // Add in level ups!
+        foreach(BattleStatType type in PhantomDataUtility.LevelUpStats)
+        {
+            for (int i = 0; i < LevelUps.GetStat(type); i++)
+            {
+                startingStats.SetStat(type, startingStats.GetStat(type) + PlayerData.LevelUpAmounts.GetStat(type));
+            }
+        }
 
         foreach(RelicInstance relic in Relics)
         {

@@ -35,7 +35,7 @@ public class BattleManager : MonoBehaviour
     private static BattleManager s_instance = null;
     public static BattleManager Instance
     {
-        get 
+        get
         {
             if (s_instance == null)
             {
@@ -83,7 +83,7 @@ public class BattleManager : MonoBehaviour
         battle.OnActorNeedsGroupTargetInput.AddListener(ShowTargetInput);
         battle.OnActorHasGivenAllNeededInput.AddListener(HideInput);
         battle.OnBattleEnd.AddListener(OnBattleEnd);
-        
+
         // Set up battle Camera manager's events
         battle.OnTurnEnd.AddListener(BattleCameraManager.Instance.OnTurnEnd);
 
@@ -177,7 +177,7 @@ public class BattleManager : MonoBehaviour
         // Set up and show the UI for selecting the chosen action's target group.
         // When a target is selected, call `actionInput.TargetSelectCallback(chosenBattleGroup)`.
         // This callback will return a `success` bool.
-        
+
         targetInput.TargetSelectCallback(m_playerMenu.ActionGroupTargets[0]);
     }
 
@@ -227,35 +227,15 @@ public class BattleManager : MonoBehaviour
         CurrentBattle.EndBattle(Battle.EndReason.Ran);
     }
 
-    public void CatchPhantom()
-    {
-        if (!CanCatch()) { return; }
-
-        Actor phantomToCatch = null;
-        foreach(Actor actor in enemyGroup.Actors)
-        {
-            if (actor.HP > 0)
-            {
-                phantomToCatch = actor;
-                break;
-            }
-        }
-
-        // In the end, actually do a minigame and have a whole process, for now just add it to the player inventory and end the battle.
-        PhantomInstanceData phantomData = ActorToData[phantomToCatch] as PhantomInstanceData;
-        PlayerInventoryManager.Instance.AddPhantom(phantomData);
-        CurrentBattle.EndBattle(Battle.EndReason.PhantomCaught);
-    }
-
     public void SwapPhantoms(Actor newPhantom)
     {
-        foreach(KeyValuePair<Actor, CombatantInstanceData> keyValuePair in ActorToData)
+        foreach (KeyValuePair<Actor, CombatantInstanceData> keyValuePair in ActorToData)
         {
             if (keyValuePair.Value == PlayerInventoryManager.Instance.GetCurrentPhantom())
             {
                 CurrentBattle.SwapParticipant(keyValuePair.Key, newPhantom);
                 PlayerInventoryManager.Instance.SetCurrentPhantom(ActorToData[newPhantom] as PhantomInstanceData);
-                HealthIndicator prevIndicator =  m_playerMenu.ActorToHealthIndicator[keyValuePair.Key];
+                HealthIndicator prevIndicator = m_playerMenu.ActorToHealthIndicator[keyValuePair.Key];
                 m_playerMenu.ActorToHealthIndicator.Remove(keyValuePair.Key);
                 prevIndicator.Actor = newPhantom;
                 m_playerMenu.ActorToHealthIndicator.Add(newPhantom, prevIndicator);
@@ -273,14 +253,28 @@ public class BattleManager : MonoBehaviour
     public bool CanCatch()
     {
         int remainingEnemies = 0;
-        foreach(Actor actor in enemyGroup.Actors)
+        foreach (Actor actor in enemyGroup.Actors)
         {
             if (actor.HP > 0)
             {
                 remainingEnemies += 1;
             }
         }
-
         return (remainingEnemies == 1);
-    }    
+    }
+
+    public Actor CatchablePhantom()
+    {
+        Actor phantomToCatch = null;
+        foreach (Actor actor in enemyGroup.Actors)
+        {
+            if (actor.HP > 0)
+            {
+                phantomToCatch = actor;
+                break;
+            }
+        }
+
+        return phantomToCatch;
+    }
 }

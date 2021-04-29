@@ -146,6 +146,11 @@ public class DataManager : MonoBehaviour
         }
 
         m_playerBattleInstanceData = new PlayerBattleInstanceData(m_playerBattleData);
+        // TODO: Save this stuff and whatnot, just defaulting the player to level 3 with 1 level up in each.
+        m_playerBattleInstanceData.Level = 3;
+        m_playerBattleInstanceData.LevelUps.Mana = 1;
+        m_playerBattleInstanceData.LevelUps.MaxHP = 1;
+        m_playerBattleInstanceData.LevelUps.Relic = 1;
         m_playerBattleInstanceData.SetCurrentStats();
         m_playerBattleInstanceData.FullRestore();
     }
