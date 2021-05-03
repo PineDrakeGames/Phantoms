@@ -12,6 +12,8 @@ public class PlayerStateAttack : PlayerMovementState
         Controller.AttackHitbox.SetActive(true);
         m_attackStarted = false;
         m_attackEnded = false;
+        Controller.CharacterAnimator.SetTrigger("Attack");
+        Controller.CharacterAnimator.SetBool("Running", false);
 
         Controller.Attack();
     }
@@ -41,6 +43,7 @@ public class PlayerStateAttack : PlayerMovementState
             if (!m_attackEnded)
             {
                 Controller.AttackHitbox.SetActive(false);
+                Controller.CharacterAnimator.SetBool("Running", true);
                 m_attackEnded = true;
             }
 
