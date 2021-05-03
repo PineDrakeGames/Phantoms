@@ -213,20 +213,41 @@ public class BattlePhantomCatchManager : MonoBehaviour
             acceptanceChance = Mathf.Pow(0.75f, (float)levelDifference + 1);
         }
         float randomRoll = Random.Range(0f, 1f);
-        if (randomRoll <= acceptanceChance)
+        if (randomRoll > acceptanceChance)
         {
             // Fail catch
+            Debug.Log( string.Format("Initial roll missed, try again lol (Random roll {0}, acceptance chance {1}", randomRoll, acceptanceChance));
             FailCatch();
             return false;
         }
 
-        // At this point, determine the required health cost in order to catch the phantom (using level difference, health % and randomness),
+        // At this point, determine the required health cost in order to catch the phantom (using level difference, health %, afflictions, battle duration, randomness, etc),
         // and check it vs the wagered health
-        //float baseHealthCost = healthPercentage;
-        // Modify based on level difference
 
-        // FOR NOW, JUST MAKING SURE IT'S AT LEAST 3 HP
-        if (m_currentWager < 3)
+        string log = "Calculating min required health cost:\n";
+
+        // Start with a random value between 0 and 1 - 0 being a min health wager, 1 being a max health wager.
+        float healthCost = Random.Range(0f, 1f);
+
+        log += string.Format("Initial Random Value: {0} ({1})\n",  Mathf.RoundToInt(Mathf.Lerp(1f, (float)m_playerCurrentHealth, healthCost)), healthCost); 
+
+
+        // After this, take into account the level difference - so adjust this health cost based on the level difference (10% per level).
+        healthCost += ( Mathf.Clamp(((float)levelDifference / 10f), -1f, 1f) );
+        log += string.Format("After level difference adjustments: {0} ({1})\n",  Mathf.RoundToInt(Mathf.Lerp(1f, (float)m_playerCurrentHealth, healthCost)), healthCost); 
+
+        // Adjust the health cost so that it's then halfway towards the enemy's health - so low roll vs high health would go to halfway, high roll vs low health would also go to half.
+        healthCost -= (healthCost - healthPercentage) * 0.5f;
+        log += string.Format("Scaling halfway to the enemy's health percentage: {0} ({1})\n",  Mathf.RoundToInt(Mathf.Lerp(1f, (float)m_playerCurrentHealth, healthCost)), healthCost); 
+        
+
+        healthCost = Mathf.Clamp01(healthCost);
+        int convertedHealthMin = Mathf.RoundToInt(Mathf.Lerp(1f, (float)m_playerCurrentHealth, healthCost));
+
+        log += "So, final health min requirement is " + convertedHealthMin;
+        Debug.Log(log);
+
+        if (m_currentWager < convertedHealthMin)
         {
             FailCatch();
             return false;
