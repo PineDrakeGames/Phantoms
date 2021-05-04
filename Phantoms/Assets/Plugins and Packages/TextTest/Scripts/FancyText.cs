@@ -30,6 +30,12 @@ public class FancyText : MonoBehaviour
     [Tooltip("The delay between when each character is revealed.")]
     public float CharacterDelay = 0.05f;
 
+    [SerializeField]
+    private List<char> m_quarterPauseCharacters = null;
+
+    [SerializeField]
+    private float quarterPauseDuration = 0.1f;
+
 
     [Header("Current Status")]
     [ShowOnly]
@@ -74,6 +80,10 @@ public class FancyText : MonoBehaviour
     AudioSource audioSource;
     bool hasAudio = false;
 
+    // Only for dialoguesystem
+    [HideInInspector]
+    public FancyTextTypewriterEffect TypeWriterEffect = null;
+
     /// Initialization ///
     // Get references to any components needed in start
     private void Start()
@@ -97,7 +107,11 @@ public class FancyText : MonoBehaviour
             ModifyMesh();
             if (Revealing)
             {
-                DisplayText();
+                m_currentDelay -= Time.deltaTime;
+                while ((m_currentDelay <= 0) && Revealing)
+                {
+                    DisplayText();
+                };
             }
         }
     }
@@ -162,11 +176,7 @@ public class FancyText : MonoBehaviour
 
     private void DisplayText()
     {
-        if (m_currentDelay > 0)
-        {
-            m_currentDelay -= Time.deltaTime;
-            return;
-        }
+        
 
         bool playedSound = false;
 
@@ -209,7 +219,7 @@ public class FancyText : MonoBehaviour
             char letter = textDisplayString[charIndex];
 
             // If the current letter is not visible, skip it.
-            if (letter == ' ' || letter == '\n')
+            if (letter == ' ' || letter == '\n' || letter == '\t')
             {
                 charIndex += 1;
             }
@@ -224,13 +234,36 @@ public class FancyText : MonoBehaviour
 
                 if (!playedSound)
                 {
-                    if (hasAudio) { audioSource.Play(); }
+                    if (hasAudio) { audioSource.PlayOneShot(audioSource.clip); }
                     playedSound = true;
                 }
                 if (CharacterDelay != 0f)
                 {
                     playedSound = false;
+                    if (TypeWriterEffect)
+                    {
+                        if (TypeWriterEffect.IsFullPauseCharacter(letter))
+                        {
+                            m_currentDelay += TypeWriterEffect.fullPauseDuration;
+                            return;
+                        }
+                        else if (TypeWriterEffect.IsQuarterPauseCharacter(letter))
+                        {
+                            m_currentDelay += TypeWriterEffect.quarterPauseDuration;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        if (m_quarterPauseCharacters.Contains(letter))
+                        {
+                            m_currentDelay += quarterPauseDuration;
+                            return;
+                        }
+                    }
+
                     m_currentDelay += CharacterDelay;
+
                     return;
                 }
             }
@@ -392,6 +425,12 @@ public class FancyText : MonoBehaviour
         }
         speeds.Add(temp);
         numSpeeds += 1;
+    }
+
+    public void SetText(string text, int startIndex)
+    {
+        SetText(text);
+        charIndex = startIndex;
     }
 
     public void SetText(string text)

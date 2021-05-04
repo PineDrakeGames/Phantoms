@@ -94,6 +94,7 @@ public class CharacterData
 
         // Get references to data from the cached mesh.
         m_sourceVertices = m_cachedMeshInfo.vertices;
+
         m_sourceVertexColors = m_cachedMeshInfo.colors32;
 
         // Get references to data from the current mesh.
@@ -159,7 +160,14 @@ public class CharacterData
                 result.y =  m_sourceVertices[m_wordIndex + vertice].y;
                 break;
             case CharacterHeight.LINE:
-                result.y =  m_sourceVertices[m_lineIndex + vertice].y;
+                if (m_lineIndex + vertice < m_sourceVertices.Length)
+                {
+                    result.y =  m_sourceVertices[m_lineIndex + vertice].y;
+                }
+                else
+                {
+                    // TODO: The issue is caused when a second material is used in the same line - will need to cache the source vertices for that instead.
+                }
                 break;
         }
         return result;

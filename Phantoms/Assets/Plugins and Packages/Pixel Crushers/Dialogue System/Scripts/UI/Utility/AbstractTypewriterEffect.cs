@@ -164,22 +164,22 @@ namespace PixelCrushers.DialogueSystem
             return UITools.StripRPGMakerCodes(s);
         }
 
-        protected bool IsFullPauseCharacter(char c)
+        public bool IsFullPauseCharacter(char c)
         {
             return IsCharacterInString(c, fullPauseCharacters);
         }
 
-        protected bool IsQuarterPauseCharacter(char c)
+        public bool IsQuarterPauseCharacter(char c)
         {
             return IsCharacterInString(c, quarterPauseCharacters);
         }
 
-        protected bool IsSilentCharacter(char c)
+        public bool IsSilentCharacter(char c)
         {
             return IsCharacterInString(c, silentCharacters);
         }
 
-        protected bool IsCharacterInString(char c, string s)
+        public bool IsCharacterInString(char c, string s)
         {
             if (string.IsNullOrEmpty(s)) return false;
             for (int i = 0; i < s.Length; i++)
@@ -189,12 +189,12 @@ namespace PixelCrushers.DialogueSystem
             return false;
         }
 
-        protected virtual void PlayCharacterAudio(char c)
+        public virtual void PlayCharacterAudio(char c)
         {
             PlayCharacterAudio();
         }
 
-        protected virtual void PlayCharacterAudio()
+        public virtual void PlayCharacterAudio()
         {
             if (audioClip == null || audioSource == null) return;
             AudioClip randomClip = null;
