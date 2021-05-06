@@ -15,14 +15,9 @@ public class BattleLoadingTrigger : MonoBehaviour
     {
         if (other.tag == "Player" && m_encounterData != null)
         {
-
-            List<PhantomInstanceData> encounterPhantoms = m_encounterData.GetEnemyPhantoms();
-            if (encounterPhantoms.Count > 0)
-            {
-                BattleStartManager.EnemyPhantoms = encounterPhantoms;
-                LoadingManager.LoadBattle(scene);
-                transform.parent.gameObject.SetActive(false);
-            }
+            BattleStartManager.Enemies = m_encounterData;
+            LoadingManager.LoadBattle(scene);
+            transform.parent.gameObject.SetActive(false);
         }
     }
 }

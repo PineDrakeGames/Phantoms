@@ -8,10 +8,16 @@ public class SetEnemyEncounterData : EnemyEncounterData
     [SerializeField]
     private List<PhantomInstanceData> m_phantoms = new List<PhantomInstanceData>();
 
-    public override List<PhantomInstanceData> GetEnemyPhantoms()
+    public override List<Ares.Actor> GetEnemies()
     {
-        List<PhantomInstanceData> returnList = new List<PhantomInstanceData>(m_phantoms);
+        List<PhantomInstanceData> phantomList = new List<PhantomInstanceData>(m_phantoms);
+        List<Ares.Actor> phantomActors = new List<Ares.Actor>();
 
-        return returnList;
+        foreach (PhantomInstanceData phantom in phantomList)
+        {
+            phantomActors.Add(SpawnGenericPhantom(phantom));
+        }
+
+        return phantomActors;
     }
 }

@@ -17,18 +17,14 @@ public class BattleStartManager : MonoBehaviour
 
 
     // List of enemies to fight in 
-    public static List<PhantomInstanceData> EnemyPhantoms = null;
+    public static EnemyEncounterData Enemies = null;
     
     #if UNITY_EDITOR
     private void Awake()
     {
-        if (EnemyPhantoms == null)
+        if (Enemies == null)
         {
-            List<PhantomInstanceData> encounterPhantoms = m_enemyEncounterData.GetEnemyPhantoms();
-            if (encounterPhantoms.Count > 0)
-            {
-                BattleStartManager.EnemyPhantoms = encounterPhantoms;
-            }
+            Enemies = m_enemyEncounterData;
         }
         if (PlayerInventoryManager.Instance.Phantoms.Count == 0)
         {
@@ -61,16 +57,6 @@ public class BattleStartManager : MonoBehaviour
             playerInactiveCombatants.RemoveAt(PlayerInventoryManager.Instance.CurrentActivePhantom);
         }
 
-
-        List<CombatantInstanceData> enemyCombatants = new List<CombatantInstanceData>();
-        foreach(PhantomInstanceData phantomData in EnemyPhantoms)
-        {
-            phantomData.SetCurrentStats();
-            phantomData.CurrentHP = phantomData.CurrentStats.MaxHP;
-            phantomData.CurrentMana = phantomData.CurrentStats.Mana;
-        }
-        enemyCombatants.AddRange(EnemyPhantoms);
-
-        m_battleInitializer.InitializeBattle(playerCombatants, playerInactiveCombatants, enemyCombatants);
+        m_battleInitializer.InitializeBattle(playerCombatants, playerInactiveCombatants, Enemies);
     }
 }

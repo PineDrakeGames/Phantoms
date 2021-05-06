@@ -27,7 +27,7 @@ public class BattleInitializer : MonoBehaviour
 
 
     // Start is called before the first frame update
-    public void InitializeBattle(List<CombatantInstanceData> playerCombatants, List<CombatantInstanceData> inactivePlayerCombatants, List<CombatantInstanceData> enemyCombatants)
+    public void InitializeBattle(List<CombatantInstanceData> playerCombatants, List<CombatantInstanceData> inactivePlayerCombatants, EnemyEncounterData enemies)
     {
         List<Actor> PlayerActors = SpawnActorsInLine(true, playerCombatants, m_playerSpawnPoint1.position, m_playerSpawnPoint2.position, m_maxDistanceBetweenPlayers);
 
@@ -38,7 +38,12 @@ public class BattleInitializer : MonoBehaviour
         }
         PlayerActors.AddRange(InactivePlayerActors);
 
-        List<Actor> EnemyActors = SpawnActorsInLine(false, enemyCombatants, m_enemySpawnPoint1.position, m_enemySpawnPoint2.position, m_maxDistanceBetweenEnemies);
+        List<Actor> EnemyActors = enemies.GetEnemies();
+        Vector3[] positions = GetSpawnPointsInLine(EnemyActors.Count, m_enemySpawnPoint1.position, m_enemySpawnPoint2.position, m_maxDistanceBetweenEnemies);
+        for (int i = 0; i < EnemyActors.Count; i++)
+        {
+            EnemyActors[i].transform.position = positions[i];
+        }
 
         SetInitialRotations(PlayerActors, EnemyActors);
 
@@ -50,9 +55,15 @@ public class BattleInitializer : MonoBehaviour
     {
         // First, create a list of positions to spawn things
         int numToSpawn = combatants.Count;
-        Vector3[] spawnPoints = new Vector3[numToSpawn];
+        Vector3[] spawnPoints = GetSpawnPointsInLine(numToSpawn, point1, point2, maxDistance);
 
-        // For each combatant, figure out where we are going to spawn things - this method spreads them evenly between point 1 and point 2, with max distance between them.
+        // Now, spawn each actor using our list of positions.
+        return SpawnActors(isPlayer, combatants, spawnPoints);
+    }
+
+    private Vector3[] GetSpawnPointsInLine(int numToSpawn, Vector3 point1, Vector3 point2, float maxDistance)
+    {
+        Vector3[] spawnPoints = new Vector3[numToSpawn];
         float totalDistance = Vector3.Distance(point1, point2);
         float actorDistance = totalDistance / (float)numToSpawn;
         if (actorDistance > maxDistance)
@@ -69,8 +80,7 @@ public class BattleInitializer : MonoBehaviour
             spawnPoints[i] = Vector3.Lerp(point1, point2, lerpAmount);
         }
 
-        // Now, spawn each actor using our list of positions.
-        return SpawnActors(isPlayer, combatants, spawnPoints);
+        return spawnPoints;
     }
 
     // To just spawn a bunch of combatants in a single place.

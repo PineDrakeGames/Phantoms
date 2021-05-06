@@ -70,9 +70,10 @@ public class RandomEnemyEncounterData : EnemyEncounterData
         }
     }
 
-    public override List<PhantomInstanceData> GetEnemyPhantoms()
+    public override List<Ares.Actor> GetEnemies()
     {
-        List<PhantomInstanceData> returnList = new List<PhantomInstanceData>();
+        List<PhantomInstanceData> phantomList = new List<PhantomInstanceData>();
+        List<Ares.Actor> phantomActors = new List<Ares.Actor>();
 
         RandomEnemyEncounter encounter = null;
 
@@ -92,10 +93,15 @@ public class RandomEnemyEncounterData : EnemyEncounterData
             PhantomInstanceData phanData = PhantomDataUtility.GenerateRandomPhantom(randEnemy.Phantom, randEnemy.PhantomLevel);
             if (phanData != null)
             {
-                returnList.Add(phanData);
+                phantomList.Add(phanData);
             }
         }
 
-        return returnList;
+        foreach (PhantomInstanceData phantom in phantomList)
+        {
+            phantomActors.Add(SpawnGenericPhantom(phantom));
+        }
+
+        return phantomActors;
     }
 }
