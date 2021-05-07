@@ -8,12 +8,30 @@ namespace Ares {
     public class TutorialAIActor : AIActor
     {
         public string Conversation = null;
+		BattleDelayElement battleDelayer = null;
+
+		private void Start()
+		{
+			battleDelayer = gameObject.AddComponent<BattleDelayElement>();
+			battleDelayer.LinkToBattle(Battle);
+			battleDelayer.RequestBattleDelayLock(DelayRequestReason.UIEvent);
+
+			PixelCrushers.DialogueSystem.DialogueManager.StartConversation(Conversation);
+
+			PixelCrushers.DialogueSystem.DialogueManager.instance.conversationEnded += OnConversationEnd;
+		}
+
+		public void OnConversationEnd(Transform transform = null)
+		{
+			battleDelayer.ReleaseBattleDelayLock();
+			PixelCrushers.DialogueSystem.DialogueManager.instance.conversationEnded -= OnConversationEnd;
+		}
 
         public override void SelectAction(ActionInput actionInput){
 			VerboseLogger.Log("Selecting AI action");
 
             // TODO: Set up targeting to make sure that no matter what, the player doesn't die.
-            PixelCrushers.DialogueSystem.DialogueManager.StartConversation(Conversation);
+            
 
 			if(actionInput.ValidAbilities.Length > 0){
 				actionInput.AbilitySelectCallback(actionInput.ValidAbilities[Random.Range(0, actionInput.ValidAbilities.Length)]);
