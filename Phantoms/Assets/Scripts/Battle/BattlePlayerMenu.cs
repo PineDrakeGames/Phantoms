@@ -72,6 +72,19 @@ public class BattlePlayerMenu : MonoBehaviour
     [SerializeField]
     private GameObject m_damageIndicatorPrefab = null;
 
+
+    ////////////////////////////////////
+    /// Public Bools to Lock Options ///
+    ////////////////////////////////////
+    public bool CanRun = true;
+    public bool CanCatch = true;
+    public bool CanSwap = true;
+    public bool CanSwitch = true;
+    public bool CanSkip = true;
+    public bool CanUseAbilities = true;
+    public bool CanUseItems = true;
+    public bool CanUseTactics = true;
+
     /////////////////////
     /// Private Enums ///
     /////////////////////
@@ -132,8 +145,35 @@ public class BattlePlayerMenu : MonoBehaviour
     public static BattlePlayerMenu Instance { get { return s_instance; } }
 
 
-    // Battle Start function!
-    // Call this to get things set up.
+    ///////////////////////
+    /// Unity Functions ///
+    ///////////////////////
+
+    private void Awake()
+    {
+        // Just making sure there are no locks by default when the battle starts, let other scripts lock the battle.
+        CanRun = true;
+        CanCatch = true;
+        CanSwap = true;
+        CanSwitch = true;
+        CanSkip = true;
+        CanUseAbilities = true;
+        CanUseItems = true;
+        CanUseTactics = true;
+    }
+
+    private void OnDestroy()
+    {
+        if (m_battleManager && m_battleManager.CurrentBattle != null)
+        {
+            m_battleManager.CurrentBattle.OnTurnStart.RemoveListener(SetCurrentTurnIndicator);
+        }
+    }
+
+    /////////////////////////////////////
+    // Battle Start function!          //
+    // Call this to get things set up. //
+    /////////////////////////////////////
     public void OnBattleStart()
     {
         if (s_instance == null)
@@ -180,14 +220,6 @@ public class BattlePlayerMenu : MonoBehaviour
             }
         }
         enemyCenter /= totalEnemies;
-    }
-
-    private void OnDestroy()
-    {
-        if (m_battleManager && m_battleManager.CurrentBattle != null)
-        {
-            m_battleManager.CurrentBattle.OnTurnStart.RemoveListener(SetCurrentTurnIndicator);
-        }
     }
 
     /////////////////////////////////
@@ -266,10 +298,11 @@ public class BattlePlayerMenu : MonoBehaviour
         BattleSubmenuButton submenuButton = null;
 
         // Catch button (if available)
-        if (m_battleManager.ActorToData[m_currentActor] is PlayerBattleInstanceData && CanCatch())
+        if (m_battleManager.ActorToData[m_currentActor] is PlayerBattleInstanceData)
         {
             submenuButton = AddSubmenuButton("Catch", "Catch that phantom!");
             submenuButton.ClickEvent.AddListener(CatchPhantomMenu);
+            submenuButton.ButtonComponent.interactable = CanCatchPhantom();
         }
 
         // Check if swapping turns is an option first.
@@ -277,22 +310,26 @@ public class BattlePlayerMenu : MonoBehaviour
         {
             submenuButton = AddSubmenuButton("Swap", "Swap turns with your partner");
             submenuButton.ClickEvent.AddListener(m_battleManager.SwapTurns);
+            submenuButton.ButtonComponent.interactable = CanSwap;
         }
 
         if (CanSwitchPhantom())
         {
             submenuButton = AddSubmenuButton("Switch Phantom", "Switch out your current phantom partner");
             submenuButton.ClickEvent.AddListener(SwitchPhantomsMenu);
+            submenuButton.ButtonComponent.interactable = CanSwitch;
         }
 
         // Just to skip a turn
         submenuButton = AddSubmenuButton("Skip", "Skip your turn");
         submenuButton.ClickEvent.AddListener(delegate { m_actionInput.SkipCallback(); });
+        submenuButton.ButtonComponent.interactable = CanSkip;
 
         // Run Button
         // TODO: Have only chance to run, just always runs for now
         submenuButton = AddSubmenuButton("Run", "Run away from battle");
         submenuButton.ClickEvent.AddListener(m_battleManager.TryRun);
+        submenuButton.ButtonComponent.interactable = CanRun;
 
         ShowSubmenu();
     }
@@ -495,6 +532,10 @@ public class BattlePlayerMenu : MonoBehaviour
                 m_abilitiesButton.Select();
                 break;
         }
+
+        m_tacticsButton.interactable = CanUseTactics;
+        m_itemsButton.interactable = CanUseItems;
+        m_abilitiesButton.interactable = CanUseAbilities;
     }
 
     public void ConfirmMove()
@@ -814,9 +855,9 @@ public class BattlePlayerMenu : MonoBehaviour
     }
 
     // Checks if the player can catch in the current fight
-    private bool CanCatch()
+    private bool CanCatchPhantom()
     {
-        return m_battleManager.CanCatch();
+        return m_battleManager.CanCatch() && CanCatch;
     }
 
     // Checks if the player can swap out their current phantom for another one

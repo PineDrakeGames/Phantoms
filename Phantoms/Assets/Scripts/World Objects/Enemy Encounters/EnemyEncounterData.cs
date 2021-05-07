@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class EnemyEncounterData : ScriptableObject
 {
-    public abstract List<Ares.Actor> GetEnemies();
+    public abstract Dictionary<CombatantInstanceData, Ares.Actor> GetEnemies();
 
 
     // Utility functions used in a few different types of enemy encounters

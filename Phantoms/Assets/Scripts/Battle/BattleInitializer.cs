@@ -38,11 +38,19 @@ public class BattleInitializer : MonoBehaviour
         }
         PlayerActors.AddRange(InactivePlayerActors);
 
-        List<Actor> EnemyActors = enemies.GetEnemies();
-        Vector3[] positions = GetSpawnPointsInLine(EnemyActors.Count, m_enemySpawnPoint1.position, m_enemySpawnPoint2.position, m_maxDistanceBetweenEnemies);
-        for (int i = 0; i < EnemyActors.Count; i++)
+        Dictionary<CombatantInstanceData, Actor> Enemies = enemies.GetEnemies();
+        List<Actor> EnemyActors = new List<Actor>();
+        
+
+        Vector3[] positions = GetSpawnPointsInLine(Enemies.Count, m_enemySpawnPoint1.position, m_enemySpawnPoint2.position, m_maxDistanceBetweenEnemies);
+        int index = 0;
+        foreach(CombatantInstanceData combatant in Enemies.Keys)
         {
-            EnemyActors[i].transform.position = positions[i];
+            Actor actorComponent = Enemies[combatant];
+            BattleManager.Instance.ActorToData[actorComponent] = combatant;
+            actorComponent.transform.position = positions[index];
+            EnemyActors.Add(actorComponent);
+            index++;
         }
 
         SetInitialRotations(PlayerActors, EnemyActors);

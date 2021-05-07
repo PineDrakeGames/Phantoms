@@ -194,6 +194,14 @@ public class BattlePhantomCatchManager : MonoBehaviour
 
         PhantomInstanceData phantomData = m_battleManager.ActorToData[phantomToCatch] as PhantomInstanceData;
 
+        /// Special cases for specific phantoms first ///
+        if (phantomToCatch is Ares.CatchTutorialAIActor)
+        {
+            SucceedCatch(phantomData, phantomToCatch);
+            return true;
+        }
+
+
         // First, get some values for determining how likely we are to catch the phantom
         int levelDifference = phantomData.Level - DataManager.Instance.GetPlayerBattleInstanceData().Level;
         float healthPercentage = (float)phantomToCatch.HP / (float)phantomToCatch.MaxHP;
@@ -252,11 +260,8 @@ public class BattlePhantomCatchManager : MonoBehaviour
             FailCatch();
             return false;
         }
-
-        phantomData.CurrentHP = phantomToCatch.HP;
-        phantomData.CurrentMana = phantomToCatch.Mana;
-        PlayerInventoryManager.Instance.AddPhantom(phantomData);
-        m_battleManager.CurrentBattle.EndBattle(Ares.Battle.EndReason.PhantomCaught);
+        
+        SucceedCatch(phantomData, phantomToCatch);
         return true;
     }
 
@@ -264,5 +269,13 @@ public class BattlePhantomCatchManager : MonoBehaviour
     {
         m_playerActor.TakeDamage(m_currentWager);
         m_actionInput.SkipCallback();
+    }
+
+    private void SucceedCatch(PhantomInstanceData phantomData, Ares.Actor phantomToCatch)
+    {
+        phantomData.CurrentHP = phantomToCatch.HP;
+        phantomData.CurrentMana = phantomToCatch.Mana;
+        PlayerInventoryManager.Instance.AddPhantom(phantomData);
+        m_battleManager.CurrentBattle.EndBattle(Ares.Battle.EndReason.PhantomCaught);
     }
 }

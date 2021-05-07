@@ -78,7 +78,7 @@ namespace Ares
             {
                 return hp;
             }
-            private set
+            protected set
             {
                 int newHp = Mathf.Clamp(value, 0, maxHP);
 

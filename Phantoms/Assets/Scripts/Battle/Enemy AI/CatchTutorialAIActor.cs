@@ -5,20 +5,47 @@ using System.Linq;
 
 namespace Ares {
     [AddComponentMenu("Ares/Tutorial AI Actor", 2)]
-    public class TutorialAIActor : AIActor
+    public class CatchTutorialAIActor : AIActor
     {
-        public string Conversation = null;
+        public string StartConversation = null;
+		public string CatchConversation = null;
 		BattleDelayElement battleDelayer = null;
 
+		//////////////////////////////
+		/// Tutorial Specific Code ///
+		//////////////////////////////
 		private void Start()
 		{
 			battleDelayer = gameObject.AddComponent<BattleDelayElement>();
 			battleDelayer.LinkToBattle(Battle);
 			battleDelayer.RequestBattleDelayLock(DelayRequestReason.UIEvent);
 
-			PixelCrushers.DialogueSystem.DialogueManager.StartConversation(Conversation);
+			PixelCrushers.DialogueSystem.DialogueManager.StartConversation(StartConversation);
+			BattlePlayerMenu.Instance.CanRun = false;
+			BattlePlayerMenu.Instance.CanCatch = false;
 
 			PixelCrushers.DialogueSystem.DialogueManager.instance.conversationEnded += OnConversationEnd;
+			OnHPChange.AddListener(OnTakeDamage);
+		}
+
+		public void OnTakeDamage(int newHP)
+		{
+			if (newHP <= (MaxHP - newHP))
+			{
+				
+
+				battleDelayer.RequestBattleDelayLock(DelayRequestReason.UIEvent);
+
+				PixelCrushers.DialogueSystem.DialogueManager.StartConversation(CatchConversation);
+				BattlePlayerMenu.Instance.CanCatch = true;
+				BattlePlayerMenu.Instance.CanUseItems = false;
+				BattlePlayerMenu.Instance.CanUseAbilities = false;
+
+				PixelCrushers.DialogueSystem.DialogueManager.instance.conversationEnded += OnConversationEnd;
+				OnHPChange.RemoveListener(OnTakeDamage);
+
+				if (newHP <= 1) { HP = 1; }
+			}
 		}
 
 		public void OnConversationEnd(Transform transform = null)
@@ -27,6 +54,10 @@ namespace Ares {
 			PixelCrushers.DialogueSystem.DialogueManager.instance.conversationEnded -= OnConversationEnd;
 		}
 
+
+		/////////////////////////////
+		/// Required AI Functions ///
+		/////////////////////////////
         public override void SelectAction(ActionInput actionInput){
 			VerboseLogger.Log("Selecting AI action");
 
