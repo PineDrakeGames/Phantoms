@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class TutorialPopupTrigger : MonoBehaviour
 {
+    [Header("TRIGGER ID STUFF")]
+    [SerializeField]
+    private bool m_saveDisabledState = true;
+    [SerializeField]
+    private string m_popupTriggerID = "Tutorial_";
+
     [Header("Key to Show")]
     [SerializeField]
     private SpecialKey m_specialKey = SpecialKey.NONE;
@@ -26,9 +32,20 @@ public class TutorialPopupTrigger : MonoBehaviour
     private bool m_active = false;
     private bool m_disabled = false;
 
+    // TEMPORARY WAY OF "SAVING" WHAT TUTORIALS HAVE BEEN COMPLETED SO THEY DON'T TRIGGER AGAIN
+    private static List<string> s_completedTutorials = new List<string>();
+
+    private void Awake()
+    {
+        if (s_completedTutorials.Contains(m_popupTriggerID) && m_saveDisabledState)
+        {
+            this.enabled = false;
+        }
+    }
+
     public void Show()
     {
-        if (!m_disabled)
+        if (!m_disabled && (!s_completedTutorials.Contains(m_popupTriggerID) || !m_saveDisabledState))
         {
             if (m_specialKey != SpecialKey.NONE)
             {
@@ -54,6 +71,11 @@ public class TutorialPopupTrigger : MonoBehaviour
         if (m_active)
         {
             Hide();
+        }
+
+        if (!s_completedTutorials.Contains(m_popupTriggerID) && m_saveDisabledState)
+        {
+            s_completedTutorials.Add(m_popupTriggerID);
         }
     }
 
