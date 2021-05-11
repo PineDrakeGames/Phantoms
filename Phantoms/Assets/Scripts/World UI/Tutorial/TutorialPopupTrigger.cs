@@ -19,6 +19,8 @@ public class TutorialPopupTrigger : MonoBehaviour
     private bool m_hideOnTriggerExit = true;
     [SerializeField]
     private bool m_disableOnTriggerExit = true;
+    [SerializeField]
+    private bool m_overrideCurrentTutorial = false;
 
 
     private bool m_active = false;
@@ -30,11 +32,11 @@ public class TutorialPopupTrigger : MonoBehaviour
         {
             if (m_specialKey != SpecialKey.NONE)
             {
-                TutorialControlPopup.Instance.ShowSpecialKeyPopup(m_specialKey);
+                TutorialControlPopup.Instance.ShowSpecialKeyPopup(m_specialKey, m_overrideCurrentTutorial);
             }
             else
             {
-                TutorialControlPopup.Instance.ShowKeyPopup(m_key);
+                TutorialControlPopup.Instance.ShowKeyPopup(m_key, m_overrideCurrentTutorial);
             }
         }
         m_active = true;
@@ -49,7 +51,10 @@ public class TutorialPopupTrigger : MonoBehaviour
     public void Disable()
     {
         m_disabled = true;
-        Hide();
+        if (m_active)
+        {
+            Hide();
+        }
     }
 
     public void StopDisable()

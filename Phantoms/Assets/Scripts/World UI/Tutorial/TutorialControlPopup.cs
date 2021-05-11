@@ -162,7 +162,7 @@ public class TutorialControlPopup : MonoBehaviour
         }
     }
 
-    public void ShowSpecialKeyPopup(SpecialKey specialKey, float displayDuration = 0f, bool Override = false)
+    public void ShowSpecialKeyPopup(SpecialKey specialKey, bool Override = false)
     {
         if (m_currentState != PopupState.Off)
         {
