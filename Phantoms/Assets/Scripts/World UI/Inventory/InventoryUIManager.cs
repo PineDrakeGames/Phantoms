@@ -30,6 +30,7 @@ public class InventoryUIManager : MonoBehaviour
     }
 
     private bool m_isInventoryOpen = false;
+    public bool IsOpen { get { return m_isInventoryOpen; } }
     private int m_currentTabIndex = 0;
 
     private void Awake()
@@ -58,7 +59,7 @@ public class InventoryUIManager : MonoBehaviour
     {
         // Check for input to open/close inventory
         // TODO: Don't just check keys, go through some input manager thing...
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.Tab) && !PauseMenu.Instance.Paused)
         {
             ToggleInventory();
         }
@@ -71,7 +72,7 @@ public class InventoryUIManager : MonoBehaviour
             }
             else
             {
-                Application.Quit();
+                PauseMenu.Instance.TogglePause();
             }
         }
     }
@@ -95,6 +96,7 @@ public class InventoryUIManager : MonoBehaviour
         m_isInventoryOpen = true;
         m_inventoryParent.SetActive(true);
         m_tabs[m_currentTabIndex].OpenTab();
+        Time.timeScale = 0f;
     }
 
     public void CloseInventory()
@@ -104,6 +106,7 @@ public class InventoryUIManager : MonoBehaviour
         m_isInventoryOpen = false;
         m_inventoryParent.SetActive(false);
         m_tabs[m_currentTabIndex].CloseTab();
+        Time.timeScale = 1f;
     }
 
     public void SetTab(int newTabIndex)
