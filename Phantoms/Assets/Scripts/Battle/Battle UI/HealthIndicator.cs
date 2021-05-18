@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class HealthIndicator : MonoBehaviour
@@ -12,9 +13,13 @@ public class HealthIndicator : MonoBehaviour
     [SerializeField]
     private TMP_Text m_currentHP = null;
     [SerializeField]
+    private Image m_HPFillMeter = null;
+    [SerializeField]
     private TMP_Text m_maxMana = null;
     [SerializeField]
     private TMP_Text m_currentMana = null;
+    [SerializeField]
+    private Image m_ManaFillMeter = null;
 
     [Header("Buffs & Afflictions")]
     [SerializeField]
@@ -66,8 +71,10 @@ public class HealthIndicator : MonoBehaviour
         {
             m_maxHP.text = newActor.MaxHP.ToString();
             m_currentHP.text = newActor.HP.ToString();
+            m_HPFillMeter.fillAmount = Mathf.Clamp01((float)newActor.HP / (float)newActor.MaxHP);
             m_maxMana.text = newActor.MaxMana.ToString();
             m_currentMana.text = newActor.Mana.ToString();
+            m_ManaFillMeter.fillAmount = Mathf.Clamp01((float)newActor.Mana / (float)newActor.MaxMana);
             m_actorName.text = newActor.DisplayName;
 
             prevHP = newActor.HP;
@@ -108,6 +115,7 @@ public class HealthIndicator : MonoBehaviour
     private void UpdateActorHP(int newHP)
     {
         m_currentHP.text = newHP.ToString();
+        m_HPFillMeter.fillAmount = Mathf.Clamp01((float)newHP / (float)m_actor.MaxHP);
         if (Actor)
         {
             BattlePlayerMenu.Instance.SetDamageIndicator(Actor.gameObject.transform.position, (prevHP - newHP));
@@ -118,6 +126,7 @@ public class HealthIndicator : MonoBehaviour
     private void UpdateActorMana(int newMana)
     {
         m_currentMana.text = newMana.ToString();
+        m_ManaFillMeter.fillAmount = Mathf.Clamp01((float)newMana / (float)m_actor.MaxMana);
     }
 
     // Status Effect Functions
