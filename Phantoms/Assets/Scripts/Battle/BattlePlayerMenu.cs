@@ -42,9 +42,7 @@ public class BattlePlayerMenu : MonoBehaviour
     private GameObject m_buttonPrefab = null;
 
     [SerializeField]
-    private GameObject m_descriptionObject = null;
-    [SerializeField]
-    private TextMeshProUGUI m_descriptionText = null;
+    private BattleSubmenuSelection selectionObject = null;
 
     [Header("Confirm Menu")]
     [SerializeField]
@@ -635,7 +633,10 @@ public class BattlePlayerMenu : MonoBehaviour
 
         submenuButton.ClickEvent.AddListener(ClearSubmenu);
         submenuButton.ClickEvent.AddListener(HideSubmenu);
-        submenuButton.SelectEvent.AddListener(delegate { SetSubmenuDescription(description); });
+        if (!string.IsNullOrEmpty(description))
+        {
+            submenuButton.SelectEvent.AddListener( delegate { selectionObject.SetButtonSelection(submenuButton); });
+        }
         return submenuButton;
     }
 
@@ -643,25 +644,23 @@ public class BattlePlayerMenu : MonoBehaviour
     {
         m_mainMenuParent.SetActive(false);
         m_subMenuParent.SetActive(true);
-        m_descriptionObject.SetActive(true);
 
         foreach (BattleSubmenuButton submenuButton in m_subMenuButtons)
         {
             if (submenuButton.gameObject.activeSelf)
             {
+                Canvas.ForceUpdateCanvases();
                 submenuButton.ButtonComponent.Select();
                 return;
             }
         }
 
         m_backButton.Select();
-        SetSubmenuDescription();
     }
 
     private void HideSubmenu()
     {
         m_subMenuParent.SetActive(false);
-        m_descriptionObject.SetActive(false);
         HideConfirmMenu();
     }
 
@@ -689,21 +688,6 @@ public class BattlePlayerMenu : MonoBehaviour
     {
         m_confirmMenuParent.SetActive(false);
         OnConfirm.RemoveAllListeners();
-    }
-
-    // Used to set the description of the submenu. When given no argument, hides the description box.
-    private void SetSubmenuDescription(string description = null)
-    {
-        if (string.IsNullOrEmpty(description))
-        {
-            m_descriptionObject.SetActive(false);
-            m_descriptionText.text = string.Empty;
-        }
-        else
-        {
-            m_descriptionObject.SetActive(true);
-            m_descriptionText.text = description;
-        }
     }
 
     // Some delegates used only in this function

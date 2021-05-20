@@ -10,8 +10,6 @@ public class BattlePhantomCatchManager : MonoBehaviour
     [SerializeField]
     private BattleManager m_battleManager = null;
     [SerializeField]
-    private BattlePlayerMenu m_playerMenu = null;
-    [SerializeField]
     private GameObject m_menuParent = null;
 
     [Header("Wager amounts")]
