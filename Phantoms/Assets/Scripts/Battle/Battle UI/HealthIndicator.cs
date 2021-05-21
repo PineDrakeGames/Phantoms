@@ -25,6 +25,8 @@ public class HealthIndicator : MonoBehaviour
     private Image m_actorIconFill = null;
     [SerializeField]
     private Image m_actorIconLines = null;
+    [SerializeField]
+    private Animator m_actorIconAnimator = null;
 
     [Header("Buffs & Afflictions")]
     [SerializeField]
@@ -144,10 +146,12 @@ public class HealthIndicator : MonoBehaviour
     {
         m_currentHP.text = newHP.ToString();
         m_HPFillMeter.fillAmount = Mathf.Clamp01((float)newHP / (float)m_actor.MaxHP);
-        if (Actor)
+        if (Actor && newHP < prevHP)
         {
+            m_actorIconAnimator.SetTrigger("Hurt");
             BattlePlayerMenu.Instance.SetDamageIndicator(Actor.gameObject.transform.position, (prevHP - newHP));
         }
+        
         prevHP = newHP;
     }
 
