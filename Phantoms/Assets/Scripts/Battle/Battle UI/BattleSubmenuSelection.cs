@@ -24,7 +24,7 @@ public class BattleSubmenuSelection : MonoBehaviour
 
     public void SetButtonSelection(BattleSubmenuButton button)
     {
-        if (button != null)
+        if (button != null && button.ButtonComponent.interactable)
         {
             rect.anchoredPosition = button.GetComponent<RectTransform>().anchoredPosition;
             m_buttonText.text = button.ButtonName;

@@ -320,6 +320,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
     {
         _attackedInAir = false;
         _doubleJumpedUsed = false;
+        CharacterAnimator.SetTrigger("Landed");
     }
 
     protected void OnLeaveStableGround()

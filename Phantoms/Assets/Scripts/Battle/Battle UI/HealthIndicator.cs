@@ -21,6 +21,11 @@ public class HealthIndicator : MonoBehaviour
     [SerializeField]
     private Image m_ManaFillMeter = null;
 
+    [SerializeField]
+    private Image m_actorIconFill = null;
+    [SerializeField]
+    private Image m_actorIconLines = null;
+
     [Header("Buffs & Afflictions")]
     [SerializeField]
     private Transform m_statusEffectsList = null;
@@ -69,6 +74,29 @@ public class HealthIndicator : MonoBehaviour
 
         if (newActor != null)
         {
+            CombatantInstanceData combatantData = null;
+            if (BattleManager.Instance.ActorToData.ContainsKey(newActor))
+            {
+                combatantData = BattleManager.Instance.ActorToData[newActor];
+            }
+
+            if (combatantData != null)
+            {
+                if (combatantData.Data.IconFill != null && combatantData.Data.IconLines != null)
+                {
+                    m_actorIconFill.sprite = combatantData.Data.IconFill;
+                    m_actorIconLines.sprite = combatantData.Data.IconLines;
+
+                    m_actorIconFill.gameObject.SetActive(true);
+                    m_actorIconLines.gameObject.SetActive(true);
+                }
+                else
+                {
+                    m_actorIconFill.gameObject.SetActive(false);
+                    m_actorIconLines.gameObject.SetActive(false);
+                }
+            }
+
             m_maxHP.text = newActor.MaxHP.ToString();
             m_currentHP.text = newActor.HP.ToString();
             m_HPFillMeter.fillAmount = Mathf.Clamp01((float)newActor.HP / (float)newActor.MaxHP);

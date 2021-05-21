@@ -10,6 +10,9 @@ public abstract class CombatantData : ScriptableObject
     public string DisplayName;
     public string Description = string.Empty;
 
+    public Sprite IconFill = null;
+    public Sprite IconLines = null;
+
     [Header("Things needed for ARES Combat")]
     public GameObject BattlePrefab = null;
     public Ability[] Abilities;
