@@ -36,7 +36,6 @@ public class BattleMainMenuButtons : MonoBehaviour
             if (button)
             {
                 SetCurrentButton(button);
-                Debug.Log(button.name);
             }
         }
     }
