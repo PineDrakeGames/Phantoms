@@ -31,6 +31,18 @@ public class BattlePlayerMenu : MonoBehaviour
     [SerializeField]
     private Button m_tacticsButton = null;
 
+    [Header("Partner menu items")]
+    [SerializeField]
+    private GameObject m_partnerMenuParent = null;
+
+    // Reference to each of the main menu buttons, both for disabling them when the option is not available, and for menu navigation.
+    [SerializeField]
+    private Button m_partnerAbilitiesButton = null;
+    [SerializeField]
+    private Button m_partnerItemsButton = null;
+    [SerializeField]
+    private Button m_partnerTacticsButton = null;
+
     [Header("Sub-menu items")]
     [SerializeField]
     private GameObject m_subMenuParent = null;
@@ -114,6 +126,7 @@ public class BattlePlayerMenu : MonoBehaviour
     private List<BattleSubmenuButton> m_subMenuButtons = new List<BattleSubmenuButton>();
     private ActionInput m_actionInput;
     private Actor m_currentActor = null;
+    private bool m_isKeeperTurn = true;
 
     private Ability m_currentAbility = null;
     private Item m_currentItem = null;
@@ -179,8 +192,8 @@ public class BattlePlayerMenu : MonoBehaviour
             s_instance = this;
         }
 
-        // Test stuff, making a few buttons.
         m_mainMenuParent.SetActive(false);
+        m_partnerMenuParent.SetActive(false);
         HideTargetIndicators();
         HideSubmenu();
 
@@ -250,6 +263,8 @@ public class BattlePlayerMenu : MonoBehaviour
         m_actionInput = actionInput;
         m_currentActor = actor;
 
+        m_isKeeperTurn = (m_battleManager.ActorToData[m_currentActor] is PlayerBattleInstanceData);
+
         m_battleCamera.SetCameraOverShoulder(actor.transform.position, enemyCenter);
         ReturnToMainMenu();
     }
@@ -296,7 +311,7 @@ public class BattlePlayerMenu : MonoBehaviour
         BattleSubmenuButton submenuButton = null;
 
         // Catch button (if available)
-        if (m_battleManager.ActorToData[m_currentActor] is PlayerBattleInstanceData)
+        if (m_isKeeperTurn)
         {
             submenuButton = AddSubmenuButton("Catch", "Catch that phantom!");
             submenuButton.ClickEvent.AddListener(CatchPhantomMenu);
@@ -513,23 +528,46 @@ public class BattlePlayerMenu : MonoBehaviour
     public void ReturnToMainMenu()
     {
         SetState(BattleMenuState.MAIN);
-        m_mainMenuParent.SetActive(true);
+
         ClearSubmenu();
         HideSubmenu();
 
-        switch (m_prevState)
+        if (m_isKeeperTurn)
         {
-            case BattleMenuState.TACTICS:
-                m_tacticsButton.Select();
-                break;
-            case BattleMenuState.ITEMS:
-                m_itemsButton.Select();
-                break;
-            default:
-                // Both if we were previously in the abilities menu, or from any other menu.
-                m_abilitiesButton.Select();
-                break;
+            m_mainMenuParent.SetActive(true);
+            switch (m_prevState)
+            {
+                case BattleMenuState.TACTICS:
+                    m_tacticsButton.Select();
+                    break;
+                case BattleMenuState.ITEMS:
+                    m_itemsButton.Select();
+                    break;
+                default:
+                    // Both if we were previously in the abilities menu, or from any other menu.
+                    m_abilitiesButton.Select();
+                    break;
+            }
         }
+        else
+        {
+            m_partnerMenuParent.SetActive(true);
+            switch (m_prevState)
+            {
+                case BattleMenuState.TACTICS:
+                    m_partnerTacticsButton.Select();
+                    break;
+                case BattleMenuState.ITEMS:
+                    m_partnerItemsButton.Select();
+                    break;
+                default:
+                    // Both if we were previously in the abilities menu, or from any other menu.
+                    m_partnerAbilitiesButton.Select();
+                    break;
+            }
+        }
+
+
 
         m_tacticsButton.interactable = CanUseTactics;
         m_itemsButton.interactable = CanUseItems;
@@ -635,7 +673,7 @@ public class BattlePlayerMenu : MonoBehaviour
         submenuButton.ClickEvent.AddListener(HideSubmenu);
         if (!string.IsNullOrEmpty(description))
         {
-            submenuButton.SelectEvent.AddListener( delegate { selectionObject.SetButtonSelection(submenuButton); });
+            submenuButton.SelectEvent.AddListener(delegate { selectionObject.SetButtonSelection(submenuButton); });
         }
         return submenuButton;
     }
@@ -643,6 +681,7 @@ public class BattlePlayerMenu : MonoBehaviour
     private void ShowSubmenu()
     {
         m_mainMenuParent.SetActive(false);
+        m_partnerMenuParent.SetActive(false);
         m_subMenuParent.SetActive(true);
 
         foreach (BattleSubmenuButton submenuButton in m_subMenuButtons)
