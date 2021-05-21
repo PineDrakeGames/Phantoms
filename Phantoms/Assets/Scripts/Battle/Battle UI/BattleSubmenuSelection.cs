@@ -37,4 +37,9 @@ public class BattleSubmenuSelection : MonoBehaviour
             m_submenuSelectionAnimator.SetTrigger("Off");
         }
     }
+
+    public void Deselect()
+    {
+        m_submenuSelectionAnimator.SetTrigger("UnHover");
+    }
 }

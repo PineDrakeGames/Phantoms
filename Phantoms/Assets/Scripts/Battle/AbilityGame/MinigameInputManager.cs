@@ -28,6 +28,17 @@ public static class MinigameInputManager
         { MinigameInput.BUTTON2, new List<KeyCode>(){KeyCode.E, KeyCode.Mouse1} }
     };
 
+    public static Dictionary<MinigameInput, string> InputToDisplayName = new Dictionary<MinigameInput, string>()
+    {
+        { MinigameInput.LEFT, "A" },
+        { MinigameInput.RIGHT, "D" },
+        { MinigameInput.UP, "W" },
+        { MinigameInput.DOWN, "S" },
+        { MinigameInput.JUMP, "Space" },
+        { MinigameInput.BUTTON1, "Q" },
+        { MinigameInput.BUTTON2, "E" }
+    };
+
     public static bool CheckInputDown(MinigameInput input)
     {
         // Check Keyboard Input

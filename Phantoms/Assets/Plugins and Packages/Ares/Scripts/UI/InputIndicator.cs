@@ -31,7 +31,7 @@ public class InputIndicator : MonoBehaviour
     public void SetIndicator(MinigameInput inputType)
     {
         // Set the image based on the button?
-        m_indicatorText.text = inputType.ToString();
+        m_indicatorText.text = MinigameInputManager.InputToDisplayName[inputType];
     }
 
     public void SetState(IndicatorState newState)
