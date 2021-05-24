@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class TestAddPhantomScript : MonoBehaviour
 {
+    [Header("Save Stuff")]
+        [SerializeField]
+    private bool m_saveDisabledState = true;
+    [SerializeField]
+    private string m_phantomFlagName = "PhantomAdd_";
+    
+
+    [Header("Other things")]
     [SerializeField]
     private GameObject m_objectToDisable = null;
 
@@ -16,17 +24,24 @@ public class TestAddPhantomScript : MonoBehaviour
     [SerializeField]
     private int m_phantomLevel = 0;
 
+    private bool m_triggered = false;
+
     private void Start()
     {
         if (m_objectToDisable == null)
         {
             m_objectToDisable = this.gameObject;
         }
+        if (m_saveDisabledState && SaveDataManager.CheckFlag(m_phantomFlagName))
+        {
+            m_triggered = true;
+            m_objectToDisable.SetActive(false);
+        }
     }
 
     private void OnTriggerEnter(Collider other) 
     {
-        if (other.tag == "Player")
+        if (other.tag == "Player" && !m_triggered)
         {
             if (m_phantomData != null)
             {
@@ -35,6 +50,11 @@ public class TestAddPhantomScript : MonoBehaviour
             else if (m_phantomID != null)
             {
                 PlayerInventoryManager.Instance.AddPhantom(PhantomDataUtility.GenerateRandomPhantom(m_phantomID, m_phantomLevel));
+            }
+
+            if (m_saveDisabledState)
+            {
+                SaveDataManager.SetFlag(m_phantomFlagName);
             }
 
             m_objectToDisable.SetActive(false);

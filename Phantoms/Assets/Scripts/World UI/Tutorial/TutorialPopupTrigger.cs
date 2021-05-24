@@ -37,7 +37,7 @@ public class TutorialPopupTrigger : MonoBehaviour
 
     private void Awake()
     {
-        if (s_completedTutorials.Contains(m_popupTriggerID) && m_saveDisabledState)
+        if (SaveDataManager.CheckFlag(m_popupTriggerID) && m_saveDisabledState)
         {
             this.enabled = false;
         }
@@ -45,7 +45,7 @@ public class TutorialPopupTrigger : MonoBehaviour
 
     public void Show()
     {
-        if (!m_disabled && (!s_completedTutorials.Contains(m_popupTriggerID) || !m_saveDisabledState))
+        if (!m_disabled && (!SaveDataManager.CheckFlag(m_popupTriggerID) || !m_saveDisabledState))
         {
             if (m_specialKey != SpecialKey.NONE)
             {
@@ -73,9 +73,9 @@ public class TutorialPopupTrigger : MonoBehaviour
             Hide();
         }
 
-        if (!s_completedTutorials.Contains(m_popupTriggerID) && m_saveDisabledState)
+        if (m_saveDisabledState)
         {
-            s_completedTutorials.Add(m_popupTriggerID);
+            SaveDataManager.SetFlag(m_popupTriggerID);
         }
     }
 
