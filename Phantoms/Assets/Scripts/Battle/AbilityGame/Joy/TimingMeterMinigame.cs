@@ -55,6 +55,9 @@ public class TimingMeterMinigame : AbilityMinigame
     private List<TimingMeterTarget> m_targetInstances = new List<TimingMeterTarget>();
     private List<GameObject> m_inputIndicators = new List<GameObject>();
 
+    private bool m_initialized = false;
+    private const float INITIALIZE_TIME = 0.5f;
+
     private void Start()
     {
         m_meter.SetActive(false);
@@ -63,48 +66,60 @@ public class TimingMeterMinigame : AbilityMinigame
     protected override void Restart()
     {
         m_meterFillImage.fillAmount = 0f;
+        m_initialized = false;
     }
 
     protected override void InitializingState()
     {
-        m_meter.SetActive(true);
-
-        // Calculate some stuff
-        m_targetPercentArea = Data.TargetTimeWindow / Data.MeterDuration;
-
-        float targetWidth = m_targetPercentArea * m_fillArea.rect.width;
-
-        // Set up the targets so they are listed in order, and set them all to not being hit.
-        foreach (TimingMeterTargetData data in Data.Targets)
+        if (!m_initialized)
         {
-            m_targetInstances.Add(new TimingMeterTarget(data));
+            m_meter.SetActive(true);
+
+            // Calculate some stuff
+            m_targetPercentArea = Data.TargetTimeWindow / Data.MeterDuration;
+
+            float targetWidth = m_targetPercentArea * m_fillArea.rect.width;
+
+            // Set up the targets so they are listed in order, and set them all to not being hit.
+            foreach (TimingMeterTargetData data in Data.Targets)
+            {
+                m_targetInstances.Add(new TimingMeterTarget(data));
+            }
+
+            m_targetInstances.Sort((t1, t2) => t1.Data.TargetPercent.CompareTo(t2.Data.TargetPercent));
+
+            foreach (TimingMeterTarget target in m_targetInstances)
+            {
+                // Instantiate a target
+                GameObject indicator = GetInputIndicator();
+
+                // Move it to the right position
+                RectTransform indicatorTransform = indicator.GetComponent<RectTransform>();
+                indicatorTransform.anchorMin = new Vector2(target.Data.TargetPercent, 0.5f);
+                indicatorTransform.anchorMax = new Vector2(target.Data.TargetPercent, 0.5f);
+
+                //Set the width based on the time window and size of the fill area.
+                indicatorTransform.sizeDelta = new Vector2(targetWidth, targetWidth);
+
+                // Set the reference
+                target.Indicator = indicator.GetComponent<InputIndicator>();
+                target.Indicator.SetState(InputIndicator.IndicatorState.WAITING);
+                target.Indicator.SetIndicator(target.Data.InputRequired);
+            }
+
+            m_currentTargetIndex = 0;
+            m_currentTime = 0f;
+            m_initialized = true;
         }
-
-        m_targetInstances.Sort((t1, t2) => t1.Data.TargetPercent.CompareTo(t2.Data.TargetPercent));
-
-        foreach (TimingMeterTarget target in m_targetInstances)
+        else
         {
-            // Instantiate a target
-            GameObject indicator = GetInputIndicator();
-
-            // Move it to the right position
-            RectTransform indicatorTransform = indicator.GetComponent<RectTransform>();
-            indicatorTransform.anchorMin = new Vector2(target.Data.TargetPercent, 0.5f);
-            indicatorTransform.anchorMax = new Vector2(target.Data.TargetPercent, 0.5f);
-
-            //Set the width based on the time window and size of the fill area.
-            indicatorTransform.sizeDelta = new Vector2(targetWidth, targetWidth);
-
-            // Set the reference
-            target.Indicator = indicator.GetComponent<InputIndicator>();
-            target.Indicator.SetState(InputIndicator.IndicatorState.WAITING);
-            target.Indicator.SetIndicator(target.Data.InputRequired);
+            m_currentTime += Time.deltaTime;
+            if (m_currentTime >= INITIALIZE_TIME)
+            {
+                m_currentTime = 0f;
+                m_state = MinigameState.RUNNING;
+            }
         }
-
-        m_currentTargetIndex = 0;
-        m_currentTime = 0f;
-
-        m_state = MinigameState.RUNNING;
     }
 
     protected override void RunningState()
