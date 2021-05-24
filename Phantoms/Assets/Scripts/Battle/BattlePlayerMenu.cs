@@ -570,8 +570,11 @@ public class BattlePlayerMenu : MonoBehaviour
 
 
         m_tacticsButton.interactable = CanUseTactics;
+        m_partnerTacticsButton.interactable = CanUseTactics;
         m_itemsButton.interactable = CanUseItems;
+        m_partnerItemsButton.interactable = CanUseItems;
         m_abilitiesButton.interactable = CanUseAbilities;
+        m_partnerAbilitiesButton.interactable = CanUseAbilities;
     }
 
     public void ConfirmMove()

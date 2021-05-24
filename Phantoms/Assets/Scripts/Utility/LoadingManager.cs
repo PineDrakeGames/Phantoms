@@ -238,7 +238,7 @@ public class LoadingManager : MonoBehaviour
 
         foreach(GameObject rootObject in SceneManager.GetActiveScene().GetRootGameObjects())
         {
-            if (rootObject.activeSelf)
+            if (rootObject.activeSelf && !OverworldManager.Instance.BattlePersistantInstances.Contains(rootObject))
             {
                 rootObject.SetActive(false);
                 m_overworldSceneItems.Add(rootObject);

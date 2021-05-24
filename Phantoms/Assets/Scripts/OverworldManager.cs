@@ -34,7 +34,10 @@ public class OverworldManager : MonoBehaviour
     public GameObject PlayerInstance = null;
     public GameObject CanvasInstance = null;
     public GameObject CameraInstance = null;
+    [HideInInspector]
     public List<GameObject> PersistantInstances = null;
+    [HideInInspector]
+    public List<GameObject> BattlePersistantInstances = null;
 
     [Header("Persistent prefabs")]
     [SerializeField]
@@ -46,6 +49,9 @@ public class OverworldManager : MonoBehaviour
     [SerializeField]
     [Tooltip("List of all prefabs that are needed in all scenes.")]
     private List<GameObject> m_persistentPrefabs = new List<GameObject>();
+    [SerializeField]
+    [Tooltip("List of all prefabs that are needed in all scenes, INCLUDING battle scenes.")]
+    private List<GameObject> m_battlePersistentPrefabs = new List<GameObject>();
 
 
     /////////////////////////////
@@ -142,6 +148,12 @@ public class OverworldManager : MonoBehaviour
             DontDestroyOnLoad(instance);
             PersistantInstances.Add(instance);
         }
+        foreach(GameObject persistant in m_battlePersistentPrefabs)
+        {
+            GameObject instance = Instantiate(persistant);
+            DontDestroyOnLoad(instance);
+            BattlePersistantInstances.Add(instance);
+        }
     }
 
     // De-initialize everything (mostly used in cases where 2 Overworld managers exist)
@@ -234,12 +246,6 @@ public class OverworldManager : MonoBehaviour
         if (CameraInstance == null)
         {
             CameraInstance = PrefabUtility.InstantiatePrefab(m_cameraPrefab) as GameObject;
-        }
-        foreach(GameObject persistant in m_persistentPrefabs)
-        {
-            GameObject instance;
-            instance = PrefabUtility.InstantiatePrefab(persistant) as GameObject;
-            PersistantInstances.Add(instance);
         }
 
         EditorUtility.SetDirty(this);
