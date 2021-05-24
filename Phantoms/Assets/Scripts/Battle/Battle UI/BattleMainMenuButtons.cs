@@ -42,6 +42,8 @@ public class BattleMainMenuButtons : MonoBehaviour
 
     public void SetCurrentButton(Button button)
     {
+        if (button == null || !button.interactable) { return; }
+        
         for (int i = 0; i < m_buttons.Length; i++)
         {
             if (m_buttons[i].ButtonComponent == button)
