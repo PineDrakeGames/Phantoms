@@ -35,9 +35,9 @@ public class OverworldManager : MonoBehaviour
     public GameObject CanvasInstance = null;
     public GameObject CameraInstance = null;
     [HideInInspector]
-    public List<GameObject> PersistantInstances = null;
+    public List<GameObject> PersistantInstances = new List<GameObject>();
     [HideInInspector]
-    public List<GameObject> BattlePersistantInstances = null;
+    public List<GameObject> BattlePersistantInstances = new List<GameObject>();
 
     [Header("Persistent prefabs")]
     [SerializeField]
@@ -141,7 +141,6 @@ public class OverworldManager : MonoBehaviour
         }
         m_cameraController = CameraInstance.GetComponent<CameraController>();
         DontDestroyOnLoad(CameraInstance);
-
         foreach(GameObject persistant in m_persistentPrefabs)
         {
             GameObject instance = Instantiate(persistant);
@@ -163,17 +162,9 @@ public class OverworldManager : MonoBehaviour
         if (PlayerInstance) { Destroy (PlayerInstance); }
         if (CanvasInstance) { Destroy (CanvasInstance); }
         if (CameraInstance) { Destroy (CameraInstance); }
-
-        while (PersistantInstances.Count > 0)
-        {
-            if (PersistantInstances[0] != null)
-            {
-                GameObject instance = PersistantInstances[0];
-                PersistantInstances.RemoveAt(0);
-                Destroy(instance);
-            }
-        }
-
+        
+        PersistantInstances.Clear();
+        BattlePersistantInstances.Clear();
         // Destroy this last
         Destroy(this.gameObject);
     }
