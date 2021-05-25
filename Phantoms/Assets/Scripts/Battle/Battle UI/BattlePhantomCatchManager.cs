@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 
 public class BattlePhantomCatchManager : MonoBehaviour
-{   
+{
     [Header("Main Scene References")]
     [SerializeField]
     private BattleManager m_battleManager = null;
@@ -177,6 +177,15 @@ public class BattlePhantomCatchManager : MonoBehaviour
     /////////////////////////
     private void UpdateUI()
     {
+        //Special case where HP = 1 just in case
+        if (m_playerCurrentHealth == 1)
+        {
+            m_currentWager = 1;
+            m_addButton.interactable = false;
+            m_subtractButton.interactable = false;
+            m_healthWagerAmount.text = m_currentWager.ToString();
+        }
+
         // TODO: Clamp to player's health
         m_currentWager = Mathf.Clamp(m_currentWager, 1, (m_playerCurrentHealth - 1));
         m_addButton.interactable = (m_currentWager < (m_playerCurrentHealth - 1));
@@ -222,7 +231,7 @@ public class BattlePhantomCatchManager : MonoBehaviour
         if (randomRoll > acceptanceChance)
         {
             // Fail catch
-            Debug.Log( string.Format("Initial roll missed, try again lol (Random roll {0}, acceptance chance {1}", randomRoll, acceptanceChance));
+            Debug.Log(string.Format("Initial roll missed, try again lol (Random roll {0}, acceptance chance {1}", randomRoll, acceptanceChance));
             FailCatch();
             return false;
         }
@@ -235,17 +244,17 @@ public class BattlePhantomCatchManager : MonoBehaviour
         // Start with a random value between 0 and 1 - 0 being a min health wager, 1 being a max health wager.
         float healthCost = Random.Range(0f, 1f);
 
-        log += string.Format("Initial Random Value: {0} ({1})\n",  Mathf.RoundToInt(Mathf.Lerp(1f, (float)m_playerCurrentHealth, healthCost)), healthCost); 
+        log += string.Format("Initial Random Value: {0} ({1})\n", Mathf.RoundToInt(Mathf.Lerp(1f, (float)m_playerCurrentHealth, healthCost)), healthCost);
 
 
         // After this, take into account the level difference - so adjust this health cost based on the level difference (10% per level).
-        healthCost += ( Mathf.Clamp(((float)levelDifference / 10f), -1f, 1f) );
-        log += string.Format("After level difference adjustments: {0} ({1})\n",  Mathf.RoundToInt(Mathf.Lerp(1f, (float)m_playerCurrentHealth, healthCost)), healthCost); 
+        healthCost += (Mathf.Clamp(((float)levelDifference / 10f), -1f, 1f));
+        log += string.Format("After level difference adjustments: {0} ({1})\n", Mathf.RoundToInt(Mathf.Lerp(1f, (float)m_playerCurrentHealth, healthCost)), healthCost);
 
         // Adjust the health cost so that it's then halfway towards the enemy's health - so low roll vs high health would go to halfway, high roll vs low health would also go to half.
         healthCost -= (healthCost - healthPercentage) * 0.5f;
-        log += string.Format("Scaling halfway to the enemy's health percentage: {0} ({1})\n",  Mathf.RoundToInt(Mathf.Lerp(1f, (float)m_playerCurrentHealth, healthCost)), healthCost); 
-        
+        log += string.Format("Scaling halfway to the enemy's health percentage: {0} ({1})\n", Mathf.RoundToInt(Mathf.Lerp(1f, (float)m_playerCurrentHealth, healthCost)), healthCost);
+
 
         healthCost = Mathf.Clamp01(healthCost);
         int convertedHealthMin = Mathf.RoundToInt(Mathf.Lerp(1f, (float)m_playerCurrentHealth, healthCost));
@@ -258,7 +267,7 @@ public class BattlePhantomCatchManager : MonoBehaviour
             FailCatch();
             return false;
         }
-        
+
         SucceedCatch(phantomData, phantomToCatch);
         return true;
     }

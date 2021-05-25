@@ -883,6 +883,8 @@ public class BattlePlayerMenu : MonoBehaviour
     // Checks if the player can catch in the current fight
     private bool CanCatchPhantom()
     {
+        if (!m_isKeeperTurn && m_currentActor.HP <= 1) { return false; }
+        
         return m_battleManager.CanCatch() && CanCatch;
     }
 
