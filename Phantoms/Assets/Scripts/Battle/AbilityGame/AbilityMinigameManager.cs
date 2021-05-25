@@ -134,6 +134,48 @@ public class AbilityMinigameManager : MonoBehaviour
     //////////////////////////////////
     private void StartMinigameInternal(AbilityMinigameData data)
     {
+        SetMinigameData(data);
+        m_currentMinigame.gameObject.SetActive(true);
+
+        ShowMinigameDescription(data);
+
+        m_currentMinigame.StartMinigame();
+    }
+
+    private void EndMinigameInternal()
+    {
+        for (int i = 0; i < m_abilityMinigames.Count; i++)
+        {
+            if (m_abilityMinigames[i] != null)
+            {
+                m_abilityMinigames[i].gameObject.SetActive(false);
+            }
+        }
+        HideMinigameDescriptionInternal();
+    }
+
+    private void ShowMinigameDescriptionInternal(AbilityMinigameData data)
+    {
+        string desc = "";
+        if (data != null && m_typeToMinigame.ContainsKey(data.type) && m_typeToMinigame[data.type] != null)
+        {
+            SetMinigameData(data);
+            desc = m_typeToMinigame[data.type].MinigameDescription;
+        }
+        if (!string.IsNullOrEmpty(desc))
+        {
+            m_minigameDescriptionParent.SetActive(true);
+            m_minigameDescriptionText.text = desc;
+        }
+    }
+
+    private void HideMinigameDescriptionInternal()
+    {
+        m_minigameDescriptionParent.SetActive(false);
+    }
+
+    private void SetMinigameData(AbilityMinigameData data)
+    {
         m_currentMinigame = m_typeToMinigame[data.type];
         switch (data.type)
         {
@@ -181,41 +223,5 @@ public class AbilityMinigameManager : MonoBehaviour
                 Debug.Log("No data.");
                 break;
         }
-        m_currentMinigame.gameObject.SetActive(true);
-
-        ShowMinigameDescription(data);
-
-        m_currentMinigame.StartMinigame();
-    }
-
-    private void EndMinigameInternal()
-    {
-        for (int i = 0; i < m_abilityMinigames.Count; i++)
-        {
-            if (m_abilityMinigames[i] != null)
-            {
-                m_abilityMinigames[i].gameObject.SetActive(false);
-            }
-        }
-        HideMinigameDescriptionInternal();
-    }
-
-    private void ShowMinigameDescriptionInternal(AbilityMinigameData data)
-    {
-        string desc = "";
-        if (data != null && m_typeToMinigame.ContainsKey(data.type) && m_typeToMinigame[data.type] != null)
-        {
-            desc = m_typeToMinigame[data.type].MinigameDescription;
-        }
-        if (!string.IsNullOrEmpty(desc))
-        {
-            m_minigameDescriptionParent.SetActive(true);
-            m_minigameDescriptionText.text = desc;
-        }
-    }
-
-    private void HideMinigameDescriptionInternal()
-    {
-        m_minigameDescriptionParent.SetActive(false);
     }
 }

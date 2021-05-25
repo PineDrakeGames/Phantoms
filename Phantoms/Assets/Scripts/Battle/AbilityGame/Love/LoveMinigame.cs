@@ -29,7 +29,14 @@ public class LoveMinigame : AbilityMinigame
     {
         get
         {
-            return "Aim at the targets!";
+            if (Data && Data.AutoAim)
+            {
+                return "Press Space with timing to hit the targets!";
+            }
+            else
+            {
+                return "Use WASD to aim, and press Space to fire at the targets!";
+            }
         }
     }
 
