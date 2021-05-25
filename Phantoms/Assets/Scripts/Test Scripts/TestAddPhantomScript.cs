@@ -58,6 +58,7 @@ public class TestAddPhantomScript : MonoBehaviour
             }
 
             m_objectToDisable.SetActive(false);
+            m_triggered = true;
         }
     }
 }
