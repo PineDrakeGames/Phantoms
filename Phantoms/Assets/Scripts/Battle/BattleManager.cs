@@ -105,6 +105,10 @@ public class BattleManager : MonoBehaviour
             else
             {
                 battle.SetParticipation(actor, true);
+                if (ActorToData[actor] is PlayerBattleInstanceData)
+                {
+                    actor.OnHPDeplete.AddListener(() => EndBattle(false));
+                }
             }
         }
         foreach (Actor actor in enemies)
@@ -209,6 +213,11 @@ public class BattleManager : MonoBehaviour
             CombatantInstanceData data = ActorToData[actor];
             data.CurrentHP = actor.HP;
             data.CurrentMana = actor.Mana;
+
+            if (data is PlayerBattleInstanceData && data.CurrentHP <= 0)
+            {
+                data.CurrentHP = 1;
+            }
         }
 
         PlayerInventoryManager.Instance.SaveBattleInventory(playerGroup.Inventory as StackedInventory);
