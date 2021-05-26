@@ -385,6 +385,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
     public void DoubleJump()
     {
         Jump();
+        CharacterAnimator.SetTrigger("Joy");
         _doubleJumpedUsed = true;
     }
 }
