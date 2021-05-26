@@ -254,7 +254,8 @@ namespace Ares
 
                 VerboseLogger.Log(string.Format("------- Starting round {0} -------", CurrentRound.ToString()), VerboseLoggerSettings.State1Color);
 
-                queuedActors = Actors.Where(a => a.HP > 0 && ActorInfo[a].IsParticipating).ToList();
+                // NOTE: Removed check here to see if actor has any HP Left - still want them to have a 'turn', will just skip it later if still at 0 HP.
+                queuedActors = Actors.Where(a => ActorInfo[a].IsParticipating).ToList();
 
                 if (Rules.ActorSortType != BattleRules.ActorSort.None)
                 {
@@ -312,6 +313,13 @@ namespace Ares
                     {
                         QueueActionWithTargets(actorInfo.blockingAction);
 
+                        return;
+                    }
+
+                    if (currentActor.HP <= 0)
+                    {
+                        BattleLog.Instance.AddLog(currentActor.DisplayName + " is knocked out, turn skipped.");
+                        OnSkipSelect(QueueSkip);
                         return;
                     }
 
@@ -2248,7 +2256,7 @@ namespace Ares
                     queuedActors.Remove(prevActor);
                     queuedActors.Insert(i, newActor);
                     currentRoundState = RoundState.InProgress;
-                    currentActor = nextActor;
+                    //currentActor = nextActor;
 
                     ProgressBattle();
                 }

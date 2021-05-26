@@ -250,6 +250,9 @@ public class BattlePlayerMenu : MonoBehaviour
     public void OnTurnEnd(Actor actor)
     {
         HideTargetIndicators();
+        HideSubmenu();
+        m_mainMenuParent.SetActive(false);
+        m_partnerMenuParent.SetActive(false);
     }
 
 
@@ -402,7 +405,11 @@ public class BattlePlayerMenu : MonoBehaviour
             if (!m_battleManager.CurrentBattle.ActorInfo[actor].IsParticipating && actor.HP > 0)
             {
                 submenuButton = AddSubmenuButton(actor.DisplayName, "Switch to " + actor.DisplayName, actor.HP.ToString() + "/" + actor.MaxHP.ToString() + " HP");
-                submenuButton.ClickEvent.AddListener(delegate { m_battleManager.SwapPhantoms(actor); });
+                submenuButton.ClickEvent.AddListener(delegate
+                {
+                    m_battleManager.SwapPhantoms(actor);
+                    m_actionInput.SkipCallback();
+                });
             }
         }
 
@@ -535,6 +542,7 @@ public class BattlePlayerMenu : MonoBehaviour
         if (m_isKeeperTurn)
         {
             m_mainMenuParent.SetActive(true);
+            m_partnerMenuParent.SetActive(false);
             switch (m_prevState)
             {
                 case BattleMenuState.TACTICS:
@@ -552,6 +560,7 @@ public class BattlePlayerMenu : MonoBehaviour
         else
         {
             m_partnerMenuParent.SetActive(true);
+            m_mainMenuParent.SetActive(false);
             switch (m_prevState)
             {
                 case BattleMenuState.TACTICS:
@@ -884,7 +893,7 @@ public class BattlePlayerMenu : MonoBehaviour
     private bool CanCatchPhantom()
     {
         if (!m_isKeeperTurn && m_currentActor.HP <= 1) { return false; }
-        
+
         return m_battleManager.CanCatch() && CanCatch;
     }
 
