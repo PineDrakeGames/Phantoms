@@ -277,7 +277,7 @@ public class BattlePlayerMenu : MonoBehaviour
         m_battleCamera.SetCameraOverShoulder(actor.transform.position, enemyCenter);
         ReturnToMainMenu();
 
-        
+        SetCurrentTurnIndicator(m_currentActor);
     }
 
     public void SetArrowIndicator(Actor actor = null)
