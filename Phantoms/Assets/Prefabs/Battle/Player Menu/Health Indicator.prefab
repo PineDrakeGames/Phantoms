@@ -195,6 +195,7 @@ MonoBehaviour:
   m_actorIconFill: {fileID: 8701107094185191667}
   m_actorIconLines: {fileID: 7623696705870501774}
   m_actorIconAnimator: {fileID: 7676452187886374100}
+  m_overallAnimator: {fileID: 1729098754639020370}
   m_statusEffectsList: {fileID: 8838066702698271361}
   m_buffStatusEffectPrefab: {fileID: 5944884717825384776, guid: cf2d73b0568247c4bab7e35cb0d63a41,
     type: 3}
@@ -1299,6 +1300,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 906356519516822299}
+  - component: {fileID: 434663804119379033}
+  - component: {fileID: 1729098754639020370}
   m_Layer: 5
   m_Name: Name & HP & MP
   m_TagString: Untagged
@@ -1329,7 +1332,38 @@ RectTransform:
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0.5}
+  m_Pivot: {x: 0.5, y: 0}
+--- !u!225 &434663804119379033
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5419227023623306368}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!95 &1729098754639020370
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5419227023623306368}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e916d97f6e32f7c45805e9fabbd494ce, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &6934427850023476338
 GameObject:
   m_ObjectHideFlags: 0
