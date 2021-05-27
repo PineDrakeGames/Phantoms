@@ -28,6 +28,9 @@ public class HealthIndicator : MonoBehaviour
     [SerializeField]
     private Animator m_actorIconAnimator = null;
 
+    [SerializeField]
+    private Animator m_overallAnimator = null;
+
     [Header("Buffs & Afflictions")]
     [SerializeField]
     private Transform m_statusEffectsList = null;
@@ -133,6 +136,15 @@ public class HealthIndicator : MonoBehaviour
 
         m_actor = newActor;
     }
+
+    public void SetAsActive(bool active)
+    {
+        m_overallAnimator.SetBool("Active", active);
+    }
+
+    /////////////////////////
+    /// Private Functions ///
+    /////////////////////////
 
     private void OnDestroy()
     {

@@ -253,6 +253,10 @@ public class BattlePlayerMenu : MonoBehaviour
         HideSubmenu();
         m_mainMenuParent.SetActive(false);
         m_partnerMenuParent.SetActive(false);
+        foreach (KeyValuePair<Actor, HealthIndicator> kvp in ActorToHealthIndicator)
+        {
+            kvp.Value.SetAsActive(true);
+        }
     }
 
 
@@ -270,6 +274,11 @@ public class BattlePlayerMenu : MonoBehaviour
 
         m_battleCamera.SetCameraOverShoulder(actor.transform.position, enemyCenter);
         ReturnToMainMenu();
+
+        foreach (KeyValuePair<Actor, HealthIndicator> kvp in ActorToHealthIndicator)
+        {
+            kvp.Value.SetAsActive(kvp.Key == m_currentActor);
+        }
     }
 
     public void SetArrowIndicator(Actor actor = null)
