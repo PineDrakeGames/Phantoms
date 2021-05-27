@@ -539,6 +539,25 @@ public class BattlePlayerMenu : MonoBehaviour
         ClearSubmenu();
         HideSubmenu();
 
+        m_tacticsButton.interactable = CanUseTactics;
+        m_partnerTacticsButton.interactable = CanUseTactics;
+        if (!CanUseTactics && m_prevState == BattleMenuState.TACTICS)
+        {
+            m_prevState = BattleMenuState.ABILITIES;
+        }
+        m_itemsButton.interactable = CanUseItems;
+        m_partnerItemsButton.interactable = CanUseItems;
+        if (!CanUseItems && m_prevState == BattleMenuState.ITEMS)
+        {
+            m_prevState = BattleMenuState.ABILITIES;
+        }
+        m_abilitiesButton.interactable = CanUseAbilities;
+        m_partnerAbilitiesButton.interactable = CanUseAbilities;
+        if (!CanUseAbilities && (m_prevState != BattleMenuState.TACTICS || m_prevState != BattleMenuState.ITEMS))
+        {
+            m_prevState = BattleMenuState.TACTICS;
+        }
+
         if (m_isKeeperTurn)
         {
             m_mainMenuParent.SetActive(true);
@@ -575,15 +594,6 @@ public class BattlePlayerMenu : MonoBehaviour
                     break;
             }
         }
-
-
-
-        m_tacticsButton.interactable = CanUseTactics;
-        m_partnerTacticsButton.interactable = CanUseTactics;
-        m_itemsButton.interactable = CanUseItems;
-        m_partnerItemsButton.interactable = CanUseItems;
-        m_abilitiesButton.interactable = CanUseAbilities;
-        m_partnerAbilitiesButton.interactable = CanUseAbilities;
     }
 
     public void ConfirmMove()

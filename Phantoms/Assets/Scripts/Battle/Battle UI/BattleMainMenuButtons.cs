@@ -10,7 +10,8 @@ public class BattleMainMenuButtons : MonoBehaviour
     private class BattleMainButton
     {
         public Button ButtonComponent = null;
-        public Image ImageComponent = null;
+        public Animator AnimatorComponent = null;
+        public Image[] ImageComponents = null;
     }
 
     [SerializeField]
@@ -23,10 +24,8 @@ public class BattleMainMenuButtons : MonoBehaviour
     [SerializeField]
     private Color m_furthestColor = Color.magenta;
 
-    private void Start()
-    {
-        SetCurrentButton(0);
-    }
+    [SerializeField]
+    private Color m_disabledColor = Color.gray;
 
     public void OnButtonSelect(GameObject buttonObject)
     {
@@ -43,7 +42,7 @@ public class BattleMainMenuButtons : MonoBehaviour
     public void SetCurrentButton(Button button)
     {
         if (button == null || !button.interactable) { return; }
-        
+
         for (int i = 0; i < m_buttons.Length; i++)
         {
             if (m_buttons[i].ButtonComponent == button)
@@ -63,9 +62,23 @@ public class BattleMainMenuButtons : MonoBehaviour
 
         for (int i = 0; i < m_buttons.Length; i++)
         {
+
+
             float distance = Mathf.Clamp01(Mathf.Abs(((float)i - (float)index) / (float)m_buttons.Length));
             Color col = Color.Lerp(m_selectedColor, m_furthestColor, distance);
-            m_buttons[i].ImageComponent.color = col;
+
+            if (!m_buttons[i].ButtonComponent.interactable)
+            {
+                col = Color.Lerp(col, m_disabledColor, 0.5f);
+            }
+
+            foreach (Image image in m_buttons[i].ImageComponents)
+            {
+                if (image)
+                {
+                    image.color = col;
+                }
+            }
 
             if (i <= index)
             {
@@ -74,6 +87,18 @@ public class BattleMainMenuButtons : MonoBehaviour
             else
             {
                 m_buttons[i].ButtonComponent.transform.SetAsFirstSibling();
+            }
+
+            if (m_buttons[i].AnimatorComponent != null)
+            {
+                if (i == index)
+                {
+                    m_buttons[i].AnimatorComponent.SetBool("Selected", true);
+                }
+                else
+                {
+                    m_buttons[i].AnimatorComponent.SetBool("Selected", false);
+                }
             }
         }
     }
