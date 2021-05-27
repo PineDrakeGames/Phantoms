@@ -6,6 +6,9 @@ public class OverworldSceneEnterTrigger : MonoBehaviour
 {
     public string LocationID = null;
 
+    [Tooltip("The Loading screen will exit TOWARDS the direction set - should set to the direction of the path back out.")]
+    public LoadingManager.LoadingScreenDirection EnterDirection = LoadingManager.LoadingScreenDirection.LEFT;
+
     [SerializeField]
     [HideInInspector]
     private string m_storedLocationID = null;

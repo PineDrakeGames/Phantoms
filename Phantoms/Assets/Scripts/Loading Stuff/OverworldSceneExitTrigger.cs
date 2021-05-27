@@ -11,6 +11,7 @@ public class OverworldSceneExitTriggerEditor : Editor
 
     SerializedProperty sceneToLoad;
     SerializedProperty loadLocationID;
+    SerializedProperty exitDirection;
 
     private string[] locationIDOptions = null;
     private int IDIndex = 0;
@@ -19,6 +20,7 @@ public class OverworldSceneExitTriggerEditor : Editor
     {
         sceneToLoad = serializedObject.FindProperty("m_sceneToLoad");
         loadLocationID = serializedObject.FindProperty("m_loadLocationID");
+        exitDirection = serializedObject.FindProperty("m_exitDirection");
 
         GetLocationOptions();
     }
@@ -34,6 +36,8 @@ public class OverworldSceneExitTriggerEditor : Editor
 
         IDIndex = EditorGUILayout.Popup(IDIndex, locationIDOptions);
         loadLocationID.stringValue = locationIDOptions[IDIndex];
+
+        EditorGUILayout.PropertyField(exitDirection);
 
         serializedObject.ApplyModifiedProperties();
     }
@@ -85,11 +89,16 @@ public class OverworldSceneExitTrigger : MonoBehaviour
     [SerializeField]
     private string m_loadLocationID = null;
 
+    [Tooltip("The Loading screen will enter FROM the direction set - should set to the direction of the path you are entering.")]
+    [SerializeField]
+    private LoadingManager.LoadingScreenDirection m_exitDirection = LoadingManager.LoadingScreenDirection.RIGHT;
+
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
         {
             OverworldManager.Instance.SetLocationID(m_loadLocationID);
+            LoadingManager.CurrentLoadDirection = m_exitDirection;
             LoadingManager.LoadScene(m_sceneToLoad, LoadingManager.SceneType.OVERWORLD);
         }
     }

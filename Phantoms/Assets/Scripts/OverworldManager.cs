@@ -204,7 +204,7 @@ public class OverworldManager : MonoBehaviour
                 // TODO: Have the enter trigger handle placing the player - just setting to position for now.
                 m_playerController.Motor.SetPositionAndRotation(enterTrigger.transform.position, enterTrigger.transform.rotation);
                 PlayerInstance.transform.position = enterTrigger.transform.position;
-                Debug.Log(PlayerInstance.transform.position);
+                LoadingManager.CurrentLoadDirection = enterTrigger.EnterDirection;
                 foundTrigger = true;
                 break;
             }

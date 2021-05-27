@@ -42,6 +42,7 @@ public class LoadingManager : MonoBehaviour
     public static UnityEvent NewSceneLoaded = new UnityEvent();
 
     private GameObject m_loadingScreen = null;
+    private Animator m_loadingScreenAnimator = null;
 
     // Stuff for the current overworld
     private List<GameObject> m_overworldSceneItems = new List<GameObject>();
@@ -51,6 +52,16 @@ public class LoadingManager : MonoBehaviour
     ///////////////////////////////////////////////
     /// Enum and values to identify scene types ///
     ///////////////////////////////////////////////
+
+    public enum LoadingScreenDirection
+    {
+        UP = 1,
+        RIGHT = 2,
+        DOWN = 3,
+        LEFT = 4
+    }
+
+    public static LoadingScreenDirection CurrentLoadDirection = LoadingScreenDirection.UP;
 
     public enum SceneType
     {
@@ -115,6 +126,7 @@ public class LoadingManager : MonoBehaviour
 
         m_loadingScreen = Instantiate(Resources.Load(LOADING_SCREEN_PREFAB, typeof(GameObject))) as GameObject;
         DontDestroyOnLoad(m_loadingScreen);
+        m_loadingScreenAnimator = m_loadingScreen.GetComponentInChildren<Animator>();
         m_loadingScreen.SetActive(false);
         m_lastOverworldScene = SceneManager.GetActiveScene();
     }
@@ -135,7 +147,7 @@ public class LoadingManager : MonoBehaviour
         if (!m_loading)
         {
             m_loading = true;
-            StartCoroutine(LoadSceneBackend(sceneIndex,newSceneType, showLoadingScreen));
+            StartCoroutine(LoadSceneBackend(sceneIndex, newSceneType, showLoadingScreen));
         }
     }
 
@@ -150,7 +162,7 @@ public class LoadingManager : MonoBehaviour
 
     private void ReturnFromBattleInternal()
     {
-        
+
         if (!m_loading)
         {
             if (m_lastOverworldScene == SceneManager.GetActiveScene())
@@ -175,34 +187,36 @@ public class LoadingManager : MonoBehaviour
                 return scene;
             }
         }
-        return SceneManager.GetActiveScene();;
+        return SceneManager.GetActiveScene(); ;
     }
 
     private IEnumerator LoadSceneBackend(int sceneIndex, SceneType newSceneType = SceneType.OTHER, bool showLoadingScreen = true)
     {
         PixelCrushers.DialogueSystem.DialogueManager.StopConversation();
         //PixelCrushers.DialogueSystem.DialogueManager.instance.displaySettings.subtitleSettings.continueButton = PixelCrushers.DialogueSystem.DisplaySettings.SubtitleSettings.ContinueButtonMode.Always;
-        
+
+        // Do Loading screen!
         if (showLoadingScreen)
         {
-            m_loadingScreen.SetActive(true);
+            yield return ShowLoadingScreen();
         }
 
         // Disabling all things from all types of scenes
         OverworldManager.Instance.SetOverworldActive(false);
 
+        // Load into the loading scene, and wait until we are there.
         SceneManager.LoadScene(m_loadingSceneIndex);
-
         while (SceneManager.GetActiveScene().buildIndex != m_loadingSceneIndex)
         {
             yield return null;
         }
 
+        // Load the new scene, and wait for that scene to finish loading.
         AsyncOperation load = SceneManager.LoadSceneAsync(sceneIndex);
         yield return load;
 
         // Check what to do for specific new scene types
-        switch(newSceneType)
+        switch (newSceneType)
         {
             case SceneType.OTHER:
                 break;
@@ -214,21 +228,25 @@ public class LoadingManager : MonoBehaviour
                 break;
         }
 
+        // Update the current scene type
         m_currentSceneType = newSceneType;
 
+        // Show the unloading screen
+        NewSceneLoaded.Invoke();
         if (showLoadingScreen)
         {
-            m_loadingScreen.SetActive(false);
+            yield return HideLoadingScreen();
         }
+
+        // Clean Up!
         m_loading = false;
-        NewSceneLoaded.Invoke();
     }
 
     private IEnumerator LoadIntoBattleBackend(int sceneIndex, bool showLoadingScreen = true)
     {
         if (showLoadingScreen)
         {
-            m_loadingScreen.SetActive(true);
+            yield return ShowLoadingScreen();
         }
         yield return null;
 
@@ -236,7 +254,7 @@ public class LoadingManager : MonoBehaviour
 
         m_overworldSceneItems.Clear();
 
-        foreach(GameObject rootObject in SceneManager.GetActiveScene().GetRootGameObjects())
+        foreach (GameObject rootObject in SceneManager.GetActiveScene().GetRootGameObjects())
         {
             if (rootObject.activeSelf && !OverworldManager.Instance.BattlePersistantInstances.Contains(rootObject))
             {
@@ -252,18 +270,19 @@ public class LoadingManager : MonoBehaviour
         SceneManager.SetActiveScene(GetLoadedSceneByIndex(sceneIndex));
 
         m_currentSceneType = SceneType.BATTLE;
+        NewSceneLoaded.Invoke();
+
         if (showLoadingScreen)
         {
-            m_loadingScreen.SetActive(false);
+            yield return HideLoadingScreen();
         }
 
         m_loading = false;
-        NewSceneLoaded.Invoke();
     }
 
     private IEnumerator ReturnFromBattleBackend()
     {
-        m_loadingScreen.SetActive(true);
+        yield return ShowLoadingScreen();
 
         yield return null;
 
@@ -272,7 +291,7 @@ public class LoadingManager : MonoBehaviour
         yield return unload;
 
         OverworldManager.Instance.SetOverworldActive(true);
-        foreach(GameObject rootObject in m_overworldSceneItems)
+        foreach (GameObject rootObject in m_overworldSceneItems)
         {
             if (rootObject != null)
             {
@@ -282,9 +301,35 @@ public class LoadingManager : MonoBehaviour
 
         SceneManager.SetActiveScene(m_lastOverworldScene);
         m_currentSceneType = SceneType.OVERWORLD;
-        m_loadingScreen.SetActive(false);
+        NewSceneLoaded.Invoke();
+        yield return HideLoadingScreen();
 
         m_loading = false;
-        NewSceneLoaded.Invoke();
+    }
+
+
+    // Helper Coroutines, for things that all the different loads need.
+    private IEnumerator ShowLoadingScreen()
+    {
+        m_loadingScreen.SetActive(true);
+        if (m_loadingScreenAnimator)
+        {
+            m_loadingScreenAnimator.SetInteger("Direction", (int)CurrentLoadDirection);
+            m_loadingScreenAnimator.SetBool("Visible", true);
+            // TODO: Wait for animation to finish instead!
+            yield return new WaitForSeconds(0.35f);
+        }
+    }
+
+    private IEnumerator HideLoadingScreen()
+    {
+        if (m_loadingScreenAnimator)
+        {
+            m_loadingScreenAnimator.SetInteger("Direction", (int)CurrentLoadDirection);
+            m_loadingScreenAnimator.SetBool("Visible", false);
+            // TODO: Wait for animation to finish instead!
+            yield return new WaitForSeconds(0.35f);
+        }
+        m_loadingScreen.SetActive(false);
     }
 }
