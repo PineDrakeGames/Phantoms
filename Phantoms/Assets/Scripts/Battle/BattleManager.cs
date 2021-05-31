@@ -6,6 +6,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Events;
 using Ares;
 
 public class BattleManager : MonoBehaviour
@@ -40,7 +41,7 @@ public class BattleManager : MonoBehaviour
             if (s_instance == null)
             {
                 s_instance = FindObjectOfType<BattleManager>();
-                if (s_instance)
+                if (s_instance == null)
                 {
                     GameObject managerObject = Instantiate(new GameObject());
                     s_instance = managerObject.AddComponent<BattleManager>();
@@ -55,6 +56,8 @@ public class BattleManager : MonoBehaviour
     BattleGroup enemyGroup = null;
 
     public Dictionary<Actor, CombatantInstanceData> ActorToData = new Dictionary<Actor, CombatantInstanceData>();
+    [HideInInspector]
+    public UnityEvent OnBattleStart = new UnityEvent();
 
     void Awake()
     {
@@ -105,6 +108,7 @@ public class BattleManager : MonoBehaviour
             else
             {
                 battle.SetParticipation(actor, true);
+                Debug.Log(actor.gameObject.name);
                 if (ActorToData[actor] is PlayerBattleInstanceData)
                 {
                     actor.OnHPDeplete.AddListener(() => EndBattle(false));
@@ -131,6 +135,8 @@ public class BattleManager : MonoBehaviour
         m_playerMenu.OnBattleStart();
 
         BattleLog.Instance.AddBattleListeners(battle);
+
+        OnBattleStart.Invoke();
 
         // If we'd started the battle with `progressAutomatically = false`, we could wait a while here to open menus etc.
         // before manually progressing to the first round by calling `battle.ProgressBattle()`.

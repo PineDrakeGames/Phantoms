@@ -9,7 +9,7 @@ using UnityEditor;
 [CustomEditor(typeof(AbilityMinigameManager))]
 public class AbilityMinigameManagerEditor : Editor
 {
-    readonly string[] sceneReferences = { "m_minigameDescriptionParent", "m_minigameDescriptionText", "m_minigameTimer" };
+    readonly string[] sceneReferences = { "m_minigameTimer" };
 
     private SerializedProperty m_abilityMinigames;
     private string[] m_minigameTypes;
@@ -56,10 +56,6 @@ public class AbilityMinigameManager : MonoBehaviour
     [SerializeField]
     private List<AbilityMinigame> m_abilityMinigames = null;
 
-    [SerializeField]
-    private GameObject m_minigameDescriptionParent = null;
-    [SerializeField]
-    private TMP_Text m_minigameDescriptionText = null;
     [SerializeField]
     private MinigameTimer m_minigameTimer = null;
 
@@ -164,14 +160,13 @@ public class AbilityMinigameManager : MonoBehaviour
         }
         if (!string.IsNullOrEmpty(desc))
         {
-            m_minigameDescriptionParent.SetActive(true);
-            m_minigameDescriptionText.text = desc;
+            BattleText.SetText(desc);
         }
     }
 
     private void HideMinigameDescriptionInternal()
     {
-        m_minigameDescriptionParent.SetActive(false);
+        BattleText.HideText();
     }
 
     private void SetMinigameData(AbilityMinigameData data)

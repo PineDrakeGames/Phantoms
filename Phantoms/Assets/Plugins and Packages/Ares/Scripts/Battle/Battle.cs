@@ -36,7 +36,7 @@ namespace Ares
         public RoundStateEvent OnRoundStateChange { get; private set; }
         public AbilityResultsEvent OnAbilityResults { get; private set; }
         public ItemResultsEvent OnItemResults { get; private set; }
-		public AfflictionResultsEvent OnAfflictionResults {get; private set;}
+        public AfflictionResultsEvent OnAfflictionResults { get; private set; }
         public ActorEvent OnActorStartedParticipating { get; private set; }
         public ActorEvent OnActorStoppedParticipating { get; private set; }
         public Actor_ActionInputEvent OnActorNeedsActionInput { get; private set; }
@@ -124,7 +124,7 @@ namespace Ares
             OnRoundStateChange = new RoundStateEvent();
             OnAbilityResults = new AbilityResultsEvent();
             OnItemResults = new ItemResultsEvent();
-			OnAfflictionResults = new AfflictionResultsEvent();
+            OnAfflictionResults = new AfflictionResultsEvent();
 
             OnActorStartedParticipating = new ActorEvent();
             OnActorStoppedParticipating = new ActorEvent();
@@ -323,7 +323,7 @@ namespace Ares
                         return;
                     }
 
-                    foreach(Affliction affliction in currentActor.Afflictions)
+                    foreach (Affliction affliction in currentActor.Afflictions)
                     {
                         if (affliction.Data.AfflictionID == "SLEEP")
                         {
@@ -602,7 +602,7 @@ namespace Ares
 
                     if (actorInfo.blockingAction == null)
                     {
-                        foreach(Affliction affliction in currentActor.Afflictions)
+                        foreach (Affliction affliction in currentActor.Afflictions)
                         {
                             if (affliction.Data.AfflictionID == "SLEEP")
                             {
@@ -742,25 +742,29 @@ namespace Ares
                     ProgressEnvironmentVariableDurationQueue(environmentVariableProcessingMoments[roundMoment], new List<EnvironmentVariable>());
                     break;
                 case BattleRules.TimedProcess.TemporaryBuffReduction:
-					if(roundMoment == RoundMoment.StartOfTurn){
-						List<TemporaryBuff> clearedBuffs = new List<TemporaryBuff>();
+                    if (roundMoment == RoundMoment.StartOfTurn)
+                    {
+                        List<TemporaryBuff> clearedBuffs = new List<TemporaryBuff>();
 
-						foreach(TemporaryBuff buff in currentActor.TemporaryBuffs){
-							buff.TurnsRemaining--;
+                        foreach (TemporaryBuff buff in currentActor.TemporaryBuffs)
+                        {
+                            buff.TurnsRemaining--;
 
-							if(buff.TurnsRemaining == 0){
-								currentActor.RemoveBuff(buff.Stat, buff.BuffID);
-								clearedBuffs.Add(buff);
-							}
-						}
+                            if (buff.TurnsRemaining == 0)
+                            {
+                                currentActor.RemoveBuff(buff.Stat, buff.BuffID);
+                                clearedBuffs.Add(buff);
+                            }
+                        }
 
-						foreach(TemporaryBuff buff in clearedBuffs){
-							currentActor.TemporaryBuffs.Remove(buff);
-						}
-					}
+                        foreach (TemporaryBuff buff in clearedBuffs)
+                        {
+                            currentActor.TemporaryBuffs.Remove(buff);
+                        }
+                    }
 
-					ProgressBattle();
-					break;
+                    ProgressBattle();
+                    break;
                 default:
                     ProgressBattle();
                     break;
@@ -840,7 +844,7 @@ namespace Ares
                     actor.Cure(currentAffliction, -1);
                 }
 
-                
+
 
                 BattleMonoBehaviour.Instance.StartCoroutine(CRProgressBattleAsSoonAsAllowed(ProgressType.AfflictionDuration,
                     () => { ProgressAfflictionDurationQueue(processingMoment, actorsToProcess, i, processedAfflictions); }));
@@ -1895,11 +1899,11 @@ namespace Ares
                     }
 
                     int power = Mathf.RoundToInt(ability.EvaluatePower(currentActor, chosenAbilityTarget, actionTarget, currentAction));
-					int special = Mathf.RoundToInt(ability.EvaluateSpecial(currentActor, chosenAbilityTarget, actionTarget, currentAction));
+                    int special = Mathf.RoundToInt(ability.EvaluateSpecial(currentActor, chosenAbilityTarget, actionTarget, currentAction));
 
                     // The ID associated with this specific action - based on ability, target, and action index.
                     string actionID = ability.Data.name + chosenAbilityTarget.name + ability.GetActionIdentifier(action);
-					int result = ProcessChainAction(ability, currentAction, currentActor, actionTarget, power, special, actionID);
+                    int result = ProcessChainAction(ability, currentAction, currentActor, actionTarget, power, special, actionID);
 
                     ability.SetActionResult(currentAction, chosenAbilityTarget, result);
                 }
@@ -1932,10 +1936,10 @@ namespace Ares
                     }
 
                     int power = Mathf.RoundToInt(item.EvaluatePower(currentActor, chosenItemTarget, actionTarget, currentAction));
-					int special = Mathf.RoundToInt(item.EvaluateSpecial(currentActor, chosenItemTarget, actionTarget, currentAction));
+                    int special = Mathf.RoundToInt(item.EvaluateSpecial(currentActor, chosenItemTarget, actionTarget, currentAction));
 
                     string actionID = item.Data.name + chosenItemTarget.name + item.GetActionIdentifier(action);
-					int result = ProcessChainAction(item, currentAction, currentActor, actionTarget, power, special, actionID);
+                    int result = ProcessChainAction(item, currentAction, currentActor, actionTarget, power, special, actionID);
 
                     item.SetActionResult(currentAction, chosenItemTarget, result);
                 }
@@ -1996,34 +2000,39 @@ namespace Ares
             }
         }
 
-        void EndAfflictionActionEffect(Actor actor, Affliction affliction, AfflictionAction action, bool hitAtLeastOneTarget){//, System.Action progressAction){
-			if(hitAtLeastOneTarget && action == affliction.Data.Actions.Where(a => !a.IsChildEffect).Last()){
-				actor.OnAfflictionEnd.Invoke(affliction);
+        void EndAfflictionActionEffect(Actor actor, Affliction affliction, AfflictionAction action, bool hitAtLeastOneTarget)
+        {//, System.Action progressAction){
+            if (hitAtLeastOneTarget && action == affliction.Data.Actions.Where(a => !a.IsChildEffect).Last())
+            {
+                actor.OnAfflictionEnd.Invoke(affliction);
 
-				if(Rules.ProgressAutomatically){
-					VerboseLogger.Log("Progressing battle automatically after affliction", VerboseLoggerSettings.RegularColor);
-					BattleMonoBehaviour.Instance.StartCoroutine(CRProgressBattleAsSoonAsAllowed(ProgressType.Turn, ProgressBattle)); //
-				}
-			}
-		}
+                if (Rules.ProgressAutomatically)
+                {
+                    VerboseLogger.Log("Progressing battle automatically after affliction", VerboseLoggerSettings.RegularColor);
+                    BattleMonoBehaviour.Instance.StartCoroutine(CRProgressBattleAsSoonAsAllowed(ProgressType.Turn, ProgressBattle)); //
+                }
+            }
+        }
 
         int ProcessChainAction(object evaluater, ChainableAction action, Actor caster, Actor target, int power, int special, string chainActionID = "")
         {
             // To log the chain action ID stuff
             // if (!string.IsNullOrEmpty(chainActionID)) { Debug.Log(chainActionID); }
-            foreach(EnvironmentVariable envVar in EnvironmentVariables){
-				power = Mathf.RoundToInt(envVar.Filter(evaluater, action, caster, target, power));
-			}
+            foreach (EnvironmentVariable envVar in EnvironmentVariables)
+            {
+                power = Mathf.RoundToInt(envVar.Filter(evaluater, action, caster, target, power));
+            }
 
-			ActorInfo casterActorInfo = ActorInfo[caster];
+            ActorInfo casterActorInfo = ActorInfo[caster];
 
-			InterruptBlockerIfNeeded(casterActorInfo, null, BattleInteractorData.RecoveryInterrupt.OnTargetHit);
+            InterruptBlockerIfNeeded(casterActorInfo, null, BattleInteractorData.RecoveryInterrupt.OnTargetHit);
 
-            #if DEBUG_BATTLE_LOG
-            switch(action.Action){
-				case ChainEvaluator.ActionType.Damage:
+#if DEBUG_BATTLE_LOG
+            switch (action.Action)
+            {
+                case ChainEvaluator.ActionType.Damage:
                     break;
-				case ChainEvaluator.ActionType.Heal:
+                case ChainEvaluator.ActionType.Heal:
                     switch (action.TargetResource)
                     {
                         case ChainableAction.ActorResourceType.Mana:
@@ -2035,39 +2044,41 @@ namespace Ares
                             break;
                     }
                     break;
-				case ChainEvaluator.ActionType.Buff:
+                case ChainEvaluator.ActionType.Buff:
                     string log = "";
-                    if (power > 0) { log = string.Format("   {0} Buffs {1}'s {2} by {3}", caster.DisplayName, target.DisplayName, action.Stat.DisplayName, power);}
+                    if (power > 0) { log = string.Format("   {0} Buffs {1}'s {2} by {3}", caster.DisplayName, target.DisplayName, action.Stat.DisplayName, power); }
                     else { log = string.Format("   {0} Debuffs {1}'s {2} by {3}", caster.DisplayName, target.DisplayName, action.Stat.DisplayName, power); }
-					if(special > 0) { log += " for " + special + " turns"; }
-					BattleLog.Instance.AddLog(log);
+                    if (special > 0) { log += " for " + special + " turns"; }
+                    BattleLog.Instance.AddLog(log);
                     break;
                 case ChainEvaluator.ActionType.ClearBuff:
-					BattleLog.Instance.AddLog(string.Format("   {0} Clears buffs from {1}", caster.DisplayName, target.DisplayName));
+                    BattleLog.Instance.AddLog(string.Format("   {0} Clears buffs from {1}", caster.DisplayName, target.DisplayName));
                     break;
-				case ChainEvaluator.ActionType.Cure:
-					BattleLog.Instance.AddLog(string.Format("   {0} Cures {1} of {2}", caster.DisplayName, target.DisplayName, action.Affliction.DisplayName));
+                case ChainEvaluator.ActionType.Cure:
+                    BattleLog.Instance.AddLog(string.Format("   {0} Cures {1} of {2}", caster.DisplayName, target.DisplayName, action.Affliction.DisplayName));
                     break;
-				case ChainEvaluator.ActionType.Environment:
-					break;
-				case ChainEvaluator.ActionType.Afflict:
-					BattleLog.Instance.AddLog(string.Format("   {0} Afflicts {1} with {2}", caster.DisplayName, target.DisplayName, action.Affliction.DisplayName));
+                case ChainEvaluator.ActionType.Environment:
                     break;
-			}
-            #endif
+                case ChainEvaluator.ActionType.Afflict:
+                    BattleLog.Instance.AddLog(string.Format("   {0} Afflicts {1} with {2}", caster.DisplayName, target.DisplayName, action.Affliction.DisplayName));
+                    break;
+            }
+#endif
 
-			switch(action.Action){
-				case ChainEvaluator.ActionType.Damage:
-					ActorInfo targetActorInfo = ActorInfo[target];
-					InterruptBlockerIfNeeded(casterActorInfo, null, BattleInteractorData.RecoveryInterrupt.OnTargetDamage);
-					InterruptBlockerIfNeeded(targetActorInfo, BattleInteractorData.PreparationInterrupt.OnDamage, BattleInteractorData.RecoveryInterrupt.OnDamage);
-					int damageDealt = target.TakeDamage(power);
-					if(target.HP == 0){
-						InterruptBlockerIfNeeded(casterActorInfo, null, BattleInteractorData.RecoveryInterrupt.OnTargetDeath);
-						InterruptBlockerIfNeeded(targetActorInfo, BattleInteractorData.PreparationInterrupt.OnDeath, BattleInteractorData.RecoveryInterrupt.OnDeath);
-					}
-					return damageDealt;
-				case ChainEvaluator.ActionType.Heal:
+            switch (action.Action)
+            {
+                case ChainEvaluator.ActionType.Damage:
+                    ActorInfo targetActorInfo = ActorInfo[target];
+                    InterruptBlockerIfNeeded(casterActorInfo, null, BattleInteractorData.RecoveryInterrupt.OnTargetDamage);
+                    InterruptBlockerIfNeeded(targetActorInfo, BattleInteractorData.PreparationInterrupt.OnDamage, BattleInteractorData.RecoveryInterrupt.OnDamage);
+                    int damageDealt = target.TakeDamage(power);
+                    if (target.HP == 0)
+                    {
+                        InterruptBlockerIfNeeded(casterActorInfo, null, BattleInteractorData.RecoveryInterrupt.OnTargetDeath);
+                        InterruptBlockerIfNeeded(targetActorInfo, BattleInteractorData.PreparationInterrupt.OnDeath, BattleInteractorData.RecoveryInterrupt.OnDeath);
+                    }
+                    return damageDealt;
+                case ChainEvaluator.ActionType.Heal:
                     switch (action.TargetResource)
                     {
                         case ChainableAction.ActorResourceType.Mana:
@@ -2076,24 +2087,25 @@ namespace Ares
                         default:
                             return target.Heal(power);
                     }
-				case ChainEvaluator.ActionType.Buff:
-					if(special > 0){
+                case ChainEvaluator.ActionType.Buff:
+                    if (special > 0)
+                    {
                         TemporaryBuff tempBuff = new TemporaryBuff(action.Stat, chainActionID, power, special);
-						target.TemporaryBuffs.Add(tempBuff);
+                        target.TemporaryBuffs.Add(tempBuff);
                         target.OnRecieveTempBuff.Invoke(tempBuff);
-					}
-					return target.BuffStat(action.Stat, chainActionID, power);
+                    }
+                    return target.BuffStat(action.Stat, chainActionID, power);
                 case ChainEvaluator.ActionType.ClearBuff:
                     return target.ClearBuff(action.ClearBuff, action.ClearBuffTempOnly, action.Stat);
-				case ChainEvaluator.ActionType.Cure:
-					return target.Cure(action.Affliction, power);
-				case ChainEvaluator.ActionType.Environment:
-					return ModifyEnvironmentVariable(action.EnvironmentVariable, action.EnvironmentVariableSetMode, power, caster);
-				case ChainEvaluator.ActionType.Afflict:
-					return (target.HP <= 0 && !action.Affliction.CanAfflictDefeatedActors) ? 0 : target.Afflict(action.Affliction, power, CurrentRound, caster);
-			}
+                case ChainEvaluator.ActionType.Cure:
+                    return target.Cure(action.Affliction, power);
+                case ChainEvaluator.ActionType.Environment:
+                    return ModifyEnvironmentVariable(action.EnvironmentVariable, action.EnvironmentVariableSetMode, power, caster);
+                case ChainEvaluator.ActionType.Afflict:
+                    return (target.HP <= 0 && !action.Affliction.CanAfflictDefeatedActors) ? 0 : target.Afflict(action.Affliction, power, CurrentRound, caster);
+            }
 
-			return -1;
+            return -1;
         }
 
         int ModifyEnvironmentVariable(EnvironmentVariableData data, ChainableAction.EnvironmentVariableSetType setType, int stage, Actor caster)
@@ -2284,7 +2296,7 @@ namespace Ares
         // Used to check if a given actor has any more current turns in this round.
         public bool HasRemainingTurns(Actor actor)
         {
-            for(int i = currentActorIndex; i < queuedActors.Count; i++)
+            for (int i = currentActorIndex; i < queuedActors.Count; i++)
             {
                 if (queuedActors[i] == actor)
                 {
@@ -2328,7 +2340,7 @@ namespace Ares
             {
                 if (envVar.CheckAbilityBlocked(ability, actor)) { return false; }
             }
-            
+
             // Nothing else makes the ability invalid, just return if the mana does now.
             return (actor.Mana < ability.Data.ManaCost);
         }
@@ -2503,7 +2515,7 @@ namespace Ares
             }
 
             actor.OnAbilityStart.Invoke(ability, targets);
-            
+
             ability.PrepareForChainEvaluation(actor, targets);
 
             List<Actor> remainingTargets = targets.ToList();
@@ -2637,6 +2649,84 @@ namespace Ares
         void EndPerformAbility(Actor actor, AbilityResults abilityResults)
         {
             OnAbilityResults.Invoke(actor, abilityResults);
+
+            // Set the text based on how the ability went!
+            string abilityResultText = "";
+            abilityResultText += actor.DisplayName + " used ability " + abilityResults.ability.Data.DisplayName + "!";
+            foreach (AbilityAction action in abilityResults.actionResults.Keys)
+            {
+                BattleActionResults result = abilityResults.actionResults[action];
+                if (result.hitTargets.Count > 0)
+                {
+                    // This part of the ability hit, log it.
+                    abilityResultText += "\n";
+                    for (int i = 0; i < result.hitTargets.Count; i++)
+                    {
+                        Actor hitActor = result.hitTargets[i];
+                        if (i == 0)
+                        {
+                            abilityResultText += hitActor.DisplayName;
+                        }
+                        else if (i == (result.hitTargets.Count - 1))
+                        {
+                            if (result.hitTargets.Count > 2)
+                            {
+                                abilityResultText += ",";
+                            }
+                            abilityResultText += " and " + hitActor.DisplayName;
+                        }
+                        else
+                        {
+                            abilityResultText += ", " + hitActor.DisplayName;
+                        }
+                    }
+
+                    switch (action.Action)
+                    {
+                        case ChainEvaluator.ActionType.Damage:
+                            abilityResultText += " was hit!";
+                            break;
+                        case ChainEvaluator.ActionType.Heal:
+                            switch (action.TargetResource)
+                            {
+                                case ChainableAction.ActorResourceType.Mana:
+                                    abilityResultText += " had MP restored!";
+                                    break;
+                                case ChainableAction.ActorResourceType.Health:
+                                default:
+                                    abilityResultText += " was healed!";
+                                    break;
+                            }
+                            break;
+                        case ChainEvaluator.ActionType.Buff:
+                            abilityResultText += " had their " + action.Stat.DisplayName;
+                            // TODO: Check the evaluated power of this!!!
+                            if (true) 
+                            { 
+                                abilityResultText += " buffed!";
+                            }
+                            else { 
+                                abilityResultText += " debuffed!";
+                            }
+                            break;
+                        case ChainEvaluator.ActionType.ClearBuff:
+                            abilityResultText += " had their buffs cleared!";
+                            break;
+                        case ChainEvaluator.ActionType.Cure:
+                            abilityResultText += " was cured of " + action.Affliction.DisplayName;
+                            break;
+                        case ChainEvaluator.ActionType.Environment:
+                            break;
+                        case ChainEvaluator.ActionType.Afflict:
+                            abilityResultText += " was afflicted with " + action.Affliction.DisplayName;
+                            break;
+                    }
+                }
+            }
+
+
+            BattleText.SetText(abilityResultText, true);
+
             ProcessAbilityEnd(actor, abilityResults);
         }
 
@@ -2879,106 +2969,124 @@ namespace Ares
             }
         }
 
-        IEnumerator CRProcessAffliction(Actor actor, Affliction affliction, System.Action progressAction){
-			actor.OnAfflictionStart.Invoke(affliction);
+        IEnumerator CRProcessAffliction(Actor actor, Affliction affliction, System.Action progressAction)
+        {
+            actor.OnAfflictionStart.Invoke(affliction);
 
 
-			affliction.OnTrigger(actor);
-			affliction.PrepareForChainEvaluation(affliction.Afflicter, new Actor[]{actor});
+            affliction.OnTrigger(actor);
+            affliction.PrepareForChainEvaluation(affliction.Afflicter, new Actor[] { actor });
 
-			AfflictionResults afflictionResults = new AfflictionResults(affliction);
+            AfflictionResults afflictionResults = new AfflictionResults(affliction);
 
-			foreach(AfflictionAction action in affliction.Data.Actions.Where(a => !a.IsChildEffect)){
-				BattleActionResults actionResults = afflictionResults.CreateResult(action);
-				bool breakChain = false;
-				BattleInteractorData.HitStatus hitStatus = actor.PerformHitTest(affliction.Afflicter, affliction.Data, action);
+            foreach (AfflictionAction action in affliction.Data.Actions.Where(a => !a.IsChildEffect))
+            {
+                BattleActionResults actionResults = afflictionResults.CreateResult(action);
+                bool breakChain = false;
+                BattleInteractorData.HitStatus hitStatus = actor.PerformHitTest(affliction.Afflicter, affliction.Data, action);
 
-				switch(hitStatus){
-					case BattleInteractorData.HitStatus.Hit:
-						if(action == affliction.Data.Actions[0]){
-							if(affliction.Data.BaseDuration > 0){
-								yield return new WaitForSeconds(affliction.Data.BaseDuration);
-							}
-						}
+                switch (hitStatus)
+                {
+                    case BattleInteractorData.HitStatus.Hit:
+                        if (action == affliction.Data.Actions[0])
+                        {
+                            if (affliction.Data.BaseDuration > 0)
+                            {
+                                yield return new WaitForSeconds(affliction.Data.BaseDuration);
+                            }
+                        }
 
-						actionResults.hitTargets.Add(actor);
-						//actor.ConfirmAfflictionActionSuccess(affliction, action); //was on
+                        actionResults.hitTargets.Add(actor);
+                        //actor.ConfirmAfflictionActionSuccess(affliction, action); //was on
 
-						//actor.OnAfflictionActionProcess.AddOneTimeListener<Affliction, AfflictionAction>((af, ac) => {ProcessAfflictionActionEffect(actor, af, ac);});
-						//actor.OnAfflictionActionEnd.AddOneTimeListener<Affliction, AfflictionAction>((af, ac) => {EndAfflictionActionEffect(actor, af, ac, progressAction);});
-						break;
-					default:
-						//actor.ConfirmAfflictionActionFail(affliction, hitStatus, action); //was on
+                        //actor.OnAfflictionActionProcess.AddOneTimeListener<Affliction, AfflictionAction>((af, ac) => {ProcessAfflictionActionEffect(actor, af, ac);});
+                        //actor.OnAfflictionActionEnd.AddOneTimeListener<Affliction, AfflictionAction>((af, ac) => {EndAfflictionActionEffect(actor, af, ac, progressAction);});
+                        break;
+                    default:
+                        //actor.ConfirmAfflictionActionFail(affliction, hitStatus, action); //was on
 
-						//breakChain = action.BreaksChainOnMiss;
+                        //breakChain = action.BreaksChainOnMiss;
 
-						actionResults.missedActions.Add(new MissedAction(actor, hitStatus));
+                        actionResults.missedActions.Add(new MissedAction(actor, hitStatus));
 
-						breakChain = action.BreaksChainOnMiss || action == affliction.Data.Actions.Last(a => !a.IsChildEffect);
-						break;
-				}
+                        breakChain = action.BreaksChainOnMiss || action == affliction.Data.Actions.Last(a => !a.IsChildEffect);
+                        break;
+                }
 
-				if(breakChain){
-					EndPerformAffliction(actor, afflictionResults);
+                if (breakChain)
+                {
+                    EndPerformAffliction(actor, afflictionResults);
 
-					if(Rules.ProgressAutomatically) {
-						VerboseLogger.Log("Progressing battle automatically after failed affliction action", VerboseLoggerSettings.RegularColor);
-						BattleMonoBehaviour.Instance.StartCoroutine(CRProgressBattleAsSoonAsAllowed(ProgressType.Turn, progressAction));
-					}
+                    if (Rules.ProgressAutomatically)
+                    {
+                        VerboseLogger.Log("Progressing battle automatically after failed affliction action", VerboseLoggerSettings.RegularColor);
+                        BattleMonoBehaviour.Instance.StartCoroutine(CRProgressBattleAsSoonAsAllowed(ProgressType.Turn, progressAction));
+                    }
 
-					break;
-				}
-			}
+                    break;
+                }
+            }
 
-            if(affliction.Data.Actions.Where(a => !a.IsChildEffect).Count() == 0 && Rules.ProgressAutomatically) {
+            if (affliction.Data.Actions.Where(a => !a.IsChildEffect).Count() == 0 && Rules.ProgressAutomatically)
+            {
                 VerboseLogger.Log("Progressing battle automatically after 0-action affliction", VerboseLoggerSettings.RegularColor);
                 BattleMonoBehaviour.Instance.StartCoroutine(CRProgressBattleAsSoonAsAllowed(ProgressType.Turn, progressAction));
             }
 
-			EndPerformAffliction (actor, afflictionResults);
-		}
+            EndPerformAffliction(actor, afflictionResults);
+        }
 
-		void EndPerformAffliction(Actor actor, AfflictionResults afflictionResults){
-			OnAfflictionResults.Invoke(actor, afflictionResults);
+        void EndPerformAffliction(Actor actor, AfflictionResults afflictionResults)
+        {
+            OnAfflictionResults.Invoke(actor, afflictionResults);
             VerboseLogger.Log("Finished Processing Affliction");
-			ProcessAfflictionEnd(actor, afflictionResults);
-		}
+            ProcessAfflictionEnd(actor, afflictionResults);
+        }
 
-		void ProcessAfflictionEnd(Actor actor, AfflictionResults afflictionResults){ //recursive
-			if(afflictionResults.actionResults.Count == 0){
-				return;
-			}
+        void ProcessAfflictionEnd(Actor actor, AfflictionResults afflictionResults)
+        { //recursive
+            if (afflictionResults.actionResults.Count == 0)
+            {
+                return;
+            }
 
-			KeyValuePair<AfflictionAction, BattleActionResults> currentResultKVP = afflictionResults.actionResults.First();
-			afflictionResults.actionResults.Remove(currentResultKVP.Key);
-			
-			if(afflictionResults.actionResults.Count > 0){
-				actor.OnAfflictionActionEnd.AddOneTimeListener<Affliction, AfflictionAction>((af, aa) => {
-					BattleMonoBehaviour.Instance.StartCoroutine(CRProgressBattleAsSoonAsAllowed(ProgressType.Immediate, () => {ProcessAfflictionEnd(actor, afflictionResults);}));
-				});
-			}
+            KeyValuePair<AfflictionAction, BattleActionResults> currentResultKVP = afflictionResults.actionResults.First();
+            afflictionResults.actionResults.Remove(currentResultKVP.Key);
 
-			if(currentResultKVP.Value.hitTargets.Count > 0){
-				actor.OnAfflictionActionEnd.AddOneTimeListener<Affliction, AfflictionAction>((af, aa) => {EndAfflictionActionEffect(actor, af, aa, true);});
-				actor.OnAfflictionActionProcess.AddOneTimeListener<Affliction, AfflictionAction>((af, aa) => ProcessAfflictionActionEffect(actor, af, aa));
-				actor.ConfirmAfflictionActionSuccess(afflictionResults.affliction, currentResultKVP.Key);
-			}
-			else{
-				actor.OnAfflictionActionEnd.AddOneTimeListener<Affliction, AfflictionAction>((af, aa) => {EndAfflictionActionEffect(actor, af, aa, false);});
-			}
+            if (afflictionResults.actionResults.Count > 0)
+            {
+                actor.OnAfflictionActionEnd.AddOneTimeListener<Affliction, AfflictionAction>((af, aa) =>
+                {
+                    BattleMonoBehaviour.Instance.StartCoroutine(CRProgressBattleAsSoonAsAllowed(ProgressType.Immediate, () => { ProcessAfflictionEnd(actor, afflictionResults); }));
+                });
+            }
 
-			if(currentResultKVP.Value.missedActions.Count > 0){
-				actor.ConfirmAfflictionActionFail(afflictionResults.affliction, currentResultKVP.Value.missedActions.Select(a => a.hitStatus).ToArray(),
-												  currentResultKVP.Key, currentResultKVP.Value.missedActions.Count == 0);
+            if (currentResultKVP.Value.hitTargets.Count > 0)
+            {
+                actor.OnAfflictionActionEnd.AddOneTimeListener<Affliction, AfflictionAction>((af, aa) => { EndAfflictionActionEffect(actor, af, aa, true); });
+                actor.OnAfflictionActionProcess.AddOneTimeListener<Affliction, AfflictionAction>((af, aa) => ProcessAfflictionActionEffect(actor, af, aa));
+                actor.ConfirmAfflictionActionSuccess(afflictionResults.affliction, currentResultKVP.Key);
+            }
+            else
+            {
+                actor.OnAfflictionActionEnd.AddOneTimeListener<Affliction, AfflictionAction>((af, aa) => { EndAfflictionActionEffect(actor, af, aa, false); });
+            }
 
-				foreach(MissedAction missedAction in currentResultKVP.Value.missedActions){
-					if(missedAction.hitStatus == BattleInteractorData.HitStatus.Evade && missedAction.target != null){
-						missedAction.target.OnAfflictionActionAvoid.Invoke(afflictionResults.affliction, currentResultKVP.Key);
-					}
-				}
-			}
+            if (currentResultKVP.Value.missedActions.Count > 0)
+            {
+                actor.ConfirmAfflictionActionFail(afflictionResults.affliction, currentResultKVP.Value.missedActions.Select(a => a.hitStatus).ToArray(),
+                                                  currentResultKVP.Key, currentResultKVP.Value.missedActions.Count == 0);
+
+                foreach (MissedAction missedAction in currentResultKVP.Value.missedActions)
+                {
+                    if (missedAction.hitStatus == BattleInteractorData.HitStatus.Evade && missedAction.target != null)
+                    {
+                        missedAction.target.OnAfflictionActionAvoid.Invoke(afflictionResults.affliction, currentResultKVP.Key);
+                    }
+                }
+            }
             VerboseLogger.Log("Finished Processing Affliction");
-		}
+        }
 
         IEnumerator CRRestoreActorRotation(Actor actor)
         {
