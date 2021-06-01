@@ -147,7 +147,7 @@ public class AbilityMinigameManager : MonoBehaviour
                 m_abilityMinigames[i].gameObject.SetActive(false);
             }
         }
-        HideMinigameDescriptionInternal();
+        //HideMinigameDescriptionInternal();
     }
 
     private void ShowMinigameDescriptionInternal(AbilityMinigameData data)

@@ -8,7 +8,7 @@ public class BattleText : MonoBehaviour
 {
     // Serialize Fields
     [SerializeField]
-    private GameObject m_textParent = null;
+    private Animator m_textBoxAnimator = null;
 
     [SerializeField]
     private TMP_Text m_textComponent = null;
@@ -36,6 +36,8 @@ public class BattleText : MonoBehaviour
     public static bool ShowingText { get { return Instance.m_showingText; } }
     private bool m_battlePaused = false;
     public static bool BattlePaused { get { return Instance.m_battlePaused; } }
+
+    private string m_currentText = string.Empty;
 
     Ares.BattleDelayElement m_battleDelayer = null;
 
@@ -110,7 +112,10 @@ public class BattleText : MonoBehaviour
     ////////////////////////////////////////////
     public void ResumeBattle()
     {
-        HideTextInternal();
+        if (m_battlePaused)
+        {
+            HideTextInternal();
+        }
     }
 
     public void OnBattleStart()
@@ -126,7 +131,13 @@ public class BattleText : MonoBehaviour
     ////////////////////////////////////////////////////
     private void SetTextInternal(string text, bool pauseBattle, float maxPauseTime)
     {
-        m_textParent.SetActive(true);
+        if (m_showingText && m_currentText == text)
+        {
+            return;
+        }
+        
+        m_textBoxAnimator.SetBool("Enabled", true);
+        if (m_showingText) { m_textBoxAnimator.SetTrigger("Reset"); }
         m_textComponent.text = text;
 
         if (pauseBattle)
@@ -151,19 +162,24 @@ public class BattleText : MonoBehaviour
         {
             m_continueButton.SetActive(false);
         }
+
+        m_showingText = true;
+        m_currentText = text;
     }
 
     private void HideTextInternal()
     {
-        m_textParent.SetActive(false);
+        m_textBoxAnimator.SetBool("Enabled", false);
 
         if (m_battlePaused)
         {
             // Resume battle
-			m_battleDelayer.ReleaseBattleDelayLock();
-            
+            m_battleDelayer.ReleaseBattleDelayLock();
+
             m_battlePaused = false;
             m_isTimedPause = false;
         }
+
+        m_showingText = false;
     }
 }
