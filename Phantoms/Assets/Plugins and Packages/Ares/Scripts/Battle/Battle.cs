@@ -2001,7 +2001,7 @@ namespace Ares
             }
         }
 
-        void EndAfflictionActionEffect(Actor actor, Affliction affliction, AfflictionAction action, bool hitAtLeastOneTarget)
+        void EndAfflictionActionEffect(Actor actor, Affliction affliction, AfflictionAction action, bool hitAtLeastOneTarget, System.Action progressAction)
         {//, System.Action progressAction){
             if (hitAtLeastOneTarget && action == affliction.Data.Actions.Where(a => !a.IsChildEffect).Last())
             {
@@ -2010,7 +2010,7 @@ namespace Ares
                 if (Rules.ProgressAutomatically)
                 {
                     VerboseLogger.Log("Progressing battle automatically after affliction", VerboseLoggerSettings.RegularColor);
-                    BattleMonoBehaviour.Instance.StartCoroutine(CRProgressBattleAsSoonAsAllowed(ProgressType.Turn, ProgressBattle)); //
+                    BattleMonoBehaviour.Instance.StartCoroutine(CRProgressBattleAsSoonAsAllowed(ProgressType.Turn, progressAction)); //
                 }
             }
         }
@@ -2960,7 +2960,7 @@ namespace Ares
 
                 if (breakChain)
                 {
-                    EndPerformAffliction(actor, afflictionResults);
+                    EndPerformAffliction(actor, afflictionResults, progressAction);
 
                     if (Rules.ProgressAutomatically)
                     {
@@ -2978,10 +2978,10 @@ namespace Ares
                 BattleMonoBehaviour.Instance.StartCoroutine(CRProgressBattleAsSoonAsAllowed(ProgressType.Turn, progressAction));
             }
 
-            EndPerformAffliction(actor, afflictionResults);
+            EndPerformAffliction(actor, afflictionResults, progressAction);
         }
 
-        void EndPerformAffliction(Actor actor, AfflictionResults afflictionResults)
+        void EndPerformAffliction(Actor actor, AfflictionResults afflictionResults, System.Action progressAction)
         {
             OnAfflictionResults.Invoke(actor, afflictionResults);
             VerboseLogger.Log("Finished Processing Affliction");
@@ -2998,11 +2998,12 @@ namespace Ares
             BattleText.SetText(abilityResultText, true);
 
 
-            ProcessAfflictionEnd(actor, afflictionResults);
+            ProcessAfflictionEnd(actor, afflictionResults, progressAction);
         }
 
-        void ProcessAfflictionEnd(Actor actor, AfflictionResults afflictionResults)
+        void ProcessAfflictionEnd(Actor actor, AfflictionResults afflictionResults, System.Action progressAction)
         { //recursive
+
             if (afflictionResults.actionResults.Count == 0)
             {
                 return;
@@ -3015,19 +3016,19 @@ namespace Ares
             {
                 actor.OnAfflictionActionEnd.AddOneTimeListener<Affliction, AfflictionAction>((af, aa) =>
                 {
-                    BattleMonoBehaviour.Instance.StartCoroutine(CRProgressBattleAsSoonAsAllowed(ProgressType.Immediate, () => { ProcessAfflictionEnd(actor, afflictionResults); }));
+                    BattleMonoBehaviour.Instance.StartCoroutine(CRProgressBattleAsSoonAsAllowed(ProgressType.Immediate, () => { ProcessAfflictionEnd(actor, afflictionResults, progressAction); }));
                 });
             }
 
             if (currentResultKVP.Value.hitTargets.Count > 0)
             {
-                actor.OnAfflictionActionEnd.AddOneTimeListener<Affliction, AfflictionAction>((af, aa) => { EndAfflictionActionEffect(actor, af, aa, true); });
+                actor.OnAfflictionActionEnd.AddOneTimeListener<Affliction, AfflictionAction>((af, aa) => { EndAfflictionActionEffect(actor, af, aa, true, progressAction); });
                 actor.OnAfflictionActionProcess.AddOneTimeListener<Affliction, AfflictionAction>((af, aa) => ProcessAfflictionActionEffect(actor, af, aa));
                 actor.ConfirmAfflictionActionSuccess(afflictionResults.affliction, currentResultKVP.Key);
             }
             else
             {
-                actor.OnAfflictionActionEnd.AddOneTimeListener<Affliction, AfflictionAction>((af, aa) => { EndAfflictionActionEffect(actor, af, aa, false); });
+                actor.OnAfflictionActionEnd.AddOneTimeListener<Affliction, AfflictionAction>((af, aa) => { EndAfflictionActionEffect(actor, af, aa, false, progressAction); });
             }
 
             if (currentResultKVP.Value.missedActions.Count > 0)
