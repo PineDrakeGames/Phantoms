@@ -78,6 +78,11 @@ public class BattleResultsManager : MonoBehaviour
         m_resultsDescriptionText.text = descriptionText;
     }
 
+    public void QueueLevelUp(UserBattleInstanceData user)
+    {
+        
+    }
+
     public void QuitBattle()
     {
         LoadingManager.ReturnFromBattle();

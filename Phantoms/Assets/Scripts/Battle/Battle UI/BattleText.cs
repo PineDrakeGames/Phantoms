@@ -88,8 +88,10 @@ public class BattleText : MonoBehaviour
         {
             m_battleDelayer = gameObject.AddComponent<Ares.BattleDelayElement>();
         }
-
-        BattleManager.Instance.OnBattleStart.AddListener(OnBattleStart);
+        if (BattleManager.Instance)
+        {
+            BattleManager.Instance.OnBattleStart.AddListener(OnBattleStart);
+        }
         OnBattleStart();
         HideTextInternal();
     }

@@ -47,7 +47,7 @@ public class BattleInitializer : MonoBehaviour
         foreach(CombatantInstanceData combatant in Enemies.Keys)
         {
             Actor actorComponent = Enemies[combatant];
-            BattleManager.Instance.ActorToData[actorComponent] = combatant;
+            m_battleManager.ActorToData[actorComponent] = combatant;
             actorComponent.transform.position = positions[index];
             EnemyActors.Add(actorComponent);
             index++;

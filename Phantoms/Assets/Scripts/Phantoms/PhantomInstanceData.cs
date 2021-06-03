@@ -9,11 +9,7 @@ public class PhantomInstanceData : UserBattleInstanceData
 
     public string NickName = null;
 
-    public int Level = 0;
-
     public PhantomBackground Background = PhantomBackground.None;
-
-    public LevelUpStats LevelUps = new LevelUpStats();
     
     public PhantomData PhanData
     {
@@ -50,13 +46,17 @@ public class PhantomInstanceData : UserBattleInstanceData
         startingStats.SetStat(decrease, startingStats.GetStat(decrease) - (PhanData.LevelUpAmounts.GetStat(decrease)/2));
 
         // Add in level ups!
+        int totalLevel = 0;
         foreach(BattleStatType type in PhantomDataUtility.LevelUpStats)
         {
-            for (int i = 0; i < LevelUps.GetStat(type); i++)
+            int levels = LevelUps.GetStat(type);
+            for (int i = 0; i < levels; i++)
             {
                 startingStats.SetStat(type, startingStats.GetStat(type) + PhanData.LevelUpAmounts.GetStat(type));
             }
+            totalLevel += levels;
         }
+        Level = totalLevel;
 
         // Add in any stat buffs coming from relics.
         foreach(RelicInstance relic in Relics)

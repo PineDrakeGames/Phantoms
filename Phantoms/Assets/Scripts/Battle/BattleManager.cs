@@ -41,11 +41,6 @@ public class BattleManager : MonoBehaviour
             if (s_instance == null)
             {
                 s_instance = FindObjectOfType<BattleManager>();
-                if (s_instance == null)
-                {
-                    GameObject managerObject = Instantiate(new GameObject());
-                    s_instance = managerObject.AddComponent<BattleManager>();
-                }
             }
             return s_instance;
         }
@@ -58,6 +53,8 @@ public class BattleManager : MonoBehaviour
     public Dictionary<Actor, CombatantInstanceData> ActorToData = new Dictionary<Actor, CombatantInstanceData>();
     [HideInInspector]
     public UnityEvent OnBattleStart = new UnityEvent();
+
+    private Dictionary<UserBattleInstanceData, int> ExperienceReward = new Dictionary<UserBattleInstanceData, int>();
 
     void Awake()
     {
@@ -97,6 +94,9 @@ public class BattleManager : MonoBehaviour
         playerGroup.OnDefeat.AddListener(() => EndBattle(false));
         enemyGroup.OnDefeat.AddListener(() => EndBattle(true));
 
+        // For exp stuff
+        //enemyGroup.ActorDefeated.AddListener(OnEnemyDefeat);
+
         // Add all actors to their respective groups
         foreach (Actor actor in playerTeam)
         {
@@ -113,6 +113,11 @@ public class BattleManager : MonoBehaviour
                 {
                     actor.OnHPDeplete.AddListener(() => EndBattle(false));
                 }
+            }
+
+            if (ActorToData.ContainsKey(actor) && ActorToData[actor] is UserBattleInstanceData)
+            {
+                ExperienceReward[ActorToData[actor] as UserBattleInstanceData] = 0;
             }
         }
         foreach (Actor actor in enemies)
@@ -196,6 +201,44 @@ public class BattleManager : MonoBehaviour
         // Hide the UI now that the actor has received all needed input.
     }
 
+    void OnEnemyDefeat(Actor enemy)
+    {
+        CombatantInstanceData enemyData = null;
+        if (ActorToData.TryGetValue(enemy, out enemyData))
+        {
+            // TODO: Handle other cases - just phantoms for now
+            if (enemyData is PhantomInstanceData)
+            {
+                int enemyLevel = (enemyData as PhantomInstanceData).Level;
+                foreach (Actor actor in playerTeam)
+                {
+                    if (ActorToData.ContainsKey(actor) && ActorToData[actor] is UserBattleInstanceData)
+                    {
+                        UserBattleInstanceData playerData = ActorToData[actor] as UserBattleInstanceData;
+                        int levelDifference = enemyLevel - playerData.Level;
+
+                        // Magic number time - should eventually store these as constants elsewhere.
+                        // 0.55 is to make sure things tend to round up instead of down
+                        int xpToGain = 3 + Mathf.RoundToInt(levelDifference * 0.55f);
+                        if (!battle.IsParticipating(actor))
+                        {
+                            xpToGain = Mathf.RoundToInt((float)xpToGain * 0.55f);
+                        }
+                        xpToGain = Mathf.Clamp(xpToGain, 0, 99);
+                        if (ExperienceReward.ContainsKey(playerData))
+                        {
+                            ExperienceReward[playerData] += xpToGain;
+                        }
+                        else
+                        {
+                            ExperienceReward[playerData] = xpToGain;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     void EndBattle(bool playerWon)
     {
         // A win condition has been met; end the battle.
@@ -226,9 +269,27 @@ public class BattleManager : MonoBehaviour
             }
         }
 
+        // Update inventory with any used items!
         PlayerInventoryManager.Instance.SaveBattleInventory(playerGroup.Inventory as StackedInventory);
 
+        // Reward XP and determine level ups!
+        // TODO: In the future, enemies other than phantoms should reward some amount of exp special to them. For now, just assume that they are a phantom,
+        // and reward Exp based on the level difference.
+
+        // Only reward XP if we win!
+        if (endReason == Battle.EndReason.PhantomCaught || endReason == Battle.EndReason.PlayerWin)
+        {
+            foreach (Actor actor in playerTeam)
+            {
+                UserBattleInstanceData data = ActorToData[actor] as UserBattleInstanceData;
+                //Debug.Log("Experience reward for " + data.GetDisplayName() + ": " + ExperienceReward[data]);
+
+            }
+        }
+
         // Show them results screen
+
+        BattleText.HideText();
         m_resultsManager.ShowResults(endReason);
     }
 

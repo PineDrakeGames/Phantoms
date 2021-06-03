@@ -2253,6 +2253,11 @@ namespace Ares
             }
         }
 
+        public bool IsParticipating(Actor actor)
+        {
+            return ActorInfo[actor].IsParticipating;
+        }
+
         // Used to swap turn to the next actor of the same group
         public void SwapParticipant(Actor prevActor, Actor newActor)
         {

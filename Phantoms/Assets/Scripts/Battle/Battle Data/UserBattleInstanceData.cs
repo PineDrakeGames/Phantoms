@@ -9,6 +9,11 @@ public abstract class UserBattleInstanceData : CombatantInstanceData
 
     public int CurrentRelicPoints = 0;
 
+    // Levels and stats stuff
+    public int Level = 0;
+    public int Experience = 0;
+    public LevelUpStats LevelUps = new LevelUpStats();
+
     public abstract void SetCurrentStats();
 
     // Public Functions to equip and unequip relics, making sure stuff is set up.
