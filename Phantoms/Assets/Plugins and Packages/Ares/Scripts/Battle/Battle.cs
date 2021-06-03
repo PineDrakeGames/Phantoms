@@ -798,6 +798,7 @@ namespace Ares
             for (int i = currentProcessingActor; i < actorsToProcess.Count; i++)
             {
                 Actor actor = actorsToProcess[i];
+                Debug.Log("Processing afflictions for actor " + actor.gameObject.name + "!");
                 Affliction currentAffliction = actor.Afflictions.FirstOrDefault(a => !processedAfflictions.Contains(a) && a.Data.EffectProcessingMoment == processingMoment);
 
                 if (currentAffliction == null)
@@ -2656,77 +2657,10 @@ namespace Ares
             foreach (AbilityAction action in abilityResults.actionResults.Keys)
             {
                 BattleActionResults result = abilityResults.actionResults[action];
-                if (result.hitTargets.Count > 0)
-                {
-                    // This part of the ability hit, log it.
-                    abilityResultText += "\n";
-                    for (int i = 0; i < result.hitTargets.Count; i++)
-                    {
-                        Actor hitActor = result.hitTargets[i];
-                        if (i == 0)
-                        {
-                            abilityResultText += hitActor.DisplayName;
-                        }
-                        else if (i == (result.hitTargets.Count - 1))
-                        {
-                            if (result.hitTargets.Count > 2)
-                            {
-                                abilityResultText += ",";
-                            }
-                            abilityResultText += " and " + hitActor.DisplayName;
-                        }
-                        else
-                        {
-                            abilityResultText += ", " + hitActor.DisplayName;
-                        }
-                    }
-
-                    switch (action.Action)
-                    {
-                        case ChainEvaluator.ActionType.Damage:
-                            abilityResultText += " was hit!";
-                            break;
-                        case ChainEvaluator.ActionType.Heal:
-                            switch (action.TargetResource)
-                            {
-                                case ChainableAction.ActorResourceType.Mana:
-                                    abilityResultText += " had MP restored!";
-                                    break;
-                                case ChainableAction.ActorResourceType.Health:
-                                default:
-                                    abilityResultText += " was healed!";
-                                    break;
-                            }
-                            break;
-                        case ChainEvaluator.ActionType.Buff:
-                            abilityResultText += " had their " + action.Stat.DisplayName;
-                            // TODO: Check the evaluated power of this!!!
-                            if (true) 
-                            { 
-                                abilityResultText += " buffed!";
-                            }
-                            else { 
-                                abilityResultText += " debuffed!";
-                            }
-                            break;
-                        case ChainEvaluator.ActionType.ClearBuff:
-                            abilityResultText += " had their buffs cleared!";
-                            break;
-                        case ChainEvaluator.ActionType.Cure:
-                            abilityResultText += " was cured of " + action.Affliction.DisplayName;
-                            break;
-                        case ChainEvaluator.ActionType.Environment:
-                            break;
-                        case ChainEvaluator.ActionType.Afflict:
-                            abilityResultText += " was afflicted with " + action.Affliction.DisplayName;
-                            break;
-                    }
-                }
+                abilityResultText += "\n" + GetBattleActionString(action, abilityResults.actionResults[action]);
             }
 
-
             BattleText.SetText(abilityResultText, true);
-
             ProcessAbilityEnd(actor, abilityResults);
         }
 
@@ -2938,6 +2872,17 @@ namespace Ares
             actor.OnItemActionProcess.AddOneTimeListener<Actor[], Item, ItemAction>(ProcessItemActionEffect);
             actor.OnItemActionEnd.AddOneTimeListener<Actor[], Item, ItemAction>(EndItemActionEffect);
 
+            // Set the text based on how the ability went!
+            string abilityResultText = "";
+            abilityResultText += actor.DisplayName + " used item " + itemResults.item.Data.DisplayName + "!";
+            foreach (ItemAction action in itemResults.actionResults.Keys)
+            {
+                BattleActionResults result = itemResults.actionResults[action];
+                abilityResultText += "\n" + GetBattleActionString(action, itemResults.actionResults[action]);
+            }
+
+            BattleText.SetText(abilityResultText, true);
+
             KeyValuePair<ItemAction, BattleActionResults> currentResultKVP = itemResults.actionResults.First();
             itemResults.actionResults.Remove(currentResultKVP.Key);
 
@@ -3040,6 +2985,19 @@ namespace Ares
         {
             OnAfflictionResults.Invoke(actor, afflictionResults);
             VerboseLogger.Log("Finished Processing Affliction");
+
+            // Set the text based on how the ability went!
+            string abilityResultText = "";
+            abilityResultText += actor.DisplayName + " was affected by " + afflictionResults.affliction.Data.DisplayName + "!";
+            foreach (AfflictionAction action in afflictionResults.actionResults.Keys)
+            {
+                BattleActionResults result = afflictionResults.actionResults[action];
+                abilityResultText += "\n" + GetBattleActionString(action, afflictionResults.actionResults[action]);
+            }
+
+            BattleText.SetText(abilityResultText, true);
+
+
             ProcessAfflictionEnd(actor, afflictionResults);
         }
 
@@ -3121,6 +3079,82 @@ namespace Ares
             yield return new WaitForSeconds(baseDelay);
 
             progressAction();
+        }
+
+        //////////////////////////////////////
+        /// Private functions added by CJ! ///
+        //////////////////////////////////////
+        private string GetBattleActionString(ChainableAction action, BattleActionResults battleActionResults)
+        {
+            string resultText = "";
+            if (battleActionResults.hitTargets.Count > 0)
+            {
+                // This part of the ability hit, log it.
+                //resultText += "\n";
+                for (int i = 0; i < battleActionResults.hitTargets.Count; i++)
+                {
+                    Actor hitActor = battleActionResults.hitTargets[i];
+                    if (i == 0)
+                    {
+                        resultText += hitActor.DisplayName;
+                    }
+                    else if (i == (battleActionResults.hitTargets.Count - 1))
+                    {
+                        if (battleActionResults.hitTargets.Count > 2)
+                        {
+                            resultText += ",";
+                        }
+                        resultText += " and " + hitActor.DisplayName;
+                    }
+                    else
+                    {
+                        resultText += ", " + hitActor.DisplayName;
+                    }
+                }
+
+                switch (action.Action)
+                {
+                    case ChainEvaluator.ActionType.Damage:
+                        resultText += " was hurt!";
+                        break;
+                    case ChainEvaluator.ActionType.Heal:
+                        switch (action.TargetResource)
+                        {
+                            case ChainableAction.ActorResourceType.Mana:
+                                resultText += " had MP restored!";
+                                break;
+                            case ChainableAction.ActorResourceType.Health:
+                            default:
+                                resultText += " was healed!";
+                                break;
+                        }
+                        break;
+                    case ChainEvaluator.ActionType.Buff:
+                        resultText += " had their " + action.Stat.DisplayName;
+                        // TODO: Check the evaluated power of this!!!
+                        if (true)
+                        {
+                            resultText += " buffed!";
+                        }
+                        else
+                        {
+                            resultText += " debuffed!";
+                        }
+                        break;
+                    case ChainEvaluator.ActionType.ClearBuff:
+                        resultText += " had their buffs cleared!";
+                        break;
+                    case ChainEvaluator.ActionType.Cure:
+                        resultText += " was cured of " + action.Affliction.DisplayName + "!";
+                        break;
+                    case ChainEvaluator.ActionType.Environment:
+                        break;
+                    case ChainEvaluator.ActionType.Afflict:
+                        resultText += " was afflicted with " + action.Affliction.DisplayName + "!";
+                        break;
+                }
+            }
+            return resultText;
         }
     }
 }
