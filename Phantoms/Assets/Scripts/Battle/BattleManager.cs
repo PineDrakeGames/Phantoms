@@ -54,7 +54,7 @@ public class BattleManager : MonoBehaviour
     [HideInInspector]
     public UnityEvent OnBattleStart = new UnityEvent();
 
-    private Dictionary<UserBattleInstanceData, int> ExperienceReward = new Dictionary<UserBattleInstanceData, int>();
+    public Dictionary<UserBattleInstanceData, int> ExperienceReward = new Dictionary<UserBattleInstanceData, int>();
 
     void Awake()
     {
@@ -95,7 +95,7 @@ public class BattleManager : MonoBehaviour
         enemyGroup.OnDefeat.AddListener(() => EndBattle(true));
 
         // For exp stuff
-        //enemyGroup.ActorDefeated.AddListener(OnEnemyDefeat);
+        enemyGroup.ActorDefeated.AddListener(OnEnemyDefeat);
 
         // Add all actors to their respective groups
         foreach (Actor actor in playerTeam)
@@ -201,7 +201,7 @@ public class BattleManager : MonoBehaviour
         // Hide the UI now that the actor has received all needed input.
     }
 
-    void OnEnemyDefeat(Actor enemy)
+    public void OnEnemyDefeat(Actor enemy)
     {
         CombatantInstanceData enemyData = null;
         if (ActorToData.TryGetValue(enemy, out enemyData))
@@ -219,7 +219,7 @@ public class BattleManager : MonoBehaviour
 
                         // Magic number time - should eventually store these as constants elsewhere.
                         // 0.55 is to make sure things tend to round up instead of down
-                        int xpToGain = 3 + Mathf.RoundToInt(levelDifference * 0.55f);
+                        int xpToGain = 5 + Mathf.RoundToInt(levelDifference * 0.55f);
                         if (!battle.IsParticipating(actor))
                         {
                             xpToGain = Mathf.RoundToInt((float)xpToGain * 0.55f);
@@ -233,6 +233,8 @@ public class BattleManager : MonoBehaviour
                         {
                             ExperienceReward[playerData] = xpToGain;
                         }
+
+                        Debug.Log(playerData.GetDisplayName() + " got " + xpToGain + " xp.");
                     }
                 }
             }
@@ -259,7 +261,7 @@ public class BattleManager : MonoBehaviour
         // UPDATE ALL THE DATA BASED ON THE RESULTS OF THE BATTLE
         foreach (Actor actor in playerTeam)
         {
-            CombatantInstanceData data = ActorToData[actor];
+            UserBattleInstanceData data = ActorToData[actor] as UserBattleInstanceData;
             data.CurrentHP = actor.HP;
             data.CurrentMana = actor.Mana;
 
@@ -267,6 +269,9 @@ public class BattleManager : MonoBehaviour
             {
                 data.CurrentHP = 1;
             }
+
+            ExperienceReward[data] = Mathf.Clamp(ExperienceReward[data], 0, 99);
+            Debug.Log(data.GetDisplayName() + " got " + ExperienceReward[data] + " xp TOTAL.");
         }
 
         // Update inventory with any used items!
@@ -275,17 +280,6 @@ public class BattleManager : MonoBehaviour
         // Reward XP and determine level ups!
         // TODO: In the future, enemies other than phantoms should reward some amount of exp special to them. For now, just assume that they are a phantom,
         // and reward Exp based on the level difference.
-
-        // Only reward XP if we win!
-        if (endReason == Battle.EndReason.PhantomCaught || endReason == Battle.EndReason.PlayerWin)
-        {
-            foreach (Actor actor in playerTeam)
-            {
-                UserBattleInstanceData data = ActorToData[actor] as UserBattleInstanceData;
-                //Debug.Log("Experience reward for " + data.GetDisplayName() + ": " + ExperienceReward[data]);
-
-            }
-        }
 
         // Show them results screen
 
