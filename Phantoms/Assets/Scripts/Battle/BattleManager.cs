@@ -270,7 +270,8 @@ public class BattleManager : MonoBehaviour
                 data.CurrentHP = 1;
             }
 
-            ExperienceReward[data] = Mathf.Clamp(ExperienceReward[data], 0, 99);
+            ExperienceReward[data] = Mathf.Clamp(ExperienceReward[data], 1, 99);
+            //ExperienceReward[data] = Random.Range(5, 500);
             Debug.Log(data.GetDisplayName() + " got " + ExperienceReward[data] + " xp TOTAL.");
         }
 

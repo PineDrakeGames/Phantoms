@@ -28,6 +28,16 @@ public class BattleResultsManager : MonoBehaviour
     [SerializeField]
     private GameObject m_experienceRewardPrefab = null;
 
+    [Header("Level Up Stuff")]
+    [SerializeField]
+    private GameObject m_levelUpParent = null;
+    [SerializeField]
+    private TMP_Text m_levelUpNameText = null;
+    [SerializeField]
+    private Transform m_levelUpOptionsParent = null;
+    [SerializeField]
+    private GameObject m_levelUpOptionPrefab = null;
+
     private enum ResultMenu
     {
         NONE,
@@ -42,7 +52,10 @@ public class BattleResultsManager : MonoBehaviour
 
     private List<PlayerExperienceBox> m_experienceBoxes = new List<PlayerExperienceBox>();
 
+    // Private level up stuff
     private List<UserBattleInstanceData> m_queuedLevelUps = new List<UserBattleInstanceData>();
+
+    private List<LevelUpOptionButton> m_levelUpOptionInstances = new List<LevelUpOptionButton>();
 
 
     ///////////////////////
@@ -68,32 +81,53 @@ public class BattleResultsManager : MonoBehaviour
         m_currentMenu = ResultMenu.DEFAULT;
         m_endReason = endReason;
 
+        switch (m_endReason)
+        {
+            case Battle.EndReason.PlayerWin:
+            case Battle.EndReason.PhantomCaught:
+                ShowExperience();
+                break;
+            case Battle.EndReason.EnemyWin:
+            case Battle.EndReason.Ran:
+            case Battle.EndReason.WinLoseConditionMet:
+            case Battle.EndReason.OutOfTurns:
+            default:
+                ShowDefault();
+                break;
+        }
+    }
+
+    public void ShowDefault()
+    {
+        m_currentMenu = ResultMenu.DEFAULT;
+
         m_resultsParent.SetActive(true);
         m_defaultResultsParent.SetActive(true);
         m_experienceResultsParent.SetActive(false);
+        m_levelUpParent.SetActive(false);
 
         string headerText = "";
         string descriptionText = "";
-        switch (endReason)
+        switch (m_endReason)
         {
             case Battle.EndReason.PlayerWin:
                 headerText = "You Won!";
-                descriptionText = "This should be where it lists your XP and lets you pick level ups, but that's not set up yet so you get this text instead!";
+                descriptionText = "Shouldn't see this menu in that case - let CJ know!";
                 break;
 
             case Battle.EndReason.EnemyWin:
                 headerText = "You Lost..";
-                descriptionText = "You probably lost some money? Or have to reload at a prev save or something?";
+                descriptionText = "You probably lost some money? Or have to reload at a prev save or something? Haven't set up this result yet. For now, gonna set you to 1 HP and return you.";
                 break;
 
             case Battle.EndReason.Ran:
                 headerText = "You Escaped!";
-                descriptionText = "You might have lost some money? Haven't figured out how this works yet.";
+                descriptionText = "You might have lost some money? Haven't figured out how this works yet - just a way to leave a battle immediately.";
                 break;
 
             case Battle.EndReason.PhantomCaught:
                 headerText = "You Caught a Phantom!";
-                descriptionText = "This is where I would normally add some information about the phantom you just caught, but I didn't do that yet!";
+                descriptionText = "Shouldn't see this menu in that case - let CJ know!";
                 break;
 
             case Battle.EndReason.WinLoseConditionMet:
@@ -124,6 +158,7 @@ public class BattleResultsManager : MonoBehaviour
         m_resultsParent.SetActive(true);
         m_defaultResultsParent.SetActive(false);
         m_experienceResultsParent.SetActive(true);
+        m_levelUpParent.SetActive(false);
 
         // Set all the experience stuff!
         // Going to instantiate an experience display for each phantom, going to assume this doesn't need to be pooled as it should only be shown once?
@@ -159,6 +194,29 @@ public class BattleResultsManager : MonoBehaviour
         }
     }
 
+    public void ShowLevelUp(UserBattleInstanceData user)
+    {
+        m_currentMenu = ResultMenu.LEVELUP;
+
+        m_resultsParent.SetActive(true);
+        m_defaultResultsParent.SetActive(false);
+        m_experienceResultsParent.SetActive(false);
+        m_levelUpParent.SetActive(true);
+
+        m_levelUpNameText.text = user.GetDisplayName();
+
+        foreach(LevelUpOptionButton button in m_levelUpOptionInstances)
+        {
+            button.gameObject.SetActive(false);
+        }
+
+        foreach(BattleStatType statType in user.LevelUpOptions())
+        {
+            LevelUpOptionButton button = GetLevelUpOptionButton();
+            button.SetButton(user, statType);
+        }
+    }
+
 
     // This function is a bit of a mess, can do with some seperation into different functions
     public void AdvanceResults()
@@ -173,30 +231,11 @@ public class BattleResultsManager : MonoBehaviour
                         break;
 
                     case ResultMenu.EXPERIENCE:
-                        bool stillFilling = false;
-                        foreach (PlayerExperienceBox experienceBox in m_experienceBoxes)
-                        {
-                            if (experienceBox.Filling)
-                            {
-                                stillFilling = true;
-                            }
-                        }
-                        if (stillFilling)
-                        {
-                            foreach (PlayerExperienceBox experienceBox in m_experienceBoxes)
-                            {
-                                experienceBox.FinishSettingExp();
-                            }
-                        }
-                        else
-                        {
-                            QuitBattle();
-                        }
+                        AdvanceExperienceMenu();
                         break;
 
                     case ResultMenu.LEVELUP:
-                        // TODO!
-                        QuitBattle();
+                        AdvanceLevelUp();
                         break;
 
                     case ResultMenu.NONE:
@@ -215,30 +254,11 @@ public class BattleResultsManager : MonoBehaviour
                         break;
 
                     case ResultMenu.EXPERIENCE:
-                        bool stillFilling = false;
-                        foreach (PlayerExperienceBox experienceBox in m_experienceBoxes)
-                        {
-                            if (experienceBox.Filling)
-                            {
-                                stillFilling = true;
-                            }
-                        }
-                        if (stillFilling)
-                        {
-                            foreach (PlayerExperienceBox experienceBox in m_experienceBoxes)
-                            {
-                                experienceBox.FinishSettingExp();
-                            }
-                        }
-                        else
-                        {
-                            QuitBattle();
-                        }
+                        AdvanceExperienceMenu();
                         break;
 
                     case ResultMenu.LEVELUP:
-                        // TODO!
-                        QuitBattle();
+                        AdvanceLevelUp();
                         break;
 
                     case ResultMenu.NONE:
@@ -262,5 +282,64 @@ public class BattleResultsManager : MonoBehaviour
     public void QuitBattle()
     {
         LoadingManager.ReturnFromBattle();
+    }
+
+    ////////////////////////////////
+    /// Private helper functions ///
+    ////////////////////////////////
+    private void AdvanceExperienceMenu()
+    {
+        bool stillFilling = false;
+        foreach (PlayerExperienceBox experienceBox in m_experienceBoxes)
+        {
+            if (experienceBox.Filling)
+            {
+                stillFilling = true;
+            }
+        }
+        if (stillFilling)
+        {
+            foreach (PlayerExperienceBox experienceBox in m_experienceBoxes)
+            {
+                experienceBox.FinishSettingExp();
+            }
+        }
+        else
+        {
+            AdvanceLevelUp();
+        }
+    }
+
+    private void AdvanceLevelUp()
+    {
+        if (m_queuedLevelUps.Count > 0)
+        {
+            UserBattleInstanceData user = m_queuedLevelUps[0];
+            m_queuedLevelUps.RemoveAt(0);
+            ShowLevelUp(user);
+        }
+        else
+        {
+            QuitBattle();
+        }
+    }
+
+    private LevelUpOptionButton GetLevelUpOptionButton()
+    {
+        foreach(LevelUpOptionButton button in m_levelUpOptionInstances)
+        {
+            if (!button.gameObject.activeSelf)
+            {
+                button.gameObject.SetActive(true);
+                return button;
+            }
+        }
+
+        // Instantiate a new button
+        GameObject buttonInstance = Instantiate(m_levelUpOptionPrefab, m_levelUpOptionsParent);
+        LevelUpOptionButton buttonComponent = buttonInstance.GetComponent<LevelUpOptionButton>();
+        buttonComponent.ResultsManager = this;
+        m_levelUpOptionInstances.Add(buttonComponent);
+        return buttonComponent;
     }
 }

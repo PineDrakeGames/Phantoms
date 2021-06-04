@@ -5,6 +5,14 @@ using UnityEngine;
 
 public abstract class UserBattleInstanceData : CombatantInstanceData
 {
+    public UserBattleData UserData
+    {
+        get
+        {
+            return (UserBattleData)Data;
+        }
+    }
+
     public List<RelicInstance> Relics = new List<RelicInstance>();
 
     public int CurrentRelicPoints = 0;
@@ -44,5 +52,13 @@ public abstract class UserBattleInstanceData : CombatantInstanceData
     {
         if (relic == null) { return false; }
         return (CurrentRelicPoints + relic.Data.Points) <= CurrentStats.Relic;
+    }
+
+    // Public functions relating to level up stuff
+    public virtual List<BattleStatType> LevelUpOptions()
+    {
+        List<BattleStatType> statTypes = new List<BattleStatType>();
+        statTypes.AddRange(PhantomDataUtility.LevelUpStats);
+        return statTypes;
     }
 }

@@ -74,7 +74,7 @@ public class PhantomInstanceData : UserBattleInstanceData
         CurrentStats = startingStats;
     }
 
-    public List<BattleStatType> LevelUpOptions()
+    public override List<BattleStatType> LevelUpOptions()
     {
         List<BattleStatType> levelUpOptions = new List<BattleStatType>();
         BackgroundStats backStats = PhantomDataUtility.BackgroundToStats[Background];
