@@ -283,6 +283,7 @@ public class BattlePhantomCatchManager : MonoBehaviour
         phantomData.CurrentHP = phantomToCatch.HP;
         phantomData.CurrentMana = phantomToCatch.Mana;
         PlayerInventoryManager.Instance.AddPhantom(phantomData);
+        BattleManager.Instance.ResultsManager.CaughtPhantom = phantomData;
         m_battleManager.OnEnemyDefeat(phantomToCatch);
         m_battleManager.CurrentBattle.EndBattle(Ares.Battle.EndReason.PhantomCaught);
     }

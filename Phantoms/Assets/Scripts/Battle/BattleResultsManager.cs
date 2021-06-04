@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Ares;
 using TMPro;
 
@@ -37,6 +38,26 @@ public class BattleResultsManager : MonoBehaviour
     private Transform m_levelUpOptionsParent = null;
     [SerializeField]
     private GameObject m_levelUpOptionPrefab = null;
+
+    [Header("Phantom Caught stuff")]
+    [SerializeField]
+    private GameObject m_phantomCaughtParent = null;
+    [SerializeField]
+    private TMP_Text m_phantomName = null;
+    [SerializeField]
+    private TMP_Text m_phantomDescription = null;
+    [SerializeField]
+    private Image m_phantomIconFill = null;
+    [SerializeField]
+    private Image m_phantomIconLines = null;
+    [SerializeField]
+    private TMP_InputField m_phantomNameInputField = null;
+    [SerializeField]
+    private Button m_SetNameButton = null;
+
+    [HideInInspector]
+    public PhantomInstanceData CaughtPhantom = null;
+
 
     private enum ResultMenu
     {
@@ -84,8 +105,10 @@ public class BattleResultsManager : MonoBehaviour
         switch (m_endReason)
         {
             case Battle.EndReason.PlayerWin:
-            case Battle.EndReason.PhantomCaught:
                 ShowExperience();
+                break;
+            case Battle.EndReason.PhantomCaught:
+                ShowCaughtPhantom();
                 break;
             case Battle.EndReason.EnemyWin:
             case Battle.EndReason.Ran:
@@ -103,8 +126,6 @@ public class BattleResultsManager : MonoBehaviour
 
         m_resultsParent.SetActive(true);
         m_defaultResultsParent.SetActive(true);
-        m_experienceResultsParent.SetActive(false);
-        m_levelUpParent.SetActive(false);
 
         string headerText = "";
         string descriptionText = "";
@@ -156,9 +177,7 @@ public class BattleResultsManager : MonoBehaviour
         m_currentMenu = ResultMenu.EXPERIENCE;
 
         m_resultsParent.SetActive(true);
-        m_defaultResultsParent.SetActive(false);
         m_experienceResultsParent.SetActive(true);
-        m_levelUpParent.SetActive(false);
 
         // Set all the experience stuff!
         // Going to instantiate an experience display for each phantom, going to assume this doesn't need to be pooled as it should only be shown once?
@@ -199,28 +218,76 @@ public class BattleResultsManager : MonoBehaviour
         m_currentMenu = ResultMenu.LEVELUP;
 
         m_resultsParent.SetActive(true);
-        m_defaultResultsParent.SetActive(false);
-        m_experienceResultsParent.SetActive(false);
         m_levelUpParent.SetActive(true);
 
         m_levelUpNameText.text = user.GetDisplayName();
 
-        foreach(LevelUpOptionButton button in m_levelUpOptionInstances)
+        foreach (LevelUpOptionButton button in m_levelUpOptionInstances)
         {
             button.gameObject.SetActive(false);
         }
 
-        foreach(BattleStatType statType in user.LevelUpOptions())
+        foreach (BattleStatType statType in user.LevelUpOptions())
         {
             LevelUpOptionButton button = GetLevelUpOptionButton();
             button.SetButton(user, statType);
         }
     }
 
+    public void ShowCaughtPhantom()
+    {
+        m_currentMenu = ResultMenu.PHANTOMCAUGHT;
+
+        if (CaughtPhantom != null)
+        {
+            m_resultsParent.SetActive(true);
+            m_phantomCaughtParent.SetActive(true);
+
+            m_phantomName.text = CaughtPhantom.Data.DisplayName;
+            m_phantomDescription.text = CaughtPhantom.Data.Description;
+            
+            if (CaughtPhantom.Data.IconFill)
+            {
+                m_phantomIconFill.gameObject.SetActive(true);
+                m_phantomIconFill.sprite = CaughtPhantom.Data.IconFill;
+            }
+            else
+            {
+                m_phantomIconFill.gameObject.SetActive(false);
+            }
+            if (CaughtPhantom.Data.IconLines)
+            {
+                m_phantomIconLines.gameObject.SetActive(true);
+                m_phantomIconLines.sprite = CaughtPhantom.Data.IconLines;
+            }
+            else
+            {
+                m_phantomIconLines.gameObject.SetActive(false);
+            }
+
+            m_phantomNameInputField.text = CaughtPhantom.GetDisplayName();
+            m_SetNameButton.interactable = true;
+        }
+        else
+        {
+            AdvanceResults();
+        }
+    }
+
+    public void OnPhantomNicknameUpdate()
+    {
+        m_SetNameButton.interactable = !(string.IsNullOrWhiteSpace(m_phantomNameInputField.text));
+    }
+
 
     // This function is a bit of a mess, can do with some seperation into different functions
     public void AdvanceResults()
     {
+        m_defaultResultsParent.SetActive(false);
+        m_experienceResultsParent.SetActive(false);
+        m_levelUpParent.SetActive(false);
+        m_phantomCaughtParent.SetActive(false);
+
         switch (m_endReason)
         {
             case Battle.EndReason.PlayerWin:
@@ -250,7 +317,7 @@ public class BattleResultsManager : MonoBehaviour
                 switch (m_currentMenu)
                 {
                     case ResultMenu.DEFAULT:
-                        ShowExperience();
+                        ShowCaughtPhantom();
                         break;
 
                     case ResultMenu.EXPERIENCE:
@@ -261,8 +328,12 @@ public class BattleResultsManager : MonoBehaviour
                         AdvanceLevelUp();
                         break;
 
-                    case ResultMenu.NONE:
                     case ResultMenu.PHANTOMCAUGHT:
+                        CaughtPhantom.NickName = m_phantomNameInputField.text;
+                        ShowExperience();
+                        break;
+
+                    case ResultMenu.NONE:
                     default:
                         QuitBattle();
                         break;
@@ -326,7 +397,7 @@ public class BattleResultsManager : MonoBehaviour
 
     private LevelUpOptionButton GetLevelUpOptionButton()
     {
-        foreach(LevelUpOptionButton button in m_levelUpOptionInstances)
+        foreach (LevelUpOptionButton button in m_levelUpOptionInstances)
         {
             if (!button.gameObject.activeSelf)
             {

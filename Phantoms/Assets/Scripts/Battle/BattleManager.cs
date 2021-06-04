@@ -26,6 +26,7 @@ public class BattleManager : MonoBehaviour
     [Header("Results stuff")]
     [SerializeField]
     private BattleResultsManager m_resultsManager = null;
+    public BattleResultsManager ResultsManager { get { return m_resultsManager; } }
 
     private Battle battle; // A reference to the actual Battle object
     public Battle CurrentBattle
