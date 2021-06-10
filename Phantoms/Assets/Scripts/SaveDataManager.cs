@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public static class SaveDataManager
 {
     // TODO: Actually save stuff! For now, just storing it statically.
     private static Dictionary<string, bool> m_flags = new Dictionary<string, bool>();
+
+    public static UnityEvent<string, bool> OnFlagUpdate = new UnityEvent<string, bool>();
     
     public static bool CheckFlag(string flagName)
     {
@@ -36,5 +39,7 @@ public static class SaveDataManager
         {
             m_flags.Add(flagName, flagValue);
         }
+
+        OnFlagUpdate.Invoke(flagName, flagValue);
     }
 }
