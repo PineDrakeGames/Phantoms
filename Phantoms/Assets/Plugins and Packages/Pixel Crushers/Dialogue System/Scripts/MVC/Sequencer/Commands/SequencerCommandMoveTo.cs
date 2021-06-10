@@ -25,6 +25,7 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
         private Transform target;
         private Transform subject;
         private Rigidbody subjectRigidbody;
+        private KinematicCharacterController.KinematicCharacterMotor subjectMotor;
         private float duration;
         float startTime;
         float endTime;
@@ -45,6 +46,7 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
             if ((subject != null) && (target != null) && (subject != target))
             {
                 subjectRigidbody = subject.GetComponent<Rigidbody>();
+                subjectMotor = subject.GetComponent<KinematicCharacterController.KinematicCharacterMotor>();
 
                 // If duration is above the cutoff, smoothly move toward target:
                 if (duration > SmoothMoveCutoff)
@@ -68,7 +70,11 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
         private void SetPosition(Vector3 newPosition, Quaternion newRotation)
         {
             // For efficiency, doesn't warp NavMeshAgent.
-            if (subjectRigidbody != null && !subjectRigidbody.isKinematic)
+            if (subjectMotor)
+            {
+                subjectMotor.SetPositionAndRotation(newPosition, newRotation);
+            }
+            else if (subjectRigidbody != null && !subjectRigidbody.isKinematic)
             {
                 subjectRigidbody.MoveRotation(newRotation);
                 subjectRigidbody.MovePosition(newPosition);
