@@ -42,12 +42,22 @@ public abstract class PlayerMovementState
     /// Movement Functions ///
 
     // Rotates the player towards the controller's look input vector with the given sharpness.
-    protected void RotateTowardsMovement(ref Quaternion currentRotation, float sharpness, float deltaTime)
+    protected void RotateTowardsMovement(ref Quaternion currentRotation, float sharpness, float deltaTime, bool useVeloctiyInsteadOfInput = false)
     {
-        if (Controller.LookInputVector.sqrMagnitude > 0f && sharpness > 0f)
+        Vector3 movement;
+        if (!useVeloctiyInsteadOfInput)
+        {
+            movement = Controller.LookInputVector;
+        }
+        else
+        {
+            movement = Controller.Motor.Velocity;
+        }
+
+        if (movement.sqrMagnitude > 0f && sharpness > 0f)
         {
             // Smoothly interpolate from current to target look direction
-            Vector3 smoothedLookInputDirection = Vector3.Slerp(Controller.Motor.CharacterForward, Controller.LookInputVector, 1 - Mathf.Exp(-sharpness * deltaTime)).normalized;
+            Vector3 smoothedLookInputDirection = Vector3.Slerp(Controller.Motor.CharacterForward, movement, 1 - Mathf.Exp(-sharpness * deltaTime)).normalized;
 
             // Set the current rotation (which will be used by the KinematicCharacterMotor)
             currentRotation = Quaternion.LookRotation(smoothedLookInputDirection, Controller.Motor.CharacterUp);

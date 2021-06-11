@@ -25,7 +25,9 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
         private Transform target;
         private Transform subject;
         private Rigidbody subjectRigidbody;
+        // CJ NOTE: Adding in stuff for kinematic motors and specifically the player to move them how we want to
         private KinematicCharacterController.KinematicCharacterMotor subjectMotor;
+        private PlayerController subjectController;
         private float duration;
         float startTime;
         float endTime;
@@ -47,6 +49,7 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
             {
                 subjectRigidbody = subject.GetComponent<Rigidbody>();
                 subjectMotor = subject.GetComponent<KinematicCharacterController.KinematicCharacterMotor>();
+                subjectController = subject.GetComponent<PlayerController>();
 
                 // If duration is above the cutoff, smoothly move toward target:
                 if (duration > SmoothMoveCutoff)
@@ -55,6 +58,18 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
                     endTime = startTime + duration;
                     originalPosition = subject.position;
                     originalRotation = subject.rotation;
+
+                    if (subjectController)
+                    {
+                        if (subjectController.CurrentState is PlayerStateInteract)
+                        {
+                            PlayerStateInteract interactState = subjectController.CurrentState as PlayerStateInteract;
+                            interactState.MoveToTarget = true;
+                            interactState.TargetPosition = target.position;
+                            interactState.LookAtTarget = true;
+                            interactState.TargetRotation = target.rotation;
+                        }
+                    }
                 }
                 else
                 {
@@ -89,10 +104,13 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
         public void Update()
         {
             // Keep smoothing for the specified duration:
-            if (DialogueTime.time < endTime)
+            if ((DialogueTime.time < endTime))
             {
                 float elapsed = (DialogueTime.time - startTime) / duration;
-                SetPosition(Vector3.Lerp(originalPosition, target.position, elapsed), Quaternion.Lerp(originalRotation, target.rotation, elapsed));
+                if (!subjectController)
+                {
+                    SetPosition(Vector3.Lerp(originalPosition, target.position, elapsed), Quaternion.Lerp(originalRotation, target.rotation, elapsed));
+                }
             }
             else
             {
@@ -105,6 +123,23 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
             // Final position:
             if ((subject != null) && (target != null) && (subject != target))
             {
+                //NOTE (CJ): If the target is something with a controller, and it's already moved to the position, we don't have to set it again at the end.
+                if (subjectController)
+                {
+                    if (subjectController.CurrentState is PlayerStateInteract)
+                    {
+                        PlayerStateInteract interactState = subjectController.CurrentState as PlayerStateInteract;
+                        if (!interactState.MoveToTarget && !interactState.LookAtTarget)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            interactState.MoveToTarget = false;
+                            interactState.LookAtTarget = false;
+                        }
+                    }
+                }
                 SetPosition(target.position, target.rotation);
             }
 
