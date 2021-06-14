@@ -426,6 +426,23 @@ namespace PixelCrushers.DialogueSystem
                 }
                 m_originalOrthographicSize = m_sequencerCamera.orthographicSize;
                 m_sequencerCamera.gameObject.SetActive(true);
+
+                // Added by CJ - assuming whenever we want to take camera control, move the sequencer camera to the original
+                m_sequencerCamera.transform.position = m_originalCameraPosition;
+                m_sequencerCamera.transform.rotation = m_originalCameraRotation;
+            }
+        }
+
+
+        /// ADDED BY CJ!
+        // Because the original camera might move around while in a conversation, added this to be called whenever we want to
+        // go back to the 'original' camera
+        public void UpdateOriginalCamera()
+        {
+            if (UnityEngine.Camera.main != null)
+            {
+                m_originalCameraPosition = m_originalCamera.transform.position;
+                m_originalCameraRotation = m_originalCamera.transform.rotation;
             }
         }
 
@@ -856,7 +873,7 @@ namespace PixelCrushers.DialogueSystem
                     // Activate any queued commands that are waiting for the message:
                     var m_queuedCommandsWaitingForMessage = m_queuedCommands.FindAll(x => string.Equals(message, x.messageToWaitFor));
                     for (int i = 0; i < m_queuedCommandsWaitingForMessage.Count; i++)
-                    { 
+                    {
                         var queuedCommand = m_queuedCommandsWaitingForMessage[i];
                         ActivateCommand(queuedCommand.command, queuedCommand.endMessage, queuedCommand.speaker, queuedCommand.listener, queuedCommand.parameters);
                     }
@@ -2106,7 +2123,7 @@ namespace PixelCrushers.DialogueSystem
                     {
                         standardDialogueUI.conversationUIElements.standardSubtitleControls.OpenSubtitlePanelLikeStart(subtitlePanelNumber);
                     }
-                    else if(string.Equals("close", mode, StringComparison.OrdinalIgnoreCase))
+                    else if (string.Equals("close", mode, StringComparison.OrdinalIgnoreCase))
                     {
                         panel.Close();
                     }
@@ -2241,7 +2258,7 @@ namespace PixelCrushers.DialogueSystem
                 var actor = DialogueManager.masterDatabase.GetActor(actorName);
                 var standardDialogueUI = DialogueManager.dialogueUI as StandardDialogueUI;
                 if (actor != null && standardDialogueUI != null)
-                { 
+                {
                     standardDialogueUI.OverrideActorMenuPanel(actor, menuPanelNumber, null);
                     return true;
                 }

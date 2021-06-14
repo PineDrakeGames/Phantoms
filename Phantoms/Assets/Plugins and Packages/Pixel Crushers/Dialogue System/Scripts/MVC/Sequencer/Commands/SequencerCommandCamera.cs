@@ -67,6 +67,7 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
                 cameraTransform = sequencer.sequencerCameraTransform;
                 if (isOriginal)
                 {
+                    sequencer.UpdateOriginalCamera();
                     targetRotation = sequencer.originalCameraRotation;
                     targetPosition = sequencer.originalCameraPosition;
                 }
