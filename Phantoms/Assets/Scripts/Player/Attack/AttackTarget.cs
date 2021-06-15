@@ -8,10 +8,10 @@ public class AttackTarget : MonoBehaviour
     [SerializeField]
     private bool m_onlyAttackOnce = false;
 
-    public UnityEvent AttackedEvent = new UnityEvent();
+    public UnityEvent<AttackTarget> AttackedEvent = new UnityEvent<AttackTarget>();
 
     [Tooltip("For things that should only be attacked once, and we want to remain attacked on re-enabling.")]
-    public UnityEvent OnAttackedReEnableEvent = new UnityEvent();
+    public UnityEvent<AttackTarget> OnAttackedReEnableEvent = new UnityEvent<AttackTarget>();
 
 
     private bool m_attacked = false;
@@ -21,7 +21,7 @@ public class AttackTarget : MonoBehaviour
         Debug.Log("Attacked " + name);
         if (!m_onlyAttackOnce || !m_attacked)
         {
-            AttackedEvent.Invoke();
+            AttackedEvent.Invoke(this);
         }
         m_attacked = true;
     }
@@ -30,7 +30,7 @@ public class AttackTarget : MonoBehaviour
     {
         if (m_onlyAttackOnce && m_attacked)
         {
-            OnAttackedReEnableEvent.Invoke();
+            OnAttackedReEnableEvent.Invoke(this);
         }
     }
 }

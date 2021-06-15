@@ -551,8 +551,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa78517a170816e4ea20b7ce96c4fcc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_root: {fileID: 3271141439673464840}
-  m_flower: {fileID: 3271141439996186011}
+  m_roots:
+  - rootTarget: {fileID: 3271141439673464841}
+    rootAnimator: {fileID: 3271141439673464840}
+    Hit: 0
+  m_flowers:
+  - {fileID: 3271141439996186011}
   m_saveTrigger: 0
   m_triggerID: Prologue_Path_2_RootFlower
 --- !u!1 &3271141439673465333
@@ -644,7 +648,7 @@ MonoBehaviour:
       - m_Target: {fileID: 3271141439539285333}
         m_TargetAssemblyTypeName: RootFlower, Assembly-CSharp
         m_MethodName: OnRootHit
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

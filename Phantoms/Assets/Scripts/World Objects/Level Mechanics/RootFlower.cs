@@ -4,12 +4,27 @@ using UnityEngine;
 
 public class RootFlower : MonoBehaviour
 {
+    [System.Serializable]
+    private class Root
+    {
+        public AttackTarget rootTarget = null;
+        public Animator rootAnimator = null;
+        [HideInInspector]
+        public bool Hit = false;
+    }
+    
+    [Header("Settings")]
     [SerializeField]
-    private Animator m_root = null;
+    private bool m_requireAllRoots = false;
+
+    [Header("Flowers and Roots")]
+    [SerializeField]
+    private Root[] m_roots = null;
 
     [SerializeField]
-    private Animator m_flower = null;
+    private Animator[] m_flowers = null;
 
+    [Header("Save Settings")]
     [SerializeField]
     private bool m_saveTrigger = false;
     [SerializeField]
@@ -43,13 +58,42 @@ public class RootFlower : MonoBehaviour
         Initialize();
     }
 
-    public void OnRootHit()
+    public void OnRootHit(AttackTarget attackedRoot)
     {
         if (!m_triggered)
         {
+            // If we require all the roots for this, check if all the roots are hit - and 
+            // return early if not.
+            if (m_requireAllRoots)
+            {
+                bool hitAllRoots = true;
+                foreach (Root root in m_roots)
+                {
+                    if (root.rootTarget == attackedRoot)
+                    {
+                        root.rootAnimator.SetBool("On", false);
+                        root.Hit = true;
+                    }
+                    else if (!root.Hit)
+                    {
+                        hitAllRoots = false;
+                    }
+                }
+                if (!hitAllRoots)
+                {
+                    return;
+                }
+            }
+
             m_triggered = true;
-            m_root.SetBool("On", false);
-            m_flower.SetBool("On", true);
+            foreach (Root root in m_roots)
+            {
+                root.rootAnimator.SetBool("On", false);
+            }
+            foreach (Animator flower in m_flowers)
+            {
+                flower.SetBool("On", true);
+            }
             if (m_saveTrigger)
             {
                 SaveDataManager.SetFlag(m_triggerID);
@@ -59,9 +103,15 @@ public class RootFlower : MonoBehaviour
 
     private void Initialize()
     {
-        m_root.SetBool("On", !m_triggered);
-        m_root.SetTrigger("Reset");
-        m_flower.SetBool("On", m_triggered);
-        m_flower.SetTrigger("Reset");
+        foreach (Root root in m_roots)
+        {
+            root.rootAnimator.SetBool("On", !m_triggered);
+            root.rootAnimator.SetTrigger("Reset");
+        }
+        foreach (Animator flower in m_flowers)
+        {
+            flower.SetBool("On", m_triggered);
+            flower.SetTrigger("Reset");
+        }
     }
 }
