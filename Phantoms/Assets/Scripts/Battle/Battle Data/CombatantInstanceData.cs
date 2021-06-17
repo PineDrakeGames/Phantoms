@@ -46,6 +46,27 @@ public abstract class CombatantInstanceData
         }
     }
 
+    public void Damage(int amount)
+    {
+        if (amount > 0)
+        {
+            CurrentHP -= amount;
+        }
+        // TODO: Do something when you reach 0?
+        // for now, just floor it to 1.
+        if (CurrentHP < 1) { CurrentHP = 1; }
+    }
+
+    public void UseMana(int amount)
+    {
+        if (amount > 0)
+        {
+            CurrentMana -= amount;
+        }
+        // TODO: Do something when you reach 0?
+        if (CurrentMana < 0) { CurrentMana = 0; }
+    }
+
     /// Public Data getter functions, to be overriden
     public virtual string GetDisplayName()
     {

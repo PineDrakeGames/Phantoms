@@ -37,7 +37,8 @@ public class RootFlower : MonoBehaviour
     {
         if (string.IsNullOrEmpty(m_triggerID))
         {
-            m_triggerID = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().name + "_" + gameObject.name;
+            int numRootFlowers = FindObjectsOfType<RootFlower>().Length;
+            m_triggerID = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().name + "_RootFlower_" + numRootFlowers.ToString();
         }
     }
 #endif

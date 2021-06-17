@@ -205,6 +205,9 @@ public class OverworldManager : MonoBehaviour
                 m_playerController.Motor.SetPositionAndRotation(enterTrigger.transform.position, enterTrigger.transform.rotation);
                 PlayerInstance.transform.position = enterTrigger.transform.position;
                 LoadingManager.CurrentLoadDirection = enterTrigger.EnterDirection;
+
+                PlayerRespawnManager.Instance.SetSafeRespawn(enterTrigger.transform.position);
+
                 foundTrigger = true;
                 break;
             }
