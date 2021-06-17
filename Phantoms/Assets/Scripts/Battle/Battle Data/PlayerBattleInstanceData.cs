@@ -26,32 +26,12 @@ public class PlayerBattleInstanceData : UserBattleInstanceData
     {
         BattleStats startingStats = new BattleStats(PlayerData.StartingStats);
 
-        // Add in level ups!
-        int totalLevel = 0;
-        foreach(BattleStatType type in PhantomDataUtility.LevelUpStats)
-        {
-            int levels = LevelUps.GetStat(type);
-            for (int i = 0; i < levels; i++)
-            {
-                startingStats.SetStat(type, startingStats.GetStat(type) + PlayerData.LevelUpAmounts.GetStat(type));
-            }
-            totalLevel += levels;
-        }
-        Level = totalLevel;
-
-        foreach(RelicInstance relic in Relics)
-        {
-            if (relic.Data is StatRelicData)
-            {
-                StatRelicData statRelic = relic.Data as StatRelicData;
-                foreach(StatRelicData.StatBuffData buffData in statRelic.StatBuffs)
-                {
-                    startingStats.SetStat(buffData.Stat, startingStats.GetStat(buffData.Stat) + buffData.Amount);
-                }
-            }
-        }
+        ApplyLevelUps(ref startingStats);
+        ApplyRelics(ref startingStats);
 
         CurrentStats = startingStats;
+
+        base.SetCurrentStats();
     }
 
     public override string GetDisplayName()
@@ -66,5 +46,24 @@ public class PlayerBattleInstanceData : UserBattleInstanceData
             return true;
         }
         return false;
+    }
+
+    // Overriding the health change functions to make sure they invoke the HP change event
+    public override void RestoreHealth()
+    {
+        base.RestoreHealth();
+        DataManager.PlayerHPChange.Invoke(CurrentHP);
+    }
+
+    public override void RestoreHealth(int amount)
+    {
+        base.RestoreHealth(amount);
+        DataManager.PlayerHPChange.Invoke(CurrentHP);
+    }
+
+    public override void Damage(int amount)
+    {
+        base.Damage(amount);
+        DataManager.PlayerHPChange.Invoke(CurrentHP);
     }
 }

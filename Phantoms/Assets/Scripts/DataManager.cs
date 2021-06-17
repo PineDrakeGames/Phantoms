@@ -73,6 +73,7 @@ public class DataManager : MonoBehaviour
     /// Public events ///
     /////////////////////
     public static UnityEvent<int> CurrentDropChange = new UnityEvent<int>();
+    public static UnityEvent<int> PlayerHPChange = new UnityEvent<int>();
 
     ////////////////////
     /// Runtime Data ///
@@ -106,6 +107,19 @@ public class DataManager : MonoBehaviour
     ///////////////////////
     /// Unity Functions ///
     ///////////////////////
+
+    private void Awake()
+    {
+        if (s_instance == null)
+        {
+            s_instance = this;
+            Initialize();
+        }
+        else if (s_instance != this)
+        {
+            Destroy(this);
+        }
+    }
 
 
     ////////////////////////
