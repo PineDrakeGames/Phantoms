@@ -18,17 +18,17 @@ public abstract class CombatantInstanceData
         RestoreMana();
     }
 
-    public void RestoreHealth()
+    public virtual void RestoreHealth()
     {
         CurrentHP = CurrentStats.MaxHP;
     }
 
-    public void RestoreMana()
+    public virtual void RestoreMana()
     {
         CurrentMana = CurrentStats.Mana;
     }
 
-    public void RestoreHealth(int amount)
+    public virtual void RestoreHealth(int amount)
     {
         if (amount > 0)
         {
@@ -37,7 +37,7 @@ public abstract class CombatantInstanceData
         }
     }
 
-    public void RestoreMana(int amount)
+    public virtual void RestoreMana(int amount)
     {
         if (amount > 0)
         {
@@ -46,7 +46,7 @@ public abstract class CombatantInstanceData
         }
     }
 
-    public void Damage(int amount)
+    public virtual void Damage(int amount)
     {
         if (amount > 0)
         {
@@ -57,7 +57,7 @@ public abstract class CombatantInstanceData
         if (CurrentHP < 1) { CurrentHP = 1; }
     }
 
-    public void UseMana(int amount)
+    public virtual void UseMana(int amount)
     {
         if (amount > 0)
         {

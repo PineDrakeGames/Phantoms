@@ -70,7 +70,6 @@ public class PlayerStateHurt : PlayerMovementState
             float progress = Mathf.Clamp01(m_currentRespawnTime / RESPAWN_DURATION);
             // Faster at start, slower at end - exponential change
             float easeInProgress = 1f - (Mathf.Pow((1f - progress), 2f));
-            Debug.Log(progress  + ", " + easeInProgress);
             Vector3 position = Vector3.Lerp(m_startingPosition, TargetPosition, easeInProgress);
             Controller.Motor.SetPosition(position);
         }

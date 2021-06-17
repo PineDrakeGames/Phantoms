@@ -45,33 +45,12 @@ public class PhantomInstanceData : UserBattleInstanceData
         startingStats.SetStat(increase, startingStats.GetStat(increase) + (PhanData.LevelUpAmounts.GetStat(increase)/2));
         startingStats.SetStat(decrease, startingStats.GetStat(decrease) - (PhanData.LevelUpAmounts.GetStat(decrease)/2));
 
-        // Add in level ups!
-        int totalLevel = 0;
-        foreach(BattleStatType type in PhantomDataUtility.LevelUpStats)
-        {
-            int levels = LevelUps.GetStat(type);
-            for (int i = 0; i < levels; i++)
-            {
-                startingStats.SetStat(type, startingStats.GetStat(type) + PhanData.LevelUpAmounts.GetStat(type));
-            }
-            totalLevel += levels;
-        }
-        Level = totalLevel;
-
-        // Add in any stat buffs coming from relics.
-        foreach(RelicInstance relic in Relics)
-        {
-            if (relic.Data is StatRelicData)
-            {
-                StatRelicData statRelic = relic.Data as StatRelicData;
-                foreach(StatRelicData.StatBuffData buffData in statRelic.StatBuffs)
-                {
-                    startingStats.SetStat(buffData.Stat, startingStats.GetStat(buffData.Stat) + buffData.Amount);
-                }
-            }
-        }
+        ApplyLevelUps(ref startingStats);
+        ApplyRelics(ref startingStats);
 
         CurrentStats = startingStats;
+
+        base.SetCurrentStats();
     }
 
     public override List<BattleStatType> LevelUpOptions()
