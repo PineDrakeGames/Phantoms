@@ -313,6 +313,7 @@ GameObject:
   - component: {fileID: 2422253410294954052}
   - component: {fileID: 564939252948132235}
   - component: {fileID: 7555418741895178838}
+  - component: {fileID: 7763285769477242283}
   m_Layer: 5
   m_Name: Relic Inventory Button
   m_TagString: Untagged
@@ -451,7 +452,23 @@ MonoBehaviour:
   - {fileID: 3285715380781990929}
   - {fileID: 693811692892723769}
   RelicsInventory: {fileID: 0}
-  Data: {fileID: 0}
+  Data:
+    Data: {fileID: 0}
+    Equipped: 0
+--- !u!114 &7763285769477242283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633393079931890072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1503ac4e4f873e44ab094b85d436cee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_buttonHoverSoundID: DEFAULT_HOVER
+  m_buttonClickSoundID: DEFAULT_CLICK
 --- !u!1 &1865787056603752065
 GameObject:
   m_ObjectHideFlags: 0
