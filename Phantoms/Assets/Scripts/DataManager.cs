@@ -57,6 +57,13 @@ public class DataManager : MonoBehaviour
         get { return Instance.m_relicData; }
     }
 
+    [SerializeField]
+    private AudioClipTable m_soundEffectData = null;
+    public static AudioClipTable SoundEffectData
+    {
+        get { return Instance.m_soundEffectData; }
+    }
+
     /////////////////////////////////////////////////////////////
     /// Prefabs that can be instantiated pretty much anywhere ///
     /////////////////////////////////////////////////////////////

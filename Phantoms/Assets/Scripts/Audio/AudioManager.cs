@@ -91,6 +91,10 @@ public class AudioManager : MonoBehaviour
     {
         Instance.PlayOneShotInternal(sound, volumeScale);
     }
+    public static void PlaySound(string soundClipID, float volumeScale = 1f)
+    {
+        Instance.PlayOneShotInternal(DataManager.SoundEffectData.GetClip(soundClipID), volumeScale);
+    }
 
     public static void PlayLoopingSound(AudioClip sound, float volumeScale = 1f)
     {
