@@ -39,6 +39,10 @@ public class AudioManager : MonoBehaviour
     private AudioSource m_oneShotSoundSource = null;
     private List<AudioSource> m_loopingSoundSources = null;
 
+    // Public Getters for stuff!
+    public static AudioClip CurrentMusicClip { get { return Instance.m_musicClip; } }
+    public static AudioClip CurrentMusicIntroClip { get { return Instance.m_musicIntroClip; } }
+
 
     ///////////////////////
     /// Unity Functions ///

@@ -47,6 +47,7 @@ public class LoadingManager : MonoBehaviour
     // Stuff for the current overworld
     private List<GameObject> m_overworldSceneItems = new List<GameObject>();
     private Scene m_lastOverworldScene;
+    private AudioClip m_currentOverworldMusic = null;
 
 
     ///////////////////////////////////////////////
@@ -265,6 +266,7 @@ public class LoadingManager : MonoBehaviour
         }
 
         m_lastOverworldScene = SceneManager.GetActiveScene();
+        m_currentOverworldMusic = AudioManager.CurrentMusicClip;
 
         yield return SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Additive);
         OverworldManager.Instance.SetOverworldActive(false);
@@ -288,6 +290,8 @@ public class LoadingManager : MonoBehaviour
 
         yield return null;
 
+        AudioManager.StopMusic();
+
         AsyncOperation unload = SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
 
         yield return unload;
@@ -300,6 +304,8 @@ public class LoadingManager : MonoBehaviour
                 rootObject.SetActive(true);
             }
         }
+
+        AudioManager.PlayMusic(m_currentOverworldMusic);
 
         SceneManager.SetActiveScene(m_lastOverworldScene);
         m_currentSceneType = SceneType.OVERWORLD;
