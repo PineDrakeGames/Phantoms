@@ -57,6 +57,10 @@ public class PlayerController : MonoBehaviour, ICharacterController
     public Animator CharacterAnimator { get { return m_characterAnimator; }}
     public float RunSpeedScale = 0.5f;
 
+    [Header("Sound Stuff")]
+    public AudioClip SoundEffectJump = null;
+    public AudioClip SoundEffectDoubleJump = null;
+
     [Header("Misc")]
     public List<Collider> IgnoredColliders = new List<Collider>();
     public float BonusOrientationSharpness = 10f;

@@ -9,10 +9,13 @@ public class PlayerStateDoubleJump : PlayerStateJump
         base.StateEnter();
 
         Controller.DoubleJump();
+        
     }
 
     protected override void InitialJump(ref Vector3 currentVelocity)
     {
+        AudioManager.PlaySound(Controller.SoundEffectDoubleJump);
+
         Vector3 jumpDirection = Controller.Motor.CharacterUp;
 
         // Assume that we are in the air, not on ground

@@ -202,7 +202,6 @@ public class LoadingManager : MonoBehaviour
         }
 
         // Disabling all things from all types of scenes
-        OverworldManager.Instance.SetOverworldActive(false);
 
         // Load into the loading scene, and wait until we are there.
         SceneManager.LoadScene(m_loadingSceneIndex);
@@ -210,6 +209,8 @@ public class LoadingManager : MonoBehaviour
         {
             yield return null;
         }
+        OverworldManager.Instance.SetOverworldActive(false);
+
 
         // Load the new scene, and wait for that scene to finish loading.
         AsyncOperation load = SceneManager.LoadSceneAsync(sceneIndex);
@@ -244,13 +245,13 @@ public class LoadingManager : MonoBehaviour
 
     private IEnumerator LoadIntoBattleBackend(int sceneIndex, bool showLoadingScreen = true)
     {
+        AudioManager.StopMusic();
         if (showLoadingScreen)
         {
             yield return ShowLoadingScreen();
         }
         yield return null;
 
-        OverworldManager.Instance.SetOverworldActive(false);
 
         m_overworldSceneItems.Clear();
 
@@ -266,6 +267,7 @@ public class LoadingManager : MonoBehaviour
         m_lastOverworldScene = SceneManager.GetActiveScene();
 
         yield return SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Additive);
+        OverworldManager.Instance.SetOverworldActive(false);
 
         SceneManager.SetActiveScene(GetLoadedSceneByIndex(sceneIndex));
 

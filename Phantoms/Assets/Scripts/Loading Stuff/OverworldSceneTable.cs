@@ -13,20 +13,12 @@ using UnityEngine.SceneManagement;
 [CustomEditor(typeof(OverworldSceneTable))]
 public class OverworldSceneTableEditor : Editor
 {
-    SerializedProperty scenes;
 
-    //The Reorderable list we will be working with
-    ReorderableList list;
-
-    private void OnEnable()
-    {
-        MakeReorderableList();
-    }
 
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
-        list.DoLayoutList();
+        DrawDefaultInspector();
 
         EditorGUILayout.Space();
 
@@ -35,83 +27,13 @@ public class OverworldSceneTableEditor : Editor
         if (GUILayout.Button("Add All"))
         {
             sceneTable.AddAllSceneLocations();
-            MakeReorderableList();
         }
         if (GUILayout.Button("Replace All"))
         {
             sceneTable.SceneToLocations.Clear();
             sceneTable.AddAllSceneLocations();
-            MakeReorderableList();
         }
         EditorGUILayout.EndHorizontal();
-
-        serializedObject.ApplyModifiedProperties();
-    }
-
-    private void MakeReorderableList()
-    {
-        //Gets the wave property in WaveManager so we can access it. 
-        scenes = serializedObject.FindProperty("m_scenes");
-
-        //Initialises the ReorderableList. We are creating a Reorderable List from the "wave" property. 
-        //In this, we want a ReorderableList that is draggable, with a display header, with add and remove buttons        
-        list = new ReorderableList(serializedObject, scenes, true, true, true, true);
-        list.drawElementCallback = DrawListItems;
-        list.drawHeaderCallback = DrawListHeader;
-        list.elementHeightCallback = DrawListHeight;
-        list.onAddCallback = OnAddCallback;
-    }
-
-    private void DrawListItems(Rect rect, int index, bool isActive, bool isFocused)
-    {
-        SerializedProperty element = list.serializedProperty.GetArrayElementAtIndex(index); //The element in the list
-        rect.y += 2;
-
-        // Create a property field and label field for each property.
-        SerializedProperty elementName = element.FindPropertyRelative("Scene");
-
-        EditorGUI.PropertyField(
-            new Rect(rect.x, rect.y, 200, EditorGUIUtility.singleLineHeight),
-            elementName,
-            GUIContent.none
-        );
-
-        rect.y += EditorGUIUtility.singleLineHeight * 1.2f;
-
-        // The 'level' property
-        // The label field for level (width 100, height of a single line)
-
-        EditorGUI.PropertyField(position:
-            new Rect(rect.x += 10, rect.y, Screen.width * .8f, height: EditorGUIUtility.singleLineHeight), element.FindPropertyRelative("SceneLocations"), new GUIContent("Locations"), includeChildren: true);
-    }
-
-    private void DrawListHeader(Rect rect)
-    {
-        string name = "Scene";
-        EditorGUI.LabelField(rect, name);
-    }
-
-    private float DrawListHeight(int index)
-    {
-        var element = list.serializedProperty.GetArrayElementAtIndex(index);
-
-        element.isExpanded = true;
-
-        float propertyHeight = EditorGUI.GetPropertyHeight(list.serializedProperty.GetArrayElementAtIndex(index), true);
-        float spacing = EditorGUIUtility.singleLineHeight / 8;
-
-        return propertyHeight + spacing;
-    }
-
-    private void OnAddCallback(ReorderableList list)
-    {
-        var index = list.serializedProperty.arraySize;
-        list.serializedProperty.arraySize++;
-        list.index = index;
-        var element = list.serializedProperty.GetArrayElementAtIndex(index);
-
-        element.FindPropertyRelative("Scene").stringValue = null;
-        element.FindPropertyRelative("SceneLocations").arraySize = 0;
     }
 }
 #endif

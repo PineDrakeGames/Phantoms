@@ -4,6 +4,19 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    private static Player s_instance = null;
+    public static Player Instance
+    {
+        get
+        {
+            if (s_instance == null)
+            {
+                s_instance = FindObjectOfType<Player>();
+            }
+            return s_instance;
+        }
+    }
+
     public PlayerController Character;
     public CameraController CharacterCamera;
 
@@ -15,6 +28,12 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        if (s_instance == null) { s_instance = this; }
+        if (s_instance != this)
+        {
+            return;
+        }
+
         //Cursor.lockState = CursorLockMode.Locked;
         if (Character == null)
         {

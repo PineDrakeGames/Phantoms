@@ -13,7 +13,7 @@ public class CameraControllerInspector : Editor
     {
         DrawDefaultInspector();
         CameraController myScript = (CameraController)target;
-        if(GUILayout.Button("Reset Camera"))
+        if (GUILayout.Button("Reset Camera"))
         {
             myScript.ResetCameraSettings();
         }
@@ -59,17 +59,20 @@ public class CameraController : MonoBehaviour
         }
     }
 
-    private void Start() 
+    private void Start()
     {
         ResetCameraPosition();
     }
 
     private void LateUpdate()
     {
-        // First get camera focus position
-        UpdateFocus();
-        // Then set the camera position based on the focus.
-        UpdateCamera();
+        if (Player && PlayerMotor)
+        {
+            // First get camera focus position
+            UpdateFocus();
+            // Then set the camera position based on the focus.
+            UpdateCamera();
+        }
     }
 
     ////////////////////////
@@ -77,11 +80,14 @@ public class CameraController : MonoBehaviour
     ////////////////////////
     public void ResetCameraPosition()
     {
-        m_focusPosition = Player.position;
-        m_prevPlayerPosition = Player.position;
-        m_currentYPosition = Player.position.y;
-        m_currentLead = 0f;
-        UpdateCamera();
+        if (Player)
+        {
+            m_focusPosition = Player.position;
+            m_prevPlayerPosition = Player.position;
+            m_currentYPosition = Player.position.y;
+            m_currentLead = 0f;
+            UpdateCamera();
+        }
     }
 
     public void SetCameraSettings(OverworldCameraSettings newSettings)
@@ -141,7 +147,7 @@ public class CameraController : MonoBehaviour
     private Vector3 GetLead()
     {
         Vector3 distance = (Player.position - m_prevPlayerPosition);
-        Vector3 offsetDirection =  Quaternion.Euler(0, -90, 0) * m_camSettings.CameraForward;
+        Vector3 offsetDirection = Quaternion.Euler(0, -90, 0) * m_camSettings.CameraForward;
 
         float targetLead = Vector3.Dot(offsetDirection.normalized, distance.normalized);
 
@@ -165,9 +171,9 @@ public class CameraController : MonoBehaviour
             if (!PlayerMotor.GroundingStatus.FoundAnyGround && distance > maxHeightDiff && newYPosition > m_currentYPosition)
             {
                 distance -= maxHeightDiff;
-                newYPosition -= maxHeightDiff; 
+                newYPosition -= maxHeightDiff;
             }
-            float progress =  Mathf.Sqrt(distance / maxHeightDiff);
+            float progress = Mathf.Sqrt(distance / maxHeightDiff);
             progress -= (Time.deltaTime / m_camSettings.HeightApproachTime);
             progress = Mathf.Clamp01(progress);
 

@@ -6,6 +6,12 @@ using Ares.ActorComponents;
 
 public class BattleInitializer : MonoBehaviour
 {
+    [Header("Music? Idk why not here")]
+    [SerializeField]
+    private AudioClip m_battleMusicIntro = null;
+    [SerializeField]
+    private AudioClip m_battleMusicLoop = null;
+
     [Header("References to other scripts")]
     [SerializeField]
     private BattleManager m_battleManager;
@@ -29,6 +35,8 @@ public class BattleInitializer : MonoBehaviour
     // Start is called before the first frame update
     public void InitializeBattle(List<CombatantInstanceData> playerCombatants, List<CombatantInstanceData> inactivePlayerCombatants, EnemyEncounterData enemies)
     {
+        AudioManager.PlayMusic(m_battleMusicLoop, m_battleMusicIntro);
+        
         List<Actor> PlayerActors = SpawnActorsInLine(true, playerCombatants, m_playerSpawnPoint1.position, m_playerSpawnPoint2.position, m_maxDistanceBetweenPlayers);
 
         List<Actor> InactivePlayerActors = SpawnActors(true, inactivePlayerCombatants, PlayerActors[PlayerActors.Count - 1].transform.position);

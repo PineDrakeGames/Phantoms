@@ -10,7 +10,7 @@ public class PlayerStateJump : PlayerMovementState
         m_holdingJump = true;
         m_SetInitialForce = true;
         Controller.CharacterAnimator.SetTrigger("Jump");
-
+        
     }
 
     public override void TickInput(PlayerCharacterInputs input)
@@ -60,6 +60,8 @@ public class PlayerStateJump : PlayerMovementState
     // Private Helper Functions
     protected virtual void InitialJump(ref Vector3 currentVelocity)
     {
+        AudioManager.PlaySound(Controller.SoundEffectJump);
+
         Vector3 jumpDirection = Controller.Motor.CharacterUp;
         if (Controller.Motor.GroundingStatus.FoundAnyGround && !Controller.Motor.GroundingStatus.IsStableOnGround)
         {

@@ -13,6 +13,9 @@ public class ItemPickup : MonoBehaviour
     [SerializeField]
     private Renderer m_itemRenderer = null;
 
+    [SerializeField]
+    private AudioClip m_itemPickupSoundEffect;
+
     private Material m_materialCopy = null;
 
     private void Awake()
@@ -37,6 +40,7 @@ public class ItemPickup : MonoBehaviour
         if (collider.tag == "Player")
         {
             PlayerInventoryManager.Instance.AddItem(ItemID);
+            AudioManager.PlaySound(m_itemPickupSoundEffect);
             this.gameObject.SetActive(false);
         }
     }

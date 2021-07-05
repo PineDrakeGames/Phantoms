@@ -13,6 +13,9 @@ public class RelicPickup : MonoBehaviour
     [SerializeField]
     private Renderer m_itemRenderer = null;
 
+    [SerializeField]
+    private AudioClip m_relicPickupSoundEffect;
+
     private Material m_materialCopy = null;
 
     private void Awake()
@@ -37,6 +40,7 @@ public class RelicPickup : MonoBehaviour
         if (collider.tag == "Player")
         {
             PlayerInventoryManager.Instance.AddRelic(RelicID);
+            AudioManager.PlaySound(m_relicPickupSoundEffect);
             this.gameObject.SetActive(false);
         }
     }
