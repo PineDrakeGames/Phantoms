@@ -7,6 +7,10 @@ public class PauseMenu : MonoBehaviour
     [SerializeField]
     private GameObject m_pauseMenuParent = null;
 
+    [SerializeField]
+    [Tooltip("In the overworld, we check for pausing elsewhere, but in battle we check here.")]
+    private bool m_checkForPauseInput = false;
+
     private static PauseMenu s_instance = null;
     public static PauseMenu Instance
     {
@@ -25,14 +29,18 @@ public class PauseMenu : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(this);
-        }
-        else
+        if (s_instance == null)
         {
             s_instance = this;
             UnPause();
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) && m_checkForPauseInput)
+        {
+            TogglePause();
         }
     }
 

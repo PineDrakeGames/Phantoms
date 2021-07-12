@@ -304,6 +304,8 @@ namespace Ares
 
             HP -= Mathf.Max(0, power);
 
+            AudioManager.PlaySound("BATTLE_HIT");
+
             // Check for afflictions that stop on damage
             Affliction currentAffliction = null;
             foreach (Affliction affliction in Afflictions)
@@ -332,6 +334,9 @@ namespace Ares
             int oldHP = HP;
 
             HP += Mathf.Max(0, power);
+
+            AudioManager.PlaySound("BATTLE_HEAL");
+
 
             return HP - oldHP;
         }
@@ -366,10 +371,14 @@ namespace Ares
             if (stages > 0)
             {
                 OnStatBuff.Invoke(stat, Mathf.Min(stat.Stage + stages, stat.Data.MaxStage));
+                AudioManager.PlaySound("BATTLE_BUFF");
+
             }
             else
             {
                 OnStatDebuff.Invoke(stat, Mathf.Max(stat.Stage - stages, stat.Data.MinStage));
+                AudioManager.PlaySound("BATTLE_DEBUFF");
+
             }
             stat.Buff(buffID, stages);
 

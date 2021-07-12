@@ -412,7 +412,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8718089631161999084
 RectTransform:
   m_ObjectHideFlags: 0
@@ -455,6 +455,7 @@ MonoBehaviour:
   m_bulletParent: {fileID: 1661459425391014619}
   m_bulletPrefab: {fileID: 6816936683528065095, guid: 3085629c36e87894c939732bd42e8d58,
     type: 3}
+  m_damageSound: {fileID: 8300000, guid: 0885f6dd95612c24cb10fd04d7e7b694, type: 3}
 --- !u!1 &8718089631861628570
 GameObject:
   m_ObjectHideFlags: 0
@@ -576,7 +577,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_playerTransform: {fileID: 8718089631861628565}
-  m_playerRigidbody: {fileID: 8718089631861628564}
   m_playerArea: {fileID: 5374327132245705783}
   m_playerAreaSpacing: 10
   AllowMovement: 0

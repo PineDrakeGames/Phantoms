@@ -33,6 +33,14 @@ public class ButtonMashMinigame : AbilityMinigame
     [SerializeField]
     private GameObject m_inputIndicator;
 
+    [Header("Sounds")]
+    [SerializeField]
+    private LoopingSoundEffect m_meterFillSound = null;
+
+    [SerializeField]
+    [MinMaxRange(-3f, 3f)]
+    private RangedFloat m_minToMaxPitch = new RangedFloat(0.5f, 1.5f);
+
     /// Public Getters
     public override string MinigameDescription
     {
@@ -90,6 +98,9 @@ public class ButtonMashMinigame : AbilityMinigame
         m_currentTargetIndex = 0;
         m_currentFill = 0f;
 
+        m_meterFillSound.SetPitch(m_minToMaxPitch.minValue);
+        m_meterFillSound.Play();
+
         AbilityMinigameManager.Timer.StartTimer(Data.TimerDuration);
 
         m_state = MinigameState.RUNNING;
@@ -126,6 +137,7 @@ public class ButtonMashMinigame : AbilityMinigame
         }
 
         m_meterFillImage.fillAmount = Mathf.Clamp01(progress);
+        m_meterFillSound.SetPitch(Mathf.Lerp(m_minToMaxPitch.minValue, m_minToMaxPitch.maxValue, progress));
 
         if (progress >= 1f)
         {
@@ -145,7 +157,9 @@ public class ButtonMashMinigame : AbilityMinigame
         {
             indicator.SetActive(false);
         }
-        
+
+        m_meterFillSound.Stop();
+
         m_meter.SetActive(false);
 
         AbilityMinigameManager.Timer.StopTimer();

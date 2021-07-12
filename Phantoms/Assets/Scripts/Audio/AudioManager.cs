@@ -101,6 +101,15 @@ public class AudioManager : MonoBehaviour
         // TODO!
     }
 
+    /// Misc Functions ///
+
+    public static void UpdateVolume()
+    {
+        Instance.m_musicSource.volume = DataManager.Instance.GetMusicVolume();
+        Instance.m_musicIntroSource.volume = DataManager.Instance.GetMusicVolume();
+        Instance.m_oneShotSoundSource.volume = DataManager.Instance.GetSoundVolume();
+    }
+
     /////////////////////////
     /// Private Functions ///
     /////////////////////////
@@ -168,7 +177,7 @@ public class AudioManager : MonoBehaviour
     {
         m_currentMusicFadeOutTime -= Time.deltaTime;
 
-        float newVolume = Mathf.Clamp01(m_currentMusicFadeOutTime / m_musicFadeOutTime);
+        float newVolume = Mathf.Clamp01(m_currentMusicFadeOutTime / m_musicFadeOutTime) * DataManager.Instance.GetMusicVolume();;
         m_musicSource.volume = newVolume;
         m_musicIntroSource.volume = newVolume;
 
@@ -186,12 +195,11 @@ public class AudioManager : MonoBehaviour
     {
         if (m_queuedMusicClip == null) { return; }
 
-        m_musicSource.volume = 1;
-        m_musicIntroSource.volume = 1;
+        m_musicSource.volume = DataManager.Instance.GetMusicVolume();
+        m_musicIntroSource.volume = DataManager.Instance.GetMusicVolume();
 
         if (m_queuedMusicIntroClip != null)
         {
-            // TODO: Set volume!
             m_musicSource.clip = m_queuedMusicClip;
             m_musicIntroSource.clip = m_queuedMusicIntroClip;
             m_musicIntroSource.Play();
@@ -215,6 +223,6 @@ public class AudioManager : MonoBehaviour
     private void PlayOneShotInternal(AudioClip clip, float volumeScale = 1f)
     {
         // TODO: set volume!
-        m_oneShotSoundSource.PlayOneShot(clip, volumeScale);
+        m_oneShotSoundSource.PlayOneShot(clip, volumeScale * DataManager.Instance.GetSoundVolume());
     }
 }

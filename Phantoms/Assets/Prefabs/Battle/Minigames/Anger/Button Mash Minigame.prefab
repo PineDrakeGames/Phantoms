@@ -167,6 +167,10 @@ MonoBehaviour:
   m_meterFillImage: {fileID: 7497259650995572492}
   m_inputIndicator: {fileID: 4442656620296838516, guid: af7a6a44b75864148af0d97a9606365f,
     type: 3}
+  m_meterFillSound: {fileID: 1134143349204593326}
+  m_minToMaxPitch:
+    minValue: 0.5
+    maxValue: 1.5
 --- !u!1 &7497259651712203677
 GameObject:
   m_ObjectHideFlags: 0
@@ -176,6 +180,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7497259651712203650}
+  - component: {fileID: 1134143349204593326}
   m_Layer: 5
   m_Name: Meter
   m_TagString: Untagged
@@ -205,6 +210,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 650, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1134143349204593326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7497259651712203677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 311f54bd1f771ce4b9a6d78cc658431a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_defaultClip: {fileID: 8300000, guid: 8671847490d76e6479b225608ddeea5d, type: 3}
 --- !u!1 &7497259651839516071
 GameObject:
   m_ObjectHideFlags: 0

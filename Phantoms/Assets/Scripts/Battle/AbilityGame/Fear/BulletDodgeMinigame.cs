@@ -35,6 +35,10 @@ public class BulletDodgeMinigame : AbilityMinigame
     [SerializeField]
     private GameObject m_bulletPrefab;
 
+    [Header("Sounds")]
+    [SerializeField]
+    private AudioClip m_damageSound = null;
+
     /// Public Getters
     public override string MinigameDescription
     {
@@ -116,6 +120,7 @@ public class BulletDodgeMinigame : AbilityMinigame
     public void HitPlayer(BulletDodgeMinigameBullet bullet = null)
     {
         m_healthIndicator.Damage();
+        AudioManager.PlaySound(m_damageSound);
 
         if (m_healthIndicator.CurrentHearts <= 0)
         {

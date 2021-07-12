@@ -33,6 +33,12 @@ public class TimingMeterMinigame : AbilityMinigame
     [SerializeField]
     private Image m_meterFillImage = null;
 
+    [SerializeField]
+    private LoopingSoundEffect m_meterFillSound = null;
+
+    [SerializeField] [MinMaxRange(-3f, 3f)]
+    private RangedFloat m_minToMaxPitch = new RangedFloat (0.5f, 1.5f);
+
     [Header("Target Prefab")]
     [SerializeField]
     private GameObject m_inputIndicator;
@@ -118,6 +124,8 @@ public class TimingMeterMinigame : AbilityMinigame
             {
                 m_currentTime = 0f;
                 m_state = MinigameState.RUNNING;
+                m_meterFillSound.SetPitch(m_minToMaxPitch.minValue);
+                m_meterFillSound.Play();
             }
         }
     }
@@ -171,6 +179,7 @@ public class TimingMeterMinigame : AbilityMinigame
         }
 
         m_meterFillImage.fillAmount = Mathf.Clamp01(progress);
+        m_meterFillSound.SetPitch(Mathf.Lerp(m_minToMaxPitch.minValue, m_minToMaxPitch.maxValue, progress));
 
         if ((progress >= 1f) && (m_currentTargetIndex >= m_targetInstances.Count))
         {
@@ -206,6 +215,8 @@ public class TimingMeterMinigame : AbilityMinigame
 
         // Clear arrays
         m_targetInstances.Clear();
+
+        m_meterFillSound.Stop();
 
         m_meter.SetActive(false);
     }

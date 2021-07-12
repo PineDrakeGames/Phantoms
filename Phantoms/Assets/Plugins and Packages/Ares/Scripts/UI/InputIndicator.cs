@@ -28,6 +28,14 @@ public class InputIndicator : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI m_indicatorText = null;
 
+    [Header("Sounds")]
+    [SerializeField]
+    private AudioClip m_hitTargetSound = null;
+    [SerializeField]
+    private AudioClip m_missTargetSound = null;
+    [SerializeField]
+    private AudioClip m_perfectTargetSound = null;
+
     public void SetIndicator(MinigameInput inputType)
     {
         // Set the image based on the button?
@@ -50,9 +58,11 @@ public class InputIndicator : MonoBehaviour
                 break;
             case IndicatorState.INPUT_RECIEVED:
                 m_indicatorImage.color = new Color(0f, 1f, 0f, 1f);
+                AudioManager.PlaySound(m_hitTargetSound);
                 break;
             case IndicatorState.FAILED:
                 m_indicatorImage.color = new Color(1f, 0f, 0f, 1f);
+                AudioManager.PlaySound(m_missTargetSound);
                 break;
         }
 

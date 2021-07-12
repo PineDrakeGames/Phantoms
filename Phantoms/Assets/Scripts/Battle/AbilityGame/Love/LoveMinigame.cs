@@ -25,6 +25,14 @@ public class LoveMinigame : AbilityMinigame
     [SerializeField]
     private GameObject m_targetPrefab = null;
 
+    [Header("Sounds")]
+    [SerializeField]
+    private AudioClip m_fireSound = null;
+    [SerializeField]
+    private AudioClip m_targetHitSound = null;
+    [SerializeField]
+    private LoopingSoundEffect m_launcherAimSound = null;
+
     public override string MinigameDescription
     {
         get
@@ -50,6 +58,8 @@ public class LoveMinigame : AbilityMinigame
     // Specific game private variables
     private float m_currentLauncherVelocity = 0f;
     private bool m_fullAimRange = false;
+
+    private bool m_aiming = false;
 
     ////////////////////////////////////
     /// Protected override functions ///
@@ -91,6 +101,7 @@ public class LoveMinigame : AbilityMinigame
     {
         ClearBullets();
         ClearTargets();
+        m_launcherAimSound.Stop();
 
         AbilityMinigameManager.Timer.StopTimer();
     }
@@ -101,6 +112,8 @@ public class LoveMinigame : AbilityMinigame
     public void HitTarget()
     {
         m_hitTargets += 1;
+        AudioManager.PlaySound(m_targetHitSound);
+
         if (m_hitTargets >= Data.NumTargets)
         {
             if (AbilityMinigameManager.Timer.TimerProgress <= 0.7f)
@@ -129,7 +142,7 @@ public class LoveMinigame : AbilityMinigame
         int targetsSpawned = 0;
         while ((pointOptions.Count > 0) && (targetsSpawned < NumTargets))
         {
-            int randomIndex = Random.Range(0,pointOptions.Count);
+            int randomIndex = Random.Range(0, pointOptions.Count);
             Vector2 randomPoint = bottomLeftCorner + pointOptions[randomIndex];
 
             if (Vector2.Distance(randomPoint, m_bulletLauncher.anchoredPosition) >= Data.MinTargetDistance)
@@ -160,6 +173,12 @@ public class LoveMinigame : AbilityMinigame
             {
                 m_currentLauncherVelocity *= -1f;
             }
+
+            if (!m_aiming)
+            {
+                m_aiming = true;
+                m_launcherAimSound.Play();
+            }
         }
         else
         {
@@ -170,8 +189,19 @@ public class LoveMinigame : AbilityMinigame
             float clockwiseMove = Mathf.Clamp(verticalMove + horizontalMove, -1f, 1f);
 
             m_launcherAngle += clockwiseMove * Data.AimSensitivity * Time.deltaTime;
+
+            if (!m_aiming && clockwiseMove != 0f)
+            {
+                m_aiming = true;
+                m_launcherAimSound.Play();
+            }
+            else if (m_aiming && clockwiseMove == 0f)
+            {
+                m_aiming = false;
+                m_launcherAimSound.Stop();
+            }
         }
-        
+
 
         // If the aim angle is >360, just allow full rotation - otherwise just clamp the value.
         if (m_fullAimRange)
@@ -207,6 +237,8 @@ public class LoveMinigame : AbilityMinigame
         bullet.SetMovement(direction, Data.BulletType, Data.BulletSpeed, Data.BulletDuration);
 
         m_bulletCooldown = (1f / Data.BulletFireRate);
+
+        AudioManager.PlaySound(m_fireSound);
     }
 
     ////////////////////////////////
@@ -218,7 +250,7 @@ public class LoveMinigame : AbilityMinigame
         float width = m_targetArea.rect.width;
         float height = m_targetArea.rect.height;
         Vector2 offset = new Vector2(Data.ReticlePosition.x * (width / 2f), Data.ReticlePosition.y * (height / 2f));
-        
+
         m_bulletLauncher.anchoredPosition = m_targetArea.anchoredPosition + offset;
 
         m_launcherAngle = (Data.AimAngleRange.minValue + Data.AimAngleRange.maxValue) / 2f;
@@ -232,7 +264,7 @@ public class LoveMinigame : AbilityMinigame
 
     private LoveMinigameBullet GetBullet()
     {
-        foreach(LoveMinigameBullet bullet in m_bullets)
+        foreach (LoveMinigameBullet bullet in m_bullets)
         {
             if (!bullet.gameObject.activeSelf)
             {
@@ -250,7 +282,7 @@ public class LoveMinigame : AbilityMinigame
 
     private void ClearBullets()
     {
-        foreach(LoveMinigameBullet bullet in m_bullets)
+        foreach (LoveMinigameBullet bullet in m_bullets)
         {
             bullet.gameObject.SetActive(false);
         }
@@ -258,7 +290,7 @@ public class LoveMinigame : AbilityMinigame
 
     private LoveMinigameTarget GetTarget()
     {
-        foreach(LoveMinigameTarget target in m_targets)
+        foreach (LoveMinigameTarget target in m_targets)
         {
             if (!target.gameObject.activeSelf)
             {
@@ -277,7 +309,7 @@ public class LoveMinigame : AbilityMinigame
 
     private void ClearTargets()
     {
-        foreach(LoveMinigameTarget target in m_targets)
+        foreach (LoveMinigameTarget target in m_targets)
         {
             target.gameObject.SetActive(false);
         }

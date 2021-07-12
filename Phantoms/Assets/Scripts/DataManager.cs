@@ -86,6 +86,9 @@ public class DataManager : MonoBehaviour
     /// Runtime Data ///
     ////////////////////
 
+    private SettingsData m_settings = null;
+    public SettingsData Settings { get { return m_settings; } }
+
     // Converting the data into dictionaries to more easily access it
     private Dictionary<string, PhantomData> m_phantomIdToData = null;
     private Dictionary<string, ItemData> m_ItemIdToData = null;
@@ -138,6 +141,8 @@ public class DataManager : MonoBehaviour
     {
         // Any initialization things
         DontDestroyOnLoad(this.gameObject);
+
+        m_settings = new SettingsData();
 
         if (m_phantomIdToData == null)
         {
@@ -242,5 +247,15 @@ public class DataManager : MonoBehaviour
         {
             phantom.FullRestore();
         }
+    }
+
+    public float GetMusicVolume()
+    {
+        return Settings.MasterVolume * Settings.MusicVolume;
+    }
+
+    public float GetSoundVolume()
+    {
+        return Settings.MasterVolume * Settings.SoundsVolume;
     }
 }
