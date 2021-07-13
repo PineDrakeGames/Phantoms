@@ -166,6 +166,8 @@ namespace AwesomeToon {
             float inView = 1.1f;
             float dist;
 
+            if (light == null) { return lightSet; }
+
             if (!light.isActiveAndEnabled) {
                 lightSet.atten = 0f;
                 return lightSet;
