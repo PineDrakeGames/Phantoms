@@ -37,6 +37,7 @@ public class CameraController : MonoBehaviour
 
     // Variables used to calculate how much the camera should lead the player
     private float m_currentLead = 0f;
+    private float m_currentDepthLead = 0f;
     private Vector3 m_prevPlayerPosition = Vector3.zero;
 
     // Variables used to set the Y position of the player.
@@ -146,19 +147,31 @@ public class CameraController : MonoBehaviour
     /// Private helper functions ///
     private Vector3 GetLead()
     {
+        // Get distance that the player just traveled
         Vector3 distance = (Player.position - m_prevPlayerPosition);
+
+        // Getting a vector for the left/right direction and forward direction
         Vector3 offsetDirection = Quaternion.Euler(0, -90, 0) * m_camSettings.CameraForward;
+        Vector3 depthDirection = m_camSettings.CameraForward;
 
+        // Using dot product to figure out how much the player is moving in the left/right direction and forward/back
         float targetLead = Vector3.Dot(offsetDirection.normalized, distance.normalized);
+        float targetDepthLead = Vector3.Dot(depthDirection.normalized, distance.normalized);
 
+        // Getting the current lead speed based on the player speed
         float leadSpeed = (PlayerMotor.Velocity.magnitude * SPEED_LEAD_SCALE) / m_camSettings.LeadDelay;
 
+        // Calculate the left/right lead
         float leadChange = targetLead - m_currentLead;
         m_currentLead += leadChange * leadSpeed * Time.deltaTime;
-
         m_currentLead = Mathf.Clamp(m_currentLead, -1f, 1f);
 
-        return (offsetDirection * m_camSettings.LeadDistance * Mathf.SmoothStep(-1f, 1f, (m_currentLead + 1f) / 2f));
+        // calculate the forward/back lead
+        float leadDepthChange = targetDepthLead - m_currentDepthLead;
+        m_currentDepthLead += leadDepthChange * leadSpeed * Time.deltaTime;
+        m_currentDepthLead = Mathf.Clamp(m_currentDepthLead, -1f, 0f);
+
+        return (offsetDirection * m_camSettings.LeadDistance * Mathf.SmoothStep(-1f, 1f, (m_currentLead + 1f) / 2f)) + (depthDirection * m_camSettings.DepthLeadDistance * Mathf.SmoothStep(-1f, 0f, (m_currentDepthLead + 1f) / 2f));
     }
 
     private float UpdateYPosition()

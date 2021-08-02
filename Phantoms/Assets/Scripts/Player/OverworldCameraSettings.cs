@@ -23,6 +23,8 @@ public class OverworldCameraSettings
     [SerializeField]
     private float m_leadDistance = 1f;
     [SerializeField]
+    private float m_depthLeadDistance = 1f;
+    [SerializeField]
     private float m_leadDelay = 0.6f;
 
     [Header("Camera Restrictions")]
@@ -47,6 +49,7 @@ public class OverworldCameraSettings
     public float MaxHeightDifference { get { return m_maxHeightDifference; } }
     public float HeightApproachTime { get { return m_heightApproachTime; } }
     public float LeadDistance { get { return m_leadDistance; } }
+    public float DepthLeadDistance { get { return m_depthLeadDistance; } }
     public float LeadDelay { get { return m_leadDelay; } }
     public bool RestrictZMovement { get { return m_restrictZMovement; } }
     public float MinZPosition { get { return m_minZPosition; } }
@@ -63,6 +66,7 @@ public class OverworldCameraSettings
         m_maxHeightDifference = camSettings.MaxHeightDifference;
         m_heightApproachTime = camSettings.HeightApproachTime;
         m_leadDistance = camSettings.LeadDistance;
+        m_depthLeadDistance = camSettings.DepthLeadDistance;
         m_leadDelay = camSettings.LeadDistance;
         m_restrictZMovement = camSettings.RestrictZMovement;
         m_minZPosition = camSettings.MinZPosition;
