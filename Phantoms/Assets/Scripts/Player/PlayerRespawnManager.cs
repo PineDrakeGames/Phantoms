@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using KinematicCharacterController;
 
 public class PlayerRespawnManager : MonoBehaviour
@@ -36,10 +37,19 @@ public class PlayerRespawnManager : MonoBehaviour
     private const float NEAR_RESPAWN_SET_INTERVAL = 0.5f;
     private const float NEAR_RESPAWN_MIN_TIME = 0.1f;
 
+    // Public Unity Events
+    public static UnityEvent<Vector3> OnSafeRespawnUpdate = new UnityEvent<Vector3>();
+    public static UnityEvent OnRespawn = new UnityEvent();
+
 
     ///////////////////////
     /// Unity Functions ///
     ///////////////////////
+    private void Awake()
+    {
+        
+    }
+
     private void Start()
     {
         m_playerController = OverworldManager.Instance.PlayerController;
@@ -63,6 +73,8 @@ public class PlayerRespawnManager : MonoBehaviour
         SetNearRespawn(newPosition);
         m_safeRespawnPoint = newPosition;
         // TODO: Maybe a small indicator?
+
+        OnSafeRespawnUpdate.Invoke(newPosition);
     }
 
     public void RespawnSafe(int damageTaken = 0)
@@ -134,5 +146,7 @@ public class PlayerRespawnManager : MonoBehaviour
         m_playerController.SetState(hurtState);
 
         m_lastRespawnTime = Time.time;
+
+        OnRespawn.Invoke();
     }
 }
