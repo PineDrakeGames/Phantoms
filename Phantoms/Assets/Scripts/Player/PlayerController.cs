@@ -61,6 +61,9 @@ public class PlayerController : MonoBehaviour, ICharacterController
     public AudioClip SoundEffectJump = null;
     public AudioClip SoundEffectDoubleJump = null;
 
+    [Header("Other Stuff")]
+    public Transform PlayerCenter = null;
+
     [Header("Misc")]
     public List<Collider> IgnoredColliders = new List<Collider>();
     public float BonusOrientationSharpness = 10f;
