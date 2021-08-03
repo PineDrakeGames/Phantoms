@@ -256,6 +256,8 @@ public class PlayerController : MonoBehaviour, ICharacterController
                 _jumpRequested = false;
             }
 
+            m_characterAnimator.SetBool("Grounded", Motor.GroundingStatus.IsStableOnGround);
+
             if (Motor.GroundingStatus.IsStableOnGround)
             {
                 _timeSinceLastAbleToJump = 0f;
@@ -384,7 +386,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
     public bool CanDoubleJump()
     {
         if (!DoubleJumpUnlocked) { return false; }
-        
+
         if (_jumpRequested && !_doubleJumpedUsed)
         {
             if (!Motor.GroundingStatus.IsStableOnGround)

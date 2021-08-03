@@ -93,6 +93,6 @@ public class RandomLootDropData : LootDropData
 
     public override int GetDropDrops()
     {
-        return Random.Range(m_minDrops, m_maxDrops);
+        return Random.Range(m_minDrops, m_maxDrops + 1);
     }
 }
