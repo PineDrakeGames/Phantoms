@@ -13,7 +13,9 @@ public class OverworldPhantomEnemy : MonoBehaviour
 
     [Header("Trigger Settings")]
     [SerializeField]
-    private float m_triggerDistance = 15f;
+    private float m_triggerDistance = 9f;
+    [SerializeField]
+    private float m_chaseDistance = 11f;
     [SerializeField]
     private LayerMask m_LineOfSightBlockers;
     [SerializeField]
@@ -43,7 +45,7 @@ public class OverworldPhantomEnemy : MonoBehaviour
     private float m_lastStateChangeTime = 0f;
     private Vector3 m_currentVelocity = Vector3.zero;
 
-    private RaycastHit[] m_raycastHit = new RaycastHit[1];
+    private RaycastHit m_raycastHit;
     private const string PLAYER_TAG = "Player";
 
     private bool m_alreadyTriggered = false;
@@ -140,17 +142,21 @@ public class OverworldPhantomEnemy : MonoBehaviour
 
     private bool PlayerDetected()
     {
+        float checkDistance = m_triggerDistance;
+        if (m_state == OverworldEnemyState.CHASING) { checkDistance = m_chaseDistance; }
+
         // Check if the player is close enough to where the phantom started
-        if (Vector3.Distance(m_player.position, m_startPosition) <= m_triggerDistance)
+        if (Vector3.Distance(m_player.position, m_startPosition) <= checkDistance)
         {
             // Try and raycast towards the player. if we hit nothing, then the player is too far.
 #if UNITY_EDITOR
             Debug.DrawRay(transform.position, m_player.position - transform.position, Color.red);
 #endif
-            if (Physics.RaycastNonAlloc(transform.position, m_player.position - transform.position, m_raycastHit, m_triggerDistance, m_LineOfSightBlockers) > 0)
+            if (Physics.Raycast(transform.position, m_player.position - transform.position, out m_raycastHit, checkDistance * 2f, m_LineOfSightBlockers))
             {
+                Debug.Log(m_raycastHit.collider.name);
                 // If we hit something, check if it's the player. If not, something is blocking line of sight.
-                if (m_raycastHit[0].collider.CompareTag(PLAYER_TAG))
+                if (m_raycastHit.collider.CompareTag(PLAYER_TAG))
                 {
                     return true;
                 }

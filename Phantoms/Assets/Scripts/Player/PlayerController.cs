@@ -64,6 +64,9 @@ public class PlayerController : MonoBehaviour, ICharacterController
     [Header("Other Stuff")]
     public Transform PlayerCenter = null;
 
+    [Header("Ability Flags")]
+    public bool DoubleJumpUnlocked = false;
+
     [Header("Misc")]
     public List<Collider> IgnoredColliders = new List<Collider>();
     public float BonusOrientationSharpness = 10f;
@@ -380,6 +383,8 @@ public class PlayerController : MonoBehaviour, ICharacterController
     // Extra abilities checking!
     public bool CanDoubleJump()
     {
+        if (!DoubleJumpUnlocked) { return false; }
+        
         if (_jumpRequested && !_doubleJumpedUsed)
         {
             if (!Motor.GroundingStatus.IsStableOnGround)
