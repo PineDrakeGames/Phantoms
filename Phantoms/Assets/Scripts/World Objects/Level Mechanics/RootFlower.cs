@@ -12,10 +12,16 @@ public class RootFlower : MonoBehaviour
         [HideInInspector]
         public bool Hit = false;
     }
-    
+
     [Header("Settings")]
     [SerializeField]
     private bool m_requireAllRoots = false;
+
+    [SerializeField]
+    private float platformSpawnDelay = 0f;
+
+    [SerializeField]
+    private PixelCrushers.DialogueSystem.Wrappers.DialogueSystemTrigger m_triggerCutscene = null;
 
     [Header("Flowers and Roots")]
     [SerializeField]
@@ -85,20 +91,7 @@ public class RootFlower : MonoBehaviour
                     return;
                 }
             }
-
-            m_triggered = true;
-            foreach (Root root in m_roots)
-            {
-                root.rootAnimator.SetBool("On", false);
-            }
-            foreach (Animator flower in m_flowers)
-            {
-                flower.SetBool("On", true);
-            }
-            if (m_saveTrigger)
-            {
-                SaveDataManager.SetFlag(m_triggerID);
-            }
+            TriggerRoot();
         }
     }
 
@@ -113,6 +106,40 @@ public class RootFlower : MonoBehaviour
         {
             flower.SetBool("On", m_triggered);
             flower.SetTrigger("Reset");
+        }
+    }
+
+    private void TriggerRoot()
+    {
+
+        m_triggered = true;
+        foreach (Root root in m_roots)
+        {
+            root.rootAnimator.SetBool("On", false);
+        }
+        
+        if (m_saveTrigger)
+        {
+            SaveDataManager.SetFlag(m_triggerID);
+        }
+        if (m_triggerCutscene)
+        {
+            m_triggerCutscene.OnUse();
+        }
+        StartCoroutine(MakePlatformAfterDelay(platformSpawnDelay));
+    }
+
+    private IEnumerator MakePlatformAfterDelay(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        MakePlatforms();
+    }
+
+    private void MakePlatforms()
+    {
+        foreach (Animator flower in m_flowers)
+        {
+            flower.SetBool("On", true);
         }
     }
 }
