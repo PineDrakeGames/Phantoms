@@ -2533,8 +2533,10 @@ namespace Ares
             {
                 BattleActionResults actionResults = abilityResults.CreateResult(action);
 
-                foreach (Actor target in remainingTargets)
+                int targetIndex = 0;
+                while (targetIndex < remainingTargets.Count())
                 {
+                    Actor target = remainingTargets[targetIndex];
                     bool breakChain = false;
 
                     BattleInteractorData.HitStatus hitStatus;
@@ -2592,6 +2594,10 @@ namespace Ares
                     if (breakChain)
                     {
                         remainingTargets.Remove(target);
+                    }
+                    else
+                    {
+                        targetIndex++;
                     }
 
                     if (remainingTargets.Count == 0)
