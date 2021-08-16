@@ -73,13 +73,16 @@ public class ParseStarterQuestionsCSV : EditorWindow
 
             StarterQuizQuestions.StarterQuestion question = new StarterQuizQuestions.StarterQuestion();
 
-            question.Question = stringData[0];
+            question.Question = stringData[(int)CSVLines.QUESTION];
 
             int stringIndex = 1;
             while (stringIndex < (stringData.Count - 1))
             {
                 StarterQuizQuestions.StarterQuestionAnswer answer = GetAnswer(stringData[stringIndex], stringData[stringIndex + 1]);
-                question.Answers.Add(answer);
+                if (answer != null)
+                {
+                    question.Answers.Add(answer);
+                }
                 stringIndex += 2;
             }
 
@@ -93,6 +96,8 @@ public class ParseStarterQuestionsCSV : EditorWindow
 
     private StarterQuizQuestions.StarterQuestionAnswer GetAnswer(string answerText, string valuesText)
     {
+        if (string.IsNullOrEmpty(answerText) || string.IsNullOrEmpty(valuesText)) { return null; }
+
         StarterQuizQuestions.StarterQuestionAnswer answer = new StarterQuizQuestions.StarterQuestionAnswer();
         answer.Answer = answerText;
 
@@ -118,7 +123,7 @@ public class ParseStarterQuestionsCSV : EditorWindow
             if (value != 0)
             {
                 StarterQuizQuestions.StarterQuestionValue questionValue = new StarterQuizQuestions.StarterQuestionValue();
-                questionValue.ID = id;
+                questionValue.ID = id.Trim().ToUpper();
                 questionValue.Value = value;
                 answer.Values.Add(questionValue);
             }
