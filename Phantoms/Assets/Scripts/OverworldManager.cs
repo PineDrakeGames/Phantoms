@@ -206,6 +206,8 @@ public class OverworldManager : MonoBehaviour
     {
         OverworldSceneEnterTrigger[] sceneEnterTriggers = FindObjectsOfType<OverworldSceneEnterTrigger>();
 
+        OverworldSceneEnterTrigger defaultEnter = null;
+
         bool foundTrigger = false;
         foreach(OverworldSceneEnterTrigger enterTrigger in sceneEnterTriggers)
         {
@@ -221,11 +223,23 @@ public class OverworldManager : MonoBehaviour
                 foundTrigger = true;
                 break;
             }
+            if (enterTrigger.DefaultEnter) { defaultEnter = enterTrigger; }
         }
 
         if (!foundTrigger)
         {
-            m_playerController.Motor.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            if (defaultEnter != null)
+            {
+                m_playerController.Motor.SetPositionAndRotation(defaultEnter.transform.position, defaultEnter.transform.rotation);
+                PlayerInstance.transform.position = defaultEnter.transform.position;
+                LoadingManager.CurrentLoadDirection = defaultEnter.EnterDirection;
+
+                PlayerRespawnManager.Instance.SetSafeRespawn(defaultEnter.transform.position);
+            }
+            else
+            {
+                m_playerController.Motor.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            }
         }
 
         m_cameraController.ResetCameraPosition();

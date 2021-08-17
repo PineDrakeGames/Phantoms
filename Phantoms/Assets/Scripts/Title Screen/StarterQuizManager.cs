@@ -198,6 +198,10 @@ public class StarterQuizManager : MonoBehaviour
         // TODO: Generate the instance for the phantom, continue convo, etc.
         OnAnswerSelect.Invoke();
         m_phantomOptionsParent.SetActive(false);
+
+        PhantomInstanceData phantomInstance = PhantomDataUtility.GenerateRandomPhantom(phantom, 1);
+
+        PlayerInventoryManager.Instance.AddPhantom(phantomInstance);
     }
 
 
