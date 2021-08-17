@@ -17,8 +17,15 @@ public class StarterQuizManager : MonoBehaviour
     [Header("Data References")]
     [SerializeField]
     private StarterQuizQuestions m_questions = null;
-    [SerializeField] [ConversationPopup]
+    [SerializeField]
+    [ConversationPopup]
     private string m_starterQuizConversation = null;
+    [SerializeField]
+    [VariablePopup]
+    private string m_starterQuestionVariable = null;
+    [SerializeField]
+    [VariablePopup]
+    private string m_finalQuestionVariable = null;
     [SerializeField]
     private List<StarterOption> m_starterOptions = new List<StarterOption>();
 
@@ -29,6 +36,10 @@ public class StarterQuizManager : MonoBehaviour
     private GameObject m_questionAnswersParent;
     [SerializeField]
     private StarterQuizAnswerButton[] m_answerButtons = null;
+    [SerializeField]
+    private GameObject m_phantomOptionsParent;
+    [SerializeField]
+    private StarterQuizPhantomOption[] m_phantomOptionButtons = null;
 
     [Header("Events")]
     public UnityEvent OnAnswerSelect = new UnityEvent();
@@ -38,7 +49,7 @@ public class StarterQuizManager : MonoBehaviour
     public static StarterQuizManager Instance
     {
         get
-        {  
+        {
             if (s_instance == null)
             {
                 s_instance = FindObjectOfType<StarterQuizManager>();
@@ -49,6 +60,7 @@ public class StarterQuizManager : MonoBehaviour
 
     // private variables
     private Dictionary<string, int> m_starterScores = new Dictionary<string, int>();
+    private Dictionary<string, int> m_relatedAnswers = new Dictionary<string, int>(); // Used for tiebreakers
     private int m_currentQuestionIndex = 0;
     private StarterQuizQuestions.StarterQuestion m_currentQuestion = null;
 
@@ -56,7 +68,7 @@ public class StarterQuizManager : MonoBehaviour
     ///////////////////////
     /// Unity Functions ///
     ///////////////////////
-    private void Awake() 
+    private void Awake()
     {
         if (s_instance == null) { s_instance = this; }
         else if (s_instance != this) { Destroy(this); }
@@ -66,11 +78,14 @@ public class StarterQuizManager : MonoBehaviour
     /////////////////////////////
     /// Public Quiz Functions ///
     /////////////////////////////
+
+    // Called to start the whole quiz! Will set stuff up and start the dialogue.
     public void StartQuiz()
     {
-        foreach(StarterOption option in m_starterOptions)
+        foreach (StarterOption option in m_starterOptions)
         {
-            m_starterScores[option.QuizID] = 0;
+            m_starterScores[option.QuizID.Trim().ToUpper()] = 0;
+            m_relatedAnswers[option.QuizID.Trim().ToUpper()] = 0;
         }
 
         m_titleScreenStuff.SetActive(false);
@@ -78,6 +93,7 @@ public class StarterQuizManager : MonoBehaviour
         DialogueManager.StartConversation(m_starterQuizConversation);
     }
 
+    // Called each time we need to get a new question - picks one out and sets the right variables in the dialogue system.
     public void GenerateQuestion()
     {
         // Make sure we have a question
@@ -90,22 +106,21 @@ public class StarterQuizManager : MonoBehaviour
         m_currentQuestion = m_questions.Questions[m_currentQuestionIndex];
 
         // Once we get the current question, update it in the dialogue system
-        DialogueLua.SetVariable("Intro.Starter Question", m_currentQuestion.Question);
+        DialogueLua.SetVariable(m_starterQuestionVariable, m_currentQuestion.Question);
 
         // check if it's the last question
         m_currentQuestionIndex++;
         if (m_currentQuestionIndex == m_questions.Questions.Count)
         {
-            DialogueLua.SetVariable("Intro.Last Question", true);
+            DialogueLua.SetVariable(m_finalQuestionVariable, true);
         }
     }
 
+    // Called to display the answer options for the current question as buttons
     public void ShowAnswers()
     {
         if (m_currentQuestion != null)
-        m_questionAnswersParent.SetActive(true);
-
-        Debug.Log(m_currentQuestion.Answers.Count);
+            m_questionAnswersParent.SetActive(true);
 
         for (int i = 0; i < m_answerButtons.Length; i++)
         {
@@ -119,15 +134,139 @@ public class StarterQuizManager : MonoBehaviour
             else
             {
                 button.gameObject.SetActive(false);
-                
+
             }
         }
     }
 
+    // Called by the answer option buttons
     public void SelectAnswer(StarterQuizQuestions.StarterQuestionAnswer answer)
     {
+        foreach (StarterQuizQuestions.StarterQuestionValue value in answer.Values)
+        {
+            string valueID = value.ID.Trim().ToUpper();
+            if (m_starterScores.ContainsKey(valueID))
+            {
+                m_starterScores[valueID] += value.Value;
+                if (value.Value > 0)
+                {
+                    m_relatedAnswers[valueID] += 1;
+                }
+            }
+            else
+            {
+                m_starterScores.Add(valueID, value.Value);
+                if (value.Value > 0)
+                {
+                    m_relatedAnswers[valueID] = 1;
+                }
+            }
+        }
+
+        
 
         m_questionAnswersParent.SetActive(false);
         OnAnswerSelect.Invoke();
+    }
+
+    // Called to show the phantom options
+    public void ShowPhantoms()
+    {
+        m_phantomOptionsParent.SetActive(true);
+
+        List<PhantomData> options = GetStarterOptionPhantoms();
+
+        for (int i = 0; i < m_phantomOptionButtons.Length; i++)
+        {
+
+            StarterQuizPhantomOption button = m_phantomOptionButtons[i];
+            if (i < options.Count)
+            {
+                button.gameObject.SetActive(true);
+                button.Phantom = options[i];
+            }
+            else
+            {
+                button.gameObject.SetActive(false);
+
+            }
+        }
+    }
+
+    public void SelectPhantom(PhantomData phantom)
+    {
+        // TODO: Generate the instance for the phantom, continue convo, etc.
+        OnAnswerSelect.Invoke();
+        m_phantomOptionsParent.SetActive(false);
+    }
+
+
+    ////////////////////////////////
+    /// Private Helper Functions ///
+    ////////////////////////////////
+
+    // Gets the list of phantoms that the player will choose from for their starter
+    private List<PhantomData> GetStarterOptionPhantoms()
+    {
+        List<string> starterIDs = new List<string>(m_starterScores.Keys);
+        starterIDs.Sort((x, y) => (m_starterScores[y].CompareTo(m_starterScores[x]))); // Sort all the starter scores based on score!
+
+        // If the 3rd and 4th are tied, sort by the number of answers related to that specific starter instead of just points.
+        if (m_starterScores[starterIDs[2]] == m_starterScores[starterIDs[3]])
+        {
+            // Get all the starter id's with that value, then sort.
+            List<string> tiedValues = new List<string>();
+            int tiedScore = m_starterScores[starterIDs[2]];
+            int numTied = 0;
+            foreach (string starterID in m_starterScores.Keys)
+            {
+                if (m_starterScores[starterID] == tiedScore)
+                {
+                    tiedValues.Add(starterID);
+                    for (int i = 0; i < 3; i++)
+                    {
+                        if (starterID == starterIDs[i])
+                        {
+                            numTied++;
+                        }
+                    }
+                }
+            }
+
+            tiedValues.Sort((x, y) => (m_relatedAnswers[y].CompareTo(m_relatedAnswers[x])));
+
+            // If things are still tied, time to pick randomly!
+            if (m_relatedAnswers[tiedValues[numTied - 1]] == m_relatedAnswers[tiedValues[numTied]])
+            {
+                // Can be smarter, but honestly this is such a low chance already I'm just shufflin everything.
+                tiedValues.Shuffle<string>();
+            }
+
+            for (int i = 0; i < numTied; i++)
+            {
+                starterIDs[2-i] =  tiedValues[i];
+            }
+        }
+
+        for (int i = 0; i < starterIDs.Count; i++)
+        {
+            Debug.Log((i+1) + ": " + starterIDs[i] + " (" + m_starterScores[starterIDs[i]] + "," + m_relatedAnswers[starterIDs[i]] + ")");
+        }
+
+        List<PhantomData> result = new List<PhantomData>();
+
+        for (int i = 0; i < 3; i++)
+        {
+            foreach(StarterOption option in m_starterOptions)
+            {
+                if (option.QuizID == starterIDs[i])
+                {
+                    result.Add(option.Phantom);
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 }

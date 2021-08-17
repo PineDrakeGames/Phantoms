@@ -14,7 +14,6 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
             // Let the starter quiz manager know that we've finished showing the question, and reveal the answers!
             answerSelected = false;
             StarterQuizManager.Instance.OnAnswerSelect.AddListener(AnswerSelected);
-            StarterQuizManager.Instance.ShowAnswers();
         }
 
         public void Update()
