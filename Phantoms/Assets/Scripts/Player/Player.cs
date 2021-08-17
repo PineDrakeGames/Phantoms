@@ -34,6 +34,11 @@ public class Player : MonoBehaviour
             return;
         }
 
+        Initialize();
+    }
+
+    public void Initialize()
+    {
         //Cursor.lockState = CursorLockMode.Locked;
         if (Character == null)
         {
@@ -43,8 +48,11 @@ public class Player : MonoBehaviour
         {
             CharacterCamera = FindObjectOfType<CameraController>();
         }
-        CharacterCamera.Player = Character.CameraFollowPoint;
-        CharacterCamera.PlayerMotor = Character.Motor;
+        if (CharacterCamera != null)
+        {
+            CharacterCamera.Player = Character.CameraFollowPoint;
+            CharacterCamera.PlayerMotor = Character.Motor;
+        }
     }
 
     private void Update()

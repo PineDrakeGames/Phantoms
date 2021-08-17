@@ -71,7 +71,7 @@ public class OverworldManager : MonoBehaviour
                     instance.name = "Overworld Manager";
                     s_instance = instance.GetComponent<OverworldManager>();
                 }
-                if (s_instance)
+                if (!s_instance.initialized)
                 {
                     s_instance.Initialize();
                 }
@@ -85,6 +85,7 @@ public class OverworldManager : MonoBehaviour
     ///////////////////////////////////////
     /// Private variables and Constants ///
     ///////////////////////////////////////
+    private bool initialized = false;
 
     private const string OVERWORLD_MANAGER_PREFAB = "Overworld Manager";
     private string m_loadLocationID;
@@ -117,6 +118,9 @@ public class OverworldManager : MonoBehaviour
     // Initializes everything needed for the overworld, if not already done.
     public void Initialize()
     {
+        Debug.Log("Initializing Overworld Manager");
+        initialized = true;
+
         DontDestroyOnLoad(this.gameObject);
 
         if (PlayerInstance == null)
@@ -153,11 +157,17 @@ public class OverworldManager : MonoBehaviour
             DontDestroyOnLoad(instance);
             BattlePersistantInstances.Add(instance);
         }
+
+        // Call the Initialize function on anything that needs it after instantiating everything.
+        // We do this at the end because sometimes things need references to other things, but we're still in the process of instantiating them.
+        Player.Instance.Initialize();
     }
 
     // De-initialize everything (mostly used in cases where 2 Overworld managers exist)
     public void DeInitialize()
     {
+        Debug.Log("Deinitializing Overworld Manager");
+
         // Destroy any instances of persistant objects
         if (PlayerInstance) { Destroy (PlayerInstance); }
         if (CanvasInstance) { Destroy (CanvasInstance); }

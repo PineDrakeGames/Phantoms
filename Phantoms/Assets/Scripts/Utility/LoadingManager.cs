@@ -143,7 +143,7 @@ public class LoadingManager : MonoBehaviour
         }
     }
 
-    private void LoadSceneInternal(int sceneIndex, SceneType newSceneType = SceneType.OTHER, bool showLoadingScreen = true)
+    private void LoadSceneInternal(int sceneIndex, SceneType newSceneType = SceneType.OVERWORLD, bool showLoadingScreen = true)
     {
         if (!m_loading)
         {
@@ -191,7 +191,7 @@ public class LoadingManager : MonoBehaviour
         return SceneManager.GetActiveScene(); ;
     }
 
-    private IEnumerator LoadSceneBackend(int sceneIndex, SceneType newSceneType = SceneType.OTHER, bool showLoadingScreen = true)
+    private IEnumerator LoadSceneBackend(int sceneIndex, SceneType newSceneType = SceneType.OVERWORLD, bool showLoadingScreen = true)
     {
         PixelCrushers.DialogueSystem.DialogueManager.StopConversation();
         //PixelCrushers.DialogueSystem.DialogueManager.instance.displaySettings.subtitleSettings.continueButton = PixelCrushers.DialogueSystem.DisplaySettings.SubtitleSettings.ContinueButtonMode.Always;

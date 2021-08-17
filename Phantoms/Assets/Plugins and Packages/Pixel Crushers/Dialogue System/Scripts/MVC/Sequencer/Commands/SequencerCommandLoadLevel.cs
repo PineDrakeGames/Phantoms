@@ -33,11 +33,16 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
             {
                 if (DialogueDebug.logWarnings) Debug.LogWarning(string.Format("{0}: Sequencer: LoadLevel() level name is an empty string", DialogueDebug.Prefix));
             }
+            else if (LoadingManager.Instance != null)
+            {
+                LoadingManager.LoadScene(levelName);
+            }
             else
             {
                 if (DialogueDebug.logInfo) Debug.Log(string.Format("{0}: Sequencer: LoadLevel({1})", DialogueDebug.Prefix, GetParameters()));
                 DialogueLua.SetActorField("Player", "Spawnpoint", spawnpoint);
                 var saveSystem = FindObjectOfType<SaveSystem>();
+
                 if (saveSystem != null)
                 {
                     if (additive)
@@ -49,7 +54,7 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
                         PersistentDataManager.LevelWillBeUnloaded();
                         SaveSystem.LoadScene(string.IsNullOrEmpty(spawnpoint) ? levelName : levelName + "@" + spawnpoint);
                     }
-                    
+
                 }
                 else
                 {
