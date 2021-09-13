@@ -54,7 +54,7 @@ public class BattleStartManager : MonoBehaviour
         playerInactiveCombatants.AddRange(PlayerInventoryManager.Instance.Phantoms);
         if (playerInactiveCombatants.Count > 0)
         {
-            playerInactiveCombatants.RemoveAt(PlayerInventoryManager.Instance.CurrentActivePhantom);
+            playerInactiveCombatants.RemoveAt(PlayerInventoryManager.CurrentActivePhantom);
         }
 
         m_battleInitializer.InitializeBattle(playerCombatants, playerInactiveCombatants, Enemies);

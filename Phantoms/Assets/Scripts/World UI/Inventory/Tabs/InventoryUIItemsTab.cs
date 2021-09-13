@@ -9,43 +9,30 @@ public class InventoryUIItemsTab : InventoryTab
     [Header("Prefab References")]
     [SerializeField]
     private GameObject m_itemButtonPrefab = null;
-    [SerializeField]
-    private GameObject m_itemTargetButtonPrefab = null;
+
 
     [Header("Scene References")]
     [SerializeField]
     private Transform m_itemButtonParent = null;
 
-    [Header("Current Phantom Selection Things")]
+    [Header("Current Item Selection Things")]
     [SerializeField]
     private TextMeshProUGUI m_itemNameText = null;
     [SerializeField]
     private TextMeshProUGUI m_itemDescriptionText = null;
     [SerializeField]
     private Button m_useItemButton = null;
-
-    [Header("Choose Item Target Things")]
     [SerializeField]
-    private GameObject m_chooseItemTargetParent = null;
-    [SerializeField]
-    private Transform m_itemTargetListParent = null;
-    [SerializeField]
-    private InventoryItemTargetButton m_playerTargetButton = null;
+    private TextMeshProUGUI m_useItemButtonText = null;
 
     // private variables
     private List<InventoryItemButton> m_itemButtons = new List<InventoryItemButton>();
-    private List<InventoryItemTargetButton> m_itemTargetButtons = new List<InventoryItemTargetButton>();
-    private List<UserBattleInstanceData> m_allCombatants = new List<UserBattleInstanceData>();
     private ItemInstanceData m_currentItem = null;
 
     // Start is called before the first frame update
     void Start()
     {
-        m_playerTargetButton.Data = DataManager.Instance.GetPlayerBattleInstanceData();
-        m_playerTargetButton.ItemsInventory = this;
         ResetItemList();
-        ResetTargetList();
-        HideItemTargetMenu();
     }
 
     /// Overridden base tab functions ///
@@ -53,8 +40,13 @@ public class InventoryUIItemsTab : InventoryTab
     {
         base.OpenTab();
         ResetItemList();
-        ResetTargetList();
-        HideItemTargetMenu();
+        InventoryUIManager.Instance.OnSelectedPartyMemberUpdate.AddListener(OnPartyMemberSelect);
+    }
+
+    public override void CloseTab()
+    {
+        base.CloseTab();
+        InventoryUIManager.Instance.OnSelectedPartyMemberUpdate.RemoveListener(OnPartyMemberSelect);
     }
 
     public void ResetItemList()
@@ -71,32 +63,19 @@ public class InventoryUIItemsTab : InventoryTab
         }
     }
 
-    public void ResetTargetList()
-    {
-        foreach(InventoryItemTargetButton button in m_itemTargetButtons)
-        {
-            button.gameObject.SetActive(false);
-        }
-
-        m_playerTargetButton.SetButton();
-
-        m_allCombatants.Clear();
-        m_allCombatants.Add(DataManager.Instance.GetPlayerBattleInstanceData());
-
-        foreach(PhantomInstanceData data in PlayerInventoryManager.Instance.Phantoms)
-        {
-            InventoryItemTargetButton itemTargetButton = GetTargetButton();
-            itemTargetButton.Data = data;
-            itemTargetButton.SetButton();
-            m_allCombatants.Add(data);
-        }
-    }
-
     public void SelectItem(ItemInstanceData data)
     {
         if (data != null && data != m_currentItem)
         {
             m_currentItem = data;
+            UpdateItemDisplay();
+        }
+    }
+
+    public void OnPartyMemberSelect()
+    {
+        if (m_currentItem != null)
+        {
             UpdateItemDisplay();
         }
     }
@@ -115,7 +94,33 @@ public class InventoryUIItemsTab : InventoryTab
             }
             if (m_useItemButton)
             {
-                m_useItemButton.interactable = m_currentItem.Data.CanUseOutOfBattle && m_currentItem.Quantity > 0;
+                m_useItemButton.gameObject.SetActive(m_currentItem.Data.CanUseOutOfBattle );
+
+                if (m_currentItem.Quantity <= 0)
+                {
+                    m_useItemButton.interactable = false;
+                    m_useItemButtonText.text = "All out!";
+                }
+                else if (m_currentItem.Data.HealsAll)
+                {
+                    m_useItemButton.interactable = true;
+                    m_useItemButtonText.text = "Use On Everybody";
+                    // Select all!
+                }
+                else
+                {
+                    // Check if someone is selected
+                    if (InventoryUIManager.Instance.CurrentSelectedPartyMember != null)
+                    {
+                        m_useItemButton.interactable = true;
+                        m_useItemButtonText.text = "Use On " + InventoryUIManager.Instance.CurrentSelectedPartyMember.PartyMemberData.GetDisplayName();
+                    }
+                    else
+                    {
+                        m_useItemButton.interactable = false;
+                        m_useItemButtonText.text = "Select a target";
+                    }
+                }
             }
         }
         else
@@ -131,6 +136,7 @@ public class InventoryUIItemsTab : InventoryTab
             if (m_useItemButton)
             {
                 m_useItemButton.interactable = false;
+                m_useItemButton.gameObject.SetActive(false);
             }
         }
     }
@@ -141,7 +147,7 @@ public class InventoryUIItemsTab : InventoryTab
         {
             if (m_currentItem.Data.HealsAll)
             {
-                foreach(CombatantInstanceData combatant in m_allCombatants)
+                foreach(CombatantInstanceData combatant in InventoryUIManager.Instance.AllPartyMembers)
                 {
                     combatant.RestoreHealth(m_currentItem.Data.HP);
                     combatant.RestoreMana(m_currentItem.Data.Mana);
@@ -151,8 +157,16 @@ public class InventoryUIItemsTab : InventoryTab
             }
             else
             {
-                ShowItemTargetMenu();
+                UseItemWithTarget(InventoryUIManager.Instance.CurrentSelectedPartyMember.PartyMemberData);
             }
+
+            if (m_currentItem.Quantity <= 0)
+            {
+                m_currentItem = null;
+                UpdateItemDisplay();
+            }
+
+            InventoryUIManager.Instance.SetPartyMembers();
         }
     }
 
@@ -164,36 +178,12 @@ public class InventoryUIItemsTab : InventoryTab
             combatant.RestoreMana(m_currentItem.Data.Mana);
             m_currentItem.Quantity -= 1;
             ResetItemList();
-            ResetTargetList();
-            if (m_currentItem.Quantity == 0)
-            {
-                HideItemTargetMenu();
-            }
         }
     }
 
     ////////////////////////////////
     /// Private Helper Functions ///
     ////////////////////////////////
-    private void ShowItemTargetMenu()
-    {
-        ResetTargetList();
-        m_chooseItemTargetParent.SetActive(true);
-        if (m_useItemButton != null)
-        {
-            m_useItemButton.interactable = false;
-        }
-    }
-
-    private void HideItemTargetMenu()
-    {
-        m_chooseItemTargetParent.SetActive(false);
-        if (m_currentItem != null && m_useItemButton != null)
-        {
-            m_useItemButton.interactable = m_currentItem.Data.CanUseOutOfBattle && m_currentItem.Quantity > 0;
-        }
-    }
-
     private InventoryItemButton GetButton()
     {
         InventoryItemButton returnButton = null;
@@ -214,31 +204,6 @@ public class InventoryUIItemsTab : InventoryTab
             returnButton = instancedButton.GetComponent<InventoryItemButton>();
             returnButton.ItemsInventory = this;
             m_itemButtons.Add(returnButton);
-        }
-
-        return returnButton;
-    }
-
-    private InventoryItemTargetButton GetTargetButton()
-    {
-        InventoryItemTargetButton returnButton = null;
-
-        foreach(InventoryItemTargetButton button in m_itemTargetButtons)
-        {
-            if (!button.gameObject.activeSelf)
-            {
-                returnButton = button;
-                button.gameObject.SetActive(true);
-                break;
-            }
-        }
-
-        if (returnButton == null)
-        {
-            GameObject instancedButton = Instantiate(m_itemTargetButtonPrefab, m_itemTargetListParent);
-            returnButton = instancedButton.GetComponent<InventoryItemTargetButton>();
-            returnButton.ItemsInventory = this;
-            m_itemTargetButtons.Add(returnButton);
         }
 
         return returnButton;

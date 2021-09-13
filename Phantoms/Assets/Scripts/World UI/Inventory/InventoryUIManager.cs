@@ -1,16 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class InventoryUIManager : MonoBehaviour
 {
+    ////////////////////////
+    /// Serialized Items ///
+    ////////////////////////
+    [Header("Party UI Items")]
+    [SerializeField]
+    private InventoryPartyMember m_playerMember = null;
+    [SerializeField]
+    private InventoryPartyMember m_currentPartnerMember = null;
+    [SerializeField]
+    private List<InventoryPartyMember> m_partyMembers = new List<InventoryPartyMember>();
+
+    [Header("Other UI Items")]
     [SerializeField]
     private GameObject m_inventoryParent = null;
-    
+
     [SerializeField]
     private List<InventoryTab> m_tabs = null;
 
-
+    /////////////////////////////
+    /// Static Instance stuff ///
+    ////////////////////////////
     private static InventoryUIManager s_instance = null;
     public static InventoryUIManager Instance
     {
@@ -26,13 +41,43 @@ public class InventoryUIManager : MonoBehaviour
 
     public static InventoryTab CurrentTab
     {
-        get { return Instance.m_tabs[Instance.m_currentTabIndex]; }
+        get
+        {
+            if (Instance.m_isTabOpen)
+            {
+                return Instance.m_tabs[Instance.m_currentTabIndex];
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 
+    /////////////////////////
+    /// Private Variables ///
+    /////////////////////////
     private bool m_isInventoryOpen = false;
     public bool IsOpen { get { return m_isInventoryOpen; } }
+    private bool m_isTabOpen = false;
+    public bool IsTabOpen { get { return m_isTabOpen; } }
     private int m_currentTabIndex = 0;
 
+    private InventoryPartyMember m_currentSelectedPartyMember = null;
+    public InventoryPartyMember CurrentSelectedPartyMember
+    {
+        get { return m_currentSelectedPartyMember; }
+    }
+
+    private List<UserBattleInstanceData> m_allPartyMembers = new List<UserBattleInstanceData>();
+    public List<UserBattleInstanceData> AllPartyMembers { get { return m_allPartyMembers; } }
+
+    /// Public Events ///
+    public UnityEvent OnSelectedPartyMemberUpdate = new UnityEvent();
+
+    ///////////////////////
+    /// Unity Functions ///
+    ///////////////////////
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -45,12 +90,10 @@ public class InventoryUIManager : MonoBehaviour
         }
     }
 
-    private void Start() 
+    private void Start()
     {
-        foreach(InventoryTab tab in m_tabs)
-        {
-            tab.CloseTab();
-        }
+        CloseTab();
+        SetPartyMembers();
         m_isInventoryOpen = true;
         CloseInventory();
     }
@@ -66,7 +109,11 @@ public class InventoryUIManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (m_isInventoryOpen)
+            if (m_isTabOpen)
+            {
+                CloseTab();
+            }
+            else if (m_isInventoryOpen)
             {
                 CloseInventory();
             }
@@ -77,6 +124,9 @@ public class InventoryUIManager : MonoBehaviour
         }
     }
 
+    ///////////////////////////////////
+    /// Public Navigation Functions ///
+    ///////////////////////////////////
     public void ToggleInventory()
     {
         if (m_isInventoryOpen)
@@ -96,6 +146,8 @@ public class InventoryUIManager : MonoBehaviour
         m_isInventoryOpen = true;
         m_inventoryParent.SetActive(true);
         m_tabs[m_currentTabIndex].OpenTab();
+        SetPartyMembers();
+        CloseTab();
         Time.timeScale = 0f;
     }
 
@@ -111,13 +163,19 @@ public class InventoryUIManager : MonoBehaviour
 
     public void SetTab(int newTabIndex)
     {
+        m_isTabOpen = true;
         if (newTabIndex == m_currentTabIndex) { return; }
 
         m_tabs[m_currentTabIndex].CloseTab();
-        if (newTabIndex < m_tabs.Count)
+        InventoryPhantomContextMenu.Instance.HideMenu();
+        if (newTabIndex < m_tabs.Count && newTabIndex >= 0)
         {
             m_currentTabIndex = newTabIndex;
             m_tabs[m_currentTabIndex].OpenTab();
+        }
+        else
+        {
+            CloseTab();
         }
     }
 
@@ -125,6 +183,7 @@ public class InventoryUIManager : MonoBehaviour
     {
         if (newTab == null)
         {
+            CloseTab();
             return;
         }
         if (!m_tabs.Contains(newTab))
@@ -133,4 +192,115 @@ public class InventoryUIManager : MonoBehaviour
         }
         SetTab(m_tabs.IndexOf(newTab));
     }
+
+    public void CloseTab()
+    {
+        m_isTabOpen = false;
+        for (int i = 0; i < m_tabs.Count; i++)
+        {
+            m_tabs[i].CloseTab();
+        }
+    }
+
+    ////////////////////////////////
+    /// Public Utility Functions ///
+    ////////////////////////////////
+
+    public void SetPartyMembers()
+    {
+        m_allPartyMembers.Clear();
+
+        m_playerMember.PartyMemberData = DataManager.Instance.GetPlayerBattleInstanceData();
+        m_allPartyMembers.Add(m_playerMember.PartyMemberData);
+
+        PhantomInstanceData currentPhantom = PlayerInventoryManager.Instance.GetCurrentPhantom();
+        if (currentPhantom != null)
+        {
+            m_currentPartnerMember.gameObject.SetActive(true);
+            m_currentPartnerMember.PartyMemberData = currentPhantom;
+            m_allPartyMembers.Add(currentPhantom);
+        }
+        else
+        {
+            m_currentPartnerMember.gameObject.SetActive(false);
+        }
+
+        // This assumes that the current party member is always the first in the list!!!
+        // If that changes this will need reworking.
+        for (int i = 0; i < m_partyMembers.Count; i++)
+        {
+            InventoryPartyMember partyMemberUI = m_partyMembers[i];
+            if (partyMemberUI == null) { continue; }
+            if (i + 1 < PlayerInventoryManager.Instance.Phantoms.Count)
+            {
+                partyMemberUI.gameObject.SetActive(true);
+                partyMemberUI.PartyMemberData = PlayerInventoryManager.Instance.Phantoms[i + 1];
+                m_allPartyMembers.Add(partyMemberUI.PartyMemberData);
+            }
+            else
+            {
+                partyMemberUI.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    public void OnPartyMemberClick(InventoryPartyMember partyMember, RectTransform rect)
+    {
+        if (!m_isTabOpen)
+        {
+            if (m_currentSelectedPartyMember == partyMember)
+            {
+                InventoryPhantomContextMenu.Instance.HideMenu();
+                m_currentSelectedPartyMember.ResetState();
+                m_currentSelectedPartyMember = null;
+            }
+            else
+            {
+                if (partyMember != null)
+                {
+                    partyMember.Select();
+                    InventoryPhantomContextMenu.Instance.SetupMenu(partyMember.PartyMemberData, rect);
+                }
+                if (m_currentSelectedPartyMember != null)
+                {
+                    m_currentSelectedPartyMember.ResetState();
+                }
+                m_currentSelectedPartyMember = partyMember;
+            }
+        }
+        else
+        {
+            // For now, all tabs just need to have party members selected
+            if (m_currentSelectedPartyMember == partyMember)
+            {
+                m_currentSelectedPartyMember.ResetState();
+                m_currentSelectedPartyMember = null;
+            }
+            else
+            {
+                if (partyMember != null)
+                {
+                    partyMember.Select();
+                }
+                if (m_currentSelectedPartyMember != null)
+                {
+                    m_currentSelectedPartyMember.ResetState();
+                }
+                m_currentSelectedPartyMember = partyMember;
+            }
+        }
+
+        OnSelectedPartyMemberUpdate.Invoke();
+    }
+
+    public void DeselectPartyMember()
+    {
+        if (m_currentSelectedPartyMember != null)
+        {
+            m_currentSelectedPartyMember.ResetState();
+            m_currentSelectedPartyMember = null;
+            OnSelectedPartyMemberUpdate.Invoke();
+        }
+    }
+
 }

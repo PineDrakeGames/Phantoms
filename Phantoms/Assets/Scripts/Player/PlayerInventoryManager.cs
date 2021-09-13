@@ -27,27 +27,9 @@ public class PlayerInventoryManager : MonoBehaviour
     public List<PhantomInstanceData> Phantoms = new List<PhantomInstanceData>();
     public List<RelicInstance> Relics = new List<RelicInstance>();
 
-    private int m_currentActivePhantom = 0;
-    public int CurrentActivePhantom
-    {
-        get { return m_currentActivePhantom; }
-        set
-        {
-            if (value >= Phantoms.Count) 
-            {
-                m_currentActivePhantom = Phantoms.Count - 1; 
-            }
-            else
-            {
-                m_currentActivePhantom = value;
-            }
-
-            if (m_currentActivePhantom < 0) 
-            { 
-                m_currentActivePhantom = 0; 
-            }
-        }
-    }
+    // We are always gonna try and have the current phantom first in the list - if that ever changes,
+    // make this number update!
+    public const int CurrentActivePhantom = 0;
 
     public void Initialize()
     {
@@ -152,7 +134,8 @@ public class PlayerInventoryManager : MonoBehaviour
             PhantomInstanceData data = Phantoms[i];
             if (data == phanData)
             {
-                CurrentActivePhantom = i;
+                Phantoms.RemoveAt(i);
+                Phantoms.Insert(0, data);
                 return;
             }
         }

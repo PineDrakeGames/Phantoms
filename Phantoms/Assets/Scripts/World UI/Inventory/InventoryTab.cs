@@ -15,6 +15,8 @@ public abstract class InventoryTab : MonoBehaviour
         {
             InventoryUIManager.Instance.SetTab(this);
         }
+        InventoryPhantomContextMenu.Instance.HideMenu();
+        InventoryPhantomDetails.Instance.HideDescription();
     }
 
     public virtual void CloseTab()

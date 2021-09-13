@@ -8,8 +8,6 @@ public class InventoryUIRelicsTab : InventoryTab
     [Header("Prefab References")]
     [SerializeField]
     private GameObject m_relicButtonPrefab = null;
-    [SerializeField]
-    private GameObject m_relicTargetButtonPrefab = null;
 
     [Header("Scene References")]
     [SerializeField]
@@ -27,25 +25,12 @@ public class InventoryUIRelicsTab : InventoryTab
     [SerializeField]
     private TextMeshProUGUI m_equipButtonText = null;
 
-    [Header("Choose Relic Target Things")]
-    [SerializeField]
-    private GameObject m_chooseRelicTargetParent = null;
-    [SerializeField]
-    private Transform m_relicTargetListParent = null;
-    [SerializeField]
-    private InventoryRelicTargetButton m_playerTargetButton = null;
-
     private List<InventoryRelicButton> m_relicButtons = new List<InventoryRelicButton>();
-    private List<InventoryRelicTargetButton> m_relicTargetButtons = new List<InventoryRelicTargetButton>();
     private RelicInstance m_currentRelic = null;
 
     void Start()
     {
-        m_playerTargetButton.Data = DataManager.Instance.GetPlayerBattleInstanceData();
-        m_playerTargetButton.RelicsInventory = this;
         ResetRelicList();
-        ResetTargetList();
-        HideRelicTargetMenu();
     }
 
     /// Overridden base tab functions ///
@@ -53,8 +38,13 @@ public class InventoryUIRelicsTab : InventoryTab
     {
         base.OpenTab();
         ResetRelicList();
-        ResetTargetList();
-        HideRelicTargetMenu();
+        InventoryUIManager.Instance.OnSelectedPartyMemberUpdate.AddListener(OnPartyMemberSelect);
+    }
+
+    public override void CloseTab()
+    {
+        base.CloseTab();
+        InventoryUIManager.Instance.OnSelectedPartyMemberUpdate.RemoveListener(OnPartyMemberSelect);
     }
 
     public void ResetRelicList()
@@ -71,45 +61,19 @@ public class InventoryUIRelicsTab : InventoryTab
         }
     }
 
-    public void ResetTargetList()
-    {
-        foreach (InventoryRelicTargetButton button in m_relicTargetButtons)
-        {
-            button.gameObject.SetActive(false);
-        }
-
-        m_playerTargetButton.SetButton();
-        PlayerBattleInstanceData player = DataManager.Instance.GetPlayerBattleInstanceData();
-        if (player.CanEquipRelic(m_currentRelic))
-        {
-            m_playerTargetButton.Enable();
-        }
-        else
-        {
-            m_playerTargetButton.Disable();
-        }
-
-        foreach (PhantomInstanceData data in PlayerInventoryManager.Instance.Phantoms)
-        {
-            InventoryRelicTargetButton relicTargetButton = GetTargetButton();
-            relicTargetButton.Data = data;
-            relicTargetButton.SetButton();
-            if (data.CanEquipRelic(m_currentRelic))
-            {
-                relicTargetButton.Enable();
-            }
-            else
-            {
-                relicTargetButton.Disable();
-            }
-        }
-    }
-
     public void SelectRelic(RelicInstance data)
     {
         if (data != null && data != m_currentRelic)
         {
             m_currentRelic = data;
+            UpdateRelicDisplay();
+        }
+    }
+
+    public void OnPartyMemberSelect()
+    {
+        if (m_currentRelic != null)
+        {
             UpdateRelicDisplay();
         }
     }
@@ -143,7 +107,26 @@ public class InventoryUIRelicsTab : InventoryTab
                     }
                     else
                     {
-                        m_equipButtonText.text = "Equip";
+                        // Check if someone is selected
+                        if (InventoryUIManager.Instance.CurrentSelectedPartyMember != null)
+                        {
+                            UserBattleInstanceData data = InventoryUIManager.Instance.CurrentSelectedPartyMember.PartyMemberData;
+                            if (data.CanEquipRelic(m_currentRelic))
+                            {
+                                m_equipButton.interactable = true;
+                                m_equipButtonText.text = "Equip To " + data.GetDisplayName();
+                            }
+                            else
+                            {
+                                m_equipButton.interactable = false;
+                                m_equipButtonText.text = data.GetDisplayName() + " Can't Equip";
+                            }
+                        }
+                        else
+                        {
+                            m_equipButton.interactable = false;
+                            m_equipButtonText.text = "Select a target";
+                        }
                     }
                 }
             }
@@ -187,9 +170,10 @@ public class InventoryUIRelicsTab : InventoryTab
             }
             else
             {
-                ResetTargetList();
-                ShowRelicTargetMenu();
+                EquipRelicWithTarget(InventoryUIManager.Instance.CurrentSelectedPartyMember.PartyMemberData);
             }
+
+            InventoryUIManager.Instance.SetPartyMembers();
         }
     }
 
@@ -199,8 +183,6 @@ public class InventoryUIRelicsTab : InventoryTab
         {
             user.EquipRelic(m_currentRelic);
             ResetRelicList();
-            ResetTargetList();
-            HideRelicTargetMenu();
             UpdateRelicDisplay();
         }
     }
@@ -208,23 +190,6 @@ public class InventoryUIRelicsTab : InventoryTab
     ////////////////////////////////
     /// Private Helper Functions ///
     ////////////////////////////////
-    private void ShowRelicTargetMenu()
-    {
-        m_chooseRelicTargetParent.SetActive(true);
-        if (m_equipButton != null)
-        {
-            m_equipButton.interactable = false;
-        }
-    }
-
-    private void HideRelicTargetMenu()
-    {
-        m_chooseRelicTargetParent.SetActive(false);
-        if (m_currentRelic != null && m_equipButton != null)
-        {
-            m_equipButton.interactable = true;
-        }
-    }
 
     private InventoryRelicButton GetButton()
     {
@@ -246,31 +211,6 @@ public class InventoryUIRelicsTab : InventoryTab
             returnButton = instancedButton.GetComponent<InventoryRelicButton>();
             returnButton.RelicsInventory = this;
             m_relicButtons.Add(returnButton);
-        }
-
-        return returnButton;
-    }
-
-    private InventoryRelicTargetButton GetTargetButton()
-    {
-        InventoryRelicTargetButton returnButton = null;
-
-        foreach (InventoryRelicTargetButton button in m_relicTargetButtons)
-        {
-            if (!button.gameObject.activeSelf)
-            {
-                returnButton = button;
-                button.gameObject.SetActive(true);
-                break;
-            }
-        }
-
-        if (returnButton == null)
-        {
-            GameObject instancedButton = Instantiate(m_relicTargetButtonPrefab, m_relicTargetListParent);
-            returnButton = instancedButton.GetComponent<InventoryRelicTargetButton>();
-            returnButton.RelicsInventory = this;
-            m_relicTargetButtons.Add(returnButton);
         }
 
         return returnButton;
