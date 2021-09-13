@@ -9,6 +9,9 @@ public class DropPickup : MonoBehaviour
     private int m_dropAmount = 1;
 
     [SerializeField]
+    [MinMaxRange(-3f, 3f)]
+    private RangedFloat m_dropPitch = new RangedFloat(0.7f, 1.3f);
+    [SerializeField]
     private AudioClip m_dropPickupSoundEffect;
 
     
@@ -17,7 +20,7 @@ public class DropPickup : MonoBehaviour
     {
         DataManager.CurrentDrops += m_dropAmount;
 
-        AudioManager.PlaySound(m_dropPickupSoundEffect);
+        AudioManager.PlaySound(m_dropPickupSoundEffect, 1f, Random.Range(m_dropPitch.minValue, m_dropPitch.maxValue));
 
         // TODO: Play an animation instead
         gameObject.SetActive(false);

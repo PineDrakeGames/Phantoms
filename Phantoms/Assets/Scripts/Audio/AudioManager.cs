@@ -37,7 +37,8 @@ public class AudioManager : MonoBehaviour
 
     // Private variables for Sound Effects
     private AudioSource m_oneShotSoundSource = null;
-    private List<AudioSource> m_loopingSoundSources = null;
+    private List<AudioSource> m_oneShotSoundSources = new List<AudioSource>();
+    private List<AudioSource> m_loopingSoundSources = new List<AudioSource>();
 
     // Public Getters for stuff!
     public static AudioClip CurrentMusicClip { get { return Instance.m_musicClip; } }
@@ -87,13 +88,13 @@ public class AudioManager : MonoBehaviour
 
     /// Sound Functions ///
 
-    public static void PlaySound(AudioClip sound, float volumeScale = 1f)
+    public static void PlaySound(AudioClip sound, float volumeScale = 1f, float pitch = 1f)
     {
-        Instance.PlayOneShotInternal(sound, volumeScale);
+        Instance.PlayOneShotInternal(sound, volumeScale, pitch);
     }
-    public static void PlaySound(string soundClipID, float volumeScale = 1f)
+    public static void PlaySound(string soundClipID, float volumeScale = 1f, float pitch = 1f)
     {
-        Instance.PlayOneShotInternal(DataManager.SoundEffectData.GetClip(soundClipID), volumeScale);
+        Instance.PlayOneShotInternal(DataManager.SoundEffectData.GetClip(soundClipID), volumeScale, pitch);
     }
 
     public static void PlayLoopingSound(AudioClip sound, float volumeScale = 1f)
@@ -220,9 +221,43 @@ public class AudioManager : MonoBehaviour
 
     /// Internal Sound Effect Functions ///
 
-    private void PlayOneShotInternal(AudioClip clip, float volumeScale = 1f)
+    private void PlayOneShotInternal(AudioClip clip, float volumeScale = 1f, float pitch = 1f)
     {
-        // TODO: set volume!
-        m_oneShotSoundSource.PlayOneShot(clip, volumeScale * DataManager.Instance.GetSoundVolume());
+        // If just using the default pitch, can use the same basic audio source.
+        if (pitch == 1f)
+        {
+            m_oneShotSoundSource.PlayOneShot(clip, volumeScale * DataManager.Instance.GetSoundVolume());
+        }
+        else
+        {
+            AudioSource source = GetFreeOneShotSource();
+            source.pitch = pitch;
+            source.volume = volumeScale * DataManager.Instance.GetSoundVolume();
+            source.clip = clip;
+            source.Play();
+        }
+    }
+
+    private AudioSource GetFreeOneShotSource()
+    {
+        AudioSource source = null;
+        foreach(AudioSource src in m_oneShotSoundSources)
+        {
+            if (!src.isPlaying)
+            {
+                source = src;
+                source.pitch = 1f;
+                source.volume = 1f;
+                source.clip = null;
+            }
+        }
+
+        if (source == null)
+        {
+            source = gameObject.AddComponent<AudioSource>();
+            m_oneShotSoundSources.Add(source);
+        }
+
+        return source;
     }
 }
