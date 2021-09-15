@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class SettingsData : MonoBehaviour
+public class SettingsData
 {
     private float m_masterVolume = 0.7f;
     private float m_soundsVolume = 0.5f;
