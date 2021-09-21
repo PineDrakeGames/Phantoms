@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using PixelCrushers.DialogueSystem;
 
@@ -40,6 +41,13 @@ public class StarterQuizManager : MonoBehaviour
     private GameObject m_phantomOptionsParent;
     [SerializeField]
     private StarterQuizPhantomOption[] m_phantomOptionButtons = null;
+
+    [SerializeField]
+    [Scene]
+    private string m_titleScene = null;
+    [SerializeField]
+    [Scene]
+    private string m_startScene = null;
 
     [Header("Events")]
     public UnityEvent OnAnswerSelect = new UnityEvent();
@@ -204,6 +212,11 @@ public class StarterQuizManager : MonoBehaviour
         PlayerInventoryManager.Instance.AddPhantom(phantomInstance);
     }
 
+    public void FinishQuiz()
+    {
+        StartCoroutine(EndQuiz());
+    }
+
 
     ////////////////////////////////
     /// Private Helper Functions ///
@@ -273,4 +286,16 @@ public class StarterQuizManager : MonoBehaviour
 
         return result;
     }
+
+    private IEnumerator EndQuiz()
+    {
+        Scene titleScene = SceneManager.GetSceneByPath(m_titleScene);
+        Scene startScene = SceneManager.GetSceneByPath(m_startScene);
+
+        SceneManager.SetActiveScene(startScene);
+        yield return null;
+        OverworldManager.Instance.SetOverworldActive(true);
+        yield return SceneManager.UnloadSceneAsync(m_titleScene);
+    }
+
 }

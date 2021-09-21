@@ -253,8 +253,6 @@ public class ShakyImage : Image
             m_cornerOffsets[i] = new ImageCornerOffset();
             GenerateNewCornerOffset(m_cornerOffsets[i]);
         }
-
-        Debug.Log("Created Corners");
     }
 
     private void UpdateCorners()
