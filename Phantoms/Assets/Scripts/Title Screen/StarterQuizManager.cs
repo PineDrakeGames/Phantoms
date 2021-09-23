@@ -41,6 +41,8 @@ public class StarterQuizManager : MonoBehaviour
     private GameObject m_phantomOptionsParent;
     [SerializeField]
     private StarterQuizPhantomOption[] m_phantomOptionButtons = null;
+    [SerializeField]
+    private GameObject m_titleScreenCamera = null;
 
     [SerializeField]
     [Scene]
@@ -293,8 +295,13 @@ public class StarterQuizManager : MonoBehaviour
         Scene startScene = SceneManager.GetSceneByPath(m_startScene);
 
         SceneManager.SetActiveScene(startScene);
-        yield return null;
         OverworldManager.Instance.SetOverworldActive(true);
+        yield return null;
+        if (m_titleScreenCamera != null)
+        {
+            Destroy(m_titleScreenCamera);
+        }
+        yield return new WaitForSeconds(5f);
         yield return SceneManager.UnloadSceneAsync(m_titleScene);
     }
 

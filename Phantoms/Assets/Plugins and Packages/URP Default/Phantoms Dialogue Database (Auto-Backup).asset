@@ -3243,7 +3243,7 @@ MonoBehaviour:
     - id: 24
       fields:
       - title: Title
-        value: 
+        value: Pan back down
         type: 0
         typeString: 
       - title: Pictures
@@ -3283,8 +3283,8 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: "SetActive(Dialogue Panel,false); \nCamera(CameraStart, CameraStartSub,
-          3)->Message(CamBack);\nContinue()@Message(CamBack);"
+        value: "SetActive(Dialogue Panel,false); \nMoveTo(CameraStartSub,  PlayerGlow,
+          5, Ease);\nCamera(CameraStart, CameraStartSub, 5, Ease)@0.25->Message(CamBack);\nContinue()@Message(CamBack);"
         type: 0
         typeString: 
       - title: EventGuid
@@ -3312,8 +3312,8 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 595.51605
-        y: 1470.8563
+        x: 597.64374
+        y: 1463.4097
         width: 160
         height: 30
     - id: 25
@@ -5235,7 +5235,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 'Camera(CameraQuiz, CameraQuizSub, 3)->Message(Cam);
+        value: 'Camera(CameraQuiz, CameraQuizSub, 5, Ease)->Message(Cam);
 
           Continue()@Message(Cam);'
         type: 0
@@ -5330,12 +5330,77 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 595.51605
-        y: 1520.8563
+        x: 594.4522
+        y: 1631.4946
         width: 160
         height: 30
-    canvasScrollPosition: {x: 38.144287, y: 941.23694}
-    canvasZoom: 0.97000015
+    - id: 53
+      fields:
+      - title: Title
+        value: New Dialogue Entry
+        type: 0
+        typeString: 
+      - title: Pictures
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Description
+        value: 
+        type: 0
+        typeString: 
+      - title: Actor
+        value: 2
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Conversant
+        value: 1
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Menu Text
+        value: 
+        type: 0
+        typeString: 
+      - title: Dialogue Text
+        value: 
+        type: 0
+        typeString: 
+      - title: Parenthetical
+        value: 
+        type: 0
+        typeString: 
+      - title: Audio Files
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Video File
+        value: 
+        type: 0
+        typeString: 
+      - title: Sequence
+        value: 
+        type: 0
+        typeString: 
+      conversationID: 6
+      isRoot: 0
+      isGroup: 0
+      nodeColor: 
+      delaySimStatus: 0
+      falseConditionAction: Block
+      conditionPriority: 2
+      outgoingLinks: []
+      conditionsString: 
+      userScript: 
+      onExecute:
+        m_PersistentCalls:
+          m_Calls: []
+      canvasRect:
+        serializedVersion: 2
+        x: 62.998642
+        y: 347.46066
+        width: 160
+        height: 30
+    canvasScrollPosition: {x: 0, y: 4.081665}
+    canvasZoom: 0.49000034
   syncInfo:
     syncActors: 0
     syncItems: 0

@@ -33,12 +33,22 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
         private Quaternion originalRotation;
         private Vector3 originalPosition;
 
+        /// ADDED BY CJ ///
+        // Adding in an enum for different types of movement!
+        private enum MovementType
+        {
+            DEFAULT,
+            EASEINOUT,
+        }
+        private MovementType movementType = MovementType.DEFAULT;
+
         public void Start()
         {
             // Get the values of the parameters:
             string angle = GetParameter(0, "Closeup");
             subject = GetSubject(1);
             duration = GetParameterAsFloat(2, 0);
+
 
             // Get angle:
             bool isDefault = string.Equals(angle, "default");
@@ -100,6 +110,20 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
             {
                 Stop();
             }
+
+            /// ADDED BY CJ ///
+            // Check if there is a move type set
+            string moveTypeString = GetParameter(3, "DEFAULT");
+            moveTypeString = moveTypeString.ToUpper();
+            moveTypeString = moveTypeString.Trim();
+            if (moveTypeString == "EASE" || moveTypeString == "EASEIN" || moveTypeString == "EASEINOUT" || moveTypeString == "E")
+            {
+                movementType = MovementType.EASEINOUT;
+            }
+            else
+            {
+                movementType = MovementType.DEFAULT;
+            }
         }
 
         public void Update()
@@ -108,6 +132,10 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
             if (DialogueTime.time < endTime)
             {
                 float elapsed = (DialogueTime.time - startTime) / duration;
+                if (movementType == MovementType.EASEINOUT)
+                {
+                    elapsed = Mathf.SmoothStep(0f, 1f, elapsed);
+                }
                 cameraTransform.rotation = Quaternion.Lerp(originalRotation, targetRotation, elapsed);
                 cameraTransform.position = Vector3.Lerp(originalPosition, targetPosition, elapsed);
             }

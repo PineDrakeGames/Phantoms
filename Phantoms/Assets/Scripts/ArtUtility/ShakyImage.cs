@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(ShakyImage))]
 public class MyImageEditor : Editor
 {
@@ -12,6 +13,7 @@ public class MyImageEditor : Editor
         base.OnInspectorGUI();//Draw inspector UI of ImageEditor
     }
 }
+#endif
 
 public class ShakyImage : Image
 {
