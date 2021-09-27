@@ -242,7 +242,7 @@ public class OverworldManager : MonoBehaviour
             }
         }
 
-        m_cameraController.ResetCameraPosition();
+        m_cameraController.ResetCameraSettings();
     }
 
 #if UNITY_EDITOR
