@@ -6,16 +6,16 @@ using UnityEngine.EventSystems;
 using TMPro;
 
 [RequireComponent(typeof(Button))]
-public class InventoryRelicTargetButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class InventoryKeyItemButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Button References")]
     [SerializeField]
-    private TextMeshProUGUI m_combatantNameText = null;
+    private Image m_itemIcon = null;
     [SerializeField]
-    private TextMeshProUGUI m_currentRPText = null;
+    private TextMeshProUGUI m_itemQuantityText = null;
 
-    public InventoryUIRelicsTab RelicsInventory = null;
-    public UserBattleInstanceData Data = null;
+    public InventoryUIKeyItemsTab KeyItemsInventory = null;
+    public KeyItemInstanceData Data = null;
 
     private Button m_buttonComponent = null;
 
@@ -41,9 +41,9 @@ public class InventoryRelicTargetButton : MonoBehaviour, IPointerEnterHandler, I
     ///////////////////////////////////////////////////////////////////////////
     public void OnClick()
     {
-        if (RelicsInventory && Data != null)
+        if (KeyItemsInventory && Data != null)
         {
-            RelicsInventory.EquipRelicWithTarget(Data);
+            KeyItemsInventory.SelectKeyItem(Data);
         }
     }
 
@@ -51,13 +51,21 @@ public class InventoryRelicTargetButton : MonoBehaviour, IPointerEnterHandler, I
     {
         if (Data != null)
         {
-            if (m_combatantNameText != null)
+            if (m_itemIcon != null)
             {
-                m_combatantNameText.text = Data.Data.DisplayName;
+                m_itemIcon.sprite = Data.Data.Sprite;
             }
-            if (m_currentRPText != null)
+            if (m_itemQuantityText != null)
             {
-                m_currentRPText.text = string.Format("<b>Available RP</b> <color=green>{0}/{1}</color>", Data.CurrentStats.Relic - Data.CurrentRelicPoints, Data.CurrentStats.Relic);
+                if (Data.Data.CanStack)
+                {
+                    m_itemQuantityText.gameObject.SetActive(true);
+                    m_itemQuantityText.text = "x" + Data.Quantity.ToString();
+                }
+                else
+                {
+                    m_itemQuantityText.gameObject.SetActive(false);
+                }
             }
         }
     }
@@ -70,14 +78,6 @@ public class InventoryRelicTargetButton : MonoBehaviour, IPointerEnterHandler, I
     public void OnStopHover()
     {
         // future animation stuff?
-    }
-
-    public void Enable() { SetEnabled(true); }
-    public void Disable() { SetEnabled(false); }
-    public void SetEnabled(bool enabled = true)
-    {
-        if (!m_buttonComponent) { m_buttonComponent = GetComponent<Button>(); }
-        m_buttonComponent.interactable = enabled;
     }
 
     //////////////////////////

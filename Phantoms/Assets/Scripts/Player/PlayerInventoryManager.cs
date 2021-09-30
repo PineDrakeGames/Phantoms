@@ -26,6 +26,7 @@ public class PlayerInventoryManager : MonoBehaviour
     public List<ItemInstanceData> Items = new List<ItemInstanceData>();
     public List<PhantomInstanceData> Phantoms = new List<PhantomInstanceData>();
     public List<RelicInstance> Relics = new List<RelicInstance>();
+    public List<KeyItemInstanceData> KeyItems = new List<KeyItemInstanceData>();
 
     // We are always gonna try and have the current phantom first in the list - if that ever changes,
     // make this number update!
@@ -41,7 +42,7 @@ public class PlayerInventoryManager : MonoBehaviour
     /////////////////////////////////////////////////////////
     public void AddItem(string itemID, int numItem = 1)
     {
-        foreach(ItemInstanceData item in Items)
+        foreach (ItemInstanceData item in Items)
         {
             if (item.Data.ItemID == itemID)
             {
@@ -66,7 +67,7 @@ public class PlayerInventoryManager : MonoBehaviour
 
     public void UseItem(string itemID, int numUsed = 1)
     {
-        foreach(ItemInstanceData item in Items)
+        foreach (ItemInstanceData item in Items)
         {
             if (item.Data.ItemID == itemID)
             {
@@ -92,10 +93,11 @@ public class PlayerInventoryManager : MonoBehaviour
 
     public void SetupBattleItem(Ares.Item item, int quantity)
     {
-        item.OnConsumed.AddListener(oldRemainingUses => {
+        item.OnConsumed.AddListener(oldRemainingUses =>
+        {
             string itemID = DataManager.Instance.TryGetItemData(item.Data).ItemID;
             UseItem(itemID);
-		});
+        });
     }
 
     public void SaveBattleInventory(Ares.StackedInventory battleInventory)
@@ -195,5 +197,58 @@ public class PlayerInventoryManager : MonoBehaviour
     public void UnequipRelic(RelicInstance relic, PlayerBattleInstanceData player)
     {
         player.UnequipRelic(relic);
+    }
+
+
+    //////////////////////////////////////
+    /// Public Functions for Key Items ///
+    //////////////////////////////////////
+
+    public void AddKeyItem(string itemID, int quantity = 1)
+    {
+        if (quantity <= 0)
+        {
+            return;
+        }
+
+        foreach (KeyItemInstanceData item in KeyItems)
+        {
+            if (item.Data.ItemID == itemID)
+            {
+                item.Quantity += quantity;
+                return;
+            }
+        }
+
+        // If we reach this point, the given item isn't already in the inventory, so add it in
+        KeyItemData data = DataManager.Instance.TryGetKeyItemData(itemID);
+        if (data != null)
+        {
+            KeyItemInstanceData instanceData = new KeyItemInstanceData(data);
+            instanceData.Quantity = quantity;
+            KeyItems.Add(instanceData);
+        }
+        else
+        {
+            Debug.LogError("Trying to add item of ID " + itemID + " but couldn't.");
+        }
+    }
+
+    public void RemoveKeyItem(string itemID, int numToRemove = 1)
+    {
+        KeyItemInstanceData keyItem = null;
+        foreach (KeyItemInstanceData item in KeyItems)
+        {
+            if (item.Data.ItemID == itemID)
+            {
+                keyItem = item;
+                break;
+            }
+        }
+        keyItem.Quantity -= numToRemove;
+        if (keyItem.Quantity <= 0)
+        {
+            KeyItems.Remove(keyItem);
+        }
     }
 }
