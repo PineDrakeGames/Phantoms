@@ -130,6 +130,30 @@ public class InventoryUIRelicsTab : InventoryTab
                     }
                 }
             }
+
+            // Update the party member list
+            foreach(UserBattleInstanceData partyMember in InventoryUIManager.Instance.AllPartyMembers)
+            {
+                bool isActive = partyMember.CanEquipRelic(m_currentRelic) || (m_currentRelic.User == partyMember);
+                InventoryPartyMember inventoryMember = InventoryUIManager.Instance.PartyDataToInventory[partyMember];
+                if (!isActive)
+                {
+                    if (InventoryUIManager.Instance.CurrentSelectedPartyMember == inventoryMember)
+                    {
+                        InventoryUIManager.Instance.DeselectPartyMember();
+                    }
+                    InventoryUIManager.Instance.PartyDataToInventory[partyMember].Disable();
+                    Debug.Log(partyMember.GetDisplayName() + " Can't Equip!");
+                }
+                else
+                {
+                    if (InventoryUIManager.Instance.CurrentSelectedPartyMember != inventoryMember)
+                    {
+                        InventoryUIManager.Instance.PartyDataToInventory[partyMember].ResetState();
+                    }
+                    Debug.Log(partyMember.GetDisplayName() + " Can Equip!");
+                }
+            }
         }
         else
         {

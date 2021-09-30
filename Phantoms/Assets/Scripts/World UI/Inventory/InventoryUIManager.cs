@@ -72,6 +72,8 @@ public class InventoryUIManager : MonoBehaviour
     private List<UserBattleInstanceData> m_allPartyMembers = new List<UserBattleInstanceData>();
     public List<UserBattleInstanceData> AllPartyMembers { get { return m_allPartyMembers; } }
 
+    public Dictionary<UserBattleInstanceData, InventoryPartyMember> PartyDataToInventory = new Dictionary<UserBattleInstanceData, InventoryPartyMember>();
+
     /// Public Events ///
     public UnityEvent OnSelectedPartyMemberUpdate = new UnityEvent();
 
@@ -104,7 +106,14 @@ public class InventoryUIManager : MonoBehaviour
         // TODO: Don't just check keys, go through some input manager thing...
         if (Input.GetKeyDown(KeyCode.Tab) && !PauseMenu.Instance.Paused)
         {
-            ToggleInventory();
+            if (m_isInventoryOpen && m_isTabOpen)
+            {
+                CloseTab();
+            }
+            else
+            {
+                ToggleInventory();
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -209,9 +218,12 @@ public class InventoryUIManager : MonoBehaviour
     public void SetPartyMembers()
     {
         m_allPartyMembers.Clear();
+        PartyDataToInventory.Clear();
 
         m_playerMember.PartyMemberData = DataManager.Instance.GetPlayerBattleInstanceData();
         m_allPartyMembers.Add(m_playerMember.PartyMemberData);
+        PartyDataToInventory.Add(m_playerMember.PartyMemberData, m_playerMember);
+
 
         PhantomInstanceData currentPhantom = PlayerInventoryManager.Instance.GetCurrentPhantom();
         if (currentPhantom != null)
@@ -219,6 +231,8 @@ public class InventoryUIManager : MonoBehaviour
             m_currentPartnerMember.gameObject.SetActive(true);
             m_currentPartnerMember.PartyMemberData = currentPhantom;
             m_allPartyMembers.Add(currentPhantom);
+            PartyDataToInventory.Add(currentPhantom, m_currentPartnerMember);
+
         }
         else
         {
@@ -236,6 +250,7 @@ public class InventoryUIManager : MonoBehaviour
                 partyMemberUI.gameObject.SetActive(true);
                 partyMemberUI.PartyMemberData = PlayerInventoryManager.Instance.Phantoms[i + 1];
                 m_allPartyMembers.Add(partyMemberUI.PartyMemberData);
+                PartyDataToInventory.Add(partyMemberUI.PartyMemberData, partyMemberUI);
             }
             else
             {

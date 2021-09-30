@@ -113,6 +113,7 @@ MonoBehaviour:
   m_StopNaN: 0
   m_Dithering: 0
   m_ClearDepth: 1
+  m_AllowXRRendering: 1
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
@@ -173,18 +174,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ca8f63a3d891cd47a2475eab7dba1f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_distanceFromFocus: 13
-  m_cameraForward: {x: 0, y: 0, z: 1}
-  m_angleUp: 12
-  m_maxHeightDifference: 3
-  m_heightApproachTime: 0.35
-  m_leadDistance: 1
-  m_leadDelay: 0.6
-  m_restrictZMovement: 1
-  m_minZPosition: -17.21053
-  m_maxZPosition: -17.21053
-  m_restrictXMovement: 0
-  m_minXPosition: -15
-  m_maxXPosition: 15
+  m_defaultSettings:
+    m_focusDistance: 13
+    m_cameraForward: {x: 0, y: 0, z: 1}
+    m_angleUp: 12
+    m_maxHeightDifference: 3
+    m_heightApproachTime: 0.35
+    m_leadDistance: 1
+    m_depthLeadDistance: 2
+    m_leadDelay: 0.6
+    m_restrictZMovement: 1
+    m_minZPosition: -17.21053
+    m_maxZPosition: -17.21053
+    m_restrictXMovement: 0
+    m_minXPosition: -15
+    m_maxXPosition: 15
   Player: {fileID: 0}
   PlayerMotor: {fileID: 0}
+  DefaultCamSettings:
+    m_focusDistance: 0
+    m_cameraForward: {x: 0, y: 0, z: 0}
+    m_angleUp: 0
+    m_maxHeightDifference: 0
+    m_heightApproachTime: 0
+    m_leadDistance: 0
+    m_depthLeadDistance: 0
+    m_leadDelay: 0
+    m_restrictZMovement: 0
+    m_minZPosition: 0
+    m_maxZPosition: 0
+    m_restrictXMovement: 0
+    m_minXPosition: 0
+    m_maxXPosition: 0

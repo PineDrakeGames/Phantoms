@@ -58,6 +58,13 @@ public class DataManager : MonoBehaviour
     }
 
     [SerializeField]
+    private KeyItemDataTable m_keyItemData = null;
+    public static KeyItemDataTable KeyItemData
+    {
+        get { return Instance.m_keyItemData; }
+    }
+
+    [SerializeField]
     private AudioClipTable m_soundEffectData = null;
     public static AudioClipTable SoundEffectData
     {
@@ -93,6 +100,8 @@ public class DataManager : MonoBehaviour
     private Dictionary<string, PhantomData> m_phantomIdToData = null;
     private Dictionary<string, ItemData> m_ItemIdToData = null;
     private Dictionary<string, RelicData> m_RelicIdToData = null;
+    private Dictionary<string, KeyItemData> m_KeyItemIdToData = null;
+
 
     // Current player data
     private PlayerBattleInstanceData m_playerBattleInstanceData = null;
@@ -171,6 +180,15 @@ public class DataManager : MonoBehaviour
             }
         }
 
+        if (m_KeyItemIdToData == null)
+        {
+            m_KeyItemIdToData = new Dictionary<string, KeyItemData>();
+            foreach (KeyItemData data in KeyItemData.Data)
+            {
+                m_KeyItemIdToData.Add(data.ItemID, data);
+            }
+        }
+
         m_playerBattleInstanceData = new PlayerBattleInstanceData(m_playerBattleData);
         // TODO: Save this stuff and whatnot, just defaulting the player to level 3 with 1 level up in each.
         m_playerBattleInstanceData.Level = 3;
@@ -222,6 +240,18 @@ public class DataManager : MonoBehaviour
         if (m_RelicIdToData.ContainsKey(relicID))
         {
             return m_RelicIdToData[relicID];
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public KeyItemData TryGetKeyItemData(string itemID)
+    {
+        if (m_KeyItemIdToData.ContainsKey(itemID))
+        {
+            return m_KeyItemIdToData[itemID];
         }
         else
         {

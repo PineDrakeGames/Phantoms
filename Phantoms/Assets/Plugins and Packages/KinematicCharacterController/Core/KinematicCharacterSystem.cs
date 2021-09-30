@@ -29,6 +29,7 @@ namespace KinematicCharacterController
             {
                 GameObject systemGameObject = new GameObject("KinematicCharacterSystem");
                 _instance = systemGameObject.AddComponent<KinematicCharacterSystem>();
+                DontDestroyOnLoad(systemGameObject);
 
                 systemGameObject.hideFlags = HideFlags.NotEditable;
                 _instance.hideFlags = HideFlags.NotEditable;

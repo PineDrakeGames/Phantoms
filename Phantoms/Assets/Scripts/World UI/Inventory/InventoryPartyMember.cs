@@ -167,7 +167,10 @@ public class InventoryPartyMember : MonoBehaviour, IPointerEnterHandler, IPointe
 
     public void OnClick()
     {
-        InventoryUIManager.Instance.OnPartyMemberClick(this, m_rect);
+        if (m_state != InventoryPartyMemberState.DISABLED)
+        {
+            InventoryUIManager.Instance.OnPartyMemberClick(this, m_rect);
+        }
     }
 
     public void ResetState()
