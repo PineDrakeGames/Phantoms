@@ -7,9 +7,9 @@ public class OverworldSceneSettings : MonoBehaviour
 
     [Header("Music Stuff!")]
     [SerializeField]
-    private AudioClip m_sceneMusicIntro = null;
+    private string m_sceneMusicIntro = null;
     [SerializeField]
-    private AudioClip m_sceneMusicLoop = null;
+    private string m_sceneMusicLoop = null;
 
     [Header("Camera Settings")]
     [SerializeField]
@@ -17,7 +17,7 @@ public class OverworldSceneSettings : MonoBehaviour
 
     private void Awake()
     {
-        if (m_sceneMusicLoop)
+        if (!string.IsNullOrEmpty(m_sceneMusicLoop))
         {
             AudioManager.PlayMusic(m_sceneMusicLoop, m_sceneMusicIntro);
         }

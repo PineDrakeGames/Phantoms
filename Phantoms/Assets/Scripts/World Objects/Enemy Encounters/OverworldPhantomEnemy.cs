@@ -136,6 +136,17 @@ public class OverworldPhantomEnemy : MonoBehaviour
         }
     }
 
+    #if UNITY_EDITOR
+ void OnDrawGizmosSelected()
+    {
+        // Draw a yellow sphere at the transform's position
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, m_chaseDistance);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, m_triggerDistance);
+    }
+    #endif
+
     //////////////////////////////////////
     /// Private helper function stuff! ///
     //////////////////////////////////////

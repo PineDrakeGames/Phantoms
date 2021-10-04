@@ -75,10 +75,13 @@ public class AudioClipTable : ScriptableObject, ISerializationCallbackReceiver
 
     public AudioClip GetClip(string clipID)
     {
-        if (m_stringIDToClip.ContainsKey(clipID.ToUpper()))
+        string upperClipID = clipID.ToUpper();
+        
+        if (m_stringIDToClip.ContainsKey(upperClipID))
         {
-            return m_stringIDToClip[clipID.ToUpper()];
+            return m_stringIDToClip[upperClipID];
         }
+
         return null;
     }
 

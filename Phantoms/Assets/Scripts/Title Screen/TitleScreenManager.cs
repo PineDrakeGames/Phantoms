@@ -11,6 +11,12 @@ public class TitleScreenManager : MonoBehaviour
     private string m_starterScene = null;
 
     [SerializeField]
+    private string m_startingMusicID = null;
+
+    [SerializeField]
+    private string m_startingAmbienceID = null;
+
+    [SerializeField]
     private Image m_backing = null;
     [SerializeField]
     private CanvasGroup m_buttons = null;
@@ -36,6 +42,9 @@ public class TitleScreenManager : MonoBehaviour
     private IEnumerator StartingSequence()
     {
         yield return SceneManager.LoadSceneAsync(m_starterScene, LoadSceneMode.Additive);
+        yield return null;
+        AudioManager.PlayMusic(m_startingMusicID);
+        AudioManager.PlayAmbience(m_startingAmbienceID, 1f, m_backingFadeOutTime + m_buttonFadeInTime);
         OverworldManager.Instance.SetOverworldActive(false);
 
         float currentTime = 0f;

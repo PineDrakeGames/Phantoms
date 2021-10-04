@@ -19,6 +19,22 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    // Private variables for Ambience
+    private AudioSource m_ambienceSource = null;
+    private AudioClip m_ambienceClip = null;
+    private AudioClip m_queuedAmbienceClip = null;
+
+    private float m_ambienceCurrentVolumeMultiplier = 0f;
+    private float m_ambiencePrevVolumeMultiplier = 0f;
+    private float m_ambienceTargetVolumeMultiplier = 0f;
+
+    private const float DEFAULT_AMBIENCE_VOLUME = 0.05f;
+    private const float DEFAULT_AMBIENCE_FADE_TIME = 2f;
+    private bool m_fadingAmbience = false;
+    private bool m_queuedAmbience = false;
+    private float m_currentAmbienceFadeTime = 0f;
+    private float m_ambienceFadeTime = 0f;
+
     // Private variables for Music
     private AudioSource m_musicSource = null;
     private AudioSource m_musicIntroSource = null;
@@ -68,13 +84,47 @@ public class AudioManager : MonoBehaviour
         {
             FadeOutMusic();
         }
+        if (m_fadingAmbience)
+        {
+            FadeAmbience();
+        }
     }
 
     ////////////////////////
     /// Public Functions ///
     ////////////////////////
 
+    /// Ambience Functions ///
+    public static void PlayAmbience(string ambienceID, float volumeMultiplier = 1f, float fadeTime = DEFAULT_AMBIENCE_FADE_TIME)
+    {
+        Instance.PlayAmbienceInternal(DataManager.AmbienceData.GetClip(ambienceID), volumeMultiplier, fadeTime);
+    }
+
+    public static void PlayAmbience(AudioClip ambience, float volumeMultiplier = 1f, float fadeTime = DEFAULT_AMBIENCE_FADE_TIME)
+    {
+        Instance.PlayAmbienceInternal(ambience, volumeMultiplier, fadeTime);
+    }
+
+    public static void SetAmbienceVolume(float volumeMultiplier = 1f, float fadeTime = DEFAULT_AMBIENCE_FADE_TIME)
+    {
+        Instance.PlayAmbienceInternal(Instance.m_ambienceClip, volumeMultiplier, fadeTime);
+    }
+
+    public static void StopAmbience(float fadeTime = DEFAULT_AMBIENCE_FADE_TIME)
+    {
+        Instance.StopAmbienceInternal(fadeTime);
+    }
+
     /// Music Functions ///
+
+    public static void PlayMusic(string musicID, string introID = "", float fadeOutTime = DEFAULT_MUSIC_FADE_OUT_TIME)
+    {
+        AudioClip clip = DataManager.MusicData.GetClip(musicID);
+        if (clip != null)
+        {
+            Instance.PlayMusicInternal(clip, DataManager.MusicData.GetClip(introID), fadeOutTime);
+        }
+    }
 
     public static void PlayMusic(AudioClip music, AudioClip intro = null, float fadeOutTime = DEFAULT_MUSIC_FADE_OUT_TIME)
     {
@@ -109,6 +159,7 @@ public class AudioManager : MonoBehaviour
         Instance.m_musicSource.volume = DataManager.Instance.GetMusicVolume();
         Instance.m_musicIntroSource.volume = DataManager.Instance.GetMusicVolume();
         Instance.m_oneShotSoundSource.volume = DataManager.Instance.GetSoundVolume();
+        Instance.m_ambienceSource.volume = Instance.GetAmbienceVolume();
     }
 
     /////////////////////////
@@ -118,14 +169,160 @@ public class AudioManager : MonoBehaviour
     {
         DontDestroyOnLoad(s_instance);
 
+        m_ambienceSource = gameObject.AddComponent<AudioSource>();
         m_musicSource = gameObject.AddComponent<AudioSource>();
         m_musicIntroSource = gameObject.AddComponent<AudioSource>();
         m_oneShotSoundSource = gameObject.AddComponent<AudioSource>();
+        m_ambienceSource.loop = true;
         m_musicSource.loop = true;
     }
 
-    /// Music Functions ///
+    /// Ambience Functions ///
 
+    private void PlayAmbienceInternal(AudioClip ambience, float volumeMultiplier = 1f, float fadeTime = DEFAULT_AMBIENCE_FADE_TIME)
+    {
+        m_ambiencePrevVolumeMultiplier = m_ambienceCurrentVolumeMultiplier;
+
+        // if the new clip is nothing, or the volume is 0, just stop the clip instead
+        if (ambience == null || volumeMultiplier <= 0f)
+        {
+            StopAmbienceInternal(fadeTime);
+            return;
+        }
+
+        // if fade time is less than 0, then just instantly start playing the ambience.
+        if (fadeTime <= 0)
+        {
+            m_ambienceClip = ambience;
+            m_ambienceSource.clip = ambience;
+            m_ambienceCurrentVolumeMultiplier = volumeMultiplier;
+            m_ambienceSource.volume = GetAmbienceVolume();
+            m_ambienceSource.Play();
+
+            m_fadingAmbience = false;
+            m_queuedAmbience = false;
+        }
+        else
+        {
+            // At this point, we know that the ambience clip is not null, the volume is greater than 0, as is the fade time -
+            // so just check if we need to fade something out, then start fading this in.
+
+            m_ambienceFadeTime = fadeTime;
+            m_currentAmbienceFadeTime = 0f;
+            m_ambienceTargetVolumeMultiplier = volumeMultiplier;
+            m_fadingAmbience = true;
+
+            // If no clip is currently playing, set it up to fade in.
+            if (!m_ambienceSource.isPlaying)
+            {
+                m_ambienceClip = ambience;
+                m_ambienceSource.clip = ambience;
+                m_ambienceSource.volume = 0f;
+                m_ambienceSource.Play();
+                m_ambiencePrevVolumeMultiplier = 0f;
+
+                m_queuedAmbience = false;
+            }
+            else
+            {
+                if (ambience == m_ambienceClip)
+                {
+                    m_queuedAmbience = false;
+                }
+                else
+                {
+                    m_queuedAmbienceClip = ambience;
+                    m_queuedAmbience = true;
+                }
+            }
+        }
+
+    }
+
+    private void StopAmbienceInternal(float fadeOutTime = DEFAULT_AMBIENCE_FADE_TIME)
+    {
+        if (!m_ambienceSource.isPlaying) { return; }
+
+        m_queuedAmbience = false;
+        m_queuedAmbienceClip = null;
+        m_ambiencePrevVolumeMultiplier = m_ambienceCurrentVolumeMultiplier;
+
+        if (fadeOutTime <= 0)
+        {
+            m_ambienceSource.Stop();
+            m_ambienceClip = null;
+            m_fadingAmbience = false;
+        }
+        else
+        {
+            m_ambienceFadeTime = fadeOutTime;
+            m_currentAmbienceFadeTime = 0f;
+            m_ambienceTargetVolumeMultiplier = 0f;
+            m_fadingAmbience = false;
+        }
+    }
+
+    private void FadeAmbience()
+    {
+        m_currentAmbienceFadeTime += Time.deltaTime;
+
+        // If we are fading the ambience, we are either switching ambiences, or changing the volume. Check that first to get the 'real' target volume.
+        float targetVolumeMultiplier;
+        if (m_queuedAmbience)
+        {
+            targetVolumeMultiplier = 0f;
+        }
+        else
+        {
+            targetVolumeMultiplier = m_ambienceTargetVolumeMultiplier;
+        }
+
+        float progress = Mathf.Clamp01(m_currentAmbienceFadeTime / m_ambienceFadeTime);
+        m_ambienceCurrentVolumeMultiplier = Mathf.Lerp(m_ambiencePrevVolumeMultiplier, targetVolumeMultiplier, progress);
+
+        m_ambienceSource.volume = GetAmbienceVolume();
+
+        Debug.Log("Fading Ambience: " + m_currentAmbienceFadeTime + ", " + m_ambienceCurrentVolumeMultiplier + ", " + GetAmbienceVolume());
+
+        // Check if we are finished fading.
+        if (progress >= 1f)
+        {
+            // If we want to fade in a new clip, set that up now.
+            if (m_queuedAmbience)
+            {
+                m_ambienceSource.Stop();
+                m_ambienceSource.clip = m_queuedAmbienceClip;
+                m_ambienceClip = m_queuedAmbienceClip;
+
+                if (m_queuedAmbienceClip == null)
+                {
+                    // If the clip we queued is nothing, then just stop - done fading stuff
+                    m_fadingAmbience = false;
+                }
+                else
+                {
+                    // Otherwise, start up the new clip and set needed values.
+                    m_ambienceSource.volume = 0f;
+                    m_ambienceSource.Play();
+                    m_ambiencePrevVolumeMultiplier = 0f;
+                    m_currentAmbienceFadeTime = 0f;
+
+                    m_queuedAmbience = false;
+                }
+            }
+            else
+            {
+                m_fadingAmbience = false;
+            }
+        }
+    }
+
+    private float GetAmbienceVolume()
+    {
+        return Mathf.Clamp01(DEFAULT_AMBIENCE_VOLUME * m_ambienceCurrentVolumeMultiplier) * DataManager.Instance.GetMusicVolume();
+    }
+
+    /// Music Functions ///
 
     private void PlayMusicInternal(AudioClip music, AudioClip intro = null, float fadeOutTime = DEFAULT_MUSIC_FADE_OUT_TIME)
     {
@@ -178,7 +375,7 @@ public class AudioManager : MonoBehaviour
     {
         m_currentMusicFadeOutTime -= Time.deltaTime;
 
-        float newVolume = Mathf.Clamp01(m_currentMusicFadeOutTime / m_musicFadeOutTime) * DataManager.Instance.GetMusicVolume();;
+        float newVolume = Mathf.Clamp01(m_currentMusicFadeOutTime / m_musicFadeOutTime) * DataManager.Instance.GetMusicVolume(); ;
         m_musicSource.volume = newVolume;
         m_musicIntroSource.volume = newVolume;
 
@@ -241,7 +438,7 @@ public class AudioManager : MonoBehaviour
     private AudioSource GetFreeOneShotSource()
     {
         AudioSource source = null;
-        foreach(AudioSource src in m_oneShotSoundSources)
+        foreach (AudioSource src in m_oneShotSoundSources)
         {
             if (!src.isPlaying)
             {

@@ -3069,7 +3069,9 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: SetContinueMode(true);
+        value: 'required SetContinueMode(true);
+
+'
         type: 0
         typeString: 
       conversationID: 6
@@ -3292,6 +3294,8 @@ MonoBehaviour:
 
           Camera(CameraStart, CameraStartSub, 5,
           Ease)@0.25->Message(CamBack);
+
+          SetAmbience(CURRENT, 1, 5);
 
           Continue()@Message(CamBack);'
         type: 0
@@ -4883,7 +4887,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 
+        value: required SetMusic(PROLOGUE, PROLOGUE_TRANSITION);
         type: 0
         typeString: 
       conversationID: 6
@@ -5246,6 +5250,11 @@ MonoBehaviour:
       - title: Sequence
         value: 'Camera(CameraQuiz, CameraQuizSub, 5, Ease)->Message(Cam);
 
+          SetMusic(QUIZ,
+          ,4);
+
+          SetAmbience(CURRENT, 0.25, 5);
+
           Continue()@Message(Cam);'
         type: 0
         typeString: 
@@ -5421,8 +5430,8 @@ MonoBehaviour:
         y: 1547.9257
         width: 160
         height: 30
-    canvasScrollPosition: {x: 183.91217, y: 923.17664}
-    canvasZoom: 1.0600001
+    canvasScrollPosition: {x: 0, y: 0}
+    canvasZoom: 0.76000035
   syncInfo:
     syncActors: 0
     syncItems: 0
