@@ -247,6 +247,7 @@ public class LoadingManager : MonoBehaviour
     private IEnumerator LoadIntoBattleBackend(int sceneIndex, bool showLoadingScreen = true)
     {
         AudioManager.StopMusic();
+        AudioManager.SetAmbienceVolume(0.1f);
         if (showLoadingScreen)
         {
             yield return ShowLoadingScreen();

@@ -11,6 +11,11 @@ public class OverworldSceneSettings : MonoBehaviour
     [SerializeField]
     private string m_sceneMusicLoop = null;
 
+    [SerializeField]
+    private string m_sceneAmbienceID = null;
+    [SerializeField]
+    private float m_sceneAmbienceScale = 1f;
+
     [Header("Camera Settings")]
     [SerializeField]
     private OverworldCameraSettings m_cameraSettings = null;
@@ -20,6 +25,10 @@ public class OverworldSceneSettings : MonoBehaviour
         if (!string.IsNullOrEmpty(m_sceneMusicLoop))
         {
             AudioManager.PlayMusic(m_sceneMusicLoop, m_sceneMusicIntro);
+        }
+        if (!string.IsNullOrEmpty(m_sceneAmbienceID))
+        {
+            AudioManager.PlayAmbience(m_sceneAmbienceID, m_sceneAmbienceScale);
         }
     }
 
