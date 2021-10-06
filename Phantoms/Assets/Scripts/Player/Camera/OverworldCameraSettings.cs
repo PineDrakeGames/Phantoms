@@ -23,7 +23,7 @@ public class OverworldCameraSettings
     [SerializeField]
     private float m_leadDistance = 1f;
     [SerializeField]
-    private float m_depthLeadDistance = 1f;
+    private float m_depthLeadDistance = 2f;
     [SerializeField]
     private float m_leadDelay = 0.6f;
 
@@ -57,6 +57,11 @@ public class OverworldCameraSettings
     public bool RestrictXMovement { get { return m_restrictXMovement; } }
     public float MinXPosition { get { return m_minXPosition; } }
     public float MaxXPosition { get { return m_maxXPosition; } }
+
+    public OverworldCameraSettings()
+    {
+
+    }
 
     public OverworldCameraSettings(OverworldCameraSettings camSettings)
     {

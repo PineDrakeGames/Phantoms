@@ -36,7 +36,7 @@ public class OverworldSceneSettings : MonoBehaviour
     {
         if (m_cameraSettings != null)
         {
-            OverworldManager.Instance.CamController.SetCameraSettings(m_cameraSettings);
+            OverworldManager.Instance.CamController.SetSceneDefaultState(m_cameraSettings);
         }
     }
 }

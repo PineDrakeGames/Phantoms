@@ -14,7 +14,42 @@ public class DropPickup : MonoBehaviour
     [SerializeField]
     private AudioClip m_dropPickupSoundEffect;
 
+    [Header("Collection animation stuff")]
+    [SerializeField]
+    private float m_dropCollectDistance = 0.5f;
+
+    [SerializeField]
+    private float m_acceleration = 10f;
+
+    [SerializeField]
+    private float m_maxSpeed = 30f;
+
+
+    private bool m_triggered = false;
+    private float m_currentSpeed = 0f;
+    private Transform m_player = null;
     
+    private void Update() {
+        if (m_triggered)
+        {
+            if (m_currentSpeed < m_maxSpeed)
+            {
+                m_currentSpeed += Time.deltaTime * m_acceleration;
+                m_currentSpeed = Mathf.Clamp(m_currentSpeed, 0f, m_maxSpeed);
+            }
+
+            Vector3 direction = (m_player.position - transform.position).normalized;
+
+            transform.Translate(direction * m_currentSpeed * Time.deltaTime);
+
+            if (Vector3.Distance(transform.position, m_player.position) <= m_dropCollectDistance)
+            {
+                Collect();
+                m_triggered = false;
+            }
+        }
+    }
+
     // Called when the drop should be picked up
     public void Collect()
     {
@@ -28,9 +63,11 @@ public class DropPickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider collider)
     {
-        if (collider.tag == "Player")
+        if (collider.tag == "Player" && collider.GetComponent<PlayerController>())
         {
-            Collect();
+            m_triggered = true;
+            // TODO: Get reference to this
+            m_player = collider.GetComponent<PlayerController>().PlayerCenter;
         }
     }
 }

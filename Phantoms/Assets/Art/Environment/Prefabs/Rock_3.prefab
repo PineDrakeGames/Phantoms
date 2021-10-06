@@ -9,13 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1209549433146511731}
-  - component: {fileID: 5479974484267178968}
   m_Layer: 0
   m_Name: Rock_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &1209549433146511731
 Transform:
@@ -32,19 +31,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &5479974484267178968
-SphereCollider:
+--- !u!64 &7875531102198171238
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4918175681821804227}
+  m_GameObject: {fileID: 7659671812718496887}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.008
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 8330653076614499142, guid: 36817aa75cd4ce348ac4af4c27670c77, type: 3}
 --- !u!1001 &7389834416511889702
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -132,8 +132,19 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rock_3
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 36817aa75cd4ce348ac4af4c27670c77,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 36817aa75cd4ce348ac4af4c27670c77, type: 3}
+--- !u!1 &7659671812718496887 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 36817aa75cd4ce348ac4af4c27670c77,
+    type: 3}
+  m_PrefabInstance: {fileID: 7389834416511889702}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6991642995373692621 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 36817aa75cd4ce348ac4af4c27670c77,

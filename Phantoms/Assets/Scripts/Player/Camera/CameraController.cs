@@ -15,7 +15,7 @@ public class CameraControllerInspector : Editor
         CameraController myScript = (CameraController)target;
         if (GUILayout.Button("Reset Camera"))
         {
-            myScript.ResetCameraSettings();
+            myScript.ResetToSceneDefault();
         }
     }
 }
@@ -40,7 +40,7 @@ public class CameraController : MonoBehaviour
     /// Camera State Stuff ///
     //////////////////////////
 
-    private OverworldCameraSettings m_currentSettings = null;
+    private PlayerCameraState m_sceneDefaultState = null;
 
     private PlayerCameraState m_currentState = null;
     private PlayerCameraState m_prevState = null;
@@ -59,11 +59,10 @@ public class CameraController : MonoBehaviour
 
     private void Awake()
     {
-        if (m_currentSettings == null)
+        if (m_sceneDefaultState == null)
         {
-            m_currentSettings = new OverworldCameraSettings(m_defaultSettings);
+            SetSceneDefaultState(m_defaultSettings);
         }
-        ResetCameraSettings();
     }
 
     private void LateUpdate()
@@ -97,29 +96,25 @@ public class CameraController : MonoBehaviour
     ////////////////////////
     /// Public Functions ///
     ////////////////////////
-    
 
-    public void SetCameraSettings(OverworldCameraSettings newSettings)
+    public void SetSceneDefaultState(OverworldCameraSettings newSettings)
+    {
+        SetCameraSettings(newSettings, 0f);
+        m_sceneDefaultState = m_currentState;
+    }
+
+    public void ResetToSceneDefault(float transitionTime = DEFAULT_TRANSITION_TIME)
+    {
+        SetCameraState(m_sceneDefaultState, transitionTime);
+    }
+
+    public void SetCameraSettings(OverworldCameraSettings newSettings, float transitionTime = DEFAULT_TRANSITION_TIME)
     {
         if (newSettings != null)
         {
-            m_currentSettings = newSettings;
             PlayerCamStateDefault newState = new PlayerCamStateDefault(this, new OverworldCameraSettings(newSettings));
-            SetCameraStateImmediate(newState);
+            SetCameraState(newState, transitionTime);
         }
-    }
-
-    public void ResetCameraSettings()
-    {
-        if (m_currentSettings != null)
-        {
-            SetCameraSettings(m_currentSettings);
-        }
-    }
-
-    public void ResetCameraState()
-    {
-        SetCameraState(new PlayerCamStateDefault(this, new OverworldCameraSettings(m_currentSettings)));
     }
 
     public void SetCameraStateImmediate(PlayerCameraState newState)

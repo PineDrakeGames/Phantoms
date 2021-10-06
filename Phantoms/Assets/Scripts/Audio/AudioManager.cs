@@ -282,8 +282,6 @@ public class AudioManager : MonoBehaviour
 
         m_ambienceSource.volume = GetAmbienceVolume();
 
-        Debug.Log("Fading Ambience: " + m_currentAmbienceFadeTime + ", " + m_ambienceCurrentVolumeMultiplier + ", " + GetAmbienceVolume());
-
         // Check if we are finished fading.
         if (progress >= 1f)
         {

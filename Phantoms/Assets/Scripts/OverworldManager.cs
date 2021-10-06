@@ -241,8 +241,6 @@ public class OverworldManager : MonoBehaviour
                 m_playerController.Motor.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
             }
         }
-
-        m_cameraController.ResetCameraSettings();
     }
 
 #if UNITY_EDITOR
