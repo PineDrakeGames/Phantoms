@@ -24,7 +24,8 @@ namespace Ares.Editor {
 				(target.GetType() == typeof(AbilityData) && ((BattleInteractorData<AbilityAction>)target).Actions.Any(a => a.PowerMode == ChainableAction.PowerType.Formula))){
 				EditorGUILayout.Space();
 				EditorGUILayout.HelpBox("Default formula tokens:\t\tFunctions:\n\nCASTER_HP\tTARGET_HP\tABS()\nCASTER_MAX_HP\tTARGET_MAX_HP\tMIN()\n" +
-					"CASTER_ATTACK\tTARGET_ATTACK\tMAX()\nCASTER_DEFENSE\tTARGET_DEFENSE\nCASTER_SPEED\tTARGET_SPEED",
+					"CASTER_ATTACK\tTARGET_ATTACK\tMAX()\nCASTER_DEFENSE\tTARGET_DEFENSE\nCASTER_SPEED\tTARGET_SPEED\n" + 
+					"MINIGAME_FAIL\tMINIGAME_SUCCESS\nMINIGAME_PERFECT\t (0 for false, 1 for true)",
 					MessageType.Info);
 			}
 

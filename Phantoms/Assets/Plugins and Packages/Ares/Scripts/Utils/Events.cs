@@ -19,6 +19,7 @@ namespace Ares {
 
 	public class AfflictionResultsEvent : UnityEvent<Actor, AfflictionResults> {}
 	public class Actors_Ability_AbilityActionEvent : UnityEvent<Actor[], Ability, AbilityAction> {}
+	public class Actors_Ability_AbilityAction_MinigameResultEvent : UnityEvent<Actor[], Ability, AbilityAction, AbilityMinigame.MinigameResult> {}
 	public class Actors_Item_ItemActionEvent : UnityEvent<Actor[], Item, ItemAction> {}
 
 	public class Affliction_AfflictionActionEvent : UnityEvent<Affliction, AfflictionAction> {}

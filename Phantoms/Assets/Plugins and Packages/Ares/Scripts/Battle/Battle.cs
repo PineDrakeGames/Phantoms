@@ -1874,7 +1874,7 @@ namespace Ares
             BattleMonoBehaviour.Instance.StartCoroutine(CRProgressBattleAsSoonAsAllowed(ProgressType.Immediate, ProgressBattle));
         }
 
-        void ProcessAbilityActionEffect(Actor[] chosenAbilityTargets, Ability ability, AbilityAction action)
+        void ProcessAbilityActionEffect(Actor[] chosenAbilityTargets, Ability ability, AbilityAction action, AbilityMinigame.MinigameResult minigameResult = AbilityMinigame.MinigameResult.SUCCESS)
         { //non-child actions only
             List<AbilityAction> actionsToProcess = ability.GetChainActionWithChildren<AbilityAction>(ability.Data.Actions, action);
 
@@ -1899,8 +1899,8 @@ namespace Ares
                             break;
                     }
 
-                    int power = Mathf.RoundToInt(ability.EvaluatePower(currentActor, chosenAbilityTarget, actionTarget, currentAction));
-                    int special = Mathf.RoundToInt(ability.EvaluateSpecial(currentActor, chosenAbilityTarget, actionTarget, currentAction));
+                    int power = Mathf.RoundToInt(ability.EvaluatePower(currentActor, chosenAbilityTarget, actionTarget, currentAction, minigameResult));
+                    int special = Mathf.RoundToInt(ability.EvaluateSpecial(currentActor, chosenAbilityTarget, actionTarget, currentAction, minigameResult));
 
                     // The ID associated with this specific action - based on ability, target, and action index.
                     string actionID = ability.Data.name + chosenAbilityTarget.name + ability.GetActionIdentifier(action);
@@ -2532,6 +2532,7 @@ namespace Ares
             foreach (AbilityAction action in ability.Data.Actions.Where(a => !a.IsChildEffect))
             {
                 BattleActionResults actionResults = abilityResults.CreateResult(action);
+                abilityResults.minigameResult = minigameResult;
 
                 int targetIndex = 0;
                 while (targetIndex < remainingTargets.Count())
@@ -2542,18 +2543,15 @@ namespace Ares
                     BattleInteractorData.HitStatus hitStatus;
                     if (usedMinigame)
                     {
-                        switch (minigameResult)
+                        if (minigameResult == AbilityMinigame.MinigameResult.FAIL && action.MissOnMinigameFail)
                         {
-                            case AbilityMinigame.MinigameResult.FAIL:
-                                hitStatus = BattleInteractorData.HitStatus.Evade;
-                                break;
-                            case AbilityMinigame.MinigameResult.SUCCESS:
-                            case AbilityMinigame.MinigameResult.PERFECT:
-                            default:
-                                hitStatus = target != null ?
-                                target.PerformHitTest(actor, ability.Data, action) :
-                                (Random.value <= action.HitChance ? BattleInteractorData.HitStatus.Hit : BattleInteractorData.HitStatus.Evade);
-                                break;
+                            hitStatus = BattleInteractorData.HitStatus.Evade;
+                        }
+                        else
+                        {
+                            hitStatus = target != null ?
+                            target.PerformHitTest(actor, ability.Data, action) :
+                            (Random.value <= action.HitChance ? BattleInteractorData.HitStatus.Hit : BattleInteractorData.HitStatus.Evade);
                         }
                     }
                     else
@@ -2691,8 +2689,8 @@ namespace Ares
             if (currentResultKVP.Value.hitTargets.Count > 0)
             {
                 actor.OnAbilityActionEnd.AddOneTimeListener<Actor[], Ability, AbilityAction>((ac, ab, aa) => { EndAbilityActionEffect(ac, ab, aa, true); });
-                actor.OnAbilityActionProcess.AddOneTimeListener<Actor[], Ability, AbilityAction>(ProcessAbilityActionEffect);
-                actor.ConfirmAbilityActionSuccess(currentResultKVP.Value.hitTargets.ToArray(), abilityResults.ability, currentResultKVP.Key);
+                actor.OnAbilityActionProcess.AddOneTimeListener<Actor[], Ability, AbilityAction, AbilityMinigame.MinigameResult>(ProcessAbilityActionEffect);
+                actor.ConfirmAbilityActionSuccess(currentResultKVP.Value.hitTargets.ToArray(), abilityResults.ability, currentResultKVP.Key, abilityResults.minigameResult);
             }
             else
             {

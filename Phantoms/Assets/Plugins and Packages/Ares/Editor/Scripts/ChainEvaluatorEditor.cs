@@ -211,6 +211,7 @@ namespace Ares.Editor
                 SerializedProperty spActionType = element.FindPropertyRelative("actionType");
                 SerializedProperty spSpecialType = element.FindPropertyRelative("specialType");
                 SerializedProperty spTargetType = element.FindPropertyRelative("targetType");
+                SerializedProperty spMissOnFail = element.FindPropertyRelative("missOnMinigameFail");
                 SerializedProperty spSetType = element.FindPropertyRelative("environmentVariableSetType");
                 SerializedProperty spClearBuffType = element.FindPropertyRelative("clearBuffType");
 				SerializedProperty spClearBuffTempOnly = element.FindPropertyRelative("clearBuffTempOnly");
@@ -246,7 +247,12 @@ namespace Ares.Editor
                     DrawField(rect, ref xOffset, 94, spTargetType);
                 }
 
+                
+
                 DrawField(rect, ref xOffset, 94, spActionType);
+
+                DrawLabel(rect, ref xOffset, 85, "Miss on mg Fail");
+                DrawField(rect, ref xOffset, 20, spMissOnFail);
 
                 if (type == ChainEvaluator.ActionType.Buff)
                 {

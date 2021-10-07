@@ -41,7 +41,7 @@ MonoBehaviour:
   - action: 2
     powerType: 0
     actionType: 0
-    specialType: 0
+    specialType: 2
     stat: {fileID: 11400000, guid: 7dbb60c46613e7f468c07376b6c2f6dd, type: 2}
     environmentVariable: {fileID: 0}
     environmentVariableSetType: 0
@@ -60,8 +60,9 @@ MonoBehaviour:
     breaksChainOnMiss: 0
     special1: 3
     special2: 0
-    specialFormula: 
+    specialFormula: 3 - MINIGAME_FAIL
     targetType: 0
+    missOnMinigameFail: 0
   animation:
     enabled: 1
     parameterName: Special

@@ -295,11 +295,11 @@ namespace Ares {
 			}
 		}
 
-		public float EvaluatePower(Actor caster, Actor interactorTarget, Actor actionTarget, AbilityAction action){
+		public float EvaluatePower(Actor caster, Actor interactorTarget, Actor actionTarget, AbilityAction action, AbilityMinigame.MinigameResult minigameResult = AbilityMinigame.MinigameResult.SUCCESS){
 			Dictionary<string, float> targetEvaluatedActionValues = evaluatedActionValues[interactorTarget];
 
 			if(action.PowerMode == AbilityAction.PowerType.Formula){
-				UpdateFormulaTokens(targetEvaluatedActionValues, caster, actionTarget);
+				UpdateFormulaTokens(targetEvaluatedActionValues, caster, actionTarget, minigameResult);
 			}
 
 			float result = action.EvaluatePower(targetEvaluatedActionValues);
@@ -311,17 +311,17 @@ namespace Ares {
 			return result;
 		}
 
-		public float EvaluateSpecial(Actor caster, Actor interactorTarget, Actor actionTarget, AbilityAction action){
+		public float EvaluateSpecial(Actor caster, Actor interactorTarget, Actor actionTarget, AbilityAction action, AbilityMinigame.MinigameResult minigameResult = AbilityMinigame.MinigameResult.SUCCESS){
 			Dictionary<string, float> targetEvaluatedActionValues = evaluatedActionValues[interactorTarget];
 
 			if(action.SpecialMode == AbilityAction.PowerType.Formula){
-				UpdateFormulaTokens(targetEvaluatedActionValues, caster, actionTarget);
+				UpdateFormulaTokens(targetEvaluatedActionValues, caster, actionTarget, minigameResult);
 			}
 
 			return action.EvaluateSpecial(targetEvaluatedActionValues);
 		}
 
-		void UpdateFormulaTokens(Dictionary<string, float> targetEvaluatedActionValues, Actor caster, Actor actionTarget){
+		void UpdateFormulaTokens(Dictionary<string, float> targetEvaluatedActionValues, Actor caster, Actor actionTarget, AbilityMinigame.MinigameResult minigameResult = AbilityMinigame.MinigameResult.SUCCESS){
 			targetEvaluatedActionValues["CASTER_HP"] = caster.HP;
 			targetEvaluatedActionValues["CASTER_MAX_HP"] = caster.MaxHP; 
 			targetEvaluatedActionValues["TARGET_HP"] = actionTarget.HP;
@@ -331,6 +331,29 @@ namespace Ares {
 				targetEvaluatedActionValues["CASTER_" + stat.ToUpper()] = caster.Stats[stat].Value;
 				targetEvaluatedActionValues["TARGET_" + stat.ToUpper()] = actionTarget.Stats[stat].Value;
 			}
+
+			// ADDED BY CJ!
+			// Adding new evaluations for minigame results.
+			// 0 if false, 1 if true.
+			int fail = 0;
+			int success = 0;
+			int perfect = 0;
+			switch (minigameResult)
+			{
+				case AbilityMinigame.MinigameResult.FAIL:
+					fail = 1;
+					break;
+				case AbilityMinigame.MinigameResult.SUCCESS:
+					success = 1;
+					break;
+				case AbilityMinigame.MinigameResult.PERFECT:
+					success = 1;
+					perfect = 1;
+					break;
+			}
+			targetEvaluatedActionValues["MINIGAME_FAIL"] = fail;
+			targetEvaluatedActionValues["MINIGAME_SUCCESS"] = success;
+			targetEvaluatedActionValues["MINIGAME_PERFECT"] = perfect;
 		}
 		
 		public void SetActionResult(AbilityAction action, Actor abilityTarget, int value){

@@ -119,7 +119,7 @@ MonoBehaviour:
   - action: 2
     powerType: 0
     actionType: 7
-    specialType: 0
+    specialType: 2
     stat: {fileID: 11400000, guid: 0d454f7f579254d5999e01dddb71c21c, type: 2}
     environmentVariable: {fileID: 0}
     environmentVariableSetType: 0
@@ -138,8 +138,9 @@ MonoBehaviour:
     breaksChainOnMiss: 0
     special1: 3
     special2: 0
-    specialFormula: 
+    specialFormula: 3 - MINIGAME_FAIL
     targetType: 0
+    missOnMinigameFail: 0
   animation:
     enabled: 1
     parameterName: Attack

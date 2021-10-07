@@ -57,12 +57,13 @@ MonoBehaviour:
     ignoreDefence: 0
     power1: 3
     power2: 0
-    powerFormula: (CASTER_ATTACK * 2) + 1
+    powerFormula: ( ( CASTER_ATTACK * 2) / ( 1 + MINIGAME_FAIL ) ) + 1
     breaksChainOnMiss: 0
     special1: 0
     special2: 0
     specialFormula: 
     targetType: 0
+    missOnMinigameFail: 0
   - action: 0
     powerType: 2
     actionType: 0
@@ -81,12 +82,13 @@ MonoBehaviour:
     ignoreDefence: 0
     power1: 3
     power2: 0
-    powerFormula: CASTER_ATTACK + 1
+    powerFormula: ( CASTER_ATTACK / ( 1 + MINIGAME_FAIL ) ) + 1
     breaksChainOnMiss: 0
     special1: 0
     special2: 0
     specialFormula: 
     targetType: 1
+    missOnMinigameFail: 0
   animation:
     enabled: 1
     parameterName: Attack

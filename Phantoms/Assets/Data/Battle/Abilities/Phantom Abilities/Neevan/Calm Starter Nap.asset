@@ -63,8 +63,9 @@ MonoBehaviour:
     special2: 0
     specialFormula: 
     targetType: 0
+    missOnMinigameFail: 0
   - action: 2
-    powerType: 0
+    powerType: 2
     actionType: 5
     specialType: 0
     stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
@@ -81,14 +82,15 @@ MonoBehaviour:
     ignoreDefence: 0
     power1: 1
     power2: 0
-    powerFormula: 
+    powerFormula: 1 - MINIGAME_FAIL
     breaksChainOnMiss: 0
     special1: 0
     special2: 0
     specialFormula: 
     targetType: 0
+    missOnMinigameFail: 0
   - action: 2
-    powerType: 0
+    powerType: 2
     actionType: 5
     specialType: 0
     stat: {fileID: 11400000, guid: 0d454f7f579254d5999e01dddb71c21c, type: 2}
@@ -105,12 +107,13 @@ MonoBehaviour:
     ignoreDefence: 0
     power1: 1
     power2: 0
-    powerFormula: 
+    powerFormula: 1 - MINIGAME_FAIL
     breaksChainOnMiss: 0
     special1: 0
     special2: 0
     specialFormula: 
     targetType: 0
+    missOnMinigameFail: 0
   - action: 4
     powerType: 0
     actionType: 0
@@ -135,6 +138,7 @@ MonoBehaviour:
     special2: 0
     specialFormula: 
     targetType: 0
+    missOnMinigameFail: 0
   animation:
     enabled: 1
     parameterName: Special

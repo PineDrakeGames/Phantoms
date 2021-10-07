@@ -24,7 +24,7 @@ namespace Ares
         public Ability_BoolEvent OnAbilityRecoveryEnd { get; private set; }
 
         public Ability_ActorsEvent OnAbilityStart { get; private set; }
-        public Actors_Ability_AbilityActionEvent OnAbilityActionProcess { get; private set; }
+        public Actors_Ability_AbilityAction_MinigameResultEvent OnAbilityActionProcess { get; private set; }
         public Actors_Ability_AbilityActionEvent OnAbilityActionEnd { get; private set; }
         public Actors_Ability_AbilityActionEvent OnAbilityActionMiss { get; private set; }
         public Actor_Ability_AbilityActionEvent OnAbilityActionAvoid { get; private set; }
@@ -177,7 +177,7 @@ namespace Ares
             OnAbilityRecoveryEnd = new Ability_BoolEvent();
 
             OnAbilityStart = new Ability_ActorsEvent();
-            OnAbilityActionProcess = new Actors_Ability_AbilityActionEvent();
+            OnAbilityActionProcess = new Actors_Ability_AbilityAction_MinigameResultEvent();
             OnAbilityActionEnd = new Actors_Ability_AbilityActionEvent();
             OnAbilityActionMiss = new Actors_Ability_AbilityActionEvent();
             OnAbilityActionAvoid = new Actor_Ability_AbilityActionEvent();
@@ -703,12 +703,12 @@ namespace Ares
         }
 
         //Ability confirmations
-        public void ConfirmAbilityActionSuccess(Actor[] targets, Ability ability, AbilityAction action)
+        public void ConfirmAbilityActionSuccess(Actor[] targets, Ability ability, AbilityAction action, AbilityMinigame.MinigameResult minigameResult)
         {//, System.Action<Actor, Ability, AbilityAction> onProcessCallback){
             VerboseLogger.Log(string.Format("{0} succesfully landed ability {1}'s {2} action on {3}", DisplayName, ability.Data.DisplayName, action.Action,
                 string.Join(",", targets.Select(t => t.displayName).ToArray())));
 
-            StartCoroutine(ScheduleOnAbilityActionProcessedAndEnded(targets, ability, action));
+            StartCoroutine(ScheduleOnAbilityActionProcessedAndEnded(targets, ability, action, minigameResult));
         }
 
         public void ConfirmAbilityActionFail(Actor[] targets, Ability ability, BattleInteractorData.HitStatus[] hitStatuses, AbilityAction action, bool canEndAbility)
@@ -798,12 +798,12 @@ namespace Ares
             abilityEndDelayLocks.Remove(requestor);
         }
 
-        IEnumerator ScheduleOnAbilityActionProcessedAndEnded(Actor[] targets, Ability ability, AbilityAction action)
+        IEnumerator ScheduleOnAbilityActionProcessedAndEnded(Actor[] targets, Ability ability, AbilityAction action, AbilityMinigame.MinigameResult minigameResult)
         { //TODO: Move these to Battle.cs?
             yield return new WaitForSeconds(action.Duration * action.NormalizedProcessTime);
             yield return null;
 
-            OnAbilityActionProcess.Invoke(targets, ability, action);
+            OnAbilityActionProcess.Invoke(targets, ability, action, minigameResult);
 
             yield return new WaitForSeconds(action.Duration * (1f - action.NormalizedProcessTime));
 

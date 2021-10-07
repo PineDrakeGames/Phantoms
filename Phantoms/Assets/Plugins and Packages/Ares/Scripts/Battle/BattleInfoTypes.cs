@@ -206,10 +206,12 @@ namespace Ares {
 	public struct AbilityResults {
 		public readonly Ability ability;
 		public readonly Dictionary<AbilityAction, BattleActionResults> actionResults;
+		public AbilityMinigame.MinigameResult minigameResult;
 
 		public AbilityResults(Ability ability){
 			this.ability = ability;
 			actionResults = new Dictionary<AbilityAction, BattleActionResults>();
+			minigameResult = AbilityMinigame.MinigameResult.SUCCESS;
 		}
 
 		public BattleActionResults CreateResult(AbilityAction action){

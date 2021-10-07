@@ -39,7 +39,7 @@ MonoBehaviour:
   turnTowardsTarget: 0
   actions:
   - action: 1
-    powerType: 0
+    powerType: 2
     actionType: 6
     specialType: 0
     stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
@@ -54,14 +54,15 @@ MonoBehaviour:
     normalizedProcessTime: 1
     chance: 1
     ignoreDefence: 0
-    power1: 2
+    power1: 0
     power2: 0
-    powerFormula: 
+    powerFormula: 2 - MINIGAME_FAIL
     breaksChainOnMiss: 0
     special1: 0
     special2: 0
     specialFormula: 
     targetType: 0
+    missOnMinigameFail: 0
   animation:
     enabled: 0
     parameterName: 
