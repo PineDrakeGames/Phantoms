@@ -50,7 +50,7 @@ public class PlayerDialogueTrigger : MonoBehaviour
             m_dialogueTrigger.trigger = PixelCrushers.DialogueSystem.DialogueSystemTriggerEvent.OnUse;
         }
 
-        PixelCrushers.DialogueSystem.DialogueManager.instance.conversationEnded += OnConversationEnd;
+        
 
         if (m_saveTrigger)
         {
@@ -70,7 +70,6 @@ public class PlayerDialogueTrigger : MonoBehaviour
         {
             SaveDataManager.OnFlagUpdate.RemoveListener(OnFlagUpdate);
         }
-        PixelCrushers.DialogueSystem.DialogueManager.instance.conversationEnded -= OnConversationEnd;
     }
 
     private void OnTriggerEnter(Collider collider)
@@ -79,6 +78,7 @@ public class PlayerDialogueTrigger : MonoBehaviour
         {
             if (m_requirementsMet && (!m_disableWhenTriggered || !m_triggered))
             {
+                PixelCrushers.DialogueSystem.DialogueManager.instance.conversationEnded += OnConversationEnd;
                 m_dialogueTrigger.OnUse(OverworldManager.Instance.PlayerInstance.transform);
                 PlayerController player = OverworldManager.Instance.PlayerController;
                 player.SetState(new PlayerStateInteract());
@@ -122,6 +122,7 @@ public class PlayerDialogueTrigger : MonoBehaviour
     {
         PlayerController player = OverworldManager.Instance.PlayerController;
         player.SetState(new PlayerStateIdle());
+        PixelCrushers.DialogueSystem.DialogueManager.instance.conversationEnded -= OnConversationEnd;
     }
 
     private void OnFlagUpdate(string flagName, bool flagValue)
