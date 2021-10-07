@@ -1,26 +1,26 @@
 fileFormatVersion: 2
-guid: ec85fa9dca18fa14388c65ded43a0b3b
+guid: a7c6136bceda75c4f854ea8fb659085a
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable:
   - first:
-      74: -1508254521184112849
-    second: SadStarter|001_KEYING
+      74: 6486938436923665943
+    second: AngerStarter|001_KEYING
   - first:
-      74: 1789943715031386931
-    second: SadStarter|002_IDLE
+      74: -5870166618013896019
+    second: AngerStarter|002_IDLE
   - first:
-      74: 7296193134858253358
-    second: SadStarter|003_ATTACK
+      74: 1279482896586276748
+    second: AngerStarter|003_SPECIAL
   - first:
-      74: 4941010331335034888
-    second: SadStarter|004_CHARGE
+      74: 4785720366782323699
+    second: AngerStarter|004_ATTACK
   - first:
-      74: 3115407329591318568
-    second: SadStarter|005_SPECIAL
+      74: -8291252100356979373
+    second: AngerStarter|005_CHARGE
   - first:
-      74: -4781622734622875389
-    second: SadStarter|006_DAMAGE
+      74: -7347594121711549127
+    second: AngerStarter|006_DAMAGE
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -50,11 +50,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: SadStarter|002_IDLE
-      takeName: SadStarter|002_IDLE
+      name: AngerStarter|002_IDLE
+      takeName: AngerStarter|002_IDLE
       internalID: 0
       firstFrame: 0
-      lastFrame: 69
+      lastFrame: 100
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -79,11 +79,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: SadStarter|003_ATTACK
-      takeName: SadStarter|003_ATTACK
+      name: AngerStarter|003_SPECIAL
+      takeName: AngerStarter|003_SPECIAL
       internalID: 0
       firstFrame: 0
-      lastFrame: 84
+      lastFrame: 79
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -108,8 +108,37 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: SadStarter|004_CHARGE
-      takeName: SadStarter|004_CHARGE
+      name: AngerStarter|004_ATTACK
+      takeName: AngerStarter|004_ATTACK
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 79
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: AngerStarter|005_CHARGE
+      takeName: AngerStarter|005_CHARGE
       internalID: 0
       firstFrame: 0
       lastFrame: 9
@@ -137,40 +166,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: SadStarter|005_SPECIAL
-      takeName: SadStarter|005_SPECIAL
+      name: AngerStarter|006_DAMAGE
+      takeName: AngerStarter|006_DAMAGE
       internalID: 0
       firstFrame: 0
-      lastFrame: 55
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: SadStarter|006_DAMAGE
-      takeName: SadStarter|006_DAMAGE
-      internalID: 0
-      firstFrame: 0
-      lastFrame: 59
+      lastFrame: 44
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -197,7 +197,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 0.6
+    globalScale: 0.5
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -248,7 +248,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.006
+    globalScale: 0.005
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
