@@ -92,6 +92,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
     private Interactable m_currentInteractable = null;
     public Interactable CurrentInteractable
     {
+        get { return m_currentInteractable; }
         set { m_currentInteractable = value; }
     }
 

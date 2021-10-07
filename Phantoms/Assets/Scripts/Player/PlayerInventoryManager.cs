@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using PixelCrushers.DialogueSystem;
 
 public class PlayerInventoryManager : MonoBehaviour
 {
@@ -35,6 +36,7 @@ public class PlayerInventoryManager : MonoBehaviour
     public void Initialize()
     {
         // Any stuff that we gotta do first
+        RegisterLuaFunctions();
     }
 
     /////////////////////////////////////////////////////////
@@ -250,5 +252,40 @@ public class PlayerInventoryManager : MonoBehaviour
         {
             KeyItems.Remove(keyItem);
         }
+    }
+
+    public bool HasKeyItem(string itemID)
+    {
+        foreach (KeyItemInstanceData item in KeyItems)
+        {
+            if (item.Data.ItemID == itemID)
+            {
+                if (item.Quantity > 0)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public int KeyItemQuantity(string itemID)
+    {
+        foreach (KeyItemInstanceData item in KeyItems)
+        {
+            if (item.Data.ItemID == itemID)
+            {
+                return item.Quantity;
+            }
+        }
+        return 0;
+    }
+
+
+    /// Private helper things! ///
+    private void RegisterLuaFunctions()
+    {
+        Lua.RegisterFunction("HasKeyItem", this, SymbolExtensions.GetMethodInfo(() => HasKeyItem(string.Empty)));
+        Lua.RegisterFunction("KeyItemQuantity", this, SymbolExtensions.GetMethodInfo(() => KeyItemQuantity(string.Empty)));
     }
 }
