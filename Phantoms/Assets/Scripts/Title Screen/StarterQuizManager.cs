@@ -283,6 +283,7 @@ public class StarterQuizManager : MonoBehaviour
                 if (option.QuizID == starterIDs[i])
                 {
                     result.Add(option.Phantom);
+                    DataManager.Instance.StarterChoices.Add(option.Phantom.ID);
                     break;
                 }
             }

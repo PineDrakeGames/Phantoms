@@ -110,11 +110,11 @@ public class RandomEnemyEncounterData : EnemyEncounterData
 
         if (DataManager.Instance != null)
         {
-            if (m_restrictStarterOptions && DataManager.Instance.StartersOrder != null && DataManager.Instance.StartersOrder.Count >= 3)
+            if (m_restrictStarterOptions && DataManager.Instance.StarterChoices != null)
             {
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < DataManager.Instance.StarterChoices.Count; i++)
                 {
-                    restrictedPhantoms.Add(DataManager.Instance.StartersOrder[i]);
+                    restrictedPhantoms.Add(DataManager.Instance.StarterChoices[i]);
                 }
             }
             else if (m_restrictStarter && !string.IsNullOrEmpty(DataManager.Instance.ChosenStarterID))
