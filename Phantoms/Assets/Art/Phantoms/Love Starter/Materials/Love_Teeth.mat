@@ -23,7 +23,7 @@ Material:
   m_Name: Love_Teeth
   m_Shader: {fileID: -6465566751694194690, guid: 4b3a33ef23cc2b04fbfa505bda3ea02b,
     type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: _CELPRIMARYMODE_NONE _TEXTUREBLENDINGMODE_MULTIPLY _UNITYSHADOWMODE_NONE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -42,6 +42,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CelCurveTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CelStepTexture:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -102,54 +110,101 @@ Material:
     - _AmbientIntensity: 1
     - _Blend: 0
     - _BumpScale: 1
+    - _CameraDistanceImpact: 0
+    - _CelExtraEnabled: 0
+    - _CelNumSteps: 3
+    - _CelPrimaryMode: 0
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
-    - _Cutoff: 0.5
+    - _Cutoff: 0.327
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DissolveAmount: 0
     - _DissolveLineThickness: 0.01
     - _DstBlend: 0
     - _EnvironmentReflections: 1
+    - _FlatRimEdgeSmoothness: 0.5
+    - _FlatRimLightAlign: 0
+    - _FlatRimSize: 0.5
+    - _FlatSpecularEdgeSmoothness: 0
+    - _FlatSpecularSize: 0.1
+    - _Flatness: 1
+    - _FlatnessExtra: 1
     - _FresnelAngle: -1
     - _FresnelSize: 10
     - _GlossMapScale: 0
-    - _GlossSize: 20
+    - _GlossSize: 38
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _GradientAngle: 0
+    - _GradientCenterX: 0
+    - _GradientCenterY: 0
+    - _GradientEnabled: 0
+    - _GradientSize: 10
+    - _LightContribution: 0
+    - _LightFalloffSize: 0
+    - _LightmapDirectionPitch: 0
+    - _LightmapDirectionYaw: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
+    - _OutlineDepthOffset: 0.047
+    - _OutlineScale: 1
+    - _OutlineWidth: 2.84
+    - _OverrideLightmapDir: 0
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _RimEnabled: 0
+    - _SelfShadingSize: 0.5
+    - _SelfShadingSizeExtra: 0.6
+    - _ShadowEdgeSize: 0.05
+    - _ShadowEdgeSizeExtra: 0.05
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
+    - _SpecularEnabled: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Surface: 0
+    - _TextureBlendingMode: 0
+    - _TextureImpact: 1
+    - _UnityShadowMode: 0
+    - _UnityShadowOcclusion: 0
+    - _UnityShadowPower: 0.2
+    - _UnityShadowSharpness: 1
+    - _VertexColorsEnabled: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _ColorDim: {r: 1, g: 1, b: 1, a: 1}
+    - _ColorDimCurve: {r: 0.85023, g: 0.85034, b: 0.8504499, a: 0.85056}
+    - _ColorDimExtra: {r: 1, g: 1, b: 1, a: 1}
+    - _ColorDimSteps: {r: 1, g: 1, b: 1, a: 1}
+    - _ColorGradient: {r: 1, g: 1, b: 1, a: 1}
     - _DissolveColor: {r: 1, g: 1, b: 1, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FlatRimColor: {r: 0.85023, g: 0.85034, b: 0.85045, a: 0.85056}
+    - _FlatSpecularColor: {r: 0.85023, g: 0.85034, b: 0.85045, a: 0.85056}
     - _FresnelIntensity: {r: 1, g: 1, b: 1, a: 0}
     - _GlossIntensity: {r: 1, g: 1, b: 1, a: 0}
     - _L1_color: {r: 0.88239163, g: 0.8392157, b: 1, a: 0.99}
-    - _L1_dir: {r: 0.13757852, g: 0.7660444, b: -0.6278919, a: 0}
+    - _L1_dir: {r: -0.22049758, g: 0.76604444, b: -0.6037854, a: 0}
     - _L2_color: {r: 0.14235295, g: 0.22352943, b: 0.20958756, a: 0.99}
-    - _L2_dir: {r: -0.027004607, g: 0.76604295, b: -0.64222187, a: 0}
+    - _L2_dir: {r: -0.36711055, g: 0.76604295, b: -0.52764374, a: 0}
     - _L3_color: {r: 0.16565005, g: 0.118823536, b: 0.19294119, a: 0.99}
-    - _L3_dir: {r: 0.3213938, g: 0.76604444, b: -0.5566705, a: 0}
+    - _L3_dir: {r: -0.027148599, g: 0.7660445, b: -0.64221406, a: 0}
     - _L4_color: {r: 0, g: 0, b: 0, a: 1}
     - _L4_dir: {r: 0, g: 1, b: 0, a: 0}
     - _L5_color: {r: 0, g: 0, b: 0, a: 1}
     - _L5_dir: {r: 0, g: 1, b: 0, a: 0}
     - _L6_color: {r: 0, g: 0, b: 0, a: 1}
     - _L6_dir: {r: 0, g: 1, b: 0, a: 0}
+    - _LightmapDirection: {r: 0, g: 1, b: 0, a: 0}
+    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _ShadingBlacks: {r: 0, g: 0, b: 0, a: 0}
     - _ShadingWhites: {r: 1, g: 1, b: 1, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _UnityShadowColor: {r: 0.85023, g: 0.85034, b: 0.8504499, a: 0.85056}
   m_BuildTextureStacks: []
