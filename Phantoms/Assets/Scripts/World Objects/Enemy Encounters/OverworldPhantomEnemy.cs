@@ -165,7 +165,6 @@ public class OverworldPhantomEnemy : MonoBehaviour
 #endif
             if (Physics.Raycast(transform.position, m_player.position - transform.position, out m_raycastHit, checkDistance * 2f, m_LineOfSightBlockers))
             {
-                Debug.Log(m_raycastHit.collider.name);
                 // If we hit something, check if it's the player. If not, something is blocking line of sight.
                 if (m_raycastHit.collider.CompareTag(PLAYER_TAG))
                 {

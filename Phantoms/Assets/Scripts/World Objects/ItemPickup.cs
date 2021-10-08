@@ -41,6 +41,10 @@ public class ItemPickup : MonoBehaviour
         {
             PlayerInventoryManager.Instance.AddItem(ItemID);
             AudioManager.PlaySound(m_itemPickupSoundEffect);
+
+            string notification = "You discovered an item: <b>" + Item.AresData.DisplayName + "</b>!\n" + Item.AresData.Description;
+            NotificationManager.SetBottomNotification(Item.Sprite, notification);
+
             this.gameObject.SetActive(false);
         }
     }

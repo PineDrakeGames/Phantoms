@@ -41,6 +41,10 @@ public class KeyItemPickup : MonoBehaviour
         {
             PlayerInventoryManager.Instance.AddKeyItem(ItemID);
             AudioManager.PlaySound(m_itemPickupSoundEffect);
+
+            string notification = "You discovered a <b>" + KeyItem.DisplayName + "</b>!\n" + KeyItem.Description;
+            NotificationManager.SetBottomNotification(KeyItem.Sprite, notification);
+
             this.gameObject.SetActive(false);
         }
     }

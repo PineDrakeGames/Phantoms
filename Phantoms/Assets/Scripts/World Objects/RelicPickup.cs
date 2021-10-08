@@ -41,6 +41,10 @@ public class RelicPickup : MonoBehaviour
         {
             PlayerInventoryManager.Instance.AddRelic(RelicID);
             AudioManager.PlaySound(m_relicPickupSoundEffect);
+
+            string notification = "You discovered a Relic: <b>" + Relic.DisplayName + "</b>!\n" + Relic.Description;
+            NotificationManager.SetBottomNotification(Relic.Icon, notification);
+
             this.gameObject.SetActive(false);
         }
     }
