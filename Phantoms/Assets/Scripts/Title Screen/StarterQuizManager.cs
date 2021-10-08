@@ -212,6 +212,8 @@ public class StarterQuizManager : MonoBehaviour
         PhantomInstanceData phantomInstance = PhantomDataUtility.GenerateRandomPhantom(phantom, 1);
 
         PlayerInventoryManager.Instance.AddPhantom(phantomInstance);
+
+        DataManager.Instance.ChosenStarterID = phantom.ID;
     }
 
     public void FinishQuiz()
@@ -281,6 +283,19 @@ public class StarterQuizManager : MonoBehaviour
                 if (option.QuizID == starterIDs[i])
                 {
                     result.Add(option.Phantom);
+                    break;
+                }
+            }
+        }
+
+        // Saving the order of starter results, so we know what the first 3 options are as well as the lowest options, because hey why not maybe we can use that later
+        for (int i = 0; i < starterIDs.Count; i++)
+        {
+            foreach(StarterOption option in m_starterOptions)
+            {
+                if (option.QuizID == starterIDs[i])
+                {
+                    DataManager.Instance.StartersOrder.Add(option.Phantom.ID);
                     break;
                 }
             }

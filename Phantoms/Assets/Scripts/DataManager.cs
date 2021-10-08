@@ -137,6 +137,11 @@ public class DataManager : MonoBehaviour
         }
     }
 
+
+    // This should be saved at some point, but I guess for now just put it here?
+    public List<string> StartersOrder = new List<string>();
+    public string ChosenStarterID = "";
+
     ///////////////////////
     /// Unity Functions ///
     ///////////////////////
