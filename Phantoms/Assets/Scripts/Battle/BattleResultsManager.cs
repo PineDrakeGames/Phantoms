@@ -374,6 +374,7 @@ public class BattleResultsManager : MonoBehaviour
             {
                 experienceBox.FinishSettingExp();
             }
+            m_experienceResultsParent.SetActive(true);
         }
         else
         {

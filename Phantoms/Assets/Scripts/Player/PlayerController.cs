@@ -63,6 +63,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
 
     [Header("Other Stuff")]
     public Transform PlayerCenter = null;
+    public float MinYPosition = -150f;
 
     [Header("Ability Flags")]
     public bool DoubleJumpUnlocked = false;
@@ -277,6 +278,11 @@ public class PlayerController : MonoBehaviour, ICharacterController
             {
                 _attackRequested = false;
             }
+        }
+
+        if (transform.position.y < MinYPosition)
+        {
+            PlayerRespawnManager.Instance.RespawnSafe(0);
         }
     }
 
