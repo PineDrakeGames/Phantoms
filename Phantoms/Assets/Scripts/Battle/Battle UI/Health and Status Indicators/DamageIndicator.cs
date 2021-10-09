@@ -27,11 +27,22 @@ public class DamageIndicator : MonoBehaviour
         }
     }
 
-    public void SetDamageIndicator(Vector3 position, int damage)
+    public void SetDamageIndicator(Vector3 position, int damage, float modifier = 1f)
     {
         transform.position = position;
         m_damageIndicatorText.text = damage.ToString();
-        m_damageIndicatorAnimation.SetTrigger("Play");
+        if (modifier <= 0.5f)
+        {
+            m_damageIndicatorAnimation.SetTrigger("Weak");
+        }
+        else if (modifier >= 2f)
+        {
+            m_damageIndicatorAnimation.SetTrigger("Strong");
+        }
+        else
+        {
+            m_damageIndicatorAnimation.SetTrigger("Play");
+        }
 
         Ready = false;
         m_currentTime = DAMAGE_INDICATOR_DURATION;

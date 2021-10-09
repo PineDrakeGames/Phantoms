@@ -298,13 +298,14 @@ namespace Ares
             Battle = battle;
         }
 
-        public int TakeDamage(int power)
+        public int TakeDamage(int power, float modifier = 1f)
         {
             int oldHP = HP;
 
             HP -= Mathf.Max(0, power);
 
-            AudioManager.PlaySound("BATTLE_HIT");
+            // Play Effects! //
+            BattlePlayerMenu.Instance.SetDamageIndicator(transform.position, power, modifier);
 
             // Check for afflictions that stop on damage
             Affliction currentAffliction = null;

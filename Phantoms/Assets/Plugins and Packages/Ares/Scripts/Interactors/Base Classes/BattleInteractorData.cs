@@ -252,14 +252,14 @@ namespace Ares {
 			}
 		}
 		
-		protected virtual void ApplyPowerModifiers(Actor caster, Actor interactorTarget, Actor actionTarget, AbilityAction action, ref float result){
+		protected virtual void ApplyPowerModifiers(Actor caster, Actor interactorTarget, Actor actionTarget, AbilityAction action, ref float result, ref float modifier){
 			// The actual power calculation. Here you could implement extra modifiers like
 			// weaknesses, critical hits, etc.
 
 			switch(action.Action){
 				case ActionType.Damage:
 					string battleLog = "   " + caster.DisplayName + " hit " + actionTarget.DisplayName + " for ";
-					float modifier = PhantomTypes.GetTypeMultiplier(action.ActionType, actionTarget.MainType) * PhantomTypes.GetTypeMultiplier(action.ActionType, actionTarget.SecondType);
+					modifier = PhantomTypes.GetTypeMultiplier(action.ActionType, actionTarget.MainType) * PhantomTypes.GetTypeMultiplier(action.ActionType, actionTarget.SecondType);
 					battleLog += "(" + result + " x "+ modifier +")";
 
 					result *= modifier;
@@ -295,7 +295,14 @@ namespace Ares {
 			}
 		}
 
-		public float EvaluatePower(Actor caster, Actor interactorTarget, Actor actionTarget, AbilityAction action, AbilityMinigame.MinigameResult minigameResult = AbilityMinigame.MinigameResult.SUCCESS){
+		public float EvaluatePower(Actor caster, Actor interactorTarget, Actor actionTarget, AbilityAction action, AbilityMinigame.MinigameResult minigameResult = AbilityMinigame.MinigameResult.SUCCESS)
+		{
+			float unnecessaryModifier = 1f;
+			return EvaluatePower(caster, interactorTarget, actionTarget, action, ref unnecessaryModifier, minigameResult);
+		}
+
+		public float EvaluatePower(Actor caster, Actor interactorTarget, Actor actionTarget, AbilityAction action, ref float modifier, AbilityMinigame.MinigameResult minigameResult = AbilityMinigame.MinigameResult.SUCCESS)
+		{
 			Dictionary<string, float> targetEvaluatedActionValues = evaluatedActionValues[interactorTarget];
 
 			if(action.PowerMode == AbilityAction.PowerType.Formula){
@@ -303,10 +310,11 @@ namespace Ares {
 			}
 
 			float result = action.EvaluatePower(targetEvaluatedActionValues);
+			modifier = 1f;
 
 			targetEvaluatedActionValues.Add(actionIdentifiers[action] + "_RAW", result);
 
-			ApplyPowerModifiers(caster, interactorTarget, actionTarget, action, ref result);
+			ApplyPowerModifiers(caster, interactorTarget, actionTarget, action, ref result, ref modifier);
 
 			return result;
 		}

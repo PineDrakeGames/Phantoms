@@ -1899,12 +1899,14 @@ namespace Ares
                             break;
                     }
 
-                    int power = Mathf.RoundToInt(ability.EvaluatePower(currentActor, chosenAbilityTarget, actionTarget, currentAction, minigameResult));
+                    // Added by CJ - to check how effective the move was (will usually be 0.25, 0.5, 1, 2, or 4)
+                    float modifier = 1f;
+                    int power = Mathf.RoundToInt(ability.EvaluatePower(currentActor, chosenAbilityTarget, actionTarget, currentAction, ref modifier, minigameResult));
                     int special = Mathf.RoundToInt(ability.EvaluateSpecial(currentActor, chosenAbilityTarget, actionTarget, currentAction, minigameResult));
 
                     // The ID associated with this specific action - based on ability, target, and action index.
                     string actionID = ability.Data.name + chosenAbilityTarget.name + ability.GetActionIdentifier(action);
-                    int result = ProcessChainAction(ability, currentAction, currentActor, actionTarget, power, special, actionID);
+                    int result = ProcessChainAction(ability, currentAction, currentActor, actionTarget, power, special, actionID, modifier);
 
                     ability.SetActionResult(currentAction, chosenAbilityTarget, result);
                 }
@@ -2015,7 +2017,7 @@ namespace Ares
             }
         }
 
-        int ProcessChainAction(object evaluater, ChainableAction action, Actor caster, Actor target, int power, int special, string chainActionID = "")
+        int ProcessChainAction(object evaluater, ChainableAction action, Actor caster, Actor target, int power, int special, string chainActionID = "", float modifier = 1f)
         {
             // To log the chain action ID stuff
             // if (!string.IsNullOrEmpty(chainActionID)) { Debug.Log(chainActionID); }
@@ -2072,7 +2074,7 @@ namespace Ares
                     ActorInfo targetActorInfo = ActorInfo[target];
                     InterruptBlockerIfNeeded(casterActorInfo, null, BattleInteractorData.RecoveryInterrupt.OnTargetDamage);
                     InterruptBlockerIfNeeded(targetActorInfo, BattleInteractorData.PreparationInterrupt.OnDamage, BattleInteractorData.RecoveryInterrupt.OnDamage);
-                    int damageDealt = target.TakeDamage(power);
+                    int damageDealt = target.TakeDamage(power, modifier);
                     if (target.HP == 0)
                     {
                         InterruptBlockerIfNeeded(casterActorInfo, null, BattleInteractorData.RecoveryInterrupt.OnTargetDeath);

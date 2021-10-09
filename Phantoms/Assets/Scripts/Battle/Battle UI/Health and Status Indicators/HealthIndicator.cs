@@ -161,7 +161,6 @@ public class HealthIndicator : MonoBehaviour
         if (Actor && newHP < prevHP)
         {
             m_actorIconAnimator.SetTrigger("Hurt");
-            BattlePlayerMenu.Instance.SetDamageIndicator(Actor.gameObject.transform.position, (prevHP - newHP));
         }
         
         prevHP = newHP;

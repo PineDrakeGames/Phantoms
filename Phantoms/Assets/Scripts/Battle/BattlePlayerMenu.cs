@@ -299,13 +299,27 @@ public class BattlePlayerMenu : MonoBehaviour
         }
     }
 
-    public void SetDamageIndicator(Vector3 position, int damage)
+    public void SetDamageIndicator(Vector3 position, int damage, float modifier = 1f)
     {
-        GetDamageIndicator().SetDamageIndicator(position, damage);
+        GetDamageIndicator().SetDamageIndicator(position, damage, modifier);
 
         float damageIntensity = ((float)damage / 10f);
 
         CameraShakeBattle.Instance.SetShake(Mathf.Lerp(0.3f, 0.6f, damageIntensity));
+
+
+        if (modifier <= 0.5f)
+        {
+            AudioManager.PlaySound("BATTLE_HIT_WEAK");
+        }
+        else if (modifier >= 0.5f)
+        {
+            AudioManager.PlaySound("BATTLE_HIT_STRONG");
+        }
+        else
+        {
+            AudioManager.PlaySound("BATTLE_HIT");
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////
