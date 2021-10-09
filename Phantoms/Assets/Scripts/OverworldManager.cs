@@ -185,7 +185,11 @@ public class OverworldManager : MonoBehaviour
     ///////////////////////////////////
     public void SetOverworldActive(bool active)
     {
-        if (PlayerInstance) { PlayerInstance.SetActive(active); }
+        if (PlayerInstance) { 
+            PlayerInstance.SetActive(active);
+            // Sometimes when coming back the player clips through the ground, just an added security measure to prevent that.
+            PlayerController.Motor.MoveCharacter(PlayerInstance.transform.position + Vector3.up * 0.3f);
+        }
         if (CanvasInstance) { CanvasInstance.SetActive(active); }
         if (CameraInstance) { CameraInstance.SetActive(active); }
         foreach(GameObject instance in PersistantInstances)

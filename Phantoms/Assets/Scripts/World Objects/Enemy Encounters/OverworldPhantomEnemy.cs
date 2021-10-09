@@ -29,6 +29,14 @@ public class OverworldPhantomEnemy : MonoBehaviour
     [SerializeField]
     private float m_returnSpeed = 1f;
 
+    [Header("Potential Flags")]
+    [SerializeField]
+    private bool m_encounterHasFlag = false;
+    [SerializeField]
+    private string m_encounterFlag = "";
+    [SerializeField]
+    private bool m_disableIfFlagSet = false;
+
 
     private enum OverworldEnemyState
     {
@@ -59,6 +67,11 @@ public class OverworldPhantomEnemy : MonoBehaviour
         // TODO: Make an empty object on the player, like 'player center' or 'player face' or something
         m_player = OverworldManager.Instance.PlayerController.PlayerCenter;
         m_startPosition = transform.position;
+
+        if (m_encounterHasFlag && m_disableIfFlagSet && SaveDataManager.CheckFlag(m_encounterFlag))
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     private void OnEnable()
@@ -221,6 +234,11 @@ public class OverworldPhantomEnemy : MonoBehaviour
 
     private void StartBattle()
     {
+        if (m_encounterHasFlag)
+        {
+            SaveDataManager.SetFlag(m_encounterFlag);
+        }
+
         BattleStartManager.Enemies = m_encounterData;
         m_alreadyTriggered = true;
         SetState(OverworldEnemyState.INACTIVE);
