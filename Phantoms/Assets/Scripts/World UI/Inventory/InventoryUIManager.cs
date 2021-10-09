@@ -181,6 +181,7 @@ public class InventoryUIManager : MonoBehaviour
         {
             m_currentTabIndex = newTabIndex;
             m_tabs[m_currentTabIndex].OpenTab();
+            SetPartyMembers();
         }
         else
         {
@@ -209,6 +210,7 @@ public class InventoryUIManager : MonoBehaviour
         {
             m_tabs[i].CloseTab();
         }
+        SetPartyMembers();
     }
 
     ////////////////////////////////
@@ -221,17 +223,21 @@ public class InventoryUIManager : MonoBehaviour
         PartyDataToInventory.Clear();
 
         m_playerMember.PartyMemberData = DataManager.Instance.GetPlayerBattleInstanceData();
+        m_playerMember.PartyMemberData.SetCurrentStats();
         m_allPartyMembers.Add(m_playerMember.PartyMemberData);
         PartyDataToInventory.Add(m_playerMember.PartyMemberData, m_playerMember);
+        m_playerMember.ResetState();
 
 
         PhantomInstanceData currentPhantom = PlayerInventoryManager.Instance.GetCurrentPhantom();
         if (currentPhantom != null)
         {
+            currentPhantom.SetCurrentStats();
             m_currentPartnerMember.gameObject.SetActive(true);
             m_currentPartnerMember.PartyMemberData = currentPhantom;
             m_allPartyMembers.Add(currentPhantom);
             PartyDataToInventory.Add(currentPhantom, m_currentPartnerMember);
+            m_currentPartnerMember.ResetState();
 
         }
         else
@@ -249,8 +255,10 @@ public class InventoryUIManager : MonoBehaviour
             {
                 partyMemberUI.gameObject.SetActive(true);
                 partyMemberUI.PartyMemberData = PlayerInventoryManager.Instance.Phantoms[i + 1];
+                partyMemberUI.PartyMemberData.SetCurrentStats();
                 m_allPartyMembers.Add(partyMemberUI.PartyMemberData);
                 PartyDataToInventory.Add(partyMemberUI.PartyMemberData, partyMemberUI);
+                partyMemberUI.ResetState();
             }
             else
             {

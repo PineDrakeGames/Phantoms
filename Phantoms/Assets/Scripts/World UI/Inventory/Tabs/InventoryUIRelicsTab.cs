@@ -208,6 +208,7 @@ public class InventoryUIRelicsTab : InventoryTab
             user.EquipRelic(m_currentRelic);
             ResetRelicList();
             UpdateRelicDisplay();
+            InventoryUIManager.Instance.SetPartyMembers();
         }
     }
 
