@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using PixelCrushers.DialogueSystem;
 
 public class DataManager : MonoBehaviour
 {
@@ -217,6 +218,8 @@ public class DataManager : MonoBehaviour
         m_playerBattleInstanceData.LevelUps.Relic = 1;
         m_playerBattleInstanceData.SetCurrentStats();
         m_playerBattleInstanceData.FullRestore();
+
+        RegisterLuaFunctions();
     }
 
     public PhantomData TryGetPhantomData(string phantomID)
@@ -307,5 +310,16 @@ public class DataManager : MonoBehaviour
     public float GetSoundVolume()
     {
         return Settings.MasterVolume * Settings.SoundsVolume;
+    }
+
+
+    /// Private Helper Functions! ///
+
+    // NOTE(CJ) - It might be better to put all these lua functions in one seperate script at one point,
+    // But for now I'm keeping them with the scripts that they are related to.
+    private void RegisterLuaFunctions()
+    {
+        Lua.RegisterFunction("CheckFlag", this, SymbolExtensions.GetMethodInfo(() => SaveDataManager.CheckFlag(string.Empty)));
+        Lua.RegisterFunction("SetFlag", this, SymbolExtensions.GetMethodInfo(() => SaveDataManager.SetFlag(string.Empty, true)));
     }
 }
