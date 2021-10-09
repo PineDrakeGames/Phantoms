@@ -9,7 +9,7 @@ public class InteractableDialogueTrigger : Interactable
     [SerializeField]
     PixelCrushers.DialogueSystem.Wrappers.DialogueSystemTrigger m_dialogueTrigger = null;
 
-    private void Awake()
+    private void Start()
     {
         PixelCrushers.DialogueSystem.DialogueManager.instance.conversationEnded += OnConversationEnd;
         PixelCrushers.DialogueSystem.DialogueManager.instance.conversationStarted += OnConversationStart;
