@@ -7,7 +7,7 @@ public class SettingsData
 {
     private float m_masterVolume = 0.7f;
     private float m_soundsVolume = 0.5f;
-    private float m_musicVolume = 0.5f;
+    private float m_musicVolume = 0.3f;
 
     public float MasterVolume
     {
