@@ -8,6 +8,10 @@ public abstract class InventoryTab : MonoBehaviour
     [SerializeField]
     protected GameObject m_tabParent = null;
 
+    [Header("Tab Options/Preferences")]
+    [SerializeField]
+    public InventoryPartyMember.DisplayMode PartyDisplayMode = InventoryPartyMember.DisplayMode.DEFAULT;
+
     public virtual void OpenTab()
     {
         m_tabParent.SetActive(true);

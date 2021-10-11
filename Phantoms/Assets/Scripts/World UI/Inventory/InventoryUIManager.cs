@@ -77,6 +77,8 @@ public class InventoryUIManager : MonoBehaviour
     /// Public Events ///
     public UnityEvent OnSelectedPartyMemberUpdate = new UnityEvent();
 
+    private InventoryPartyMember.DisplayMode m_currentDisplayMode = InventoryPartyMember.DisplayMode.DEFAULT;
+
     ///////////////////////
     /// Unity Functions ///
     ///////////////////////
@@ -173,7 +175,6 @@ public class InventoryUIManager : MonoBehaviour
     public void SetTab(int newTabIndex)
     {
         m_isTabOpen = true;
-        if (newTabIndex == m_currentTabIndex) { return; }
 
         m_tabs[m_currentTabIndex].CloseTab();
         InventoryPhantomContextMenu.Instance.HideMenu();
@@ -181,6 +182,8 @@ public class InventoryUIManager : MonoBehaviour
         {
             m_currentTabIndex = newTabIndex;
             m_tabs[m_currentTabIndex].OpenTab();
+            m_currentDisplayMode = m_tabs[m_currentTabIndex].PartyDisplayMode;
+            Debug.Log("Display mode to " + m_currentDisplayMode.ToString() + ", for tab " + m_tabs[m_currentTabIndex].GetType());
             SetPartyMembers();
         }
         else
@@ -210,6 +213,7 @@ public class InventoryUIManager : MonoBehaviour
         {
             m_tabs[i].CloseTab();
         }
+        m_currentDisplayMode = InventoryPartyMember.DisplayMode.DEFAULT;
         SetPartyMembers();
     }
 
@@ -226,6 +230,7 @@ public class InventoryUIManager : MonoBehaviour
         m_playerMember.PartyMemberData.SetCurrentStats();
         m_allPartyMembers.Add(m_playerMember.PartyMemberData);
         PartyDataToInventory.Add(m_playerMember.PartyMemberData, m_playerMember);
+        m_playerMember.CurrentDisplay = m_currentDisplayMode;
         m_playerMember.ResetState();
 
 
@@ -237,6 +242,7 @@ public class InventoryUIManager : MonoBehaviour
             m_currentPartnerMember.PartyMemberData = currentPhantom;
             m_allPartyMembers.Add(currentPhantom);
             PartyDataToInventory.Add(currentPhantom, m_currentPartnerMember);
+            m_currentPartnerMember.CurrentDisplay = m_currentDisplayMode;
             m_currentPartnerMember.ResetState();
 
         }
@@ -258,6 +264,7 @@ public class InventoryUIManager : MonoBehaviour
                 partyMemberUI.PartyMemberData.SetCurrentStats();
                 m_allPartyMembers.Add(partyMemberUI.PartyMemberData);
                 PartyDataToInventory.Add(partyMemberUI.PartyMemberData, partyMemberUI);
+                partyMemberUI.CurrentDisplay = m_currentDisplayMode;
                 partyMemberUI.ResetState();
             }
             else
