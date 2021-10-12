@@ -19,6 +19,11 @@ public class InventoryPartyMember : MonoBehaviour, IPointerEnterHandler, IPointe
     [SerializeField]
     private TMP_Text m_nameText = null;
 
+    [SerializeField]
+    private UIPhantomTypeDisplay m_typeOneDisplayer = null;
+    [SerializeField]
+    private UIPhantomTypeDisplay m_typeTwoDisplayer = null;
+
     [Header("HP and MP Display")]
     [SerializeField]
     private GameObject m_healthAndManaDisplayParent = null;
@@ -142,7 +147,7 @@ public class InventoryPartyMember : MonoBehaviour, IPointerEnterHandler, IPointe
     {
         if (data == m_partyMemberData)
         {
-            UpdateUI();
+            UpdateDisplay();
             return;
         }
 
@@ -156,6 +161,7 @@ public class InventoryPartyMember : MonoBehaviour, IPointerEnterHandler, IPointe
         }
         m_partyMemberData = data;
         UpdateUI();
+        UpdateDisplay();
     }
 
     public void UpdateUI()
@@ -175,6 +181,51 @@ public class InventoryPartyMember : MonoBehaviour, IPointerEnterHandler, IPointe
             m_levelText.text = "Level: " + m_partyMemberData.Level;
         }
 
+        if (m_partyMemberData is PhantomInstanceData)
+        {
+            PhantomInstanceData phantom = m_partyMemberData as PhantomInstanceData;
+            if (m_typeOneDisplayer != null)
+            {
+                if (phantom.PhanData.MainType != PhantomType.NONE)
+                {
+                    m_typeOneDisplayer.gameObject.SetActive(true);
+                    m_typeOneDisplayer.Type = phantom.PhanData.MainType;
+                }
+                else
+                {
+                    m_typeOneDisplayer.gameObject.SetActive(false);
+                }
+            }
+
+            if (m_typeTwoDisplayer != null)
+            {
+                if (phantom.PhanData.SecondType != PhantomType.NONE)
+                {
+                    m_typeTwoDisplayer.gameObject.SetActive(true);
+                    m_typeTwoDisplayer.Type = phantom.PhanData.SecondType;
+                }
+                else
+                {
+                    m_typeTwoDisplayer.gameObject.SetActive(false);
+                }
+            }
+        }
+        else
+        {
+            if (m_typeOneDisplayer != null)
+            {
+                m_typeOneDisplayer.gameObject.SetActive(false);
+            }
+
+            if (m_typeTwoDisplayer != null)
+            {
+                m_typeTwoDisplayer.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    public void UpdateDisplay()
+    {
         switch (m_displayMode)
         {
             case DisplayMode.DEFAULT:
@@ -207,7 +258,7 @@ public class InventoryPartyMember : MonoBehaviour, IPointerEnterHandler, IPointe
                 int availableRelicPoints = m_partyMemberData.CurrentStats.Relic - m_partyMemberData.CurrentRelicPoints;
                 if (m_availableRelicText) { m_availableRelicText.text = availableRelicPoints + "/" + totalRelicPoints; }
 
-                for(int i = 0; i < m_relicTicks.Count; i++)
+                for (int i = 0; i < m_relicTicks.Count; i++)
                 {
                     InventoryRelicTick relicTick = m_relicTicks[i];
                     if (i < totalRelicPoints)
@@ -223,8 +274,6 @@ public class InventoryPartyMember : MonoBehaviour, IPointerEnterHandler, IPointe
 
                 break;
         }
-
-        
     }
 
     public void OnClick()
@@ -283,6 +332,6 @@ public class InventoryPartyMember : MonoBehaviour, IPointerEnterHandler, IPointe
     {
         m_displayMode = newDisplay;
 
-        UpdateUI();
+        UpdateDisplay();
     }
 }
