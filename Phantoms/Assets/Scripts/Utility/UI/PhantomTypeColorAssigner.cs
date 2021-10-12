@@ -48,7 +48,7 @@ public abstract class PhantomTypeColorAssigner : MonoBehaviour
 
     private void SubscribeColorChange() => color.Changed += OnColorChanged;
 
-    private void UnsubscribeColorChange() => color.Changed -= OnColorChanged;
+    private void UnsubscribeColorChange() => m_prevColor.Changed -= OnColorChanged;
 
     private void OnColorChanged()
     {
@@ -78,7 +78,7 @@ public abstract class PhantomTypeColorAssigner : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        if (m_colorManager != null && color != m_prevColor)
+        if (m_colorManager != null)
         {
             UnsubscribeColorChange();
             SubscribeColorChange();

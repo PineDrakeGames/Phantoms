@@ -34,7 +34,7 @@ public abstract class ColorAssigner : MonoBehaviour
 
     private void SubscribeColorChange() => color.Changed += OnColorChanged;
 
-    private void UnsubscribeColorChange() => color.Changed -= OnColorChanged;
+    private void UnsubscribeColorChange() => m_prevColor.Changed -= OnColorChanged;
 
     private void OnColorChanged()
     {
@@ -64,7 +64,7 @@ public abstract class ColorAssigner : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        if (color != null && color != m_prevColor)
+        if (color != null)
         {
             UnsubscribeColorChange();
             SubscribeColorChange();
