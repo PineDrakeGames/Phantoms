@@ -36,6 +36,7 @@ public class DataManager : MonoBehaviour
     [Header("Data Serialize Fields")]
     [SerializeField]
     private PlayerBattleData m_playerBattleData = null;
+    public PlayerBattleData PlayerBattleData { get { return m_playerBattleData; } }
 
     [SerializeField]
     private PhantomDataTable m_phantomData = null;
@@ -109,7 +110,11 @@ public class DataManager : MonoBehaviour
     ////////////////////
 
     private SettingsData m_settings = null;
-    public SettingsData Settings { get { return m_settings; } }
+    public SettingsData Settings
+    {
+        get { return m_settings; } 
+        set { m_settings = value; }    
+    }
 
     // Converting the data into dictionaries to more easily access it
     private Dictionary<string, PhantomData> m_phantomIdToData = null;
@@ -120,6 +125,11 @@ public class DataManager : MonoBehaviour
 
     // Current player data
     private PlayerBattleInstanceData m_playerBattleInstanceData = null;
+    public PlayerBattleInstanceData PlayerInstanceData
+    {
+        get { return m_playerBattleInstanceData; }
+        set { m_playerBattleInstanceData = value; }
+    }
 
     // Variables for drops, the currency.
     private int m_currentDrops = 0;

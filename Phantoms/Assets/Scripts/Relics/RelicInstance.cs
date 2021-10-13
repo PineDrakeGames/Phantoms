@@ -7,7 +7,24 @@ public class RelicInstance
 {
     public RelicData Data = null;
     public bool Equipped = false;
-    public UserBattleInstanceData User = null;
+    private UserBattleInstanceData m_user = null;
+    public UserBattleInstanceData User
+    {
+        get { return m_user; }
+        set
+        {
+            m_user = value;
+            if (m_user != null)
+            {
+                UserID = m_user.InstanceID;
+            }
+            else
+            {
+                UserID = "";
+            }
+        }
+    }
+    public string UserID = null;
 
     public RelicInstance()
     {

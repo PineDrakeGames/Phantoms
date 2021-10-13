@@ -17,9 +17,32 @@ public class PlayerBattleInstanceData : UserBattleInstanceData
         }
     }
 
+    public const string PLAYER_INSTANCE_ID = "Player";
+
+    public PlayerBattleInstanceData()
+    {
+        InstanceID = PLAYER_INSTANCE_ID;
+    }
+
     public PlayerBattleInstanceData(PlayerBattleData playerData)
     {
-        Data = playerData;
+        InstanceID = PLAYER_INSTANCE_ID;
+        Level = 0;
+        LevelUps = new LevelUpStats();
+        LevelUps.SetToZero();
+        CurrentStats = new BattleStats();
+    }
+
+    public PlayerBattleInstanceData(PlayerBattleInstanceData playerData)
+    {
+        InstanceID = PLAYER_INSTANCE_ID;
+        Level = playerData.Level;
+        LevelUps = playerData.LevelUps;
+        CurrentStats = playerData.CurrentStats;
+        Data = playerData.Data;
+        CurrentHP = playerData.CurrentHP;
+        CurrentMana = playerData.CurrentMana;
+        Experience = playerData.Experience;
     }
 
     public override void SetCurrentStats()

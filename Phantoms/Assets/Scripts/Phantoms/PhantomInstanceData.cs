@@ -19,6 +19,10 @@ public class PhantomInstanceData : UserBattleInstanceData
             {
                 Data = DataManager.Instance.TryGetPhantomData(PhantomID);
             }
+            if (string.IsNullOrEmpty(PhantomID))
+            {
+                PhantomID = Data.ID;
+            }
             return (PhantomData)Data;
         }
     }
@@ -32,6 +36,32 @@ public class PhantomInstanceData : UserBattleInstanceData
         LevelUps = new LevelUpStats();
         LevelUps.SetToZero();
         CurrentStats = new BattleStats();
+    }
+
+    public PhantomInstanceData(PhantomData data)
+    {
+        Data = data;
+        PhantomID = data.ID;
+        NickName = string.Empty;
+        Level = 0;
+        Background = PhantomBackground.None;
+        LevelUps = new LevelUpStats();
+        LevelUps.SetToZero();
+        CurrentStats = new BattleStats();
+    }
+
+    public PhantomInstanceData(PhantomInstanceData phantomData)
+    {
+        PhantomID = phantomData.PhantomID;
+        NickName = phantomData.NickName;
+        Level = phantomData.Level;
+        Background = phantomData.Background;
+        LevelUps = phantomData.LevelUps;
+        CurrentStats = phantomData.CurrentStats;
+        Data = phantomData.Data;
+        CurrentHP = phantomData.CurrentHP;
+        CurrentMana = phantomData.CurrentMana;
+        Experience = phantomData.Experience;
     }
 
     public override void SetCurrentStats()

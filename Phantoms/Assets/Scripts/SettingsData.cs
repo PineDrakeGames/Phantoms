@@ -26,4 +26,15 @@ public class SettingsData
         get { return m_musicVolume; }
         set { m_musicVolume = Mathf.Clamp01(value); }
     }
+
+    public SettingsData()
+    {
+    }
+
+    public SettingsData(SettingsData settings)
+    {
+        m_masterVolume = settings.MasterVolume;
+        m_soundsVolume = settings.SoundsVolume;
+        m_musicVolume = settings.MusicVolume;
+    }
 }

@@ -74,4 +74,15 @@ public class PauseMenu : MonoBehaviour
     {
         Application.Quit();
     }
+
+    // Temp stuff for testing
+    public void Save()
+    {
+        PixelCrushers.SaveSystem.SaveToSlot(0);
+    }
+
+    public void Load()
+    {
+        PixelCrushers.SaveSystem.LoadFromSlot(0);
+    }
 }

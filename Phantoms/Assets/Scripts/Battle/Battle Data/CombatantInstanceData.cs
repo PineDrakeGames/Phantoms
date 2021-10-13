@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 [System.Serializable]
 public abstract class CombatantInstanceData
 {
     public CombatantData Data;
+
+    public string InstanceID = Guid.NewGuid().ToString();
 
     public int CurrentHP = 0;
     public int CurrentMana = 0;

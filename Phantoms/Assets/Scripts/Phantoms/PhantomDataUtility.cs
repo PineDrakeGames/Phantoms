@@ -134,6 +134,7 @@ public static class PhantomDataUtility
 
 
         PhantomInstanceData instanceData = new PhantomInstanceData();
+        Debug.Log(instanceData.InstanceID);
         instanceData.Data = phantomData;
 
         // Get random background

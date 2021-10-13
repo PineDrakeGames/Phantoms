@@ -21,4 +21,10 @@ public class ItemInstanceData
         Data = data;
         Quantity = 0;
     }
+
+    public ItemInstanceData(ItemInstanceData instanceData)
+    {
+        Data = instanceData.Data;
+        Quantity = instanceData.Quantity;
+    }
 }
