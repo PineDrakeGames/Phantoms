@@ -45,6 +45,11 @@ namespace PixelCrushers.DialogueSystem
             {
                 return listener;
             }
+            else if (string.Compare(specifier, SequencerKeywords.Player, System.StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                // Note: This only works in the overworld for now
+                return OverworldManager.Instance.PlayerController.CharacterAnimator.transform;
+            }
             else
             {
                 GameObject go = FindSpecifier(specifier);

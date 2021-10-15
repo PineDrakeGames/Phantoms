@@ -57,8 +57,16 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
             if ((subject != null) && (target != null) && (subject != target))
             {
                 subjectRigidbody = subject.GetComponent<Rigidbody>();
-                subjectMotor = subject.GetComponent<KinematicCharacterController.KinematicCharacterMotor>();
-                subjectController = subject.GetComponent<PlayerController>();
+                subjectMotor = subject.GetComponentInChildren<KinematicCharacterController.KinematicCharacterMotor>();
+                if (subjectMotor == null)
+                {
+                    subjectMotor = subject.GetComponentInParent<KinematicCharacterController.KinematicCharacterMotor>();
+                }
+                subjectController = subject.GetComponentInChildren<PlayerController>();
+                if (subjectController == null)
+                {
+                    subjectController = subject.GetComponentInParent<PlayerController>();
+                }
 
                 // If duration is above the cutoff, smoothly move toward target:
                 if (duration > SmoothMoveCutoff)

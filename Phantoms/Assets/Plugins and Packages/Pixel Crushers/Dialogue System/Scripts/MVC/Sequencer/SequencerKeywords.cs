@@ -11,6 +11,7 @@ namespace PixelCrushers.DialogueSystem
 
         public const string Speaker = "speaker";
         public const string Listener = "listener";
+        public const string Player = "player";
 
         public const string DefaultSequence = "{{default}}";
         public const string End = "{{end}}";
