@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEditor;
 
 [CustomEditor(typeof(OverworldManager))]
-public class OverworldManagerEditor : Editor 
+public class OverworldManagerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
@@ -81,7 +81,6 @@ public class OverworldManager : MonoBehaviour
         }
     }
 
-
     ///////////////////////////////////////
     /// Private variables and Constants ///
     ///////////////////////////////////////
@@ -94,6 +93,10 @@ public class OverworldManager : MonoBehaviour
     public CameraController CamController { get { return m_cameraController; } }
     private PlayerController m_playerController = null;
     public PlayerController PlayerController { get { return m_playerController; } }
+
+    private bool m_queuePlayerSpawnpoint = false;
+    private Vector3 m_queuedSpawnPosition = Vector3.zero;
+
 
     ///////////////////////
     /// Unity Functions ///
@@ -145,13 +148,13 @@ public class OverworldManager : MonoBehaviour
         }
         m_cameraController = CameraInstance.GetComponent<CameraController>();
         DontDestroyOnLoad(CameraInstance);
-        foreach(GameObject persistant in m_persistentPrefabs)
+        foreach (GameObject persistant in m_persistentPrefabs)
         {
             GameObject instance = Instantiate(persistant);
             DontDestroyOnLoad(instance);
             PersistantInstances.Add(instance);
         }
-        foreach(GameObject persistant in m_battlePersistentPrefabs)
+        foreach (GameObject persistant in m_battlePersistentPrefabs)
         {
             GameObject instance = Instantiate(persistant);
             DontDestroyOnLoad(instance);
@@ -169,10 +172,10 @@ public class OverworldManager : MonoBehaviour
         Debug.Log("Deinitializing Overworld Manager");
 
         // Destroy any instances of persistant objects
-        if (PlayerInstance) { Destroy (PlayerInstance); }
-        if (CanvasInstance) { Destroy (CanvasInstance); }
-        if (CameraInstance) { Destroy (CameraInstance); }
-        
+        if (PlayerInstance) { Destroy(PlayerInstance); }
+        if (CanvasInstance) { Destroy(CanvasInstance); }
+        if (CameraInstance) { Destroy(CameraInstance); }
+
         PersistantInstances.Clear();
         BattlePersistantInstances.Clear();
         // Destroy this last
@@ -185,14 +188,15 @@ public class OverworldManager : MonoBehaviour
     ///////////////////////////////////
     public void SetOverworldActive(bool active)
     {
-        if (PlayerInstance) { 
+        if (PlayerInstance)
+        {
             PlayerInstance.SetActive(active);
             // Sometimes when coming back the player clips through the ground, just an added security measure to prevent that.
             PlayerController.Motor.MoveCharacter(PlayerInstance.transform.position + Vector3.up * 0.3f);
         }
         if (CanvasInstance) { CanvasInstance.SetActive(active); }
         if (CameraInstance) { CameraInstance.SetActive(active); }
-        foreach(GameObject instance in PersistantInstances)
+        foreach (GameObject instance in PersistantInstances)
         {
             if (instance != null)
             {
@@ -208,43 +212,60 @@ public class OverworldManager : MonoBehaviour
 
     public void PlaceOverworldObjects()
     {
-        OverworldSceneEnterTrigger[] sceneEnterTriggers = FindObjectsOfType<OverworldSceneEnterTrigger>();
 
-        OverworldSceneEnterTrigger defaultEnter = null;
-
-        bool foundTrigger = false;
-        foreach(OverworldSceneEnterTrigger enterTrigger in sceneEnterTriggers)
+        // Placing the player!
+        if (m_queuePlayerSpawnpoint)
         {
-            if (enterTrigger.LocationID == m_loadLocationID)
-            {
-                // TODO: Have the enter trigger handle placing the player - just setting to position for now.
-                m_playerController.Motor.SetPositionAndRotation(enterTrigger.transform.position, enterTrigger.transform.rotation);
-                PlayerInstance.transform.position = enterTrigger.transform.position;
-                LoadingManager.CurrentLoadDirection = enterTrigger.EnterDirection;
-
-                PlayerRespawnManager.Instance.SetSafeRespawn(enterTrigger.transform.position);
-
-                foundTrigger = true;
-                break;
-            }
-            if (enterTrigger.DefaultEnter) { defaultEnter = enterTrigger; }
+            m_playerController.Motor.SetPositionAndRotation(m_queuedSpawnPosition, Quaternion.identity);
+            m_queuePlayerSpawnpoint = false;
         }
-
-        if (!foundTrigger)
+        else
         {
-            if (defaultEnter != null)
-            {
-                m_playerController.Motor.SetPositionAndRotation(defaultEnter.transform.position, defaultEnter.transform.rotation);
-                PlayerInstance.transform.position = defaultEnter.transform.position;
-                LoadingManager.CurrentLoadDirection = defaultEnter.EnterDirection;
 
-                PlayerRespawnManager.Instance.SetSafeRespawn(defaultEnter.transform.position);
-            }
-            else
+            OverworldSceneEnterTrigger[] sceneEnterTriggers = FindObjectsOfType<OverworldSceneEnterTrigger>();
+
+            OverworldSceneEnterTrigger defaultEnter = null;
+
+            bool foundTrigger = false;
+            foreach (OverworldSceneEnterTrigger enterTrigger in sceneEnterTriggers)
             {
-                m_playerController.Motor.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                if (enterTrigger.LocationID == m_loadLocationID)
+                {
+                    // TODO: Have the enter trigger handle placing the player - just setting to position for now.
+                    m_playerController.Motor.SetPositionAndRotation(enterTrigger.transform.position, enterTrigger.transform.rotation);
+                    PlayerInstance.transform.position = enterTrigger.transform.position;
+                    LoadingManager.CurrentLoadDirection = enterTrigger.EnterDirection;
+
+                    PlayerRespawnManager.Instance.SetSafeRespawn(enterTrigger.transform.position);
+
+                    foundTrigger = true;
+                    break;
+                }
+                if (enterTrigger.DefaultEnter) { defaultEnter = enterTrigger; }
+            }
+
+            if (!foundTrigger)
+            {
+                if (defaultEnter != null)
+                {
+                    m_playerController.Motor.SetPositionAndRotation(defaultEnter.transform.position, defaultEnter.transform.rotation);
+                    PlayerInstance.transform.position = defaultEnter.transform.position;
+                    LoadingManager.CurrentLoadDirection = defaultEnter.EnterDirection;
+
+                    PlayerRespawnManager.Instance.SetSafeRespawn(defaultEnter.transform.position);
+                }
+                else
+                {
+                    m_playerController.Motor.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                }
             }
         }
+    }
+
+    public void QueuePlayerSpawnPoint(Vector3 position)
+    {
+        m_queuePlayerSpawnpoint = true;
+        m_queuedSpawnPosition = position;
     }
 
 #if UNITY_EDITOR

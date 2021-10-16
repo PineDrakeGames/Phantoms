@@ -78,11 +78,11 @@ public class PauseMenu : MonoBehaviour
     // Temp stuff for testing
     public void Save()
     {
-        PixelCrushers.SaveSystem.SaveToSlot(0);
+        PixelCrushers.SaveSystem.SaveToSlot(SaveDataManager.CurrentSaveSlot);
     }
 
     public void Load()
     {
-        PixelCrushers.SaveSystem.LoadFromSlot(0);
+        PixelCrushers.SaveSystem.LoadFromSlot(SaveDataManager.CurrentSaveSlot);
     }
 }

@@ -156,7 +156,7 @@ public class InventoryUIManager : MonoBehaviour
 
         m_isInventoryOpen = true;
         m_inventoryParent.SetActive(true);
-        m_tabs[m_currentTabIndex].OpenTab();
+        //m_tabs[m_currentTabIndex].OpenTab();
         SetPartyMembers();
         CloseTab();
         Time.timeScale = 0f;

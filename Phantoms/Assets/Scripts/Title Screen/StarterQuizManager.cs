@@ -98,8 +98,6 @@ public class StarterQuizManager : MonoBehaviour
             m_relatedAnswers[option.QuizID.Trim().ToUpper()] = 0;
         }
 
-        m_titleScreenStuff.SetActive(false);
-
         DialogueManager.StartConversation(m_starterQuizConversation);
     }
 

@@ -8,9 +8,9 @@ public class BattleInitializer : MonoBehaviour
 {
     [Header("Music? Idk why not here")]
     [SerializeField]
-    private AudioClip m_battleMusicIntro = null;
+    private string m_battleMusicIntro = null;
     [SerializeField]
-    private AudioClip m_battleMusicLoop = null;
+    private string m_battleMusicLoop = null;
 
     [Header("References to other scripts")]
     [SerializeField]

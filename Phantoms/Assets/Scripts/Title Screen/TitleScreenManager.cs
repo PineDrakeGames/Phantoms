@@ -6,6 +6,26 @@ using UnityEngine.SceneManagement;
 
 public class TitleScreenManager : MonoBehaviour
 {
+    /////////////////////////
+    /// Serialized Fields ///
+    /////////////////////////
+    [Header("Button References")]
+    [SerializeField]
+    private Button m_startButton = null;
+    [SerializeField]
+    private Button m_continueButton = null;
+    [SerializeField]
+    private Button m_loadSavesButton = null;
+    [SerializeField]
+    private CanvasGroup m_buttons = null;
+
+    [Header("Other References")]
+    [SerializeField]
+    private StarterQuizManager m_starterQuizManager = null;
+
+    [SerializeField]
+    private GameObject m_titleScreenParent = null;
+
     [SerializeField]
     [Scene]
     private string m_starterScene = null;
@@ -18,8 +38,7 @@ public class TitleScreenManager : MonoBehaviour
 
     [SerializeField]
     private Image m_backing = null;
-    [SerializeField]
-    private CanvasGroup m_buttons = null;
+
 
     [SerializeField]
     private float m_backingFadeOutTime = 1f;
@@ -29,6 +48,9 @@ public class TitleScreenManager : MonoBehaviour
 
     private Coroutine m_currentSequence = null;
 
+    ///////////////////////
+    /// Unity Functions ///
+    ///////////////////////
     private void Awake()
     {
         m_backing.gameObject.SetActive(true);
@@ -36,7 +58,92 @@ public class TitleScreenManager : MonoBehaviour
         backingColor.a = 1f;
         m_backing.color = backingColor;
         m_buttons.gameObject.SetActive(false);
-        m_currentSequence = StartCoroutine(StartingSequence());
+
+        DataManager.CreateInstance();
+    }
+
+    private void Start()
+    {
+        CheckSaveData();
+        m_currentSequence = StartCoroutine(StartingSequence());        
+    }
+
+    ///////////////////////////////
+    /// Public Button Functions ///
+    ///////////////////////////////
+
+    public void StartNewGame(int slotNumber)
+    {
+        SaveDataManager.CurrentSaveSlot = slotNumber;
+
+        m_titleScreenParent.SetActive(false);
+
+        m_starterQuizManager.StartQuiz();
+    }
+
+    public void ContinueFromLastSave()
+    {
+        // Check to see if there is save data in the 
+        int slot = Mathf.Clamp(DataManager.Instance.Settings.LastSaveSlotPlayed, 0, SaveSlotManager.NUM_SLOTS);
+        if (!PixelCrushers.SaveSystem.HasSavedGameInSlot(slot))
+        {
+            for (int i = 0; i < SaveSlotManager.NUM_SLOTS; i++)
+            {
+                if (PixelCrushers.SaveSystem.HasSavedGameInSlot(i))
+                {
+                    slot = i;
+                    break;
+                }
+            }
+        }
+
+        SaveDataManager.CurrentSaveSlot = slot;
+        PixelCrushers.SaveSystem.LoadFromSlot(SaveDataManager.CurrentSaveSlot);
+    }
+
+
+    //////////////////////////////////////////////
+    /// Private Helper Functions + Coroutines! ///
+    //////////////////////////////////////////////
+    private void CheckSaveData()
+    {
+        // Load the settings first (If they are there)
+        SaveSettingsManager.Load();
+
+        // Load the save slots! Basically, check if we have save data - if we do, set up the save slot buttons,
+        // Otherwise set up the 'first time screen' basically.
+        SaveSlotManager.Load();
+
+        bool hasSaveData = false; // Start by assuming we don't have save data, then go through the slots (if there are any)
+
+        // TODO: Just because we don't have the slot data, we might still have the actual save data - 
+        // If thats the case, just make some slot data but leave the rest of the info blank for now
+        for (int i = 0; i < SaveSlotManager.NUM_SLOTS; i++)
+        {
+            SaveSlot slot = SaveSlotManager.GetSlotData(i);
+            if (slot != null)
+            {
+                Debug.Log("Slot " + slot.SlotNumber + ": " + slot.LastSave);
+                if (PixelCrushers.SaveSystem.HasSavedGameInSlot(slot.SlotNumber))
+                {
+                    hasSaveData = true;
+                    break;
+                }
+            }
+        }
+
+        if (hasSaveData)
+        {
+            m_startButton.gameObject.SetActive(false);
+            m_continueButton.gameObject.SetActive(true);
+            m_loadSavesButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            m_startButton.gameObject.SetActive(true);
+            m_continueButton.gameObject.SetActive(false);
+            m_loadSavesButton.gameObject.SetActive(false);
+        }
     }
 
     private IEnumerator StartingSequence()

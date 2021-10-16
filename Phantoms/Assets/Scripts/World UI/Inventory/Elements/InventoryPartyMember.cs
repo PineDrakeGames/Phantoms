@@ -166,7 +166,7 @@ public class InventoryPartyMember : MonoBehaviour, IPointerEnterHandler, IPointe
 
     public void UpdateUI()
     {
-        if (m_partyMemberData == null)
+        if (m_partyMemberData == null || m_partyMemberData.Data == null)
         {
             // TODO: Hide everything maybe?
             return;

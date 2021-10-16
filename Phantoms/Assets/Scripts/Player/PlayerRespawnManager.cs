@@ -28,6 +28,7 @@ public class PlayerRespawnManager : MonoBehaviour
 
     // Variables for the safe respawn
     private Vector3 m_safeRespawnPoint = Vector3.zero;
+    public Vector3 SafeRespawnPoint { get { return m_safeRespawnPoint; } }
 
     // Variables for the near respawn
     private Vector3 m_nearRespawnPoint = Vector3.zero;

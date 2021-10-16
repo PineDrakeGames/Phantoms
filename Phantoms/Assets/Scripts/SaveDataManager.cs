@@ -119,9 +119,6 @@ public class SavedItemData
 [System.Serializable]
 public class SavedGameData
 {
-    // Settings!
-    public SettingsData Settings = new SettingsData();
-
     // Story Stuff
     public List<Flag> Flags = new List<Flag>();
 
@@ -134,6 +131,10 @@ public class SavedGameData
     public List<SavedRelicData> Relics = new List<SavedRelicData>();
     public List<SavedItemData> KeyItems = new List<SavedItemData>();
 
+    // Last scene and position that the player was in
+    public string Scene = "";
+    public Vector3 ScenePosition = Vector3.zero;
+
     // Other
     public int Drops = 0;
     public List<string> StartersOrder = new List<string>();
@@ -144,6 +145,8 @@ public class SavedGameData
 
 public static class SaveDataManager
 {
+    public static int CurrentSaveSlot = -1;
+
     public static SavedGameData SavedData = new SavedGameData();
 
     private static Dictionary<string, bool> m_flags = new Dictionary<string, bool>();
@@ -156,9 +159,6 @@ public static class SaveDataManager
     // much easier to do.
     public static void UpdateSavedData()
     {
-        // Settings
-        SavedData.Settings = new SettingsData(DataManager.Instance.Settings);
-
         // Flags
         SavedData.Flags.Clear();
         foreach(KeyValuePair<string, bool> flag in m_flags)
@@ -208,19 +208,25 @@ public static class SaveDataManager
             SavedData.KeyItems.Add(savedItem);
         }
 
+        // Scene and position
+        SavedData.Scene = LoadingManager.Instance.LastOverworldScene.path;
+        Debug.Log(PlayerRespawnManager.Instance.SafeRespawnPoint);
+        Vector3 spawn = PlayerRespawnManager.Instance.SafeRespawnPoint;
+        SavedData.ScenePosition = new Vector3(spawn.x, spawn.y, spawn.z);
+        Debug.Log(SavedData.ScenePosition);
+
         // Other
         SavedData.Drops = DataManager.CurrentDrops;
         SavedData.ChosenStarterID = System.String.Copy(DataManager.Instance.ChosenStarterID);
         SavedData.StartersOrder = DataManager.Instance.StartersOrder.ConvertAll(starter => System.String.Copy(starter)); // Deep copy of the list of strings
-        SavedData.StarterChoices = DataManager.Instance.StarterChoices.ConvertAll(starter => System.String.Copy(starter)); 
+        SavedData.StarterChoices = DataManager.Instance.StarterChoices.ConvertAll(starter => System.String.Copy(starter));
+
+        SaveSlotManager.Save();
     }
 
     // The reverse of the previous function, updating all of our static data with the SavedData.
     public static void UpdateStaticData()
     {
-        // Settings
-        DataManager.Instance.Settings = new SettingsData(SavedData.Settings);
-
         // Flags
         m_flags.Clear();
         foreach(Flag flag in SavedData.Flags)
@@ -235,6 +241,7 @@ public static class SaveDataManager
         playerData.CurrentMana = savedPlayerData.CurrentMana;
         playerData.Experience = savedPlayerData.Experience;
         playerData.LevelUps = new LevelUpStats(savedPlayerData.LevelUps);
+        playerData.Data = DataManager.Instance.PlayerBattleData;
         DataManager.Instance.PlayerInstanceData = playerData;
         
         // Player's Phantoms
@@ -242,6 +249,7 @@ public static class SaveDataManager
         foreach(SavedPhantomData savedPhantom in SavedData.Phantoms)
         {
             PhantomInstanceData phantomInstance = new PhantomInstanceData(DataManager.Instance.TryGetPhantomData(savedPhantom.PhantomID));
+            Debug.Log(phantomInstance.Data.DisplayName);
             phantomInstance.InstanceID = savedPhantom.InstanceID; // VERY IMPORTANT - make sure that it gets the same ID so that relics can be re-equipped properly
             phantomInstance.CurrentHP = savedPhantom.CurrentHP;
             phantomInstance.CurrentMana = savedPhantom.CurrentHP;
@@ -299,6 +307,12 @@ public static class SaveDataManager
         DataManager.Instance.ChosenStarterID = System.String.Copy(SavedData.ChosenStarterID);
         DataManager.Instance.StartersOrder = SavedData.StartersOrder.ConvertAll(starter => System.String.Copy(starter)); // Deep copy of the list of strings
         DataManager.Instance.StarterChoices = SavedData.StarterChoices.ConvertAll(starter => System.String.Copy(starter));
+
+        // LAST PART is loading into the correct scene and position!
+        // Gonna be pretty naive about this for now, just always assume that we CAN load and
+        // not really check if its safe.
+        OverworldManager.Instance.QueuePlayerSpawnPoint(SavedData.ScenePosition);
+        LoadingManager.LoadScene(SavedData.Scene);
     }
     
     ////////////////////

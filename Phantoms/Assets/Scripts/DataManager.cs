@@ -17,13 +17,7 @@ public class DataManager : MonoBehaviour
         {
             if (s_instance == null)
             {
-                GameObject instance = Instantiate(Resources.Load(DATA_MANAGER_PREFAB, typeof(GameObject))) as GameObject;
-                instance.name = "Data Manager";
-                s_instance = instance.GetComponent<DataManager>();
-                if (s_instance)
-                {
-                    s_instance.Initialize();
-                }
+                CreateInstance();
             }
             return s_instance;
         }
@@ -112,8 +106,8 @@ public class DataManager : MonoBehaviour
     private SettingsData m_settings = null;
     public SettingsData Settings
     {
-        get { return m_settings; } 
-        set { m_settings = value; }    
+        get { return m_settings; }
+        set { m_settings = value; }
     }
 
     // Converting the data into dictionaries to more easily access it
@@ -175,6 +169,17 @@ public class DataManager : MonoBehaviour
     ////////////////////////
     /// Public functions ///
     ////////////////////////
+
+    public static void CreateInstance()
+    {
+        GameObject instance = Instantiate(Resources.Load(DATA_MANAGER_PREFAB, typeof(GameObject))) as GameObject;
+        instance.name = "Data Manager";
+        s_instance = instance.GetComponent<DataManager>();
+        if (s_instance)
+        {
+            s_instance.Initialize();
+        }
+    }
 
     // Initialize function, called when a data manager is created
     public void Initialize()

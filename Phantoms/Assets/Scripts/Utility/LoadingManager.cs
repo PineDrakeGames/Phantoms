@@ -47,6 +47,7 @@ public class LoadingManager : MonoBehaviour
     // Stuff for the current overworld
     private List<GameObject> m_overworldSceneItems = new List<GameObject>();
     private Scene m_lastOverworldScene;
+    public Scene LastOverworldScene { get { return m_lastOverworldScene; } }
     private AudioClip m_currentOverworldMusic = null;
 
 
@@ -225,6 +226,7 @@ public class LoadingManager : MonoBehaviour
             case SceneType.OVERWORLD:
                 OverworldManager.Instance.PlaceOverworldObjects();
                 OverworldManager.Instance.SetOverworldActive(true);
+                m_lastOverworldScene = SceneManager.GetActiveScene();
                 break;
             case SceneType.BATTLE:
                 break;
