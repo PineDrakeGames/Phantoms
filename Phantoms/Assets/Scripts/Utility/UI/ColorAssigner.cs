@@ -34,7 +34,7 @@ public abstract class ColorAssigner : MonoBehaviour
 
     private void SubscribeColorChange() => color.Changed += OnColorChanged;
 
-    private void UnsubscribeColorChange() => m_prevColor.Changed -= OnColorChanged;
+    private void UnsubscribeColorChange() => color.Changed -= OnColorChanged;
 
     private void OnColorChanged()
     {

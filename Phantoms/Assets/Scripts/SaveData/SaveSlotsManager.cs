@@ -68,7 +68,7 @@ public static class SaveSlotManager
     public static void Save()
     {
         UpdateSlots();
-        
+
         string jsonData = JsonUtility.ToJson(SavedData, true);
 
         string path = Application.persistentDataPath + SLOTS_FILE_NAME;
@@ -95,7 +95,7 @@ public static class SaveSlotManager
         }
 
         bool foundSlot = false;
-        foreach(SaveSlot slot in SavedData.Slots)
+        foreach (SaveSlot slot in SavedData.Slots)
         {
             if (slot.SlotNumber == SaveDataManager.CurrentSaveSlot)
             {
@@ -106,10 +106,7 @@ public static class SaveSlotManager
 
         if (!foundSlot)
         {
-            SaveSlot slot = new SaveSlot(SaveDataManager.CurrentSaveSlot);
-            slot.SlotNumber = SaveDataManager.CurrentSaveSlot;
-            slot.LastSave = System.DateTime.Now.ToString("MM/dd/yyyy, hh:mm tt");
-            SavedData.Slots.Add(slot);
+            CreateSlot(SaveDataManager.CurrentSaveSlot);
         }
     }
 
@@ -123,11 +120,20 @@ public static class SaveSlotManager
                 return slot;
             }
         }
+
+        // If we reached this point, didn't find a save slot
+        if (PixelCrushers.SaveSystem.HasSavedGameInSlot(slotNumber))
+        {
+            SaveSlot slot = CreateSlot(slotNumber);
+            return slot;
+        }
+
         return null;
     }
 
     public static void CleanUpSlots()
     {
+        List<int> foundSlots = new List<int>();
         for (int i = 0; i < SavedData.Slots.Count; i++)
         {
             SaveSlot slot = SavedData.Slots[i];
@@ -136,6 +142,33 @@ public static class SaveSlotManager
                 SavedData.Slots.RemoveAt(i);
                 i--;
             }
+            else if (foundSlots.Contains(slot.SlotNumber))
+            {
+                SavedData.Slots.RemoveAt(i);
+                i--;
+            }
+            else
+            {
+                foundSlots.Add(slot.SlotNumber);
+            }
         }
+
+        for (int i = 0; i < NUM_SLOTS; i++)
+        {
+            if (PixelCrushers.SaveSystem.HasSavedGameInSlot(i) && !foundSlots.Contains(i))
+            {
+                CreateSlot(i);
+            }
+        }
+    }
+
+    private static SaveSlot CreateSlot(int slotNumber)
+    {
+        Debug.Log("Making Slot " + slotNumber);
+        SaveSlot slot = new SaveSlot(slotNumber);
+        slot.SlotNumber = slotNumber;
+        slot.LastSave = System.DateTime.Now.ToString("MM/dd/yyyy, hh:mm tt");
+        SavedData.Slots.Add(slot);
+        return slot;
     }
 }

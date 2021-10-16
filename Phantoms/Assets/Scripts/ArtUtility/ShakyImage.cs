@@ -22,11 +22,8 @@ public class ShakyImage : Image
     /////////////////////////
 
     [Header("Shaky Variables")]
-    [SerializeField]
-    private float m_shakeDistance = 5f;
-
-    [SerializeField]
-    private RangedFloat m_shakeInterval = new RangedFloat(0.2f, 0.5f);
+    public float ShakeDistance = 5f;
+    public RangedFloat ShakeInterval = new RangedFloat(0.2f, 0.5f);
 
     // For a sliced image, the imaged is divided into 9, with 36 verts, so positioning them is weirder.
     // Chart of the verts for future reference
@@ -271,11 +268,11 @@ public class ShakyImage : Image
 
     private void GenerateNewCornerOffset(ImageCornerOffset corner)
     {
-        Vector3 newPosition = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0f).normalized * Random.Range(0f, m_shakeDistance);
+        Vector3 newPosition = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0f).normalized * Random.Range(0f, ShakeDistance);
         corner.PrevPos = corner.CurrentPos;
         corner.TargetPos = newPosition;
         corner.CurrentTime = 0f;
-        corner.TotalTime = Random.Range(m_shakeInterval.minValue, m_shakeInterval.maxValue);
+        corner.TotalTime = Random.Range(ShakeInterval.minValue, ShakeInterval.maxValue);
     }
 
     public static float InverseLerp(Vector3 a, Vector3 b, Vector3 value)

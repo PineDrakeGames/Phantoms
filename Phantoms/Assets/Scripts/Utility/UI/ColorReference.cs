@@ -8,6 +8,8 @@ public class ColorReference : ScriptableObject
 {
     [SerializeField] private UnityEngine.Color color;
 
+    public UnityEngine.Color Color { get { return color; } }
+
     public event Action Changed;
 
     public float a
