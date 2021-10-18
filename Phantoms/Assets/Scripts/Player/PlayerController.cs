@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
     public GameObject AttackHitbox = null;
     public float AttackInputLingerTime = 0.15f;
     public float AttackMaxMoveSpeed = 1f;
+    public float ScytheOutTime = 4f;
 
     [Header("Art stuff")]
     [SerializeField]
@@ -92,6 +93,8 @@ public class PlayerController : MonoBehaviour, ICharacterController
     private float _timeSinceJumpRequested = Mathf.Infinity;
     private float _timeSinceLastAbleToJump = 0f;
     private float _timeSinceAttackRequested = Mathf.Infinity;
+    private float _timeSinceAttack = 0f;
+    private bool _scytheOut = false;
     private Vector3 _internalVelocityAdd = Vector3.zero;
 
     private Interactable m_currentInteractable = null;
@@ -282,6 +285,16 @@ public class PlayerController : MonoBehaviour, ICharacterController
             {
                 _attackRequested = false;
             }
+
+            if (_scytheOut)
+            {
+                _timeSinceAttack += deltaTime;
+                if (_timeSinceAttack >= ScytheOutTime)
+                {
+                    CharacterAnimator.SetTrigger("ScytheAway");
+                    _scytheOut = false;
+                }
+            }
         }
 
         if (transform.position.y < MinYPosition)
@@ -389,6 +402,9 @@ public class PlayerController : MonoBehaviour, ICharacterController
         {
             _attackedInAir =  true;
         }
+
+        _scytheOut = true;
+        _timeSinceAttack = 0f;
 
         AttackManager.StartAttack();
     }
