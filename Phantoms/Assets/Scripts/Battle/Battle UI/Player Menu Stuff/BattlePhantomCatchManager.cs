@@ -103,11 +103,13 @@ public class BattlePhantomCatchManager : MonoBehaviour
         m_playerCurrentHealth = playerActor.HP;
         m_playerActor = playerActor;
         m_actionInput = actionInput;
+        playerActor.GetComponentInChildren<Animator>().SetTrigger("Catch");
     }
 
     public void StopCatching()
     {
         m_menuParent.SetActive(false);
+        m_playerActor.GetComponentInChildren<Animator>().SetTrigger("Idle");
     }
 
 
@@ -169,7 +171,7 @@ public class BattlePhantomCatchManager : MonoBehaviour
     public void SubmitAmount()
     {
         TryCatchPhantom();
-        StopCatching();
+        m_menuParent.SetActive(false);
     }
 
     /////////////////////////
