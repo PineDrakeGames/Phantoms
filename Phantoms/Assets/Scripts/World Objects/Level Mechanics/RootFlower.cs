@@ -36,6 +36,12 @@ public class RootFlower : MonoBehaviour
     [SerializeField]
     private string m_triggerID = string.Empty;
 
+    [Header("Effects")]
+    [SerializeField]
+    private SoundEffectData RootHit = null;
+    [SerializeField]
+    private SoundEffectData FlowerGrow = null;
+
     private bool m_triggered = false;
 
 #if UNITY_EDITOR
@@ -67,6 +73,8 @@ public class RootFlower : MonoBehaviour
 
     public void OnRootHit(AttackTarget attackedRoot)
     {
+        AudioManager.PlaySound3D(RootHit, attackedRoot.transform.position);
+
         if (!m_triggered)
         {
             // If we require all the roots for this, check if all the roots are hit - and 
@@ -111,7 +119,6 @@ public class RootFlower : MonoBehaviour
 
     private void TriggerRoot()
     {
-
         m_triggered = true;
         foreach (Root root in m_roots)
         {
@@ -139,6 +146,7 @@ public class RootFlower : MonoBehaviour
     {
         foreach (Animator flower in m_flowers)
         {
+            AudioManager.PlaySound3D(FlowerGrow, flower.transform.position);
             flower.SetBool("On", true);
         }
     }

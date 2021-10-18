@@ -68,6 +68,7 @@ public class AudioManager : MonoBehaviour
     private AudioSource m_oneShotSoundSource = null;
     private List<AudioSource> m_oneShotSoundSources = new List<AudioSource>();
     private List<AudioSource> m_loopingSoundSources = new List<AudioSource>();
+    private List<AudioSource> m_3DSoundSources = new List<AudioSource>();
 
     // Public Getters for stuff!
     public static AudioClip CurrentMusicClip { get { return Instance.m_musicClip; } }
@@ -165,11 +166,33 @@ public class AudioManager : MonoBehaviour
         float pitch = Random.Range(soundEffect.PitchRange.minValue, soundEffect.PitchRange.maxValue);
         if (soundEffect.Clip != null)
         {
-            AudioManager.PlaySound(soundEffect.Clip, volume, pitch);
+            Instance.PlayOneShotInternal(soundEffect.Clip, volume, pitch);
         }
         else
         {
-            AudioManager.PlaySound(soundEffect.ClipID, volume, pitch);
+            Instance.PlayOneShotInternal(DataManager.SoundEffectData.GetClip(soundEffect.ClipID), volume, pitch);
+        }
+    }
+
+    public static void PlaySound3D(AudioClip sound, Vector3 position, float volumeScale = 1f, float pitch = 1f)
+    {
+        Instance.PlayOneShotInternal3D(sound, position, volumeScale, pitch);
+    }
+    public static void PlaySound3D(string soundClipID, Vector3 position, float volumeScale = 1f, float pitch = 1f)
+    {
+        Instance.PlayOneShotInternal3D(DataManager.SoundEffectData.GetClip(soundClipID), position, volumeScale, pitch);
+    }
+    public static void PlaySound3D(SoundEffectData soundEffect, Vector3 position)
+    {
+        float volume = Random.Range(soundEffect.VolumeRange.minValue, soundEffect.VolumeRange.maxValue);
+        float pitch = Random.Range(soundEffect.PitchRange.minValue, soundEffect.PitchRange.maxValue);
+        if (soundEffect.Clip != null)
+        {
+            Instance.PlayOneShotInternal3D(soundEffect.Clip, position, volume, pitch);
+        }
+        else
+        {
+            Instance.PlayOneShotInternal3D(DataManager.SoundEffectData.GetClip(soundEffect.ClipID), position, volume, pitch);
         }
     }
 
@@ -442,7 +465,7 @@ public class AudioManager : MonoBehaviour
 
     /// Internal Sound Effect Functions ///
 
-    private void PlayOneShotInternal(AudioClip clip, float volumeScale = 1f, float pitch = 1f)
+    private void PlayOneShotInternal(AudioClip clip, float volumeScale = 1f, float pitch = 1f, bool is3D = false)
     {
         // If just using the default pitch, can use the same basic audio source.
         if (pitch == 1f)
@@ -457,6 +480,17 @@ public class AudioManager : MonoBehaviour
             source.clip = clip;
             source.Play();
         }
+    }
+
+    private void PlayOneShotInternal3D(AudioClip clip, Vector3 Position, float volumeScale = 1f, float pitch = 1f, bool is3D = false)
+    {
+        // If just using the default pitch, can use the same basic audio source.
+        AudioSource source = GetFree3DSource();
+        source.transform.position = Position;
+        source.pitch = pitch;
+        source.volume = volumeScale * DataManager.Instance.GetSoundVolume();
+        source.clip = clip;
+        source.Play();
     }
 
     private AudioSource GetFreeOneShotSource()
@@ -477,6 +511,35 @@ public class AudioManager : MonoBehaviour
         {
             source = gameObject.AddComponent<AudioSource>();
             m_oneShotSoundSources.Add(source);
+        }
+
+        return source;
+    }
+
+    private AudioSource GetFree3DSource()
+    {
+        AudioSource source = null;
+        foreach (AudioSource src in m_3DSoundSources)
+        {
+            if (!src.isPlaying)
+            {
+                source = src;
+                source.pitch = 1f;
+                source.volume = 1f;
+                source.clip = null;
+            }
+        }
+
+        if (source == null)
+        {
+            GameObject sourceObject = new GameObject("3D One Shot Source");
+            sourceObject.transform.parent = transform;
+            source = sourceObject.AddComponent<AudioSource>();
+            source.spatialBlend = 1f;
+            source.minDistance = 10f;
+            source.maxDistance = 70f;
+            source.rolloffMode = AudioRolloffMode.Linear;
+            m_3DSoundSources.Add(source);
         }
 
         return source;
