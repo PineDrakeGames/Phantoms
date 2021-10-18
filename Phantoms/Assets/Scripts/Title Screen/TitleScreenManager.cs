@@ -90,6 +90,9 @@ public class TitleScreenManager : MonoBehaviour
     {
         SaveDataManager.CurrentSaveSlot = slotNumber;
 
+        DataManager.Instance.Settings.LastSaveSlotPlayed = slotNumber;
+        SaveSettingsManager.Save();
+
         m_titleScreenParent.SetActive(false);
 
         m_starterQuizManager.StartQuiz();
@@ -158,6 +161,8 @@ public class TitleScreenManager : MonoBehaviour
             {
                 SaveDataManager.CurrentSaveSlot = m_currentSlot.SlotNumber;
                 PixelCrushers.SaveSystem.LoadFromSlot(SaveDataManager.CurrentSaveSlot);
+                DataManager.Instance.Settings.LastSaveSlotPlayed = SaveDataManager.CurrentSaveSlot;
+                SaveSettingsManager.Save();
             }
             else
             {

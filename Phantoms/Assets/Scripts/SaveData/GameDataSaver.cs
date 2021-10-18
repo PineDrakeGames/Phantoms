@@ -13,6 +13,7 @@ public class GameDataSaver : PixelCrushers.Saver
     public override string RecordData()
     {
         SaveDataManager.UpdateSavedData();
+        SaveSettingsManager.Save();
         return PixelCrushers.SaveSystem.Serialize(SaveDataManager.SavedData);
     }
 

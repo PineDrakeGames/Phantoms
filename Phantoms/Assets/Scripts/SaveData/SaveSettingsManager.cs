@@ -24,6 +24,7 @@ public static class SaveSettingsManager
         {
             Debug.Log("Save System: Error reading file: " + path);
             jsonData = string.Empty;
+            Save();
         }
 
         if (Equals(DataManager.Instance.Settings, default(SettingsData)))
