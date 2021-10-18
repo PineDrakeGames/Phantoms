@@ -46,7 +46,7 @@ namespace PixelCrushers
             set { m_debug = value; }
         }
 
-        public virtual void Start()
+        public virtual void Awake()
         {
             LoadSavedGameInfoFromFile();
         }
