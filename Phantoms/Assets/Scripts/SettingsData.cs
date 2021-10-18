@@ -6,11 +6,11 @@ using UnityEngine;
 public class SettingsData
 {
     [SerializeField]
-    private float m_masterVolume = 0.7f;
+    private float m_masterVolume = 0.5f;
     [SerializeField]
     private float m_soundsVolume = 0.5f;
     [SerializeField]
-    private float m_musicVolume = 0.3f;
+    private float m_musicVolume = 0.5f;
 
     public int LastSaveSlotPlayed = -1;
 
