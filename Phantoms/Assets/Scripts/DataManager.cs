@@ -336,5 +336,6 @@ public class DataManager : MonoBehaviour
     {
         Lua.RegisterFunction("CheckFlag", this, SymbolExtensions.GetMethodInfo(() => SaveDataManager.CheckFlag(string.Empty)));
         Lua.RegisterFunction("SetFlag", this, SymbolExtensions.GetMethodInfo(() => SaveDataManager.SetFlag(string.Empty, true)));
+        Lua.RegisterFunction("Save", this, SymbolExtensions.GetMethodInfo(() => PixelCrushers.SaveSystem.SaveToSlot(SaveDataManager.CurrentSaveSlot)));
     }
 }

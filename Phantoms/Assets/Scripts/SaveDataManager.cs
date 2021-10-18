@@ -145,7 +145,7 @@ public class SavedGameData
 
 public static class SaveDataManager
 {
-    public static int CurrentSaveSlot = -1;
+    public static int CurrentSaveSlot = 0;
 
     public static SavedGameData SavedData = new SavedGameData();
 
