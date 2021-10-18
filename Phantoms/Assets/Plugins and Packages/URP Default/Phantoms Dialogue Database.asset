@@ -7080,10 +7080,7 @@ MonoBehaviour:
         type: 0
         typeString: CustomFieldType_Text
       - title: Sequence
-        value: 'required SetContinueMode(true);
-
-          AnimatorTrigger(StartingQuizEnd,
-          PlayerCharacter);
+        value: 'AnimatorTrigger(StartingQuizEnd, PlayerCharacter);
 
           Continue()@10;'
         type: 0
@@ -7113,8 +7110,8 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 591.701
-        y: 1682.2695
+        x: 592.8775
+        y: 1679.9166
         width: 160
         height: 30
     - id: 53
@@ -7308,7 +7305,9 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 'SetContinueMode(false);
+        value: 'AnimatorBool(Visible,true,BlackBackground)@3;
+
+          SetContinueMode(false);
 
           SetDialoguePanel(true);
 
@@ -7336,8 +7335,8 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 591.18256
-        y: 1733.446
+        x: 592.359
+        y: 1732.2695
         width: 160
         height: 30
     - id: 56
@@ -7383,7 +7382,9 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 
+        value: 'SetDialoguePanel(false)@3;
+
+          Continue()@4;'
         type: 0
         typeString: 
       conversationID: 6
@@ -7454,14 +7455,16 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 'required SetActive(Tutorial Move Trigger, true);
+        value: 'AnimatorBool(Visible,false,BlackBackground);
 
           required
-          SetContinueMode(true);'
+          SetActive(Tutorial Move Trigger, true);
+
+          required SetContinueMode(true);'
         type: 0
         typeString: 
       - title: EventGuid
-        value: 
+        value: c123b99f-bbc2-4276-b941-76c749df7c50
         type: 0
         typeString: 
       conversationID: 6
@@ -7479,7 +7482,7 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 592.87744
+        x: 591.701
         y: 1833.446
         width: 160
         height: 30
@@ -8944,7 +8947,7 @@ MonoBehaviour:
       canvasRect:
         serializedVersion: 2
         x: 340
-        y: 134
+        y: 132.93616
         width: 160
         height: 30
     - id: 2

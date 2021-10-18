@@ -17,6 +17,8 @@ public class Player : MonoBehaviour
         }
     }
 
+    public static bool PlayerInputEnabled = true;
+
     public PlayerController Character;
     public CameraController CharacterCamera;
 
@@ -67,6 +69,8 @@ public class Player : MonoBehaviour
 
     private void HandleCharacterInput()
     {
+        if (!PlayerInputEnabled) { return; }
+        
         PlayerCharacterInputs characterInputs = new PlayerCharacterInputs();
 
         // Build the CharacterInputs struct

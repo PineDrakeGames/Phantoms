@@ -34,6 +34,8 @@ public class StarterQuizManager : MonoBehaviour
     [SerializeField]
     private GameObject m_titleScreenStuff;
     [SerializeField]
+    private Animator m_blackScreenAnimator = null;
+    [SerializeField]
     private GameObject m_questionAnswersParent;
     [SerializeField]
     private StarterQuizAnswerButton[] m_answerButtons = null;
@@ -214,6 +216,18 @@ public class StarterQuizManager : MonoBehaviour
         DataManager.Instance.ChosenStarterID = phantom.ID;
     }
 
+    // Functions for finishing sequence stuff //
+    public void TurnOnPlayer()
+    {
+        Player.PlayerInputEnabled = false;
+        OverworldManager.Instance.PlayerInstance.SetActive(true);
+    }
+
+    public void SetBlackScreen(bool visible)
+    {
+        m_blackScreenAnimator.SetBool("Visible", visible);
+    }
+
     public void FinishQuiz()
     {
         StartCoroutine(EndQuiz());
@@ -310,6 +324,8 @@ public class StarterQuizManager : MonoBehaviour
 
         SceneManager.SetActiveScene(startScene);
         OverworldManager.Instance.SetOverworldActive(true);
+        Player.PlayerInputEnabled = true;
+
         yield return null;
         if (m_titleScreenCamera != null)
         {

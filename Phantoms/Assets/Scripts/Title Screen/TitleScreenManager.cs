@@ -48,7 +48,7 @@ public class TitleScreenManager : MonoBehaviour
     private string m_startingAmbienceID = null;
 
     [SerializeField]
-    private Image m_backing = null;
+    private Animator m_backingAnimator = null;
 
 
     [SerializeField]
@@ -66,10 +66,6 @@ public class TitleScreenManager : MonoBehaviour
     ///////////////////////
     private void Awake()
     {
-        m_backing.gameObject.SetActive(true);
-        Color backingColor = m_backing.color;
-        backingColor.a = 1f;
-        m_backing.color = backingColor;
         m_mainMenuButtons.gameObject.SetActive(false);
         m_saveSlotButtons.gameObject.SetActive(false);
 
@@ -251,16 +247,14 @@ public class TitleScreenManager : MonoBehaviour
         AudioManager.PlayAmbience(m_startingAmbienceID, 1f, m_backingFadeOutTime + m_buttonFadeInTime);
         OverworldManager.Instance.SetOverworldActive(false);
 
+
+        m_backingAnimator.SetBool("Visible", false);
         float currentTime = 0f;
         while (currentTime < m_backingFadeOutTime)
         {
-            Color backingColor = m_backing.color;
-            backingColor.a = 1f - Mathf.Clamp01(currentTime / m_backingFadeOutTime);
-            m_backing.color = backingColor;
             yield return null;
             currentTime += Time.deltaTime;
         }
-        m_backing.gameObject.SetActive(false);
         m_mainMenuButtons.gameObject.SetActive(true);
         currentTime = 0f;
         while (currentTime < m_buttonFadeInTime)

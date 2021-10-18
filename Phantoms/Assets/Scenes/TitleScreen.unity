@@ -1440,8 +1440,9 @@ GameObject:
   - component: {fileID: 553656317}
   - component: {fileID: 553656319}
   - component: {fileID: 553656318}
+  - component: {fileID: 553656320}
   m_Layer: 5
-  m_Name: Backing
+  m_Name: BlackBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1480,7 +1481,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1504,6 +1505,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 553656316}
   m_CullTransparentMesh: 1
+--- !u!95 &553656320
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 553656316}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 849619368c6141742993dd3aeb0f9545, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &558148276
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1699,10 +1719,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 11426072, guid: 58ac37417e60e534f91138088a3e6f70, type: 3}
-      propertyPath: displaySettings.dialogueUI
-      value: 
-      objectReference: {fileID: 101180, guid: 297a1b04e72a7fb458cf63dca9fb7a68, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 58ac37417e60e534f91138088a3e6f70, type: 3}
 --- !u!1 &634173344
@@ -8068,7 +8084,7 @@ Transform:
   m_LocalRotation: {x: 0.000000029802322, y: -0.0000001490116, z: 0.0000000027179234,
     w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.540694, y: 3.163672, z: 2.5406938}
+  m_LocalScale: {x: 2.540694, y: 2.540694, z: 2.5406938}
   m_Children: []
   m_Father: {fileID: 1334593155}
   m_RootOrder: 1
@@ -8184,6 +8200,7 @@ MonoBehaviour:
   - QuizID: SHAME
     Phantom: {fileID: 11400000, guid: cf6bc88056e9ac74e80eb96cf168260c, type: 2}
   m_titleScreenStuff: {fileID: 1950060239}
+  m_blackScreenAnimator: {fileID: 553656320}
   m_questionAnswersParent: {fileID: 80975633}
   m_answerButtons:
   - {fileID: 2378389868794422357}
@@ -8582,6 +8599,22 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
   - guid: eea53ec2-fc70-4038-89d9-794b8955d7a9
+    onExecute:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1458992839}
+          m_TargetAssemblyTypeName: StarterQuizManager, Assembly-CSharp
+          m_MethodName: TurnOnPlayer
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - guid: c123b99f-bbc2-4276-b941-76c749df7c50
     onExecute:
       m_PersistentCalls:
         m_Calls:
@@ -9808,7 +9841,7 @@ MonoBehaviour:
   m_starterScene: Assets/Scenes/Prologue Scenes/Prologue_Start.unity
   m_startingMusicID: TITLE
   m_startingAmbienceID: PROLOGUE
-  m_backing: {fileID: 553656318}
+  m_backingAnimator: {fileID: 553656320}
   m_backingFadeOutTime: 1
   m_buttonFadeInTime: 0.3
 --- !u!4 &2096017110
