@@ -58,8 +58,12 @@ public class PlayerController : MonoBehaviour, ICharacterController
     public float RunSpeedScale = 0.5f;
 
     [Header("Sound Stuff")]
-    public AudioClip SoundEffectJump = null;
-    public AudioClip SoundEffectDoubleJump = null;
+    public SoundEffectData SoundEffectJump = null;
+    public SoundEffectData SoundEffectDoubleJump = null;
+    public AudioClip Land = null;
+    public RangedFloat LandSpeedRange = new RangedFloat(0f, 10f);
+    [MinMaxRange(0f, 1f)]
+    public RangedFloat LandVolumeRange = new RangedFloat(0.3f, 1f);
 
     [Header("Other Stuff")]
     public Transform PlayerCenter = null;

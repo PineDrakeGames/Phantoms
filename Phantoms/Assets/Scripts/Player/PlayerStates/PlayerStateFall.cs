@@ -2,6 +2,8 @@
 
 public class PlayerStateFall : PlayerMovementState
 {
+    private float fallSpeed = 0f;
+
     public override void StateEnter()
     {
         Controller.CharacterAnimator.SetTrigger("Fall");
@@ -38,11 +40,18 @@ public class PlayerStateFall : PlayerMovementState
             AirStrafeMovement(ref currentVelocity, Controller.MoveInputVector, deltaTime);
             ApplyGravity(ref currentVelocity, deltaTime);
             ApplyDrag(ref currentVelocity, deltaTime);
+            fallSpeed = currentVelocity.y * -1f;
         }
     }
 
     public override void StateExit()
     {
         Controller.CharacterAnimator.SetTrigger("Landed");
+
+        if (fallSpeed >= Controller.LandSpeedRange.minValue)
+        {
+            float volume = Mathf.Lerp(Controller.LandVolumeRange.minValue, Controller.LandVolumeRange.maxValue,  Mathf.Clamp01((fallSpeed -  Controller.LandSpeedRange.minValue) / (Controller.LandSpeedRange.maxValue -  Controller.LandSpeedRange.minValue)));
+            AudioManager.PlaySound(Controller.Land, volume);
+        }
     }
 }

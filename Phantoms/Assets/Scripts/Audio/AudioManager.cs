@@ -2,6 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Some Helper classes!
+[System.Serializable]
+public class SoundEffectData
+{
+    public AudioClip Clip;
+    public string ClipID;
+    [MinMaxRange(0f, 1f)]
+    public RangedFloat VolumeRange = new RangedFloat(1f, 1f);
+    [MinMaxRange(-3f, 3f)]
+    public RangedFloat PitchRange = new RangedFloat(1f, 1f);
+}
+
+
 public class AudioManager : MonoBehaviour
 {
 
@@ -145,6 +158,19 @@ public class AudioManager : MonoBehaviour
     public static void PlaySound(string soundClipID, float volumeScale = 1f, float pitch = 1f)
     {
         Instance.PlayOneShotInternal(DataManager.SoundEffectData.GetClip(soundClipID), volumeScale, pitch);
+    }
+    public static void PlaySound(SoundEffectData soundEffect)
+    {
+        float volume = Random.Range(soundEffect.VolumeRange.minValue, soundEffect.VolumeRange.maxValue);
+        float pitch = Random.Range(soundEffect.PitchRange.minValue, soundEffect.PitchRange.maxValue);
+        if (soundEffect.Clip != null)
+        {
+            AudioManager.PlaySound(soundEffect.Clip, volume, pitch);
+        }
+        else
+        {
+            AudioManager.PlaySound(soundEffect.ClipID, volume, pitch);
+        }
     }
 
     public static void PlayLoopingSound(AudioClip sound, float volumeScale = 1f)
@@ -399,7 +425,7 @@ public class AudioManager : MonoBehaviour
             m_musicSource.clip = m_queuedMusicClip;
             m_musicIntroSource.clip = m_queuedMusicIntroClip;
             m_musicIntroSource.PlayScheduled(AudioSettings.dspTime + 0.5);
-            m_musicSource.PlayScheduled(AudioSettings.dspTime  + 0.5 + ((double)m_queuedMusicIntroClip.samples / m_queuedMusicIntroClip.frequency));
+            m_musicSource.PlayScheduled(AudioSettings.dspTime + 0.5 + ((double)m_queuedMusicIntroClip.samples / m_queuedMusicIntroClip.frequency));
         }
         else
         {

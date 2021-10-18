@@ -480,7 +480,9 @@ MonoBehaviour:
   m_audioClips:
   - Clip: {fileID: 8300000, guid: 01daef65a2334614d929bbf79b321ebc, type: 3}
     ClipID: 
-    VolumeScale: 0.1
+    VolumeRange:
+      minValue: 0.1
+      maxValue: 0.15
     PitchRange:
       minValue: 0.9
       maxValue: 1.1
@@ -755,9 +757,31 @@ MonoBehaviour:
   AttackMaxMoveSpeed: 1
   m_characterAnimator: {fileID: 8061551722320289525}
   RunSpeedScale: 0.1
-  SoundEffectJump: {fileID: 8300000, guid: 283def7c28761444d9b9932f921d2403, type: 3}
-  SoundEffectDoubleJump: {fileID: 8300000, guid: 96616339964d90643922e57d2bbd724a,
-    type: 3}
+  SoundEffectJump:
+    Clip: {fileID: 8300000, guid: 283def7c28761444d9b9932f921d2403, type: 3}
+    ClipID: 
+    VolumeRange:
+      minValue: 0.25
+      maxValue: 0.25
+    PitchRange:
+      minValue: 0.9
+      maxValue: 1.1
+  SoundEffectDoubleJump:
+    Clip: {fileID: 8300000, guid: 96616339964d90643922e57d2bbd724a, type: 3}
+    ClipID: 
+    VolumeRange:
+      minValue: 0.25
+      maxValue: 0.25
+    PitchRange:
+      minValue: 1
+      maxValue: 1
+  Land: {fileID: 8300000, guid: 9c89861ce6f105f4b9201cfc43959750, type: 3}
+  LandSpeedRange:
+    minValue: 2
+    maxValue: 30
+  LandVolumeRange:
+    minValue: 0.15
+    maxValue: 0.75
   PlayerCenter: {fileID: 7411798252256606767}
   MinYPosition: -150
   DoubleJumpUnlocked: 0
