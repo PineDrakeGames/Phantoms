@@ -148,6 +148,12 @@ public class BattleInitializer : MonoBehaviour
                 actorComponent.Init(displayName, data.CurrentHP, data.CurrentStats.MaxHP, data.CurrentMana, data.CurrentStats.Mana, stats, data.Data.Abilities, actorComponent.FallbackAbility, actorComponent.Afflictions, actorComponent.inventory);
                 actorComponent.MainType = PhantomType.NONE;
                 actorComponent.SecondType = PhantomType.NONE;
+                ActorAnimation actorAnimation = spawnedObject.GetComponent<ActorAnimation>();
+                if (actorAnimation == null)
+                {
+                    actorAnimation = spawnedObject.AddComponent<ActorAnimation>();
+                    SetActorAnimations(actorAnimation);
+                }
             }
             else if (combatants[i] is PhantomInstanceData)
             {
