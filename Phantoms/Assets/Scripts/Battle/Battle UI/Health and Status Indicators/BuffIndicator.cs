@@ -4,17 +4,51 @@ using UnityEngine;
 
 public class BuffIndicator : MonoBehaviour
 {
+    [System.Serializable]
+    private class BuffIndicatorData
+    {
+        public string Stat;
+        public Material StarsColor;
+        public Color LightsColor;
+    }
+
     [SerializeField]
     private ParticleSystem m_starsParticles = null;
 
     [SerializeField]
     private ParticleSystem m_lightsParticles = null;
 
+    [Header("Buff specifics")]
+    [SerializeField]
+    private List<BuffIndicatorData> m_buffsData = new List<BuffIndicatorData>();
+
     private bool m_readyToUse = true;
     public bool Ready { get { return m_readyToUse; } }
 
     private const float BUFF_INDICATOR_DURATION = 1f;
     private float m_currentTime = 0f;
+
+    // Particle System parts
+    ParticleSystem.EmissionModule m_starsParticlesEmission;
+    ParticleSystemRenderer m_starsParticlesRenderer;
+    Material m_starsParticlesMaterial = null;
+
+    ParticleSystem.EmissionModule m_lightsParticlesEmission;
+    ParticleSystem.MainModule m_lightsParticlesMain;
+
+    ///////////////////////
+    /// Unity Functions ///
+    ///////////////////////
+    private void Awake()
+    {
+        m_starsParticlesEmission = m_starsParticles.emission;
+        m_starsParticlesRenderer = m_starsParticles.GetComponent<ParticleSystemRenderer>();
+        m_starsParticlesMaterial = new Material(m_starsParticlesRenderer.material);
+        m_starsParticlesRenderer.material = m_starsParticlesMaterial;
+
+        m_lightsParticlesEmission = m_lightsParticles.emission;
+        m_lightsParticlesMain = m_lightsParticles.main;
+    }
 
     private void Update() 
     {
@@ -32,25 +66,47 @@ public class BuffIndicator : MonoBehaviour
     public void SetBuffIndicator(Vector3 position, Ares.Stat stat, int stages)
     {
         transform.position = position;
-        StartBuffEffect();
+        StartBuffEffect(stat, stages);
 
         m_readyToUse = false;
         m_currentTime = BUFF_INDICATOR_DURATION;
     }
 
-    private void StartBuffEffect()
+    private void StartBuffEffect(Ares.Stat stat, int stages)
     {
-        ParticleSystem.EmissionModule starsEmission = m_starsParticles.emission;
-        starsEmission.enabled = true;
-        ParticleSystem.EmissionModule lightsEmission = m_lightsParticles.emission;
-        lightsEmission.enabled = true;
+        BuffIndicatorData data = GetStatData(stat);
+
+        if (data != null)
+        {
+            m_starsParticlesRenderer.material = data.StarsColor;
+            m_lightsParticlesMain.startColor = data.LightsColor;
+        }
+        else
+        {
+            m_starsParticlesRenderer.material = m_starsParticlesMaterial;
+            m_lightsParticlesMain.startColor = Color.white;
+        }
+
+        m_starsParticlesEmission.enabled = true;
+        m_lightsParticlesEmission.enabled = true;
     }
 
     private void EndBuffEffect()
     {
-        ParticleSystem.EmissionModule starsEmission = m_starsParticles.emission;
-        starsEmission.enabled = false;
-        ParticleSystem.EmissionModule lightsEmission = m_lightsParticles.emission;
-        lightsEmission.enabled = false;
+        m_starsParticlesEmission.enabled = false;
+        m_lightsParticlesEmission.enabled = false;
+    }
+
+    private BuffIndicatorData GetStatData( Ares.Stat stat)
+    {
+        foreach(BuffIndicatorData buffData in m_buffsData)
+        {
+            if (buffData.Stat == stat.Data.name)
+            {
+                return buffData;
+            }
+        }
+
+        return null;
     }
 }
