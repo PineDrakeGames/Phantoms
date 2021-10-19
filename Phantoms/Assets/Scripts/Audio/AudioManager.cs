@@ -158,7 +158,9 @@ public class AudioManager : MonoBehaviour
     }
     public static void PlaySound(string soundClipID, float volumeScale = 1f, float pitch = 1f)
     {
-        Instance.PlayOneShotInternal(DataManager.SoundEffectData.GetClip(soundClipID), volumeScale, pitch);
+        float clipScale = 1f;
+        AudioClip clip = DataManager.SoundEffectData.GetClip(soundClipID, out clipScale);
+        Instance.PlayOneShotInternal(clip, clipScale * volumeScale, pitch);
     }
     public static void PlaySound(SoundEffectData soundEffect)
     {
@@ -170,7 +172,9 @@ public class AudioManager : MonoBehaviour
         }
         else
         {
-            Instance.PlayOneShotInternal(DataManager.SoundEffectData.GetClip(soundEffect.ClipID), volume, pitch);
+            float clipScale = 1f;
+            AudioClip clip = DataManager.SoundEffectData.GetClip(soundEffect.ClipID, out clipScale);
+            Instance.PlayOneShotInternal(clip, clipScale * volume, pitch);
         }
     }
 
@@ -180,7 +184,9 @@ public class AudioManager : MonoBehaviour
     }
     public static void PlaySound3D(string soundClipID, Vector3 position, float volumeScale = 1f, float pitch = 1f)
     {
-        Instance.PlayOneShotInternal3D(DataManager.SoundEffectData.GetClip(soundClipID), position, volumeScale, pitch);
+        float clipScale = 1f;
+        AudioClip clip = DataManager.SoundEffectData.GetClip(soundClipID, out clipScale);
+        Instance.PlayOneShotInternal3D(clip, position, clipScale * volumeScale, pitch);
     }
     public static void PlaySound3D(SoundEffectData soundEffect, Vector3 position)
     {
@@ -192,7 +198,9 @@ public class AudioManager : MonoBehaviour
         }
         else
         {
-            Instance.PlayOneShotInternal3D(DataManager.SoundEffectData.GetClip(soundEffect.ClipID), position, volume, pitch);
+            float clipScale = 1f;
+            AudioClip clip = DataManager.SoundEffectData.GetClip(soundEffect.ClipID, out clipScale);
+            Instance.PlayOneShotInternal3D(clip, position, clipScale * volume, pitch);
         }
     }
 

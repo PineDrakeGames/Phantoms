@@ -305,7 +305,7 @@ namespace Ares
             HP -= Mathf.Max(0, power);
 
             // Play Effects! //
-            BattlePlayerMenu.Instance.SetDamageIndicator(transform.position, power, modifier);
+            BattleEffectsManager.Instance.SetDamageIndicator(transform.position, power, modifier);
 
             // Check for afflictions that stop on damage
             Affliction currentAffliction = null;
@@ -369,18 +369,17 @@ namespace Ares
         {
             int oldStage = stat.Stage;
 
-            if (stages > 0)
+            BattleEffectsManager.Instance.SetBuffIndicator(transform.position, stat, stages);
+
+            if (stages >= 0)
             {
                 OnStatBuff.Invoke(stat, Mathf.Min(stat.Stage + stages, stat.Data.MaxStage));
-                AudioManager.PlaySound("BATTLE_BUFF");
-
             }
             else
             {
                 OnStatDebuff.Invoke(stat, Mathf.Max(stat.Stage - stages, stat.Data.MinStage));
-                AudioManager.PlaySound("BATTLE_DEBUFF");
-
             }
+
             stat.Buff(buffID, stages);
 
             return stat.Stage - oldStage;

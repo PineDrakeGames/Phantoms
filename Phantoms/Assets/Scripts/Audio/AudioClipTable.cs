@@ -37,9 +37,11 @@ public class AudioClipTable : ScriptableObject, ISerializationCallbackReceiver
     {
         public string m_clipID = "";
         public AudioClip m_audioClip;
+        [Range(0f, 1f)]
+        public float m_volumeScale = 1f;
     }
 
-    private Dictionary<string, AudioClip> m_stringIDToClip = new Dictionary<string, AudioClip>();
+    private Dictionary<string, AudioClipItem> m_stringIDToClip = new Dictionary<string, AudioClipItem>();
 
     [SerializeField]
     private List<AudioClipItem> m_audioClipItems = new List<AudioClipItem>();
@@ -68,7 +70,7 @@ public class AudioClipTable : ScriptableObject, ISerializationCallbackReceiver
         {
             if (!m_stringIDToClip.ContainsKey(item.m_clipID.ToUpper()))
             {
-                m_stringIDToClip.Add(item.m_clipID.ToUpper(), item.m_audioClip);
+                m_stringIDToClip.Add(item.m_clipID.ToUpper(), item);
             }
         }
     }
@@ -76,10 +78,27 @@ public class AudioClipTable : ScriptableObject, ISerializationCallbackReceiver
     public AudioClip GetClip(string clipID)
     {
         string upperClipID = clipID.ToUpper();
+
         
         if (m_stringIDToClip.ContainsKey(upperClipID))
         {
-            return m_stringIDToClip[upperClipID];
+            return m_stringIDToClip[upperClipID].m_audioClip;
+        }
+
+        return null;
+    }
+
+
+    public AudioClip GetClip(string clipID, out float volumeScale)
+    {
+        string upperClipID = clipID.ToUpper();
+
+        volumeScale = 1f;
+        
+        if (m_stringIDToClip.ContainsKey(upperClipID))
+        {
+            volumeScale = m_stringIDToClip[upperClipID].m_volumeScale;
+            return m_stringIDToClip[upperClipID].m_audioClip;
         }
 
         return null;

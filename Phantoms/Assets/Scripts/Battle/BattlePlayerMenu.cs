@@ -79,8 +79,6 @@ public class BattlePlayerMenu : MonoBehaviour
     private GameObject m_currentTurnIndicator = null;
     [SerializeField]
     private GameObject m_targetIndicatorPrefab = null;
-    [SerializeField]
-    private GameObject m_damageIndicatorPrefab = null;
 
 
     ////////////////////////////////////
@@ -121,7 +119,6 @@ public class BattlePlayerMenu : MonoBehaviour
 
     private GameObject m_currentTargetIndicator = null;
     private List<GameObject> m_targetIndicators = new List<GameObject>();
-    private List<DamageIndicator> m_damageIndicators = new List<DamageIndicator>();
 
     private List<BattleSubmenuButton> m_subMenuButtons = new List<BattleSubmenuButton>();
     private ActionInput m_actionInput;
@@ -296,29 +293,6 @@ public class BattlePlayerMenu : MonoBehaviour
             m_currentTargetIndicator.SetActive(true);
             // TODO: Either set offset in prefab or in data
             m_currentTargetIndicator.transform.position = actor.transform.position + (Vector3.up * 1.5f);
-        }
-    }
-
-    public void SetDamageIndicator(Vector3 position, int damage, float modifier = 1f)
-    {
-        GetDamageIndicator().SetDamageIndicator(position, damage, modifier);
-
-        float damageIntensity = ((float)damage / 10f);
-
-        CameraShakeBattle.Instance.SetShake(Mathf.Lerp(0.3f, 0.6f, damageIntensity));
-
-
-        if (modifier <= 0.5f)
-        {
-            AudioManager.PlaySound("BATTLE_HIT_WEAK");
-        }
-        else if (modifier >= 0.5f)
-        {
-            AudioManager.PlaySound("BATTLE_HIT_STRONG");
-        }
-        else
-        {
-            AudioManager.PlaySound("BATTLE_HIT");
         }
     }
 
@@ -651,22 +625,6 @@ public class BattlePlayerMenu : MonoBehaviour
         }
         m_currentTargetIndicator = null;
     }
-
-    private DamageIndicator GetDamageIndicator()
-    {
-        foreach (DamageIndicator indicator in m_damageIndicators)
-        {
-            if (indicator.Ready)
-            {
-                return indicator;
-            }
-        }
-        GameObject newIndicatorObject = Instantiate(m_damageIndicatorPrefab);
-        DamageIndicator newIndicator = newIndicatorObject.GetComponent<DamageIndicator>();
-        m_damageIndicators.Add(newIndicator);
-        return newIndicator;
-    }
-
 
     ///////////////////////////////////////////////////////////
     /// Private helper functions to manage the battle menu. ///
