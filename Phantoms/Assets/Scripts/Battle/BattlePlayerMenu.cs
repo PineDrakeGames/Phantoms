@@ -212,6 +212,14 @@ public class BattlePlayerMenu : MonoBehaviour
                     gameObj = Instantiate(m_enemyHealthIndicatorPrefab, m_enemyHealthIndicators);
                 }
                 indicator = gameObj.GetComponent<HealthIndicator>();
+                if (actor.Group.Name == "Player")
+                {
+                    indicator.ShowType = true;
+                }
+                else
+                {
+                    indicator.ShowType = false;
+                }
                 indicator.Actor = actor;
                 ActorToHealthIndicator.Add(actor, indicator);
             }
@@ -255,7 +263,7 @@ public class BattlePlayerMenu : MonoBehaviour
         HideSubmenu();
         m_mainMenuParent.SetActive(false);
         m_partnerMenuParent.SetActive(false);
-        
+
     }
 
 

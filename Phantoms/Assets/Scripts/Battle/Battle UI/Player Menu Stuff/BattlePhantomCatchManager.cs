@@ -55,7 +55,7 @@ public class BattlePhantomCatchManager : MonoBehaviour
     {
         m_healthWagerAmount.onValueChanged.AddListener(OnValueChange);
         m_healthWagerAmount.onEndEdit.AddListener(OnEndEdit);
-        StopCatching();
+        m_menuParent.SetActive(false);
     }
 
     private void OnEnable()

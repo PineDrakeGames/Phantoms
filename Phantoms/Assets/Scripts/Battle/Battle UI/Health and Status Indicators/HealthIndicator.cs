@@ -5,6 +5,9 @@ using TMPro;
 
 public class HealthIndicator : MonoBehaviour
 {
+    [Header("Public Options")]
+    public bool ShowType = true;
+
     [Header("References to UI Elements")]
     [SerializeField]
     private TMP_Text m_actorName = null;
@@ -20,6 +23,11 @@ public class HealthIndicator : MonoBehaviour
     private TMP_Text m_currentMana = null;
     [SerializeField]
     private Image m_ManaFillMeter = null;
+
+    [SerializeField]
+    private UIPhantomTypeDisplay m_mainTypeDisplay = null;
+    [SerializeField]
+    private UIPhantomTypeDisplay m_secondTypeDisplay = null;
 
     [SerializeField]
     private Image m_actorIconFill = null;
@@ -109,6 +117,35 @@ public class HealthIndicator : MonoBehaviour
             m_currentMana.text = newActor.Mana.ToString();
             m_ManaFillMeter.fillAmount = Mathf.Clamp01((float)newActor.Mana / (float)newActor.MaxMana);
             m_actorName.text = newActor.DisplayName;
+
+            PhantomInstanceData phantomData = combatantData as PhantomInstanceData;
+            if (ShowType && phantomData != null)
+            {
+                
+                if (phantomData.PhanData.MainType != PhantomType.NONE)
+                {
+                    m_mainTypeDisplay.gameObject.SetActive(true);
+                    m_mainTypeDisplay.SetType(phantomData.PhanData.MainType);
+                }
+                else
+                {
+                    m_mainTypeDisplay.gameObject.SetActive(false);
+                }
+                if (phantomData.PhanData.SecondType != PhantomType.NONE)
+                {
+                    m_secondTypeDisplay.gameObject.SetActive(true);
+                    m_secondTypeDisplay.SetType(phantomData.PhanData.SecondType);
+                }
+                else
+                {
+                    m_secondTypeDisplay.gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                m_mainTypeDisplay.gameObject.SetActive(false);
+                m_secondTypeDisplay.gameObject.SetActive(false);
+            }
 
             prevHP = newActor.HP;
             newActor.OnRecieveTempBuff.AddListener(AddTempBuff);
