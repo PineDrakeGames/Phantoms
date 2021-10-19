@@ -252,6 +252,7 @@ namespace Ares.Editor
                 DrawField(rect, ref xOffset, 94, spActionType);
 
                 DrawLabel(rect, ref xOffset, 85, "Miss on mg Fail");
+                // TODO: This bugs out for some afflictions? Idk why...
                 DrawField(rect, ref xOffset, 20, spMissOnFail);
 
                 if (type == ChainEvaluator.ActionType.Buff)
