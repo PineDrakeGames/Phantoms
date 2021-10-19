@@ -20,6 +20,13 @@ public class BuffIndicator : MonoBehaviour
 
     [Header("Buff specifics")]
     [SerializeField]
+    private Transform m_buffTransform = null;
+    [SerializeField]
+    private Transform m_debuffTransform = null;
+    [SerializeField]
+    private Transform m_starsTransform = null;
+
+    [SerializeField]
     private List<BuffIndicatorData> m_buffsData = new List<BuffIndicatorData>();
 
     private bool m_readyToUse = true;
@@ -86,6 +93,11 @@ public class BuffIndicator : MonoBehaviour
             m_starsParticlesRenderer.material = m_starsParticlesMaterial;
             m_lightsParticlesMain.startColor = Color.white;
         }
+
+        Transform targetTransform = m_buffTransform;
+        if (stages < 0) { targetTransform = m_debuffTransform; }
+        m_starsTransform.position = targetTransform.position;
+        m_starsTransform.rotation = targetTransform.rotation;
 
         m_starsParticlesEmission.enabled = true;
         m_lightsParticlesEmission.enabled = true;
