@@ -11,7 +11,8 @@ public class BattleMainMenuButtons : MonoBehaviour
     {
         public Button ButtonComponent = null;
         public Animator AnimatorComponent = null;
-        public Image[] ImageComponents = null;
+        public Image LineImage = null;
+        public ShakyImage BoxImage = null;
     }
 
     [SerializeField]
@@ -72,12 +73,15 @@ public class BattleMainMenuButtons : MonoBehaviour
                 col = Color.Lerp(col, m_disabledColor, 0.5f);
             }
 
-            foreach (Image image in m_buttons[i].ImageComponents)
+            m_buttons[i].LineImage.color = col;
+            m_buttons[i].BoxImage.color = col;
+            if (i == index)
             {
-                if (image)
-                {
-                    image.color = col;
-                }
+                m_buttons[i].BoxImage.ShakeDistance = 0f;
+            }
+            else
+            {
+                m_buttons[i].BoxImage.ShakeDistance = 2f;
             }
 
             if (i <= index)
