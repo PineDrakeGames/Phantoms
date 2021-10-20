@@ -9,16 +9,19 @@ public class BattlePhantomCatchManager : MonoBehaviour
     [Header("Main Scene References")]
     [SerializeField]
     private BattleManager m_battleManager = null;
+    
+
+    [Header("Wager References")]
     [SerializeField]
     private GameObject m_menuParent = null;
-
-    [Header("Wager amounts")]
     [SerializeField]
     private TMP_InputField m_healthWagerAmount = null;
     [SerializeField]
     private Button m_addButton = null;
     [SerializeField]
     private Button m_subtractButton = null;
+    [SerializeField]
+    private Image m_heartFillImage = null;
 
     [Header("Press and hold values")]
     [SerializeField]
@@ -44,6 +47,10 @@ public class BattlePhantomCatchManager : MonoBehaviour
     private bool m_increaseHeld = false;
     private bool m_decreaseHeld = false;
     private float m_holdTime = 0f;
+
+    private float m_currentHeartFillPercentage = 0f;
+    private float m_targetHeartFillPercentage = 0f;
+    private float m_currentHeartFillSpeed = 0f;
 
     private Ares.Actor m_playerActor;
     private Ares.ActionInput m_actionInput;
@@ -91,6 +98,12 @@ public class BattlePhantomCatchManager : MonoBehaviour
             }
         }
 
+        if (m_currentHeartFillPercentage != m_targetHeartFillPercentage)
+        {
+            m_currentHeartFillPercentage = Mathf.SmoothDamp(m_currentHeartFillPercentage, m_targetHeartFillPercentage, ref m_currentHeartFillSpeed, 0.1f, 10f);
+            m_heartFillImage.fillAmount = m_currentHeartFillPercentage;
+        }
+
     }
 
     ////////////////////////
@@ -103,6 +116,7 @@ public class BattlePhantomCatchManager : MonoBehaviour
         m_playerCurrentHealth = playerActor.HP;
         m_playerActor = playerActor;
         m_actionInput = actionInput;
+        SetHeartTargetFill();
         playerActor.GetComponentInChildren<Animator>().SetTrigger("Catch");
     }
 
@@ -193,6 +207,13 @@ public class BattlePhantomCatchManager : MonoBehaviour
         m_addButton.interactable = (m_currentWager < (m_playerCurrentHealth - 1));
         m_subtractButton.interactable = (m_currentWager > 1);
         m_healthWagerAmount.text = m_currentWager.ToString();
+
+        SetHeartTargetFill();
+    }
+
+    private void SetHeartTargetFill()
+    {
+        m_targetHeartFillPercentage = (float)m_currentWager / ((float)m_playerCurrentHealth - 1f);
     }
 
     private bool TryCatchPhantom()
