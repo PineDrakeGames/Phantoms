@@ -32,6 +32,8 @@ public class StarterQuizManager : MonoBehaviour
 
     [Header("Scene References")]
     [SerializeField]
+    private Transform m_playerStartPosition = null;
+    [SerializeField]
     private GameObject m_titleScreenStuff;
     [SerializeField]
     private Animator m_blackScreenAnimator = null;
@@ -99,6 +101,9 @@ public class StarterQuizManager : MonoBehaviour
             m_starterScores[option.QuizID.Trim().ToUpper()] = 0;
             m_relatedAnswers[option.QuizID.Trim().ToUpper()] = 0;
         }
+
+        OverworldManager.Instance.PlayerController.transform.position = m_playerStartPosition.position;
+        OverworldManager.Instance.PlayerController.transform.rotation = m_playerStartPosition.rotation;
 
         DialogueManager.StartConversation(m_starterQuizConversation);
     }
@@ -221,6 +226,11 @@ public class StarterQuizManager : MonoBehaviour
     {
         Player.PlayerInputEnabled = false;
         OverworldManager.Instance.PlayerInstance.SetActive(true);
+        OverworldManager.Instance.PlayerController.SetState(new PlayerStateInteract());
+        // For some reason, have to manually simulate a frame before setting the player's position and rotation.
+        KinematicCharacterController.KinematicCharacterSystem.Simulate(Time.fixedDeltaTime, KinematicCharacterController.KinematicCharacterSystem.CharacterMotors, KinematicCharacterController.KinematicCharacterSystem.PhysicsMovers);
+        OverworldManager.Instance.PlayerController.Motor.SetPositionAndRotation(m_playerStartPosition.position, m_playerStartPosition.rotation);
+        LoadingManager.NewSceneLoaded.Invoke(); // Done to re-update shaders
     }
 
     public void SetBlackScreen(bool visible)
@@ -325,6 +335,8 @@ public class StarterQuizManager : MonoBehaviour
         SceneManager.SetActiveScene(startScene);
         OverworldManager.Instance.SetOverworldActive(true);
         Player.PlayerInputEnabled = true;
+        OverworldManager.Instance.PlayerController.SetState(new PlayerStateIdle());
+
 
         yield return null;
         if (m_titleScreenCamera != null)

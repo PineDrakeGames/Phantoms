@@ -314,6 +314,32 @@ public static class SaveDataManager
         OverworldManager.Instance.QueuePlayerSpawnPoint(SavedData.ScenePosition);
         LoadingManager.LoadScene(SavedData.Scene);
     }
+
+    public static void ResetStaticData()
+    {
+        m_flags.Clear();
+
+        // Player
+        PlayerBattleInstanceData playerData = new PlayerBattleInstanceData(DataManager.Instance.PlayerBattleData);
+
+        // Player's Phantoms
+        PlayerInventoryManager.Instance.Phantoms.Clear();
+
+        // Relics
+        PlayerInventoryManager.Instance.Relics.Clear();
+
+        // Items
+        PlayerInventoryManager.Instance.Items.Clear();
+
+        // Key Items
+        PlayerInventoryManager.Instance.KeyItems.Clear();
+
+        // Other
+        DataManager.CurrentDrops = 0;
+        DataManager.Instance.ChosenStarterID = string.Empty;
+        DataManager.Instance.StartersOrder = new List<string>();
+        DataManager.Instance.StarterChoices = new List<string>();
+    }
     
     ////////////////////
     /// Flags Stuff! ///

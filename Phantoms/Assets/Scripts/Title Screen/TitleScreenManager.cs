@@ -61,6 +61,8 @@ public class TitleScreenManager : MonoBehaviour
 
     private TitleMenuSaveSlot m_currentSlot = null;
 
+    private static bool didFirstTimeLoad = false;
+
     ///////////////////////
     /// Unity Functions ///
     ///////////////////////
@@ -200,12 +202,25 @@ public class TitleScreenManager : MonoBehaviour
     //////////////////////////////////////////////
     private void CheckSaveData()
     {
-        // Load the settings first (If they are there)
-        SaveSettingsManager.Load();
+        if (!didFirstTimeLoad)
+        {
+            // Load the settings first (If they are there)
+            SaveSettingsManager.Load();
 
-        // Load the save slots! Basically, check if we have save data - if we do, set up the save slot buttons,
-        // Otherwise set up the 'first time screen' basically.
-        SaveSlotManager.Load();
+            // Load the save slots! Basically, check if we have save data - if we do, set up the save slot buttons,
+            // Otherwise set up the 'first time screen' basically.
+            SaveSlotManager.Load();
+            didFirstTimeLoad = true;
+        }
+        else
+        {
+            // If we've been to the title screen before, then just unload the save data and reset stuff.
+            SaveDataManager.ResetStaticData();
+            DataManager.Instance.Settings.LastSaveSlotPlayed = SaveDataManager.CurrentSaveSlot;
+            SaveDataManager.CurrentSaveSlot = -1;
+        }
+
+
         SaveSlotManager.CleanUpSlots();
 
         bool hasSaveData = false; // Start by assuming we don't have save data, then go through the slots (if there are any)

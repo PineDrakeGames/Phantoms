@@ -84,7 +84,7 @@ public class PauseMenu : MonoBehaviour
 
     public void ReturnToMainMenu()
     {
-        LoadingManager.LoadScene(0);
+        LoadingManager.LoadScene(0, LoadingManager.SceneType.OTHER);
         UnPause();
     }
 }
