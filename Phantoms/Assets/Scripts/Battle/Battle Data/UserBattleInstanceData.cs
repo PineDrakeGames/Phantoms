@@ -85,7 +85,11 @@ public abstract class UserBattleInstanceData : CombatantInstanceData
             }
             totalLevel += levels;
         }
-        Level = totalLevel;
+        Level = totalLevel + 1;
+
+        BattleStatsFloat baseStatIncrease = new BattleStatsFloat(UserData.BaseStatsPerLevel);
+        baseStatIncrease.ScaleStats(Level);
+        stats.AddStats(baseStatIncrease);
     }
 
     protected void ApplyRelics(ref BattleStats stats)

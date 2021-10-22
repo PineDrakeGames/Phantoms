@@ -74,7 +74,7 @@ public class NotificationManager : MonoBehaviour
     {
         if (m_displayingBottomBar)
         {
-            m_currentDisplayDuration += Time.deltaTime;
+            m_currentDisplayDuration += Time.unscaledDeltaTime;
             if (m_currentDisplayDuration >= BOTTOM_BAR_MAX_DISPLAY_DURATION)
             {
                 HideNotificationInternal();

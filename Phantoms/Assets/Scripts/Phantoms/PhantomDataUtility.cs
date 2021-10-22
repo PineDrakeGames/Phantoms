@@ -125,7 +125,7 @@ public static class PhantomDataUtility
         return GenerateRandomPhantom(DataManager.Instance.TryGetPhantomData(phantomID), level);
     }
 
-    public static PhantomInstanceData GenerateRandomPhantom(PhantomData phantomData, int level = 0)
+    public static PhantomInstanceData GenerateRandomPhantom(PhantomData phantomData, int level = 1)
     {
         if (phantomData == null)
         {
@@ -146,7 +146,7 @@ public static class PhantomDataUtility
         instanceData.Level = level;
         List<BattleStatType> randomPool = new List<BattleStatType>();
         BackgroundStats backStats = BackgroundToStats[instanceData.Background];
-        for(int i = 0; i < level; i++)
+        for(int i = 1; i < level; i++)
         {
             List<BattleStatType> statOption = instanceData.LevelUpOptions();
             randomPool.Clear();

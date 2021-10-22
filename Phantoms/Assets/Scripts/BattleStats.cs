@@ -82,6 +82,24 @@ public class BattleStats
         Mana = 0;
         Relic = 0;
     }
+
+    public void AddStats(BattleStats otherStats)
+    {
+        MaxHP += otherStats.MaxHP;
+        Attack += otherStats.Attack;
+        Defense += otherStats.Defense;
+        Mana += otherStats.Mana;
+        Relic += otherStats.Relic;
+    }
+
+    public void AddStats(BattleStatsFloat otherStats)
+    {
+        MaxHP += Mathf.FloorToInt(otherStats.MaxHP);
+        Attack += Mathf.FloorToInt(otherStats.Attack);
+        Defense += Mathf.FloorToInt(otherStats.Defense);
+        Mana += Mathf.FloorToInt(otherStats.Mana);
+        Relic += Mathf.FloorToInt(otherStats.Relic);
+    }
 }
 
 //////////////////////
@@ -183,5 +201,87 @@ public class LevelUpStats
         MaxHP = 0;
         Mana = 0;
         Relic = 0;
+    }
+}
+
+[System.Serializable]
+public class BattleStatsFloat
+{
+    public float MaxHP = 0f;
+    public float Attack = 0f;
+    public float Defense = 0f;
+    public float Mana = 0f;
+    public float Relic = 0f;
+
+    public BattleStatsFloat() { }
+
+    public BattleStatsFloat(BattleStatsFloat other)
+    {
+        MaxHP = other.MaxHP;
+        Attack = other.Attack;
+        Defense = other.Defense;
+        Mana = other.Mana;
+        Relic = other.Relic;
+    }
+
+    public float GetStat(BattleStatType type)
+    {
+        switch (type)
+        {
+            case BattleStatType.MAXHP:
+                return MaxHP;
+            case BattleStatType.ATTACK:
+                return Attack;
+            case BattleStatType.DEFENSE:
+                return Defense;
+            case BattleStatType.MANA:
+                return Mana;
+            case BattleStatType.RELIC:
+                return Relic;
+            default:
+                return 0;
+        }
+    }
+
+    public void SetStat(BattleStatType type, float newValue)
+    {
+        switch (type)
+        {
+            case BattleStatType.MAXHP:
+                MaxHP = newValue;
+                break;
+            case BattleStatType.ATTACK:
+                Attack = newValue;
+                break;
+            case BattleStatType.DEFENSE:
+                Defense = newValue;
+                break;
+            case BattleStatType.MANA:
+                Mana = newValue;
+                break;
+            case BattleStatType.RELIC:
+                Relic = newValue;
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void AddStats(BattleStats otherStats)
+    {
+        MaxHP += otherStats.MaxHP;
+        Attack += otherStats.Attack;
+        Defense += otherStats.Defense;
+        Mana += otherStats.Mana;
+        Relic += otherStats.Relic;
+    }
+
+    public void ScaleStats(float scaleAmount)
+    {
+        MaxHP *= scaleAmount;
+        Attack *= scaleAmount;
+        Defense *= scaleAmount;
+        Mana *= scaleAmount;
+        Relic *= scaleAmount;
     }
 }

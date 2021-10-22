@@ -220,7 +220,7 @@ public class BattleManager : MonoBehaviour
 
                         // Magic number time - should eventually store these as constants elsewhere.
                         // 0.55 is to make sure things tend to round up instead of down
-                        int xpToGain = 5 + Mathf.RoundToInt(levelDifference * 0.55f);
+                        int xpToGain = 8 + Mathf.RoundToInt(levelDifference * 2);
                         if (!battle.IsParticipating(actor))
                         {
                             xpToGain = Mathf.RoundToInt((float)xpToGain * 0.55f);
