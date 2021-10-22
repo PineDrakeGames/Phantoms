@@ -34,6 +34,7 @@ public class PauseMenu : MonoBehaviour
             s_instance = this;
             UnPause();
         }
+        m_pauseMenuParent.SetActive(false);
     }
 
     private void Update()
@@ -46,11 +47,14 @@ public class PauseMenu : MonoBehaviour
 
     public void Pause()
     {
-        Time.timeScale = 0f;
-        m_pauseMenuParent.SetActive(true);
-        m_paused = true;
+        if (!LoadingManager.Loading)
+        {
+            Time.timeScale = 0f;
+            m_pauseMenuParent.SetActive(true);
+            m_paused = true;
 
-        Player.PlayerInputEnabled = false;
+            Player.PlayerInputEnabled = false;
+        }
     }
 
     public void UnPause()
@@ -78,14 +82,9 @@ public class PauseMenu : MonoBehaviour
         Application.Quit();
     }
 
-    // Temp stuff for testing
-    public void Save()
+    public void ReturnToMainMenu()
     {
-        PixelCrushers.SaveSystem.SaveToSlot(SaveDataManager.CurrentSaveSlot);
-    }
-
-    public void Load()
-    {
-        PixelCrushers.SaveSystem.LoadFromSlot(SaveDataManager.CurrentSaveSlot);
+        LoadingManager.LoadScene(0);
+        UnPause();
     }
 }
