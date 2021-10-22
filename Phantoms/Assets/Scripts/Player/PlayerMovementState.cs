@@ -42,10 +42,10 @@ public abstract class PlayerMovementState
     /// Movement Functions ///
 
     // Rotates the player towards the controller's look input vector with the given sharpness.
-    protected void RotateTowardsMovement(ref Quaternion currentRotation, float sharpness, float deltaTime, bool useVeloctiyInsteadOfInput = false)
+    protected void RotateTowardsMovement(ref Quaternion currentRotation, float sharpness, float deltaTime, bool useVelocityInsteadOfInput = false)
     {
         Vector3 movement;
-        if (!useVeloctiyInsteadOfInput)
+        if (!useVelocityInsteadOfInput)
         {
             movement = Controller.LookInputVector;
         }

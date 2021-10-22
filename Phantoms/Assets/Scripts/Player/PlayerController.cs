@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
     public float MaxStableMoveSpeed = 10f;
     public float StableMovementSharpness = 15f;
     public float OrientationSharpness = 10f;
+    public float AirOrientationSharpness = 5f;
 
     [Header("Air Movement")]
     public float MaxAirMoveSpeed = 15f;
