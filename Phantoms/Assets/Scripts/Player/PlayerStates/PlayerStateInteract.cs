@@ -15,6 +15,8 @@ public class PlayerStateInteract : PlayerMovementState
             Controller.CharacterAnimator.SetTrigger("Fall");
             Controller.CharacterAnimator.SetTrigger("Landed");
         }
+
+        Controller.PutAwayScythe();
     }
 
     public override void TickInput(PlayerCharacterInputs input)

@@ -7080,10 +7080,7 @@ MonoBehaviour:
         type: 0
         typeString: CustomFieldType_Text
       - title: Sequence
-        value: 'required SetContinueMode(true);
-
-          AnimatorTrigger(StartingQuizEnd,
-          PlayerCharacter);
+        value: 'AnimatorTrigger(StartingQuizEnd, PlayerCharacter);
 
           Continue()@10;'
         type: 0
@@ -7113,8 +7110,8 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 591.701
-        y: 1682.2695
+        x: 592.8775
+        y: 1679.9166
         width: 160
         height: 30
     - id: 53
@@ -7308,7 +7305,9 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 'SetContinueMode(false);
+        value: 'AnimatorBool(Visible,true,BlackBackground)@3;
+
+          SetContinueMode(false);
 
           SetDialoguePanel(true);
 
@@ -7336,8 +7335,8 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 591.18256
-        y: 1733.446
+        x: 592.359
+        y: 1732.2695
         width: 160
         height: 30
     - id: 56
@@ -7383,7 +7382,9 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 
+        value: 'SetDialoguePanel(false)@3;
+
+          Continue()@4;'
         type: 0
         typeString: 
       conversationID: 6
@@ -7454,14 +7455,16 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 'required SetActive(Tutorial Move Trigger, true);
+        value: 'AnimatorBool(Visible,false,BlackBackground);
 
           required
-          SetContinueMode(true);'
+          SetActive(Tutorial Move Trigger, true);
+
+          required SetContinueMode(true);'
         type: 0
         typeString: 
       - title: EventGuid
-        value: 
+        value: c123b99f-bbc2-4276-b941-76c749df7c50
         type: 0
         typeString: 
       conversationID: 6
@@ -7479,7 +7482,7 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 592.87744
+        x: 591.701
         y: 1833.446
         width: 160
         height: 30
@@ -8869,7 +8872,7 @@ MonoBehaviour:
     - id: 1
       fields:
       - title: Title
-        value: New Dialogue Entry
+        value: Taking a seat
         type: 0
         typeString: 
       - title: Pictures
@@ -8914,12 +8917,12 @@ MonoBehaviour:
           required MoveTo(SavePosition,
           Player, 2);
 
-          AnimatorTrigger(Save,Player);
+          required AnimatorTrigger(Save,Player);
 
-          AnimatorTrigger(Save,listener);
+          required
+          AnimatorBool(Saving,true,listener)@1;
 
-          Continue()
-          @2'
+          Continue() @2'
         type: 0
         typeString: 
       conversationID: 10
@@ -8937,17 +8940,90 @@ MonoBehaviour:
         isConnector: 0
         priority: 2
       conditionsString: 
-      userScript: CheckFlag()
+      userScript: 
       onExecute:
         m_PersistentCalls:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
         x: 340
-        y: 136
+        y: 132.93616
         width: 160
         height: 30
     - id: 2
+      fields:
+      - title: Title
+        value: Saving
+        type: 0
+        typeString: 
+      - title: Pictures
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Description
+        value: 
+        type: 0
+        typeString: 
+      - title: Actor
+        value: 2
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Conversant
+        value: 1
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Menu Text
+        value: 
+        type: 0
+        typeString: 
+      - title: Dialogue Text
+        value: 
+        type: 0
+        typeString: 
+      - title: Parenthetical
+        value: 
+        type: 0
+        typeString: 
+      - title: Audio Files
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Video File
+        value: 
+        type: 0
+        typeString: 
+      - title: Sequence
+        value: 'Save(true)->Message(Saved);
+
+          Continue()@Message(Saved);'
+        type: 0
+        typeString: 
+      conversationID: 10
+      isRoot: 0
+      isGroup: 0
+      nodeColor: 
+      delaySimStatus: 0
+      falseConditionAction: Block
+      conditionPriority: 2
+      outgoingLinks:
+      - originConversationID: 10
+        originDialogueID: 2
+        destinationConversationID: 10
+        destinationDialogueID: 3
+        isConnector: 0
+        priority: 2
+      conditionsString: 
+      userScript: 
+      onExecute:
+        m_PersistentCalls:
+          m_Calls: []
+      canvasRect:
+        serializedVersion: 2
+        x: 338
+        y: 221
+        width: 160
+        height: 30
+    - id: 3
       fields:
       - title: Title
         value: New Dialogue Entry
@@ -8990,9 +9066,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 'TogglePlayerControl(true);
+        value: 'AnimatorTrigger(FinishSave,Player);
 
-          Continue() @Message(camMoved);'
+          AnimatorBool(Saving,false,listener);
+
+          Continue()@3;'
         type: 0
         typeString: 
       conversationID: 10
@@ -9004,18 +9082,18 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks: []
       conditionsString: 
-      userScript: Save()
+      userScript: 
       onExecute:
         m_PersistentCalls:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 340
-        y: 190
+        x: 338
+        y: 271
         width: 160
         height: 30
-    canvasScrollPosition: {x: 2, y: 1}
-    canvasZoom: 1
+    canvasScrollPosition: {x: 0, y: 0}
+    canvasZoom: 0.94000006
   syncInfo:
     syncActors: 0
     syncItems: 0

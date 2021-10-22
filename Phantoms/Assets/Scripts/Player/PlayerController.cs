@@ -55,7 +55,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
     [Header("Art stuff")]
     [SerializeField]
     private Animator m_characterAnimator = null;
-    public Animator CharacterAnimator { get { return m_characterAnimator; }}
+    public Animator CharacterAnimator { get { return m_characterAnimator; } }
     public float RunSpeedScale = 0.5f;
 
     [Header("Sound Stuff")]
@@ -241,7 +241,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
         Vector3 horizontalVelocity = currentVelocity - Vector3.Project(currentVelocity, Motor.CharacterUp);
         if (_moveInputVector.magnitude > 0f || horizontalVelocity.magnitude > 4f)
         {
-            
+
             m_characterAnimator.SetFloat("Speed", horizontalVelocity.magnitude * RunSpeedScale);
         }
         else
@@ -277,7 +277,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
                 _timeSinceLastAbleToJump += deltaTime;
             }
         }
-        
+
         // Handle Attack-related values
         {
             _timeSinceAttackRequested += deltaTime;
@@ -291,8 +291,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
                 _timeSinceAttack += deltaTime;
                 if (_timeSinceAttack >= ScytheOutTime)
                 {
-                    CharacterAnimator.SetTrigger("ScytheAway");
-                    _scytheOut = false;
+                    PutAwayScythe();
                 }
             }
         }
@@ -400,7 +399,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
         _attackRequested = false;
         if (!Motor.GroundingStatus.IsStableOnGround)
         {
-            _attackedInAir =  true;
+            _attackedInAir = true;
         }
 
         _scytheOut = true;
@@ -423,11 +422,20 @@ public class PlayerController : MonoBehaviour, ICharacterController
         }
         return false;
     }
-    
+
     public void DoubleJump()
     {
         Jump();
         CharacterAnimator.SetTrigger("Joy");
         _doubleJumpedUsed = true;
+    }
+
+    public void PutAwayScythe()
+    {
+        if (_scytheOut)
+        {
+            CharacterAnimator.SetTrigger("ScytheAway");
+            _scytheOut = false;
+        }
     }
 }
