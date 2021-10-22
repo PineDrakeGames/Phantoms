@@ -49,6 +49,8 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 0f;
         m_pauseMenuParent.SetActive(true);
         m_paused = true;
+
+        Player.PlayerInputEnabled = false;
     }
 
     public void UnPause()
@@ -56,6 +58,7 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1f;
         m_pauseMenuParent.SetActive(false);
         m_paused = false;
+        Player.PlayerInputEnabled = true;
     }
 
     public void TogglePause()

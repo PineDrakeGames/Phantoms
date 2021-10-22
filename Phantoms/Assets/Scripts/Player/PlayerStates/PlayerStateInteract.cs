@@ -17,6 +17,7 @@ public class PlayerStateInteract : PlayerMovementState
         }
 
         Controller.PutAwayScythe();
+        Player.PlayerInputEnabled = false;
     }
 
     public override void TickInput(PlayerCharacterInputs input)
@@ -77,6 +78,6 @@ public class PlayerStateInteract : PlayerMovementState
 
     public override void StateExit()
     {
-
+        Player.PlayerInputEnabled = true;
     }
 }

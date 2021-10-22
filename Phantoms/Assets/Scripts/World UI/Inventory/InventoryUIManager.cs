@@ -160,6 +160,7 @@ public class InventoryUIManager : MonoBehaviour
         SetPartyMembers();
         CloseTab();
         Time.timeScale = 0f;
+        Player.PlayerInputEnabled = false;
     }
 
     public void CloseInventory()
@@ -170,6 +171,7 @@ public class InventoryUIManager : MonoBehaviour
         m_inventoryParent.SetActive(false);
         m_tabs[m_currentTabIndex].CloseTab();
         Time.timeScale = 1f;
+        Player.PlayerInputEnabled = true;
     }
 
     public void SetTab(int newTabIndex)
