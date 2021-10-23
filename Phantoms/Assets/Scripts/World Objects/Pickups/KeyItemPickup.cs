@@ -16,10 +16,23 @@ public class KeyItemPickup : MonoBehaviour
     [SerializeField]
     private AudioClip m_itemPickupSoundEffect;
 
+    [Header("Flag Stuff")]
+    [SerializeField]
+    private bool m_encounterHasFlag = false;
+    [SerializeField]
+    private string m_encounterFlag = "";
+    [SerializeField]
+    private bool m_disableIfFlagSet = false;
+
     private Material m_materialCopy = null;
 
     private void Awake()
     {
+        if (m_encounterHasFlag && m_disableIfFlagSet && SaveDataManager.CheckFlag(m_encounterFlag))
+        {
+            gameObject.SetActive(false);
+        }
+
         if (m_itemRenderer == null)
         {
             m_itemRenderer = GetComponentInChildren<Renderer>();
@@ -44,6 +57,11 @@ public class KeyItemPickup : MonoBehaviour
 
             string notification = "You discovered a <b>" + KeyItem.DisplayName + "</b>!\n" + KeyItem.Description;
             NotificationManager.SetBottomNotification(KeyItem.Sprite, notification);
+
+            if (m_encounterHasFlag)
+            {
+                SaveDataManager.SetFlag(m_encounterFlag);
+            }
 
             this.gameObject.SetActive(false);
         }

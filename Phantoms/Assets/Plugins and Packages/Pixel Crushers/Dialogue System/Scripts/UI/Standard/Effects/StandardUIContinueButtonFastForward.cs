@@ -29,6 +29,10 @@ namespace PixelCrushers.DialogueSystem
         [Tooltip("If alert is displaying, continue past it.")]
         public bool continueAlertPanel = true;
 
+        [Tooltip("Inputs that continue/fast forward")]
+        [SerializeField]
+        private KeyCode[] fastForwardContinueKeys;
+
         private UnityEngine.UI.Button continueButton;
 
         private AbstractDialogueUI m_runtimeDialogueUI;
@@ -59,6 +63,20 @@ namespace PixelCrushers.DialogueSystem
                 typewriterEffect = GetComponentInChildren<UnityUITypewriterEffect>();
             }
             continueButton = GetComponent<UnityEngine.UI.Button>();
+        }
+
+        private void Update()
+        {
+            if (continueButton.interactable && fastForwardContinueKeys != null)
+            {
+                foreach(KeyCode key in fastForwardContinueKeys)
+                {
+                    if (Input.GetKeyDown(key))
+                    {
+                        OnFastForward();
+                    }
+                }
+            }
         }
 
         public virtual void OnFastForward()
