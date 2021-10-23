@@ -152,15 +152,15 @@ public class AudioManager : MonoBehaviour
 
     /// Sound Functions ///
 
-    public static void PlaySound(AudioClip sound, float volumeScale = 1f, float pitch = 1f)
+    public static void PlaySound(AudioClip sound, float volumeScale = 1f, float pitch = 1f, bool canStack = true)
     {
-        Instance.PlayOneShotInternal(sound, volumeScale, pitch);
+        Instance.PlayOneShotInternal(sound, volumeScale, pitch, canStack);
     }
-    public static void PlaySound(string soundClipID, float volumeScale = 1f, float pitch = 1f)
+    public static void PlaySound(string soundClipID, float volumeScale = 1f, float pitch = 1f, bool canStack = true)
     {
         float clipScale = 1f;
         AudioClip clip = DataManager.SoundEffectData.GetClip(soundClipID, out clipScale);
-        Instance.PlayOneShotInternal(clip, clipScale * volumeScale, pitch);
+        Instance.PlayOneShotInternal(clip, clipScale * volumeScale, pitch, canStack);
     }
     public static void PlaySound(SoundEffectData soundEffect)
     {
@@ -473,10 +473,33 @@ public class AudioManager : MonoBehaviour
 
     /// Internal Sound Effect Functions ///
 
-    private void PlayOneShotInternal(AudioClip clip, float volumeScale = 1f, float pitch = 1f, bool is3D = false)
+    private void PlayOneShotInternal(AudioClip clip, float volumeScale = 1f, float pitch = 1f, bool canStack = true)
     {
         // If just using the default pitch, can use the same basic audio source.
-        if (pitch == 1f)
+        if (!canStack)
+        {
+            bool foundSource = false;
+            foreach (AudioSource src in m_oneShotSoundSources)
+            {
+                if (src.isPlaying && src.clip == clip)
+                {
+                    src.Stop();
+                    src.pitch = pitch;
+                    src.volume = volumeScale * DataManager.Instance.GetSoundVolume();
+                    src.Play();
+                    foundSource = true;
+                }
+            }
+            if (!foundSource)
+            {
+                AudioSource source = GetFreeOneShotSource();
+                source.pitch = pitch;
+                source.volume = volumeScale * DataManager.Instance.GetSoundVolume();
+                source.clip = clip;
+                source.Play();
+            }
+        }
+        else if (pitch == 1f)
         {
             m_oneShotSoundSource.PlayOneShot(clip, volumeScale * DataManager.Instance.GetSoundVolume());
         }

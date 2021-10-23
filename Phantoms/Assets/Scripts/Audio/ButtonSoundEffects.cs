@@ -33,7 +33,7 @@ public class ButtonSoundEffects : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (!string.IsNullOrEmpty(m_buttonHoverSoundID) && m_buttonComponent.interactable)
         {
-            AudioManager.PlaySound(m_buttonHoverSoundID);
+            AudioManager.PlaySound(m_buttonHoverSoundID, 1f, 1f, false);
         }
     }
 
