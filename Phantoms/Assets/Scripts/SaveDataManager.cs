@@ -159,6 +159,7 @@ public static class SaveDataManager
     // much easier to do.
     public static void UpdateSavedData()
     {
+        if (SavedData == null) { SavedData = new SavedGameData(); }
         // Flags
         SavedData.Flags.Clear();
         foreach(KeyValuePair<string, bool> flag in m_flags)
