@@ -2504,7 +2504,7 @@ namespace Ares
             // Not sure if this is the place to do it, but using the mana here...
             actor.SpendMana(ability.Data.ManaCost);
 
-            AbilityMinigame.MinigameResult minigameResult = AbilityMinigame.MinigameResult.FAIL;
+            AbilityMinigame.MinigameResult minigameResult = AbilityMinigame.MinigameResult.NO_MINIGAME;
             bool usedMinigame = false;
             if (ability.UseMinigame && ability.Minigame != null && actor.Group.Name == "Player")
             {
@@ -2664,11 +2664,28 @@ namespace Ares
 
             // Set the text based on how the ability went!
             string abilityResultText = "";
-            abilityResultText += actor.DisplayName + " used ability " + abilityResults.ability.Data.DisplayName + "!";
+            string minigameSuccess = "!";
+            switch (abilityResults.minigameResult)
+            {
+                case AbilityMinigame.MinigameResult.SUCCESS:
+                    minigameSuccess = " successfully!";
+                    break;
+                case AbilityMinigame.MinigameResult.FAIL:
+                    minigameSuccess = ", and tried their best!";
+                    break;
+                case AbilityMinigame.MinigameResult.PERFECT:
+                    minigameSuccess = " <b>PERFECTLY!</b>";
+                    break;
+                case AbilityMinigame.MinigameResult.NO_MINIGAME:
+                default:
+                    break;
+            }
+
+            abilityResultText += actor.DisplayName + " used ability " + abilityResults.ability.Data.DisplayName + minigameSuccess;
             foreach (AbilityAction action in abilityResults.actionResults.Keys)
             {
                 BattleActionResults result = abilityResults.actionResults[action];
-                abilityResultText += "\n" + GetBattleActionString(action, abilityResults.actionResults[action]);
+                abilityResultText += "\n" + GetBattleActionString(action, abilityResults.actionResults[action], actor, abilityResults.ability);
             }
 
             BattleText.SetText(abilityResultText, true);
@@ -3103,6 +3120,7 @@ namespace Ares
             {
                 // This part of the ability hit, log it.
                 //resultText += "\n";
+
                 for (int i = 0; i < battleActionResults.hitTargets.Count; i++)
                 {
                     Actor hitActor = battleActionResults.hitTargets[i];
@@ -3165,6 +3183,90 @@ namespace Ares
                         resultText += " was afflicted with " + action.Affliction.DisplayName + "!";
                         break;
                 }
+            }
+            return resultText;
+        }
+
+        private string GetBattleActionString(AbilityAction action, BattleActionResults battleActionResults, Actor actor, Ability ability)
+        {
+            string resultText = "";
+            if (battleActionResults.hitTargets.Count > 0)
+            {
+                // This part of the ability hit, log it.
+                //resultText += "\n";
+
+                for (int i = 0; i < battleActionResults.hitTargets.Count; i++)
+                {
+                    Actor hitActor = battleActionResults.hitTargets[i];
+                    Actor actualTarget = hitActor;
+                    if (action.TargetMode == AbilityAction.TargetType.Self)
+                    {
+                        resultText += actor.DisplayName;
+                        actualTarget = actor;
+                    }
+                    else
+                    {
+                        resultText += hitActor.DisplayName;
+                    }
+
+                    float modifier = 1f;
+                    int power = Mathf.RoundToInt(ability.EvaluatePower(currentActor, hitActor, actualTarget, action, ref modifier, AbilityMinigame.MinigameResult.NO_MINIGAME));
+
+                    switch (action.Action)
+                    {
+                        case ChainEvaluator.ActionType.Damage:
+
+                            if (modifier > 1f)
+                            {
+                                resultText += " was <b>CRITICALLY</b> hurt!";
+                            }
+                            else if (modifier < 1f)
+                            {
+                                resultText += " was <i>slightly</i> hurt!";
+                            }
+                            else
+                            {
+                                resultText += " was hurt!";
+                            }
+                            break;
+                        case ChainEvaluator.ActionType.Heal:
+                            switch (action.TargetResource)
+                            {
+                                case ChainableAction.ActorResourceType.Mana:
+                                    resultText += " had MP restored!";
+                                    break;
+                                case ChainableAction.ActorResourceType.Health:
+                                default:
+                                    resultText += " was healed!";
+                                    break;
+                            }
+                            break;
+                        case ChainEvaluator.ActionType.Buff:
+                            resultText += " had their " + action.Stat.DisplayName;
+                            // TODO: Check the evaluated power of this!!!
+                            if (power >= 0 )
+                            {
+                                resultText += " buffed!";
+                            }
+                            else
+                            {
+                                resultText += " debuffed!";
+                            }
+                            break;
+                        case ChainEvaluator.ActionType.ClearBuff:
+                            resultText += " had their buffs cleared!";
+                            break;
+                        case ChainEvaluator.ActionType.Cure:
+                            resultText += " was cured of " + action.Affliction.DisplayName + "!";
+                            break;
+                        case ChainEvaluator.ActionType.Environment:
+                            break;
+                        case ChainEvaluator.ActionType.Afflict:
+                            resultText += " was afflicted with " + action.Affliction.DisplayName + "!";
+                            break;
+                    }
+                }
+
             }
             return resultText;
         }

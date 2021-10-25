@@ -12,6 +12,7 @@ public abstract class AbilityMinigame : MonoBehaviour
     }
     public enum MinigameResult
     {
+        NO_MINIGAME,
         FAIL,
         SUCCESS,
         PERFECT
