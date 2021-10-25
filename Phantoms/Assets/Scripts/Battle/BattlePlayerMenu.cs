@@ -117,6 +117,7 @@ public class BattlePlayerMenu : MonoBehaviour
     /// Private Variables ///
     /////////////////////////
 
+    private HealthIndicator m_currentActorTarget = null;
     private GameObject m_currentTargetIndicator = null;
     private List<GameObject> m_targetIndicators = new List<GameObject>();
 
@@ -137,6 +138,8 @@ public class BattlePlayerMenu : MonoBehaviour
     private BattleMenuState m_currentState = BattleMenuState.MAIN;
 
     private UnityEvent OnConfirm = new UnityEvent();
+
+    private const float TARGET_ARROW_HEIGHT_OFFSET = 2.2f;
 
     //////////////////////
     /// Public Getters ///
@@ -300,8 +303,22 @@ public class BattlePlayerMenu : MonoBehaviour
         {
             m_currentTargetIndicator.SetActive(true);
             // TODO: Either set offset in prefab or in data
-            m_currentTargetIndicator.transform.position = actor.transform.position + (Vector3.up * 1.5f);
+            m_currentTargetIndicator.transform.position = actor.transform.position + (Vector3.up * TARGET_ARROW_HEIGHT_OFFSET);
         }
+        HealthIndicator newTarget = null;
+        if (actor != null && ActorToHealthIndicator.ContainsKey(actor))
+        {
+           newTarget = ActorToHealthIndicator[actor];
+        }
+        if (m_currentActorTarget != null && m_currentActorTarget != newTarget)
+        {
+            m_currentActorTarget.SetTargeted(false);
+        }
+        if (newTarget != null)
+        {
+            newTarget.SetTargeted(true);
+        }
+        m_currentActorTarget = newTarget;
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -456,18 +473,21 @@ public class BattlePlayerMenu : MonoBehaviour
             case BattleInteractorData.TargetType.SingleActor:
                 m_actionInput.AbilitySelectCallback(m_currentAbility);
                 m_battleCamera.ResetCamera();
+                HideTargetIndicators();
                 break;
             case BattleInteractorData.TargetType.NumberOfActors:
                 if (m_actionTargets.Count >= m_currentAbility.Data.NumberOfTargets)
                 {
                     m_actionInput.AbilitySelectCallback(m_currentAbility);
                     m_battleCamera.ResetCamera();
+                    HideTargetIndicators();
                 }
                 else
                 {
                     // Leave the current target indicator, get a new one.
                     m_currentTargetIndicator = GetTargetIndicator();
                     m_currentTargetIndicator.SetActive(false);
+                    m_currentActorTarget = null;
                 }
                 break;
         }
@@ -494,6 +514,7 @@ public class BattlePlayerMenu : MonoBehaviour
                     // Leave the current target indicator, get a new one.
                     m_currentTargetIndicator = GetTargetIndicator();
                     m_currentTargetIndicator.SetActive(false);
+                    m_currentActorTarget = null;
                 }
                 break;
         }
@@ -631,7 +652,12 @@ public class BattlePlayerMenu : MonoBehaviour
         {
             indicator.SetActive(false);
         }
+        foreach(HealthIndicator healthIndicator in ActorToHealthIndicator.Values)
+        {
+            healthIndicator.SetTargeted(false);
+        }
         m_currentTargetIndicator = null;
+        m_currentActorTarget = null;
     }
 
     ///////////////////////////////////////////////////////////
@@ -693,6 +719,8 @@ public class BattlePlayerMenu : MonoBehaviour
         m_mainMenuParent.SetActive(false);
         m_partnerMenuParent.SetActive(false);
         m_subMenuParent.SetActive(true);
+
+        UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
 
         foreach (BattleSubmenuButton submenuButton in m_subMenuButtons)
         {
@@ -835,7 +863,11 @@ public class BattlePlayerMenu : MonoBehaviour
                     foreach (Actor actor in group.Actors)
                     {
                         GameObject targetIndicator = GetTargetIndicator();
-                        targetIndicator.transform.position = actor.transform.position + (Vector3.up * 1.5f);
+                        targetIndicator.transform.position = actor.transform.position + (Vector3.up * TARGET_ARROW_HEIGHT_OFFSET);
+                        if (ActorToHealthIndicator.ContainsKey(actor))
+                        {
+                            ActorToHealthIndicator[actor].SetTargeted(true);
+                        }
                     }
                 }
 
@@ -855,7 +887,11 @@ public class BattlePlayerMenu : MonoBehaviour
                 foreach (Actor actor in m_actionTargets)
                 {
                     GameObject targetIndicator = GetTargetIndicator();
-                    targetIndicator.transform.position = actor.transform.position + (Vector3.up * 1.5f);
+                    targetIndicator.transform.position = actor.transform.position + (Vector3.up * TARGET_ARROW_HEIGHT_OFFSET);
+                    if (ActorToHealthIndicator.ContainsKey(actor))
+                        {
+                            ActorToHealthIndicator[actor].SetTargeted(true);
+                        }
                 }
 
                 OnConfirm.AddListener(delegate

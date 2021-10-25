@@ -25,7 +25,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7730724014331859398}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -52,6 +52,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_textBoxAnimator: {fileID: 7730724014331859397}
   m_textComponent: {fileID: 7730724014602883208}
+  m_fancyTextComponent: {fileID: 6296366356238773482}
   m_continueButton: {fileID: 7730724015757628941}
 --- !u!95 &7730724014331859397
 Animator:
@@ -83,6 +84,7 @@ GameObject:
   - component: {fileID: 7730724014602883214}
   - component: {fileID: 7730724014602883209}
   - component: {fileID: 7730724014602883208}
+  - component: {fileID: 6296366356238773482}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -207,6 +209,28 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6296366356238773482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7730724014602883211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 566a73b386e86154fa405c7d9fe9a49e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_effectTable: {fileID: 11400000, guid: 8718aaa59b05c3a4ab72f658f9409f22, type: 2}
+  defaultEffect: {fileID: 0}
+  createtype: {fileID: 11400000, guid: 7fea25c083b7a644fb33c60ef9715429, type: 2}
+  CharacterDelay: 0.02
+  m_quarterPauseCharacters: 
+  quarterPauseDuration: 0.1
+  Active: 0
+  Revealing: 0
+  newLinePause: 0.2
+  TypeWriterEffect: {fileID: 0}
 --- !u!1 &7730724015247965614
 GameObject:
   m_ObjectHideFlags: 0

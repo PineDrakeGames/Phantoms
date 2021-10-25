@@ -14,6 +14,9 @@ public class BattleText : MonoBehaviour
     private TMP_Text m_textComponent = null;
 
     [SerializeField]
+    private FancyText m_fancyTextComponent = null;
+
+    [SerializeField]
     private GameObject m_continueButton = null;
 
     // Static instance stuff
@@ -72,7 +75,7 @@ public class BattleText : MonoBehaviour
 
     private void Update()
     {
-        if (m_battlePaused && m_isTimedPause)
+        if (m_battlePaused && m_isTimedPause && !m_fancyTextComponent.Revealing)
         {
             m_remainingPauseTime -= Time.deltaTime;
             if (m_remainingPauseTime <= 0)
@@ -99,14 +102,14 @@ public class BattleText : MonoBehaviour
     ////////////////////////////////////////////
     /// Public static functions to be called ///
     ////////////////////////////////////////////
-    public static void SetText(string text, bool pauseBattle = false, float maxPauseTime = 4f)
+    public static void SetText(string text, bool pauseBattle = false, float maxPauseTime = 2f)
     {
         Instance.SetTextInternal(text, pauseBattle, maxPauseTime);
     }
 
-    public static void HideText()
+    public static void HideText(bool finishIfWriting = true)
     {
-        Instance.HideTextInternal();
+        Instance.HideTextInternal(finishIfWriting);
     }
 
     ////////////////////////////////////////////
@@ -137,10 +140,11 @@ public class BattleText : MonoBehaviour
         {
             return;
         }
-        
+
         m_textBoxAnimator.SetBool("Enabled", true);
         if (m_showingText) { m_textBoxAnimator.SetTrigger("Reset"); }
         m_textComponent.text = text;
+        m_fancyTextComponent.SetText(text);
 
         if (pauseBattle)
         {
@@ -169,8 +173,17 @@ public class BattleText : MonoBehaviour
         m_currentText = text;
     }
 
-    private void HideTextInternal()
+    private void HideTextInternal(bool finishIfWriting = true)
     {
+        if (m_fancyTextComponent.Revealing)
+        {
+            m_fancyTextComponent.FinishLine();
+            if (finishIfWriting)
+            {
+                return;
+            }
+        }
+
         m_textBoxAnimator.SetBool("Enabled", false);
 
         if (m_battlePaused)

@@ -166,7 +166,7 @@ public class AbilityMinigameManager : MonoBehaviour
 
     private void HideMinigameDescriptionInternal()
     {
-        BattleText.HideText();
+        BattleText.HideText(false);
     }
 
     private void SetMinigameData(AbilityMinigameData data)

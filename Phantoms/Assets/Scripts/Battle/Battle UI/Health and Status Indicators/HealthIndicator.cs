@@ -39,6 +39,9 @@ public class HealthIndicator : MonoBehaviour
     [SerializeField]
     private Animator m_overallAnimator = null;
 
+    [SerializeField]
+    private GameObject m_targetedIndicator = null;
+
     [Header("Buffs & Afflictions")]
     [SerializeField]
     private Transform m_statusEffectsList = null;
@@ -172,11 +175,18 @@ public class HealthIndicator : MonoBehaviour
         }
 
         m_actor = newActor;
+
+        SetTargeted(false);
     }
 
     public void SetAsActive(bool active)
     {
         m_overallAnimator.SetBool("Active", active);
+    }
+
+    public void SetTargeted(bool isTargeted)
+    {
+        m_targetedIndicator.gameObject.SetActive(isTargeted);
     }
 
     /////////////////////////
