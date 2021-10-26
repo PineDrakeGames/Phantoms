@@ -110,8 +110,10 @@ public class BattleResultsManager : MonoBehaviour
             case Battle.EndReason.PhantomCaught:
                 ShowCaughtPhantom();
                 break;
-            case Battle.EndReason.EnemyWin:
             case Battle.EndReason.Ran:
+                ShowRunAway();
+                break;
+            case Battle.EndReason.EnemyWin:
             case Battle.EndReason.WinLoseConditionMet:
             case Battle.EndReason.OutOfTurns:
             default:
@@ -245,7 +247,7 @@ public class BattleResultsManager : MonoBehaviour
 
             m_phantomName.text = CaughtPhantom.Data.DisplayName;
             m_phantomDescription.text = CaughtPhantom.Data.Description;
-            
+
             if (CaughtPhantom.Data.IconFill)
             {
                 m_phantomIconFill.gameObject.SetActive(true);
@@ -277,6 +279,45 @@ public class BattleResultsManager : MonoBehaviour
     public void OnPhantomNicknameUpdate()
     {
         m_SetNameButton.interactable = !(string.IsNullOrWhiteSpace(m_phantomNameInputField.text));
+    }
+
+    public void ShowRunAway()
+    {
+        m_currentMenu = ResultMenu.DEFAULT;
+
+        m_resultsParent.SetActive(true);
+        m_defaultResultsParent.SetActive(true);
+
+        string headerText = "You Lost..";
+
+        float percentDropsLost = Random.Range(0.05f, 0.2f);
+
+        int numDropsLost = Mathf.RoundToInt((float)DataManager.CurrentDrops * percentDropsLost);
+        if (numDropsLost < 5) { numDropsLost = Mathf.Min(5, DataManager.CurrentDrops); }
+        if (numDropsLost < 0) { numDropsLost = 0; }
+
+        DataManager.CurrentDrops -= numDropsLost;
+
+        string descriptionText;
+
+        if (numDropsLost <= 0)
+        {
+            descriptionText = "You run as fast as you can. After running for awhile, the Phantom seems to lose interest, and you escape.";
+
+        }
+        else
+        {
+            descriptionText = "You toss some drops to bait the Phantom away.\n You lose <b>" + numDropsLost + "</b>drop";
+            if (numDropsLost > 1)
+            {
+                descriptionText += "s";
+            }
+            descriptionText += ".";
+        }
+
+        m_defaultResultsParent.SetActive(true);
+        m_defaultResultsHeaderText.text = headerText;
+        m_defaultResultsDescriptionText.text = descriptionText;
     }
 
 
