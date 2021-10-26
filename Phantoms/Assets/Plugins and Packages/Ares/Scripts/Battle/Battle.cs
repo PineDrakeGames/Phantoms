@@ -3190,81 +3190,84 @@ namespace Ares
         private string GetBattleActionString(AbilityAction action, BattleActionResults battleActionResults, Actor actor, Ability ability)
         {
             string resultText = "";
-            if (battleActionResults.hitTargets.Count > 0)
+            if (battleActionResults.hitTargets.Count <= 0) { return resultText; }
+            // This part of the ability hit, log it.
+            //resultText += "\n";
+
+            for (int i = 0; i < battleActionResults.hitTargets.Count; i++)
             {
-                // This part of the ability hit, log it.
-                //resultText += "\n";
-
-                for (int i = 0; i < battleActionResults.hitTargets.Count; i++)
+                Actor hitActor = battleActionResults.hitTargets[i];
+                Actor actualTarget = hitActor;
+                if (action.TargetMode == AbilityAction.TargetType.Self)
                 {
-                    Actor hitActor = battleActionResults.hitTargets[i];
-                    Actor actualTarget = hitActor;
-                    if (action.TargetMode == AbilityAction.TargetType.Self)
-                    {
-                        resultText += actor.DisplayName;
-                        actualTarget = actor;
-                    }
-                    else
-                    {
-                        resultText += hitActor.DisplayName;
-                    }
+                    resultText += actor.DisplayName;
+                    actualTarget = actor;
+                }
+                else
+                {
+                    resultText += hitActor.DisplayName;
+                }
 
-                    float modifier = 1f;
-                    int power = Mathf.RoundToInt(ability.EvaluatePower(currentActor, hitActor, actualTarget, action, ref modifier, AbilityMinigame.MinigameResult.NO_MINIGAME));
+                float modifier = 1f;
+                int power = Mathf.RoundToInt(ability.EvaluatePower(currentActor, hitActor, actualTarget, action, ref modifier, AbilityMinigame.MinigameResult.NO_MINIGAME));
 
-                    switch (action.Action)
-                    {
-                        case ChainEvaluator.ActionType.Damage:
+                switch (action.Action)
+                {
+                    case ChainEvaluator.ActionType.Damage:
 
-                            if (modifier > 1f)
-                            {
-                                resultText += " was <b>CRITICALLY</b> hurt!";
-                            }
-                            else if (modifier < 1f)
-                            {
-                                resultText += " was <i>slightly</i> hurt!";
-                            }
-                            else
-                            {
-                                resultText += " was hurt!";
-                            }
-                            break;
-                        case ChainEvaluator.ActionType.Heal:
-                            switch (action.TargetResource)
-                            {
-                                case ChainableAction.ActorResourceType.Mana:
-                                    resultText += " had MP restored!";
-                                    break;
-                                case ChainableAction.ActorResourceType.Health:
-                                default:
-                                    resultText += " was healed!";
-                                    break;
-                            }
-                            break;
-                        case ChainEvaluator.ActionType.Buff:
-                            resultText += " had their " + action.Stat.DisplayName;
-                            // TODO: Check the evaluated power of this!!!
-                            if (power >= 0 )
-                            {
-                                resultText += " buffed!";
-                            }
-                            else
-                            {
-                                resultText += " debuffed!";
-                            }
-                            break;
-                        case ChainEvaluator.ActionType.ClearBuff:
-                            resultText += " had their buffs cleared!";
-                            break;
-                        case ChainEvaluator.ActionType.Cure:
-                            resultText += " was cured of " + action.Affliction.DisplayName + "!";
-                            break;
-                        case ChainEvaluator.ActionType.Environment:
-                            break;
-                        case ChainEvaluator.ActionType.Afflict:
-                            resultText += " was afflicted with " + action.Affliction.DisplayName + "!";
-                            break;
-                    }
+                        if (modifier > 1f)
+                        {
+                            resultText += " was <b>CRITICALLY</b> hurt!";
+                        }
+                        else if (modifier < 1f)
+                        {
+                            resultText += " was <i>slightly</i> hurt!";
+                        }
+                        else
+                        {
+                            resultText += " was hurt!";
+                        }
+                        break;
+                    case ChainEvaluator.ActionType.Heal:
+                        switch (action.TargetResource)
+                        {
+                            case ChainableAction.ActorResourceType.Mana:
+                                resultText += " had MP restored!";
+                                break;
+                            case ChainableAction.ActorResourceType.Health:
+                            default:
+                                resultText += " was healed!";
+                                break;
+                        }
+                        break;
+                    case ChainEvaluator.ActionType.Buff:
+                        resultText += " had their " + action.Stat.DisplayName;
+                        // TODO: Check the evaluated power of this!!!
+                        if (power >= 0)
+                        {
+                            resultText += " buffed!";
+                        }
+                        else
+                        {
+                            resultText += " debuffed!";
+                        }
+                        break;
+                    case ChainEvaluator.ActionType.ClearBuff:
+                        resultText += " had their buffs cleared!";
+                        break;
+                    case ChainEvaluator.ActionType.Cure:
+                        resultText += " was cured of " + action.Affliction.DisplayName + "!";
+                        break;
+                    case ChainEvaluator.ActionType.Environment:
+                        break;
+                    case ChainEvaluator.ActionType.Afflict:
+                        resultText += " was afflicted with " + action.Affliction.DisplayName + "!";
+                        break;
+                }
+
+                if (i < battleActionResults.hitTargets.Count - 1)
+                {
+                    resultText += "\n";
                 }
 
             }
