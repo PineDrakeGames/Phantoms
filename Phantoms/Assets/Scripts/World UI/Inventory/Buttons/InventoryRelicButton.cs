@@ -5,12 +5,10 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 
-[RequireComponent(typeof(Button))]
-public class InventoryRelicButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+
+public class InventoryRelicButton : InventoryGenericButton
 {
     [Header("Button References")]
-    [SerializeField]
-    private Image m_relicIcon = null;
     [SerializeField]
     private GameObject m_currentRelicEquipParent = null;
     [SerializeField]
@@ -20,44 +18,29 @@ public class InventoryRelicButton : MonoBehaviour, IPointerEnterHandler, IPointe
 
     public InventoryUIRelicsTab RelicsInventory = null;
     public RelicInstance Data = null;
-
-    private Button m_buttonComponent = null;
-
-    ///////////////////////
-    /// Unity Functions ///
-    ///////////////////////
-    private void Awake()
-    {
-        m_buttonComponent = GetComponent<Button>();
-        m_buttonComponent.onClick.AddListener(OnClick);
-    }
-
-    private void OnDestroy()
-    {
-        if (m_buttonComponent)
-        {
-            m_buttonComponent.onClick.RemoveAllListeners();
-        }
-    }
-
+    
     ///////////////////////////////////////////////////////////////////////////
     /// Public functions for clicking, hovering, and setting up the button. ///
     ///////////////////////////////////////////////////////////////////////////
-    public void OnClick()
+    public override void OnClick()
     {
+        base.OnClick();
+
         if (RelicsInventory && Data != null)
         {
-            RelicsInventory.SelectRelic(Data);
+            RelicsInventory.SelectRelic(this);
         }
     }
 
-    public void SetButton()
+    public override void SetupButton()
     {
+        base.SetupButton();
+
         if (Data != null)
         {
-            if (m_relicIcon != null)
+            if (m_icon != null)
             {
-                m_relicIcon.sprite = Data.Data.Icon;
+                m_icon.sprite = Data.Data.Icon;
             }
             if (m_currentRelicEquipText != null && m_currentRelicEquipParent != null)
             {
@@ -82,27 +65,5 @@ public class InventoryRelicButton : MonoBehaviour, IPointerEnterHandler, IPointe
                 index++;
             }
         }
-    }
-
-    public void OnHover()
-    {
-        // future animation stuff?
-    }
-
-    public void OnStopHover()
-    {
-        // future animation stuff?
-    }
-
-    //////////////////////////
-    /// IPointer functions ///
-    //////////////////////////
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        OnHover();
-    }
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        OnStopHover();
     }
 }

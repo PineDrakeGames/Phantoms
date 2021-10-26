@@ -26,7 +26,7 @@ public class InventoryUIRelicsTab : InventoryTab
     private TextMeshProUGUI m_equipButtonText = null;
 
     private List<InventoryRelicButton> m_relicButtons = new List<InventoryRelicButton>();
-    private RelicInstance m_currentRelic = null;
+    private InventoryRelicButton m_currentRelic = null;
 
     void Start()
     {
@@ -38,6 +38,7 @@ public class InventoryUIRelicsTab : InventoryTab
     {
         base.OpenTab();
         ResetRelicList();
+        UpdateRelicDisplay();
         InventoryUIManager.Instance.OnSelectedPartyMemberUpdate.AddListener(OnPartyMemberSelect);
     }
 
@@ -57,14 +58,18 @@ public class InventoryUIRelicsTab : InventoryTab
         {
             InventoryRelicButton relicButton = GetButton();
             relicButton.Data = data;
-            relicButton.SetButton();
+            relicButton.SetupButton();
         }
     }
 
-    public void SelectRelic(RelicInstance data)
+    public void SelectRelic(InventoryRelicButton data)
     {
         if (data != null && data != m_currentRelic)
         {
+            if (m_currentRelic != null)
+            {
+                m_currentRelic.Selected = false;
+            }
             m_currentRelic = data;
             UpdateRelicDisplay();
         }
@@ -84,15 +89,15 @@ public class InventoryUIRelicsTab : InventoryTab
         {
             if (m_relicNameText != null)
             {
-                m_relicNameText.text = m_currentRelic.Data.DisplayName;
+                m_relicNameText.text = m_currentRelic.Data.Data.DisplayName;
             }
             if (m_relicDescriptionText != null)
             {
-                m_relicDescriptionText.text = m_currentRelic.Data.Description;
+                m_relicDescriptionText.text = m_currentRelic.Data.Data.Description;
             }
             if (m_relicRPRequirementText != null)
             {
-                m_relicRPRequirementText.text = "Costs " + m_currentRelic.Data.Points + " RP";
+                m_relicRPRequirementText.text = "Costs " + m_currentRelic.Data.Data.Points + " RP";
             }
 
             if (m_equipButton)
@@ -101,9 +106,9 @@ public class InventoryUIRelicsTab : InventoryTab
                 m_equipButton.interactable = true;
                 if (m_equipButtonText)
                 {
-                    if (m_currentRelic.Equipped)
+                    if (m_currentRelic.Data.Equipped)
                     {
-                        m_equipButtonText.text = "Unequip from " + m_currentRelic.User.GetDisplayName();
+                        m_equipButtonText.text = "Unequip from " + m_currentRelic.Data.User.GetDisplayName();
                     }
                     else
                     {
@@ -111,7 +116,7 @@ public class InventoryUIRelicsTab : InventoryTab
                         if (InventoryUIManager.Instance.CurrentSelectedPartyMember != null)
                         {
                             UserBattleInstanceData data = InventoryUIManager.Instance.CurrentSelectedPartyMember.PartyMemberData;
-                            if (data.CanEquipRelic(m_currentRelic))
+                            if (data.CanEquipRelic(m_currentRelic.Data))
                             {
                                 m_equipButton.interactable = true;
                                 m_equipButtonText.text = "Equip To " + data.GetDisplayName();
@@ -132,9 +137,9 @@ public class InventoryUIRelicsTab : InventoryTab
             }
 
             // Update the party member list
-            foreach(UserBattleInstanceData partyMember in InventoryUIManager.Instance.AllPartyMembers)
+            foreach (UserBattleInstanceData partyMember in InventoryUIManager.Instance.AllPartyMembers)
             {
-                bool isActive = partyMember.CanEquipRelic(m_currentRelic) || (m_currentRelic.User == partyMember);
+                bool isActive = partyMember.CanEquipRelic(m_currentRelic.Data) || (m_currentRelic.Data.User == partyMember);
                 InventoryPartyMember inventoryMember = InventoryUIManager.Instance.PartyDataToInventory[partyMember];
                 if (!isActive)
                 {
@@ -159,15 +164,15 @@ public class InventoryUIRelicsTab : InventoryTab
         {
             if (m_relicNameText != null)
             {
-                m_relicNameText.text = "-";
+                m_relicNameText.text = "Select a Relic!";
             }
             if (m_relicDescriptionText != null)
             {
-                m_relicDescriptionText.text = "-";
+                m_relicDescriptionText.text = "";
             }
             if (m_relicRPRequirementText)
             {
-                m_relicRPRequirementText.text = "-";
+                m_relicRPRequirementText.text = "";
             }
             if (m_equipButton)
             {
@@ -185,11 +190,11 @@ public class InventoryUIRelicsTab : InventoryTab
     {
         if (m_currentRelic != null)
         {
-            if (m_currentRelic.Equipped)
+            if (m_currentRelic.Data.Equipped)
             {
-                UserBattleInstanceData user = m_currentRelic.User;
-                user.UnequipRelic(m_currentRelic);
-                ResetRelicList();
+                UserBattleInstanceData user = m_currentRelic.Data.User;
+                user.UnequipRelic(m_currentRelic.Data);
+                m_currentRelic.SetupButton();
                 UpdateRelicDisplay();
             }
             else
@@ -203,10 +208,10 @@ public class InventoryUIRelicsTab : InventoryTab
 
     public void EquipRelicWithTarget(UserBattleInstanceData user)
     {
-        if (m_currentRelic != null && user.CanEquipRelic(m_currentRelic))
+        if (m_currentRelic != null && user.CanEquipRelic(m_currentRelic.Data))
         {
-            user.EquipRelic(m_currentRelic);
-            ResetRelicList();
+            user.EquipRelic(m_currentRelic.Data);
+            m_currentRelic.SetupButton();
             UpdateRelicDisplay();
             InventoryUIManager.Instance.SetPartyMembers();
         }

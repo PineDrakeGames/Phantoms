@@ -5,55 +5,37 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 
-[RequireComponent(typeof(Button))]
-public class InventoryKeyItemButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class InventoryKeyItemButton : InventoryGenericButton
 {
     [Header("Button References")]
-    [SerializeField]
-    private Image m_itemIcon = null;
     [SerializeField]
     private TextMeshProUGUI m_itemQuantityText = null;
 
     public InventoryUIKeyItemsTab KeyItemsInventory = null;
     public KeyItemInstanceData Data = null;
 
-    private Button m_buttonComponent = null;
-
-    ///////////////////////
-    /// Unity Functions ///
-    ///////////////////////
-    private void Awake()
-    {
-        m_buttonComponent = GetComponent<Button>();
-        m_buttonComponent.onClick.AddListener(OnClick);
-    }
-
-    private void OnDestroy()
-    {
-        if (m_buttonComponent)
-        {
-            m_buttonComponent.onClick.RemoveAllListeners();
-        }
-    }
-
     ///////////////////////////////////////////////////////////////////////////
     /// Public functions for clicking, hovering, and setting up the button. ///
     ///////////////////////////////////////////////////////////////////////////
-    public void OnClick()
+    public override void OnClick()
     {
+        base.OnClick();
+
         if (KeyItemsInventory && Data != null)
         {
-            KeyItemsInventory.SelectKeyItem(Data);
+            KeyItemsInventory.SelectKeyItem(this);
         }
     }
 
-    public void SetButton()
+    public override void SetupButton()
     {
+        base.SetupButton();
+
         if (Data != null)
         {
-            if (m_itemIcon != null)
+            if (m_icon != null)
             {
-                m_itemIcon.sprite = Data.Data.Sprite;
+                m_icon.sprite = Data.Data.Sprite;
             }
             if (m_itemQuantityText != null)
             {
@@ -67,28 +49,8 @@ public class InventoryKeyItemButton : MonoBehaviour, IPointerEnterHandler, IPoin
                     m_itemQuantityText.gameObject.SetActive(false);
                 }
             }
+            
+            m_buttonAnimator.SetBool("Disabled", Data.Quantity <= 0);
         }
-    }
-
-    public void OnHover()
-    {
-        // future animation stuff?
-    }
-
-    public void OnStopHover()
-    {
-        // future animation stuff?
-    }
-
-    //////////////////////////
-    /// IPointer functions ///
-    //////////////////////////
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        OnHover();
-    }
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        OnStopHover();
     }
 }

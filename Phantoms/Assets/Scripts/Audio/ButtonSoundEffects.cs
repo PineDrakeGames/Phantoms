@@ -47,10 +47,16 @@ public class ButtonSoundEffects : MonoBehaviour, IPointerEnterHandler, IPointerE
     //////////////////////////
     public void OnPointerEnter(PointerEventData eventData)
     {
-        OnHover();
+        if (m_buttonComponent.interactable)
+        {
+            OnHover();
+        }
     }
     public void OnPointerExit(PointerEventData eventData)
     {
-        OnStopHover();
+        if (m_buttonComponent.interactable)
+        {
+            OnStopHover();
+        }
     }
 }

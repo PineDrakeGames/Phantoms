@@ -27,7 +27,7 @@ public class InventoryUIItemsTab : InventoryTab
 
     // private variables
     private List<InventoryItemButton> m_itemButtons = new List<InventoryItemButton>();
-    private ItemInstanceData m_currentItem = null;
+    private InventoryItemButton m_currentItem = null;
 
     // Start is called before the first frame update
     void Start()
@@ -40,6 +40,7 @@ public class InventoryUIItemsTab : InventoryTab
     {
         base.OpenTab();
         ResetItemList();
+        UpdateItemDisplay();
         InventoryUIManager.Instance.OnSelectedPartyMemberUpdate.AddListener(OnPartyMemberSelect);
     }
 
@@ -59,14 +60,18 @@ public class InventoryUIItemsTab : InventoryTab
         {
             InventoryItemButton itemButton = GetButton();
             itemButton.Data = data;
-            itemButton.SetButton();
+            itemButton.SetupButton();
         }
     }
 
-    public void SelectItem(ItemInstanceData data)
+    public void SelectItem(InventoryItemButton data)
     {
         if (data != null && data != m_currentItem)
         {
+            if (m_currentItem != null)
+            {
+                m_currentItem.Selected = false;
+            }
             m_currentItem = data;
             UpdateItemDisplay();
         }
@@ -94,14 +99,14 @@ public class InventoryUIItemsTab : InventoryTab
             }
             if (m_useItemButton)
             {
-                m_useItemButton.gameObject.SetActive(m_currentItem.Data.CanUseOutOfBattle );
+                m_useItemButton.gameObject.SetActive(m_currentItem.Data.Data.CanUseOutOfBattle );
 
-                if (m_currentItem.Quantity <= 0)
+                if (m_currentItem.Data.Quantity <= 0)
                 {
                     m_useItemButton.interactable = false;
                     m_useItemButtonText.text = "All out!";
                 }
-                else if (m_currentItem.Data.HealsAll)
+                else if (m_currentItem.Data.Data.HealsAll)
                 {
                     m_useItemButton.interactable = true;
                     m_useItemButtonText.text = "Use On Everybody";
@@ -127,11 +132,11 @@ public class InventoryUIItemsTab : InventoryTab
         {
             if (m_itemNameText != null)
             {
-                m_itemNameText.text = "-";
+                m_itemNameText.text = "Select an Item!";
             }
             if (m_itemDescriptionText != null)
             {
-                m_itemDescriptionText.text = "-";
+                m_itemDescriptionText.text = "";
             }
             if (m_useItemButton)
             {
@@ -143,25 +148,26 @@ public class InventoryUIItemsTab : InventoryTab
 
     public void UseItem()
     {
-        if (m_currentItem != null && m_currentItem.Quantity > 0 && m_currentItem.Data.CanUseOutOfBattle)
+        if (m_currentItem != null && m_currentItem.Data.Quantity > 0 && m_currentItem.Data.Data.CanUseOutOfBattle)
         {
-            if (m_currentItem.Data.HealsAll)
+            if (m_currentItem.Data.Data.HealsAll)
             {
                 foreach(CombatantInstanceData combatant in InventoryUIManager.Instance.AllPartyMembers)
                 {
-                    combatant.RestoreHealth(m_currentItem.Data.HP);
-                    combatant.RestoreMana(m_currentItem.Data.Mana);
+                    combatant.RestoreHealth(m_currentItem.Data.Data.HP);
+                    combatant.RestoreMana(m_currentItem.Data.Data.Mana);
                 }
-                m_currentItem.Quantity -= 1;
-                ResetItemList();
+                m_currentItem.Data.Quantity -= 1;
+                m_currentItem.SetupButton();
             }
             else
             {
                 UseItemWithTarget(InventoryUIManager.Instance.CurrentSelectedPartyMember.PartyMemberData);
             }
 
-            if (m_currentItem.Quantity <= 0)
+            if (m_currentItem.Data.Quantity <= 0)
             {
+                m_currentItem.Selected = false;
                 m_currentItem = null;
                 UpdateItemDisplay();
             }
@@ -172,12 +178,12 @@ public class InventoryUIItemsTab : InventoryTab
 
     public void UseItemWithTarget(CombatantInstanceData combatant)
     {
-        if (m_currentItem != null && m_currentItem.Quantity > 0 && m_currentItem.Data.CanUseOutOfBattle)
+        if (m_currentItem != null && m_currentItem.Data.Quantity > 0 && m_currentItem.Data.Data.CanUseOutOfBattle)
         {
-            combatant.RestoreHealth(m_currentItem.Data.HP);
-            combatant.RestoreMana(m_currentItem.Data.Mana);
-            m_currentItem.Quantity -= 1;
-            ResetItemList();
+            combatant.RestoreHealth(m_currentItem.Data.Data.HP);
+            combatant.RestoreMana(m_currentItem.Data.Data.Mana);
+            m_currentItem.Data.Quantity -= 1;
+            m_currentItem.SetupButton();
         }
     }
 

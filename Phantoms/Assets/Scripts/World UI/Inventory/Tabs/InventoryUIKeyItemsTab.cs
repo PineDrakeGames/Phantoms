@@ -30,7 +30,7 @@ public class InventoryUIKeyItemsTab : InventoryTab
 
     // private variables
     private List<InventoryKeyItemButton> m_keyItemButtons = new List<InventoryKeyItemButton>();
-    private KeyItemInstanceData m_currentKeyItem = null;
+    private InventoryKeyItemButton m_currentKeyItem = null;
 
     // Start is called before the first frame update
     void Start()
@@ -43,6 +43,7 @@ public class InventoryUIKeyItemsTab : InventoryTab
     {
         base.OpenTab();
         ResetItemList();
+        UpdateItemDisplay();
         InventoryUIManager.Instance.OnSelectedPartyMemberUpdate.AddListener(OnPartyMemberSelect);
     }
 
@@ -62,14 +63,18 @@ public class InventoryUIKeyItemsTab : InventoryTab
         {
             InventoryKeyItemButton itemButton = GetButton();
             itemButton.Data = data;
-            itemButton.SetButton();
+            itemButton.SetupButton();
         }
     }
 
-    public void SelectKeyItem(KeyItemInstanceData data)
+    public void SelectKeyItem(InventoryKeyItemButton data)
     {
         if (data != null && data != m_currentKeyItem)
         {
+            if (m_currentKeyItem != null)
+            {
+                m_currentKeyItem.Selected = false;
+            }
             m_currentKeyItem = data;
             UpdateItemDisplay();
         }
@@ -89,11 +94,11 @@ public class InventoryUIKeyItemsTab : InventoryTab
         {
             if (m_itemNameText != null)
             {
-                m_itemNameText.text = m_currentKeyItem.Data.DisplayName;
+                m_itemNameText.text = m_currentKeyItem.Data.Data.DisplayName;
             }
             if (m_itemDescriptionText != null)
             {
-                m_itemDescriptionText.text = m_currentKeyItem.Data.Description;
+                m_itemDescriptionText.text = m_currentKeyItem.Data.Data.Description;
             }
             if (m_useItemButton)
             {
@@ -104,11 +109,11 @@ public class InventoryUIKeyItemsTab : InventoryTab
         {
             if (m_itemNameText != null)
             {
-                m_itemNameText.text = "-";
+                m_itemNameText.text = "Select a Key Item!";
             }
             if (m_itemDescriptionText != null)
             {
-                m_itemDescriptionText.text = "-";
+                m_itemDescriptionText.text = "";
             }
             if (m_useItemButton)
             {
@@ -120,7 +125,7 @@ public class InventoryUIKeyItemsTab : InventoryTab
 
     public void UseItem()
     {
-        if (m_currentKeyItem != null && m_currentKeyItem.Quantity > 0)
+        if (m_currentKeyItem != null && m_currentKeyItem.Data.Quantity > 0)
         {
             // Some key items may have uses in the future, but for now, nope!
         }
@@ -128,7 +133,7 @@ public class InventoryUIKeyItemsTab : InventoryTab
 
     public void UseItemWithTarget(CombatantInstanceData combatant)
     {
-        if (m_currentKeyItem != null && m_currentKeyItem.Quantity > 0)
+        if (m_currentKeyItem != null && m_currentKeyItem.Data.Quantity > 0)
         {
             // Same as normal use item - no use right now, but maybe later?
         }
