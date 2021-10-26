@@ -102,6 +102,8 @@ public class BattleResultsManager : MonoBehaviour
         m_currentMenu = ResultMenu.DEFAULT;
         m_endReason = endReason;
 
+        BattleCameraManager.Instance.BattleOverCamera();
+
         switch (m_endReason)
         {
             case Battle.EndReason.PlayerWin:

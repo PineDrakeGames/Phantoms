@@ -12,6 +12,9 @@ public class BattleCameraManager : MonoBehaviour
     private Transform m_defaultCameraPosition = null;
 
     [SerializeField]
+    private Transform m_battleFinishedCameraPosition = null;
+
+    [SerializeField]
     private AnimationCurve m_cameraTransitionCurve = null;
 
 
@@ -132,6 +135,11 @@ public class BattleCameraManager : MonoBehaviour
     {
         
         SetCamera(m_defaultCameraPosition.position, m_defaultCameraPosition.rotation);
+    }
+
+    public void BattleOverCamera()
+    {
+        SetCamera(m_battleFinishedCameraPosition.position, m_battleFinishedCameraPosition.rotation, 2f);
     }
 
     // Setting the camera using an explicit position and rotation
