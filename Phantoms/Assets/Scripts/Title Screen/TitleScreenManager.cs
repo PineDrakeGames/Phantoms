@@ -193,6 +193,7 @@ public class TitleScreenManager : MonoBehaviour
 
     public void ReturnToMainMenu()
     {
+        CheckSaveData();
         m_mainMenuButtons.gameObject.SetActive(true);
         m_saveSlotButtons.gameObject.SetActive(false);
     }

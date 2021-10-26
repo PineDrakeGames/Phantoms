@@ -89,6 +89,8 @@ public class VolumeSlider : MonoBehaviour, IDragHandler, IEndDragHandler
         {
             AudioManager.PlaySound(m_confirmSound);
         }
+
+        SaveSettingsManager.Save();
     }
 
 }
