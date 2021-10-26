@@ -9,7 +9,7 @@ public class BattlePhantomCatchManager : MonoBehaviour
     [Header("Main Scene References")]
     [SerializeField]
     private BattleManager m_battleManager = null;
-    
+
 
     [Header("Wager References")]
     [SerializeField]
@@ -22,6 +22,20 @@ public class BattlePhantomCatchManager : MonoBehaviour
     private Button m_subtractButton = null;
     [SerializeField]
     private Image m_heartFillImage = null;
+
+    [Header("Heart References")]
+    [SerializeField]
+    private GameObject m_heartObject = null;
+    [SerializeField]
+    private Animator m_heartAnimator = null;
+    [SerializeField]
+    private Vector3 m_heartMoveToPosition = Vector3.zero;
+
+    [Header("Waiting for response references")]
+    [SerializeField]
+    private CanvasGroup m_responsesBox = null;
+    [SerializeField]
+    private FancyText m_responseBoxText = null;
 
     [Header("Press and hold values")]
     [SerializeField]
@@ -55,6 +69,14 @@ public class BattlePhantomCatchManager : MonoBehaviour
     private Ares.Actor m_playerActor;
     private Ares.ActionInput m_actionInput;
 
+    private Vector3 m_heartStartingPos = Vector3.zero;
+
+    private const float TIME_BETWEEN_PULSES = 1.1f;
+    private const float MOVE_HEART_DURATION = 2f;
+    private const float RESULTS_BOX_FADEINTIME = 0.5f;
+    private const float RESULTS_WATCH_DURATION = 2f;
+    private const float FADE_OUT_TIME = 0.7f;
+
     ///////////////////////
     /// Unity Functions ///
     ///////////////////////
@@ -63,6 +85,9 @@ public class BattlePhantomCatchManager : MonoBehaviour
         m_healthWagerAmount.onValueChanged.AddListener(OnValueChange);
         m_healthWagerAmount.onEndEdit.AddListener(OnEndEdit);
         m_menuParent.SetActive(false);
+        m_responsesBox.gameObject.SetActive(false);
+        m_heartObject.gameObject.SetActive(false);
+        m_heartStartingPos = m_heartObject.GetComponent<RectTransform>().anchoredPosition;
     }
 
     private void OnEnable()
@@ -112,17 +137,20 @@ public class BattlePhantomCatchManager : MonoBehaviour
     public void StartCatch(Ares.Actor playerActor, Ares.ActionInput actionInput)
     {
         m_menuParent.SetActive(true);
+        m_heartObject.SetActive(true);
+        m_heartObject.GetComponent<RectTransform>().anchoredPosition = m_heartStartingPos;
         CurrentWager = 1;
         m_playerCurrentHealth = playerActor.HP;
         m_playerActor = playerActor;
         m_actionInput = actionInput;
         SetHeartTargetFill();
-        playerActor.GetComponentInChildren<Animator>().SetTrigger("Catch");
     }
 
     public void StopCatching()
     {
         m_menuParent.SetActive(false);
+        m_heartObject.SetActive(false);
+        m_responsesBox.gameObject.SetActive(false);
         m_playerActor.GetComponentInChildren<Animator>().SetTrigger("Idle");
     }
 
@@ -185,7 +213,6 @@ public class BattlePhantomCatchManager : MonoBehaviour
     public void SubmitAmount()
     {
         TryCatchPhantom();
-        m_menuParent.SetActive(false);
     }
 
     /////////////////////////
@@ -255,7 +282,7 @@ public class BattlePhantomCatchManager : MonoBehaviour
         {
             // Fail catch
             Debug.Log(string.Format("Initial roll missed, try again lol (Random roll {0}, acceptance chance {1}", randomRoll, acceptanceChance));
-            FailCatch();
+            StartCoroutine(FailCatch(phantomToCatch, 1));
             return false;
         }
 
@@ -287,27 +314,123 @@ public class BattlePhantomCatchManager : MonoBehaviour
 
         if (m_currentWager < convertedHealthMin)
         {
-            FailCatch();
+            StartCoroutine(FailCatch(phantomToCatch));
             return false;
         }
 
-        SucceedCatch(phantomData, phantomToCatch);
+        StartCoroutine(SucceedCatch(phantomData, phantomToCatch));
         return true;
     }
 
-    private void FailCatch()
+    private IEnumerator FailCatch(Ares.Actor phantomToCatch, int numPulses = 3)
     {
+        Coroutine resultWait = StartCoroutine(WaitForResult(numPulses));
+        yield return resultWait;
+
+        m_heartAnimator.SetTrigger("Reject");
+        m_responseBoxText.SetText("But it seems to reject you!");
+        foreach (Animator anim in phantomToCatch.GetComponentsInChildren<Animator>())
+        {
+            anim.SetTrigger("Attack");
+        }
+
         m_playerActor.TakeDamage(m_currentWager);
+
+        yield return new WaitForSeconds(RESULTS_WATCH_DURATION);
+        yield return StartCoroutine(FadeOutResults());
+
         m_actionInput.SkipCallback();
+        StopCatching();
     }
 
-    private void SucceedCatch(PhantomInstanceData phantomData, Ares.Actor phantomToCatch)
+    private IEnumerator SucceedCatch(PhantomInstanceData phantomData, Ares.Actor phantomToCatch)
     {
+        Coroutine resultWait = StartCoroutine(WaitForResult());
+        yield return resultWait;
+
+        m_heartAnimator.SetTrigger("Accept");
+        m_playerActor.GetComponentInChildren<Animator>().SetTrigger("Idle");
+        m_responseBoxText.SetText("And it accepts you!");
+        foreach (Animator anim in phantomToCatch.GetComponentsInChildren<Animator>())
+        {
+            anim.SetTrigger("Special");
+        }
+
+
+        yield return new WaitForSeconds(RESULTS_WATCH_DURATION);
+        yield return StartCoroutine(FadeOutResults());
+
         phantomData.CurrentHP = phantomToCatch.HP;
         phantomData.CurrentMana = phantomToCatch.Mana;
         PlayerInventoryManager.Instance.AddPhantom(phantomData);
         BattleManager.Instance.ResultsManager.CaughtPhantom = phantomData;
         m_battleManager.OnEnemyDefeat(phantomToCatch);
         m_battleManager.CurrentBattle.EndBattle(Ares.Battle.EndReason.PhantomCaught);
+        StopCatching();
+    }
+
+    private IEnumerator WaitForResult(int numPulses = 3)
+    {
+        float currentTime = 0f;
+
+        // Set things up first
+        m_menuParent.gameObject.SetActive(false);
+        m_responsesBox.gameObject.SetActive(true);
+        m_responseBoxText.SetText(" ");
+        RectTransform heartRectTransform = m_heartObject.GetComponent<RectTransform>();
+        bool heartMoved = false;
+        bool boxFadedIn = false;
+        while (!heartMoved || !boxFadedIn)
+        {
+            currentTime += Time.deltaTime;
+
+            if (!boxFadedIn)
+            {
+                float fadeInProgress = currentTime / RESULTS_BOX_FADEINTIME;
+
+                m_responsesBox.alpha = Mathf.Clamp01(fadeInProgress);
+                if (fadeInProgress >= 1)
+                {
+                    boxFadedIn = true;
+                    m_responseBoxText.SetText("You reach your heart out to the Phantom...");
+                    m_playerActor.GetComponentInChildren<Animator>().SetTrigger("Catch");
+                }
+            }
+
+            if (!heartMoved)
+            {
+                float heartMoveProgress = currentTime / MOVE_HEART_DURATION;
+
+                heartRectTransform.anchoredPosition = Vector3.Lerp(m_heartStartingPos, m_heartMoveToPosition, Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(heartMoveProgress)));
+                if (heartMoveProgress >= 1)
+                {
+                    heartRectTransform.anchoredPosition = m_heartMoveToPosition;
+                    heartMoved = true;
+                }
+            }
+
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.2f);
+
+        for (int i = 0; i < numPulses; i++)
+        {
+            m_heartAnimator.SetTrigger("Pulse");
+            yield return new WaitForSeconds(TIME_BETWEEN_PULSES);
+        }
+    }
+
+    private IEnumerator FadeOutResults()
+    {
+        float currentTime = 0f;
+
+        while (currentTime < FADE_OUT_TIME)
+        {
+            currentTime += Time.deltaTime;
+            float fadeOutProgress = currentTime / FADE_OUT_TIME;
+            m_responsesBox.alpha = Mathf.Clamp01(1f - fadeOutProgress);
+            yield return null;
+        }
     }
 }
