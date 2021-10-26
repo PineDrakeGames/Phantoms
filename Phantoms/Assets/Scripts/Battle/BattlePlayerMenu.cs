@@ -221,7 +221,8 @@ public class BattlePlayerMenu : MonoBehaviour
                 }
                 else
                 {
-                    indicator.ShowType = false;
+                    // Having enemies show types as well for now
+                    indicator.ShowType = true;
                 }
                 indicator.Actor = actor;
                 ActorToHealthIndicator.Add(actor, indicator);

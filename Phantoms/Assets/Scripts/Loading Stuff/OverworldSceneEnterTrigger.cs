@@ -9,6 +9,9 @@ public class OverworldSceneEnterTrigger : MonoBehaviour
     [Tooltip("The Loading screen will exit TOWARDS the direction set - should set to the direction of the path back out.")]
     public LoadingManager.LoadingScreenDirection EnterDirection = LoadingManager.LoadingScreenDirection.LEFT;
 
+    [Tooltip("The direction the player will walk upon entering the scene")]
+    public Vector2 EnterWalkDirection = Vector2.zero;
+
     public bool DefaultEnter = false;
 
     [SerializeField]

@@ -38,7 +38,25 @@ public class LoadingManager : MonoBehaviour
     private int m_loadingSceneIndex = 0;
 
     private bool m_loading = false;
-    public static bool Loading { get { return Instance.m_loading; } }
+    public static bool Loading
+    {
+        get
+        {
+            return Instance.m_loading;
+        }
+        set
+        {
+            Instance.m_loading = value;
+            if (Instance.m_loading)
+            {
+                Player.PlayerInputEnabled = false;
+            }
+            else
+            {
+                Player.PlayerInputEnabled = true;
+            }
+        }
+    }
     public static UnityEvent NewSceneLoaded = new UnityEvent();
 
     private GameObject m_loadingScreen = null;
@@ -64,6 +82,8 @@ public class LoadingManager : MonoBehaviour
     }
 
     public static LoadingScreenDirection CurrentLoadDirection = LoadingScreenDirection.UP;
+
+    public static Vector2 LoadWalkDirection = Vector2.zero;
 
     public enum SceneType
     {
@@ -137,27 +157,27 @@ public class LoadingManager : MonoBehaviour
     // Internal function called by the static scene load functions to access any instanced variables.
     private void LoadSceneInternal(int sceneIndex)
     {
-        if (!m_loading)
+        if (!Loading)
         {
-            m_loading = true;
+            Loading = true;
             StartCoroutine(LoadSceneBackend(sceneIndex));
         }
     }
 
     private void LoadSceneInternal(int sceneIndex, SceneType newSceneType = SceneType.OVERWORLD, bool showLoadingScreen = true)
     {
-        if (!m_loading)
+        if (!Loading)
         {
-            m_loading = true;
+            Loading = true;
             StartCoroutine(LoadSceneBackend(sceneIndex, newSceneType, showLoadingScreen));
         }
     }
 
     private void LoadBattleInternal(int sceneIndex)
     {
-        if (!m_loading)
+        if (!Loading)
         {
-            m_loading = true;
+            Loading = true;
             StartCoroutine(LoadIntoBattleBackend(sceneIndex));
         }
     }
@@ -165,7 +185,7 @@ public class LoadingManager : MonoBehaviour
     private void ReturnFromBattleInternal()
     {
 
-        if (!m_loading)
+        if (!Loading)
         {
             if (m_lastOverworldScene == SceneManager.GetActiveScene())
             {
@@ -173,7 +193,7 @@ public class LoadingManager : MonoBehaviour
             }
             else
             {
-                m_loading = true;
+                Loading = true;
                 StartCoroutine(ReturnFromBattleBackend());
             }
         }
@@ -243,7 +263,7 @@ public class LoadingManager : MonoBehaviour
         }
 
         // Clean Up!
-        m_loading = false;
+        Loading = false;
     }
 
     private IEnumerator LoadIntoBattleBackend(int sceneIndex, bool showLoadingScreen = true)
@@ -284,7 +304,7 @@ public class LoadingManager : MonoBehaviour
             yield return HideLoadingScreen();
         }
 
-        m_loading = false;
+        Loading = false;
     }
 
     private IEnumerator ReturnFromBattleBackend()
@@ -315,7 +335,7 @@ public class LoadingManager : MonoBehaviour
         NewSceneLoaded.Invoke();
         yield return HideLoadingScreen();
 
-        m_loading = false;
+        Loading = false;
     }
 
 
@@ -327,6 +347,9 @@ public class LoadingManager : MonoBehaviour
         {
             m_loadingScreenAnimator.SetInteger("Direction", (int)CurrentLoadDirection);
             m_loadingScreenAnimator.SetBool("Visible", true);
+
+            Player.SetCharacterInput(LoadWalkDirection);
+
             // TODO: Wait for animation to finish instead!
             yield return new WaitForSeconds(0.35f);
         }
@@ -338,6 +361,8 @@ public class LoadingManager : MonoBehaviour
         {
             m_loadingScreenAnimator.SetInteger("Direction", (int)CurrentLoadDirection);
             m_loadingScreenAnimator.SetBool("Visible", false);
+            Player.SetCharacterInput(LoadWalkDirection);
+
             // TODO: Wait for animation to finish instead!
             yield return new WaitForSeconds(0.35f);
         }

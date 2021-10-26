@@ -57,6 +57,15 @@ public class Player : MonoBehaviour
         }
     }
 
+    public static void SetCharacterInput(Vector2 direction)
+    {
+        PlayerCharacterInputs characterInputs = new PlayerCharacterInputs();
+        characterInputs.MoveAxisForward = direction.y;
+        characterInputs.MoveAxisRight = direction.x;
+        // Apply inputs to character
+        Instance.Character.SetInputs(ref characterInputs);
+    }
+
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))

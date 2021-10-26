@@ -3217,11 +3217,11 @@ namespace Ares
 
                         if (modifier > 1f)
                         {
-                            resultText += " was <b>CRITICALLY</b> hurt!";
+                            resultText += " was hurt <b>CRITICALLY</b>!";
                         }
                         else if (modifier < 1f)
                         {
-                            resultText += " was <i>slightly</i> hurt!";
+                            resultText += " was hurt, but <i>resisted</i>!";
                         }
                         else
                         {

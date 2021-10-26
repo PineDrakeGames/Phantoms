@@ -235,6 +235,7 @@ public class OverworldManager : MonoBehaviour
                     m_playerController.Motor.SetPositionAndRotation(enterTrigger.transform.position, enterTrigger.transform.rotation);
                     PlayerInstance.transform.position = enterTrigger.transform.position;
                     LoadingManager.CurrentLoadDirection = enterTrigger.EnterDirection;
+                    LoadingManager.LoadWalkDirection = enterTrigger.EnterWalkDirection;
 
                     PlayerRespawnManager.Instance.SetSafeRespawn(enterTrigger.transform.position);
 
@@ -251,12 +252,14 @@ public class OverworldManager : MonoBehaviour
                     m_playerController.Motor.SetPositionAndRotation(defaultEnter.transform.position, defaultEnter.transform.rotation);
                     PlayerInstance.transform.position = defaultEnter.transform.position;
                     LoadingManager.CurrentLoadDirection = defaultEnter.EnterDirection;
+                    LoadingManager.LoadWalkDirection = defaultEnter.EnterWalkDirection;
 
                     PlayerRespawnManager.Instance.SetSafeRespawn(defaultEnter.transform.position);
                 }
                 else
                 {
                     m_playerController.Motor.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                    LoadingManager.LoadWalkDirection = Vector2.zero;
                 }
             }
         }
