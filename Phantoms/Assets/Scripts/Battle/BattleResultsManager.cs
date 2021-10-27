@@ -11,6 +11,9 @@ public class BattleResultsManager : MonoBehaviour
     [SerializeField]
     private GameObject m_resultsParent = null;
 
+    [SerializeField]
+    private CanvasGroup m_healthBars = null;
+
     [Header("Default Results Items")]
     [SerializeField]
     private GameObject m_defaultResultsParent = null;
@@ -78,6 +81,8 @@ public class BattleResultsManager : MonoBehaviour
 
     private List<LevelUpOptionButton> m_levelUpOptionInstances = new List<LevelUpOptionButton>();
 
+    private const float BATTLE_UI_FADEOUT_DURATION = 0.5f;
+
 
     ///////////////////////
     /// Unity Functions ///
@@ -96,8 +101,14 @@ public class BattleResultsManager : MonoBehaviour
         m_resultsParent.SetActive(false);
     }
 
-    public void ShowResults(Battle.EndReason endReason)
+    public void ShowResults(Battle.EndReason endReason, bool waitForAbilities = true)
     {
+        if (waitForAbilities)
+        {
+            StartCoroutine(WaitForAbilitiesToFinish(endReason));
+            return;
+        }
+
         // Always start with the default menu, at least for now?
         m_currentMenu = ResultMenu.DEFAULT;
         m_endReason = endReason;
@@ -456,5 +467,43 @@ public class BattleResultsManager : MonoBehaviour
         buttonComponent.ResultsManager = this;
         m_levelUpOptionInstances.Add(buttonComponent);
         return buttonComponent;
+    }
+
+    private IEnumerator WaitForAbilitiesToFinish(Battle.EndReason endReason)
+    {
+        bool actorsDoingAbilities = true;
+        bool battleTextDisplaying = true;
+        float currentTime = 0f;
+
+        // Setting a max time of 5 seconds, just in case things get locked up somehow.
+        while ((actorsDoingAbilities || battleTextDisplaying) && currentTime < 5f)
+        {
+            currentTime += Time.deltaTime;
+
+            actorsDoingAbilities = false;
+            foreach (Actor actor in BattleManager.Instance.CurrentBattle.Actors)
+            {
+                if (actor.IsCastingAbility)
+                {
+                    actorsDoingAbilities = true;
+                }
+            }
+
+            battleTextDisplaying = BattleText.ShowingText;
+
+            yield return null;
+        }
+
+
+        currentTime = 0f;
+        while (currentTime < BATTLE_UI_FADEOUT_DURATION)
+        {
+            currentTime += Time.deltaTime;
+            float progress = Mathf.Clamp01(currentTime / BATTLE_UI_FADEOUT_DURATION);
+            m_healthBars.alpha = 1f - progress;
+            yield return null;
+        }
+
+        ShowResults(endReason, false);
     }
 }

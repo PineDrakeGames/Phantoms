@@ -285,7 +285,7 @@ public class BattleManager : MonoBehaviour
 
         // Show them results screen
 
-        BattleText.HideText(false);
+        //BattleText.HideText(false);
         m_resultsManager.ShowResults(endReason);
     }
 
