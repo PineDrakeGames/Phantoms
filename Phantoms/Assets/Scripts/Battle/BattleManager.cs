@@ -114,6 +114,13 @@ public class BattleManager : MonoBehaviour
                 {
                     actor.OnHPDeplete.AddListener(() => EndBattle(false));
                 }
+                else
+                {
+                    foreach (Animator anim in actor.GetComponentsInChildren<Animator>())
+                    {
+                        anim.SetTrigger("Spawn");
+                    }
+                }
             }
 
             if (ActorToData.ContainsKey(actor) && ActorToData[actor] is UserBattleInstanceData)
@@ -131,6 +138,10 @@ public class BattleManager : MonoBehaviour
             else
             {
                 battle.SetParticipation(actor, true);
+                foreach (Animator anim in actor.GetComponentsInChildren<Animator>())
+                {
+                    anim.SetTrigger("Spawn");
+                }
             }
         }
 
@@ -311,6 +322,11 @@ public class BattleManager : MonoBehaviour
                 m_playerMenu.ActorToHealthIndicator.Remove(keyValuePair.Key);
                 prevIndicator.Actor = newPhantom;
                 m_playerMenu.ActorToHealthIndicator.Add(newPhantom, prevIndicator);
+
+                foreach (Animator anim in newPhantom.GetComponentsInChildren<Animator>())
+                {
+                    anim.SetTrigger("Spawn");
+                }
 
                 return;
             }
