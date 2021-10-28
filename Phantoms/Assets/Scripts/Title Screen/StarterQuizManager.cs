@@ -111,6 +111,7 @@ public class StarterQuizManager : MonoBehaviour
     // Called each time we need to get a new question - picks one out and sets the right variables in the dialogue system.
     public void GenerateQuestion()
     {
+        Debug.Log("Generating Question");
         // Make sure we have a question
         if (m_currentQuestionIndex >= m_questions.Questions.Count)
         {
