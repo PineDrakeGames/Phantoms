@@ -147,6 +147,7 @@ public class DataManager : MonoBehaviour
     public List<string> StartersOrder = new List<string>();
     public List<string> StarterChoices = new List<string>();
     public string ChosenStarterID = "";
+    public string KindredInstanceID = "";
 
     ///////////////////////
     /// Unity Functions ///

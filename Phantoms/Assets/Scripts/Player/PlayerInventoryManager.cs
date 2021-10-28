@@ -139,12 +139,25 @@ public class PlayerInventoryManager : MonoBehaviour
         }
 
         Phantoms.Add(newPhantom);
+
+        if (newPhantomID.Trim().ToUpper() == "KINDRED")
+        {
+            DataManager.Instance.KindredInstanceID = newPhantom.InstanceID;
+        }
         return true;
     }
 
     public void AddPhantom(PhantomInstanceData newPhantom)
     {
         Phantoms.Add(newPhantom);
+    }
+
+    public void RemovePhantom(PhantomInstanceData phantom)
+    {
+        if (Phantoms.Contains(phantom))
+        {
+            Phantoms.Remove(phantom);
+        }
     }
 
     public PhantomInstanceData GetCurrentPhantom()

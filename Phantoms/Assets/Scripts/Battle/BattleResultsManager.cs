@@ -58,6 +58,15 @@ public class BattleResultsManager : MonoBehaviour
     [SerializeField]
     private Button m_SetNameButton = null;
 
+    [Header("Phantom Release Stuff")]
+    [SerializeField]
+    private GameObject m_phantomReleaseParent = null;
+    [SerializeField]
+    private Transform m_phantomOptionsContainer = null;
+    [SerializeField]
+    private GameObject m_phantomReleaseButton = null;
+
+
     [HideInInspector]
     public PhantomInstanceData CaughtPhantom = null;
 
@@ -68,7 +77,8 @@ public class BattleResultsManager : MonoBehaviour
         DEFAULT,
         EXPERIENCE,
         LEVELUP,
-        PHANTOMCAUGHT
+        PHANTOMCAUGHT,
+        PHANTOMRELEASE
     }
 
     private ResultMenu m_currentMenu = ResultMenu.NONE;
@@ -80,6 +90,8 @@ public class BattleResultsManager : MonoBehaviour
     private List<UserBattleInstanceData> m_queuedLevelUps = new List<UserBattleInstanceData>();
 
     private List<LevelUpOptionButton> m_levelUpOptionInstances = new List<LevelUpOptionButton>();
+
+    private List<PhantomReleaseOptionButton> m_phantomReleaseButtons = new List<PhantomReleaseOptionButton>();
 
     private const float BATTLE_UI_FADEOUT_DURATION = 0.5f;
 
@@ -199,10 +211,19 @@ public class BattleResultsManager : MonoBehaviour
         m_experienceBoxes.Add(m_keeperReward);
 
         Dictionary<UserBattleInstanceData, int> experienceRewards = BattleManager.Instance.ExperienceReward;
-        foreach (UserBattleInstanceData player in experienceRewards.Keys)
+
+        List<UserBattleInstanceData> usersToShow = new List<UserBattleInstanceData>();
+        usersToShow.Add(DataManager.Instance.GetPlayerBattleInstanceData());
+        usersToShow.AddRange(PlayerInventoryManager.Instance.Phantoms);
+
+        foreach (UserBattleInstanceData player in usersToShow)
         {
             // NOTE(CJ): THIS IS WHERE THE ACTUAL LEVEL UP AND EXPERIENCE REWARDING IS!
-            int newExperience = player.Experience + experienceRewards[player];
+            int newExperience = player.Experience;
+            if (experienceRewards.ContainsKey(player))
+            {
+                newExperience += experienceRewards[player];
+            }
             int numLevelUps = 0;
             while (newExperience >= 100)
             {
@@ -289,6 +310,38 @@ public class BattleResultsManager : MonoBehaviour
         }
     }
 
+    public void ShowReleasePhantom()
+    {
+        m_currentMenu = ResultMenu.PHANTOMRELEASE;
+        m_resultsParent.SetActive(true);
+        m_phantomReleaseParent.SetActive(true);
+
+        m_phantomReleaseButtons.Add(m_phantomReleaseButton.GetComponent<PhantomReleaseOptionButton>());
+
+        for (int i = 1; i < PlayerInventoryManager.Instance.Phantoms.Count; i++)
+        {
+            GameObject newButton = Instantiate(m_phantomReleaseButton, m_phantomOptionsContainer);
+            m_phantomReleaseButtons.Add(newButton.GetComponent<PhantomReleaseOptionButton>());
+        }
+
+        for (int i = 0; i < PlayerInventoryManager.Instance.Phantoms.Count; i++)
+        {
+            PhantomInstanceData phantom = PlayerInventoryManager.Instance.Phantoms[i];
+            PhantomReleaseOptionButton button = m_phantomReleaseButtons[i];
+
+            if (phantom == null || phantom.InstanceID == DataManager.Instance.KindredInstanceID)
+            {
+                button.gameObject.SetActive(false);
+            }
+            else
+            {
+                button.gameObject.SetActive(true);
+                button.ResultsManager = this;
+                button.SetButton(phantom);
+            }
+        }
+    }
+
     public void OnPhantomNicknameUpdate()
     {
         m_SetNameButton.interactable = !(string.IsNullOrWhiteSpace(m_phantomNameInputField.text));
@@ -341,6 +394,7 @@ public class BattleResultsManager : MonoBehaviour
         m_experienceResultsParent.SetActive(false);
         m_levelUpParent.SetActive(false);
         m_phantomCaughtParent.SetActive(false);
+        m_phantomReleaseParent.SetActive(false);
 
         switch (m_endReason)
         {
@@ -361,6 +415,7 @@ public class BattleResultsManager : MonoBehaviour
 
                     case ResultMenu.NONE:
                     case ResultMenu.PHANTOMCAUGHT:
+                    case ResultMenu.PHANTOMRELEASE:
                     default:
                         QuitBattle();
                         break;
@@ -384,9 +439,19 @@ public class BattleResultsManager : MonoBehaviour
 
                     case ResultMenu.PHANTOMCAUGHT:
                         CaughtPhantom.NickName = m_phantomNameInputField.text;
+                        // Temporary solution, should eventually have a constant int for current party size.
+                        if (PlayerInventoryManager.Instance.Phantoms.Count > 7)
+                        {
+                            ShowReleasePhantom();
+                        }
+                        else
+                        {
+                            ShowExperience();
+                        }
+                        break;
+                    case ResultMenu.PHANTOMRELEASE:
                         ShowExperience();
                         break;
-
                     case ResultMenu.NONE:
                     default:
                         QuitBattle();

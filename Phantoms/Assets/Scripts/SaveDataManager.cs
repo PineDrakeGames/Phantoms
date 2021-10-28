@@ -140,6 +140,7 @@ public class SavedGameData
     public List<string> StartersOrder = new List<string>();
     public List<string> StarterChoices = new List<string>();
     public string ChosenStarterID = "";
+    public string KindredInstanceID = "";
 }
 
 
@@ -219,6 +220,7 @@ public static class SaveDataManager
         // Other
         SavedData.Drops = DataManager.CurrentDrops;
         SavedData.ChosenStarterID = System.String.Copy(DataManager.Instance.ChosenStarterID);
+        SavedData.KindredInstanceID = System.String.Copy(DataManager.Instance.KindredInstanceID);
         SavedData.StartersOrder = DataManager.Instance.StartersOrder.ConvertAll(starter => System.String.Copy(starter)); // Deep copy of the list of strings
         SavedData.StarterChoices = DataManager.Instance.StarterChoices.ConvertAll(starter => System.String.Copy(starter));
 
@@ -306,6 +308,7 @@ public static class SaveDataManager
         // Other
         DataManager.CurrentDrops = SavedData.Drops;
         DataManager.Instance.ChosenStarterID = System.String.Copy(SavedData.ChosenStarterID);
+        DataManager.Instance.KindredInstanceID = System.String.Copy(SavedData.KindredInstanceID);
         DataManager.Instance.StartersOrder = SavedData.StartersOrder.ConvertAll(starter => System.String.Copy(starter)); // Deep copy of the list of strings
         DataManager.Instance.StarterChoices = SavedData.StarterChoices.ConvertAll(starter => System.String.Copy(starter));
 

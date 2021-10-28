@@ -254,7 +254,7 @@ public class BattlePhantomCatchManager : MonoBehaviour
         /// Special cases for specific phantoms first ///
         if (phantomToCatch is Ares.CatchTutorialAIActor)
         {
-            SucceedCatch(phantomData, phantomToCatch);
+            StartCoroutine(SucceedCatch(phantomData, phantomToCatch));
             return true;
         }
 
