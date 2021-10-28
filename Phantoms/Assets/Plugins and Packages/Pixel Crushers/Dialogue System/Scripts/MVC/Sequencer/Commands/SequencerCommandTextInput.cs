@@ -107,7 +107,10 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
                 }
                 else
                 {
-                    DialogueLua.SetVariable(variableName, text);
+                    if (!string.IsNullOrWhiteSpace(text))
+                    {
+                        DialogueLua.SetVariable(variableName, text);
+                    }
                     //---Was: Lua.Run(string.Format("Variable[\"{0}\"] = \"{1}\"", new System.Object[] { variableName, DialogueLua.DoubleQuotesToSingle(text) }));
                 }
             }

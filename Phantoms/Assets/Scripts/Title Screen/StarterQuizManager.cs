@@ -28,6 +28,9 @@ public class StarterQuizManager : MonoBehaviour
     [VariablePopup]
     private string m_finalQuestionVariable = null;
     [SerializeField]
+    [VariablePopup]
+    private string m_phantomNameVariable = null;
+    [SerializeField]
     private List<StarterOption> m_starterOptions = new List<StarterOption>();
 
     [Header("Scene References")]
@@ -179,7 +182,7 @@ public class StarterQuizManager : MonoBehaviour
             }
         }
 
-        
+
 
         m_questionAnswersParent.SetActive(false);
         OnAnswerSelect.Invoke();
@@ -215,9 +218,7 @@ public class StarterQuizManager : MonoBehaviour
         OnAnswerSelect.Invoke();
         m_phantomOptionsParent.SetActive(false);
 
-        PhantomInstanceData phantomInstance = PhantomDataUtility.GenerateRandomPhantom(phantom, 1);
-
-        PlayerInventoryManager.Instance.AddPhantom(phantomInstance);
+        DialogueLua.SetVariable(m_phantomNameVariable, phantom.DisplayName);
 
         DataManager.Instance.ChosenStarterID = phantom.ID;
     }
@@ -288,20 +289,20 @@ public class StarterQuizManager : MonoBehaviour
 
             for (int i = 0; i < numTied; i++)
             {
-                starterIDs[2-i] =  tiedValues[i];
+                starterIDs[2 - i] = tiedValues[i];
             }
         }
 
         for (int i = 0; i < starterIDs.Count; i++)
         {
-            Debug.Log((i+1) + ": " + starterIDs[i] + " (" + m_starterScores[starterIDs[i]] + "," + m_relatedAnswers[starterIDs[i]] + ")");
+            Debug.Log((i + 1) + ": " + starterIDs[i] + " (" + m_starterScores[starterIDs[i]] + "," + m_relatedAnswers[starterIDs[i]] + ")");
         }
 
         List<PhantomData> result = new List<PhantomData>();
 
         for (int i = 0; i < 3; i++)
         {
-            foreach(StarterOption option in m_starterOptions)
+            foreach (StarterOption option in m_starterOptions)
             {
                 if (option.QuizID == starterIDs[i])
                 {
@@ -315,7 +316,7 @@ public class StarterQuizManager : MonoBehaviour
         // Saving the order of starter results, so we know what the first 3 options are as well as the lowest options, because hey why not maybe we can use that later
         for (int i = 0; i < starterIDs.Count; i++)
         {
-            foreach(StarterOption option in m_starterOptions)
+            foreach (StarterOption option in m_starterOptions)
             {
                 if (option.QuizID == starterIDs[i])
                 {

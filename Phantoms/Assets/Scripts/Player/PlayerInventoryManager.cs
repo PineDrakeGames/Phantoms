@@ -114,6 +114,34 @@ public class PlayerInventoryManager : MonoBehaviour
     //////////////////////////////////////////////////////
     /// Public functions relating to phantoms captured ///
     //////////////////////////////////////////////////////
+    public bool AddPhantom(string newPhantomID, string nickName = null, double level = 1)
+    {
+        return AddPhantom(newPhantomID, nickName, Mathf.RoundToInt((float)level));
+    }
+
+    public bool AddPhantom(string newPhantomID, string nickName = null, int level = 1)
+    {
+        if (newPhantomID.Trim().ToUpper() == "KINDRED" && !string.IsNullOrEmpty(DataManager.Instance.ChosenStarterID))
+        {
+            newPhantomID = DataManager.Instance.ChosenStarterID;
+        }
+
+        PhantomInstanceData newPhantom = PhantomDataUtility.GenerateRandomPhantom(newPhantomID, level);
+
+        if (newPhantom == null)
+        {
+            return false;
+        }
+        
+        if (!string.IsNullOrEmpty(nickName))
+        {
+            newPhantom.NickName = nickName;
+        }
+
+        Phantoms.Add(newPhantom);
+        return true;
+    }
+
     public void AddPhantom(PhantomInstanceData newPhantom)
     {
         Phantoms.Add(newPhantom);
@@ -287,5 +315,6 @@ public class PlayerInventoryManager : MonoBehaviour
     {
         Lua.RegisterFunction("HasKeyItem", this, SymbolExtensions.GetMethodInfo(() => HasKeyItem(string.Empty)));
         Lua.RegisterFunction("KeyItemQuantity", this, SymbolExtensions.GetMethodInfo(() => KeyItemQuantity(string.Empty)));
+        Lua.RegisterFunction("AddPhantom", this, SymbolExtensions.GetMethodInfo(() => AddPhantom(string.Empty, string.Empty, 1d)));
     }
 }
