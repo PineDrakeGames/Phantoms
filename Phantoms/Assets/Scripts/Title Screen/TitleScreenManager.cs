@@ -246,12 +246,14 @@ public class TitleScreenManager : MonoBehaviour
             m_startButton.gameObject.SetActive(false);
             m_continueButton.gameObject.SetActive(true);
             m_loadSavesButton.gameObject.SetActive(true);
+            m_continueButton.Select();
         }
         else
         {
             m_startButton.gameObject.SetActive(true);
             m_continueButton.gameObject.SetActive(false);
             m_loadSavesButton.gameObject.SetActive(false);
+            m_startButton.Select();
         }
     }
 

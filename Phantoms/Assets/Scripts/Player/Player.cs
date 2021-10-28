@@ -27,6 +27,10 @@ public class Player : MonoBehaviour
     private const string MouseScrollInput = "Mouse ScrollWheel";
     private const string HorizontalInput = "Horizontal";
     private const string VerticalInput = "Vertical";
+    private const string AttackInput = "Attack";
+    private const string JumpInput = "Jump";
+    private const string InteractInput = "Interact";
+
 
     private void Awake()
     {

@@ -16,6 +16,7 @@ public class StarterQuizAnswerButton : MonoBehaviour
     StarterQuizManager m_manager = null;
 
     private Button m_buttonComponent = null;
+    public Button ButtonComponent { get { return m_buttonComponent; } }
 
     private StarterQuizQuestions.StarterQuestionAnswer m_answer = null;
     public StarterQuizQuestions.StarterQuestionAnswer Answer

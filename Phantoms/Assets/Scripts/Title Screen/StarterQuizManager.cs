@@ -156,6 +156,8 @@ public class StarterQuizManager : MonoBehaviour
 
             }
         }
+
+        m_answerButtons[0].ButtonComponent.Select();
     }
 
     // Called by the answer option buttons
@@ -210,6 +212,8 @@ public class StarterQuizManager : MonoBehaviour
 
             }
         }
+
+        m_phantomOptionButtons[0].ButtonComponent.Select();
     }
 
     public void SelectPhantom(PhantomData phantom)

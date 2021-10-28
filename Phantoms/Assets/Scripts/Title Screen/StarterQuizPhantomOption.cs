@@ -17,6 +17,7 @@ public class StarterQuizPhantomOption : MonoBehaviour
     StarterQuizManager m_manager = null;
 
     private Button m_buttonComponent = null;
+    public Button ButtonComponent { get { return m_buttonComponent; } }
 
     private PhantomData m_phantom = null;
     public PhantomData Phantom
