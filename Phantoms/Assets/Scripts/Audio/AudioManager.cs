@@ -455,8 +455,8 @@ public class AudioManager : MonoBehaviour
         {
             m_musicSource.clip = m_queuedMusicClip;
             m_musicIntroSource.clip = m_queuedMusicIntroClip;
-            m_musicIntroSource.PlayScheduled(AudioSettings.dspTime + 0.5);
-            m_musicSource.PlayScheduled(AudioSettings.dspTime + 0.5 + ((double)m_queuedMusicIntroClip.samples / m_queuedMusicIntroClip.frequency));
+            m_musicIntroSource.PlayScheduled(AudioSettings.dspTime + 0.1);
+            m_musicSource.PlayScheduled(AudioSettings.dspTime + 0.1 + ((double)m_queuedMusicIntroClip.samples / m_queuedMusicIntroClip.frequency));
         }
         else
         {

@@ -15,6 +15,8 @@ public class PlayerStateAttack : PlayerMovementState
         Controller.CharacterAnimator.SetTrigger("Attack");
         Controller.CharacterAnimator.SetBool("Running", false);
 
+        AudioManager.PlaySound(Controller.SoundEffectAttack);
+
         Controller.Attack();
     }
 
