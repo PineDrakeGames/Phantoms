@@ -93,21 +93,18 @@ public class PhantomInstanceData : UserBattleInstanceData
             int statLevels = LevelUps.GetStat(statType);
             if (statType == backStats.Decrease)
             {
-                if (statLevels < 2)
+                if (statLevels <= 3)
                 {
                     levelUpOptions.Add(statType);
                 }
             }
             else if (statType == backStats.Increase)
             {
-                if (statLevels < 7)
-                {
-                    levelUpOptions.Add(statType);
-                }
+                levelUpOptions.Add(statType);
             }
             else
             {
-                if (statLevels < 3)
+                if (statLevels < 5)
                 {
                     levelUpOptions.Add(statType);
                 }

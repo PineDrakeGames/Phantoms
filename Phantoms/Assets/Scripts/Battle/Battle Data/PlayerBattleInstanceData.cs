@@ -71,6 +71,14 @@ public class PlayerBattleInstanceData : UserBattleInstanceData
         return false;
     }
 
+    public override List<BattleStatType> LevelUpOptions()
+    {
+        // Player can always choose any stat? Sure
+        List<BattleStatType> statTypes = new List<BattleStatType>();
+        statTypes.AddRange(PhantomDataUtility.LevelUpStats);
+        return statTypes;
+    }
+
     // Overriding the health change functions to make sure they invoke the HP change event
     public override void RestoreHealth()
     {

@@ -528,6 +528,7 @@ public class BattleResultsManager : MonoBehaviour
 
         // Instantiate a new button
         GameObject buttonInstance = Instantiate(m_levelUpOptionPrefab, m_levelUpOptionsParent);
+        buttonInstance.gameObject.SetActive(true);
         LevelUpOptionButton buttonComponent = buttonInstance.GetComponent<LevelUpOptionButton>();
         buttonComponent.ResultsManager = this;
         m_levelUpOptionInstances.Add(buttonComponent);

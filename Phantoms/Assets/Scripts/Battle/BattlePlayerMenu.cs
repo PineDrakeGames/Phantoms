@@ -901,8 +901,11 @@ public class BattlePlayerMenu : MonoBehaviour
 
                 foreach (Actor actor in m_actionTargets)
                 {
-                    GameObject targetIndicator = GetTargetIndicator();
-                    targetIndicator.transform.position = actor.transform.position + (Vector3.up * TARGET_ARROW_HEIGHT_OFFSET);
+                    if (m_battleManager.CurrentBattle.IsParticipating(actor))
+                    {
+                        GameObject targetIndicator = GetTargetIndicator();
+                        targetIndicator.transform.position = actor.transform.position + (Vector3.up * TARGET_ARROW_HEIGHT_OFFSET);
+                    }
                     if (ActorToHealthIndicator.ContainsKey(actor))
                     {
                         ActorToHealthIndicator[actor].SetTargeted(true);

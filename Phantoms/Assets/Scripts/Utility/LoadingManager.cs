@@ -268,6 +268,7 @@ public class LoadingManager : MonoBehaviour
 
     private IEnumerator LoadIntoBattleBackend(int sceneIndex, bool showLoadingScreen = true)
     {
+        LoadWalkDirection = Vector2.zero;
         AudioManager.StopMusic();
         AudioManager.SetAmbienceVolume(0.1f);
         if (showLoadingScreen)
