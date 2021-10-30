@@ -16,6 +16,12 @@ public class InventoryUIManager : MonoBehaviour
     [SerializeField]
     private List<InventoryPartyMember> m_partyMembers = new List<InventoryPartyMember>();
 
+    [Header("Sounds")]
+    [SerializeField]
+    private SoundEffectData m_openInventorySound = null;
+    [SerializeField]
+    private SoundEffectData m_closeInventorySound = null;
+
     [Header("Other UI Items")]
     [SerializeField]
     private GameObject m_inventoryParent = null;
@@ -160,6 +166,7 @@ public class InventoryUIManager : MonoBehaviour
         SetPartyMembers();
         CloseTab();
         Time.timeScale = 0f;
+        AudioManager.PlaySound(m_openInventorySound);
         Player.PlayerInputEnabled = false;
     }
 
@@ -171,6 +178,7 @@ public class InventoryUIManager : MonoBehaviour
         m_inventoryParent.SetActive(false);
         m_tabs[m_currentTabIndex].CloseTab();
         Time.timeScale = 1f;
+        AudioManager.PlaySound(m_closeInventorySound);
         Player.PlayerInputEnabled = true;
     }
 
