@@ -220,7 +220,7 @@ public class LoadingManager : MonoBehaviour
         // Do Loading screen!
         if (showLoadingScreen)
         {
-            yield return ShowLoadingScreen();
+            yield return ShowLoadingScreen((int)CurrentLoadDirection);
         }
 
         // Disabling all things from all types of scenes
@@ -259,7 +259,7 @@ public class LoadingManager : MonoBehaviour
         NewSceneLoaded.Invoke();
         if (showLoadingScreen)
         {
-            yield return HideLoadingScreen();
+            yield return HideLoadingScreen((int)CurrentLoadDirection);
         }
 
         // Clean Up!
@@ -273,7 +273,7 @@ public class LoadingManager : MonoBehaviour
         AudioManager.SetAmbienceVolume(0.1f);
         if (showLoadingScreen)
         {
-            yield return ShowLoadingScreen();
+            yield return ShowLoadingScreen(5);
         }
         yield return null;
 
@@ -302,7 +302,7 @@ public class LoadingManager : MonoBehaviour
 
         if (showLoadingScreen)
         {
-            yield return HideLoadingScreen();
+            yield return HideLoadingScreen(5);
         }
 
         Loading = false;
@@ -310,7 +310,7 @@ public class LoadingManager : MonoBehaviour
 
     private IEnumerator ReturnFromBattleBackend()
     {
-        yield return ShowLoadingScreen();
+        yield return ShowLoadingScreen(0);
 
         yield return null;
 
@@ -334,19 +334,19 @@ public class LoadingManager : MonoBehaviour
         SceneManager.SetActiveScene(m_lastOverworldScene);
         m_currentSceneType = SceneType.OVERWORLD;
         NewSceneLoaded.Invoke();
-        yield return HideLoadingScreen();
+        yield return HideLoadingScreen(0);
 
         Loading = false;
     }
 
 
     // Helper Coroutines, for things that all the different loads need.
-    private IEnumerator ShowLoadingScreen()
+    private IEnumerator ShowLoadingScreen(int direction)
     {
         m_loadingScreen.SetActive(true);
         if (m_loadingScreenAnimator)
         {
-            m_loadingScreenAnimator.SetInteger("Direction", (int)CurrentLoadDirection);
+            m_loadingScreenAnimator.SetInteger("Direction", direction);
             m_loadingScreenAnimator.SetBool("Visible", true);
 
             Player.SetCharacterInput(LoadWalkDirection);
@@ -356,11 +356,11 @@ public class LoadingManager : MonoBehaviour
         }
     }
 
-    private IEnumerator HideLoadingScreen()
+    private IEnumerator HideLoadingScreen(int direction)
     {
         if (m_loadingScreenAnimator)
         {
-            m_loadingScreenAnimator.SetInteger("Direction", (int)CurrentLoadDirection);
+            m_loadingScreenAnimator.SetInteger("Direction", direction);
             m_loadingScreenAnimator.SetBool("Visible", false);
             Player.SetCharacterInput(LoadWalkDirection);
 
