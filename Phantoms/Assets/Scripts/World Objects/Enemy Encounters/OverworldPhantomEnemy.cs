@@ -19,7 +19,9 @@ public class OverworldPhantomEnemy : MonoBehaviour
     [SerializeField]
     private LayerMask m_LineOfSightBlockers;
     [SerializeField]
-    private float m_chaseDelay = 0.3f;
+    private float m_chaseDelay = 0.5f;
+    [SerializeField]
+    private float m_giveUpDelay = 0.3f;
     [SerializeField]
     private float m_lingerTimeAfterChase = 1.5f;
     [SerializeField]
@@ -37,6 +39,10 @@ public class OverworldPhantomEnemy : MonoBehaviour
     [SerializeField]
     private bool m_disableIfFlagSet = false;
 
+    [Header("Other")]
+    [SerializeField]
+    private Animator m_encounterAnimator = null;
+
 
     private enum OverworldEnemyState
     {
@@ -51,6 +57,7 @@ public class OverworldPhantomEnemy : MonoBehaviour
     private Transform m_player = null;
 
     private float m_lastStateChangeTime = 0f;
+    private float m_lastSawPlayerTime = 0f;
     private Vector3 m_currentVelocity = Vector3.zero;
 
     private RaycastHit m_raycastHit;
@@ -107,13 +114,14 @@ public class OverworldPhantomEnemy : MonoBehaviour
 
         if (m_state == OverworldEnemyState.CHASING)
         {
-            if (!playerDetected)
+            if ((!playerDetected && (Time.time - m_lastSawPlayerTime >= m_giveUpDelay)) || !PlayerInRange())
             {
                 // Lost the player - start returning
                 SetState(OverworldEnemyState.RETURNING);
             }
             else
             {
+                m_lastSawPlayerTime = Time.time;
                 if (Time.time - m_lastStateChangeTime >= m_chaseDelay)
                 {
                     Chase(m_player.position);
@@ -149,8 +157,8 @@ public class OverworldPhantomEnemy : MonoBehaviour
         }
     }
 
-    #if UNITY_EDITOR
- void OnDrawGizmosSelected()
+#if UNITY_EDITOR
+    void OnDrawGizmosSelected()
     {
         // Draw a yellow sphere at the transform's position
         Gizmos.color = Color.yellow;
@@ -158,11 +166,20 @@ public class OverworldPhantomEnemy : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, m_triggerDistance);
     }
-    #endif
+#endif
 
     //////////////////////////////////////
     /// Private helper function stuff! ///
     //////////////////////////////////////
+
+    private bool PlayerInRange()
+    {
+        float checkDistance = m_triggerDistance;
+        if (m_state == OverworldEnemyState.CHASING) { checkDistance = m_chaseDistance; }
+
+        // Check if the player is close enough to where the phantom started
+        return Vector3.Distance(m_player.position, m_startPosition) <= checkDistance;
+    }
 
     private bool PlayerDetected()
     {
@@ -190,6 +207,15 @@ public class OverworldPhantomEnemy : MonoBehaviour
 
     private void SetState(OverworldEnemyState newState)
     {
+        if (newState is OverworldEnemyState.CHASING)
+        {
+            m_lastSawPlayerTime = Time.time;
+            m_encounterAnimator.SetBool("Alerted", true);
+        }
+        else
+        {
+            m_encounterAnimator.SetBool("Alerted", false);
+        }
         m_lastStateChangeTime = Time.time;
         m_currentVelocity = Vector3.zero;
         m_state = newState;

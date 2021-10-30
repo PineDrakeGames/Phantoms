@@ -19,6 +19,7 @@ public class CurrentHPCounter : MonoBehaviour
     void Start()
     {
         DataManager.PlayerHPChange.AddListener(CurrentHPChange);
+        LoadingManager.NewSceneLoaded.AddListener(SetHPIndicator);
         
         if (playerData == null)
         {
@@ -39,6 +40,7 @@ public class CurrentHPCounter : MonoBehaviour
         {
             playerData.OnStatsUpdate.RemoveListener(OnPlayerStatChange);
         }
+        LoadingManager.NewSceneLoaded.RemoveListener(SetHPIndicator);
     }
 
     // Called to change the drop total to a new specific amount
