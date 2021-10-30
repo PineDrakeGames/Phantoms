@@ -53,6 +53,7 @@ public class ItemPickup : MonoBehaviour
     public void SetItem(string newItemID)
     {
         ItemID = newItemID;
+        Item = DataManager.Instance.TryGetItemData(ItemID);
         SetItem();
     }
 
