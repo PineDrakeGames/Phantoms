@@ -34,7 +34,7 @@ namespace Ares {
 			{
 				
 
-				battleDelayer.RequestBattleDelayLock(DelayRequestReason.UIEvent);
+				battleDelayer.RequestTurnDelayLock(DelayRequestReason.UIEvent);
 
 				PixelCrushers.DialogueSystem.DialogueManager.StartConversation(CatchConversation);
 				BattlePlayerMenu.Instance.CanCatch = true;
@@ -51,6 +51,7 @@ namespace Ares {
 		public void OnConversationEnd(Transform transform = null)
 		{
 			battleDelayer.ReleaseBattleDelayLock();
+			battleDelayer.ReleaseTurnDelayLock();
 			PixelCrushers.DialogueSystem.DialogueManager.instance.conversationEnded -= OnConversationEnd;
 		}
 

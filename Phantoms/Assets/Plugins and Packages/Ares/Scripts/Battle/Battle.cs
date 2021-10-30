@@ -60,6 +60,7 @@ namespace Ares
         public List<EnvironmentVariable> EnvironmentVariables { get; private set; }
         public List<DelayRequest> ProgressDelayRequests { get; private set; }
         public HashSet<BattleDelayElement> ProgressDelayLocks { get; private set; }
+        public HashSet<BattleDelayElement> TurnDelayLocks { get; private set; } //Added by CJ - delaying the whole turn from advancing instead of halfway through the turn.
         public BattleRules Rules { get; private set; }
         public float TurnTimeLeft { get { return Mathf.Max(0f, turnTimeLeft); } }
         //		public float TurnTimeLeft {get{return Mathf.Max(0f, turnTimeLeft);}}
@@ -93,6 +94,7 @@ namespace Ares
         List<QueuedAction> queuedActions;
         int currentActorIndex = -1;
         Actor currentActor;
+        public Actor CurrentActor { get { return currentActor; } }
         bool canContinue = true;
         float startTime;
         int currentTimedProcessCounter;
@@ -148,6 +150,7 @@ namespace Ares
             EnvironmentVariables = new List<EnvironmentVariable>();
             queuedActions = new List<QueuedAction>();
             ProgressDelayLocks = new HashSet<BattleDelayElement>();
+            TurnDelayLocks = new HashSet<BattleDelayElement>();
             ProgressDelayRequests = new List<DelayRequest>();
 
             progressWaitTimes = new Dictionary<ProgressType, float>{
@@ -944,6 +947,26 @@ namespace Ares
             return false;
         }
 
+        public bool RequestTurnDelayLock(BattleDelayElement requestor, DelayRequestReason reason)
+        {
+            if (Rules.AllowWaitingFor(reason))
+            {
+                AddTurnDelayLock(requestor);
+
+                if (reason == DelayRequestReason.AbilityEvent)
+                {
+                    if (currentActorIndex < queuedActors.Count)
+                    {
+                        currentActor.AddAbilityEndDelayLock(requestor);
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
         public void ReleaseProgressDelayLock(BattleDelayElement locker)
         {
             bool xxx = ProgressDelayLocks.Remove(locker);
@@ -955,8 +978,27 @@ namespace Ares
                 VerboseLogger.Log(string.Format("Releasing lock from gameobject {0}", locker.name), VerboseLoggerSettings.UnimportantColor);
 
                 //				if(currentActorIndex < queuedActors.Count){
-                currentActor.ReleaseAbilityEndDelayLock(locker);
+                if (currentActor != null)
+                {
+                    currentActor.ReleaseAbilityEndDelayLock(locker);
+                }
                 //				}
+            }
+        }
+
+        // CJ: Copied from above, just swapped progressdelaylocks for turndelaylocks.
+        public void ReleaseTurnDelayLock(BattleDelayElement locker)
+        {
+            bool xxx = TurnDelayLocks.Remove(locker);
+
+            if (xxx && TurnDelayLocks.Where(l => l == locker).Count() == 0)
+            {
+                VerboseLogger.Log(string.Format("Releasing lock from gameobject {0}", locker.name), VerboseLoggerSettings.UnimportantColor);
+
+                if (currentActor != null)
+                {
+                    currentActor.ReleaseAbilityEndDelayLock(locker);
+                }
             }
         }
 
@@ -968,6 +1010,11 @@ namespace Ares
         void AddProgressDelayLock(BattleDelayElement requestor)
         {
             ProgressDelayLocks.Add(requestor);
+        }
+
+        void AddTurnDelayLock(BattleDelayElement requestor)
+        {
+            TurnDelayLocks.Add(requestor);
         }
 
         void HandleInvalidTargetFallback<T, T2, T3>(BattleRules.TargetFallbackType fallback, T effector, Actor caster, System.Action<Actor> randomTargetAction) where T :
@@ -3103,6 +3150,14 @@ namespace Ares
                 maxDelay = ProgressDelayRequests.Count > 0 ? ProgressDelayRequests.Max(d => d.TimeRemaining) : 0f;
 
                 yield return null;
+            }
+
+            if (progressType == ProgressType.Turn)
+            {
+                while (TurnDelayLocks.Count > 0)
+                {
+                    yield return null;
+                }
             }
 
             yield return new WaitForSeconds(baseDelay);

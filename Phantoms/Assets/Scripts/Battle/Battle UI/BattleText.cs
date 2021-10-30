@@ -149,7 +149,7 @@ public class BattleText : MonoBehaviour
         if (pauseBattle)
         {
             // Pause Battle
-            m_battleDelayer.RequestBattleDelayLock(Ares.DelayRequestReason.UIEvent);
+            m_battleDelayer.RequestTurnDelayLock(Ares.DelayRequestReason.UIEvent);
 
             m_battlePaused = true;
             m_continueButton.SetActive(true);
@@ -189,7 +189,7 @@ public class BattleText : MonoBehaviour
         if (m_battlePaused)
         {
             // Resume battle
-            m_battleDelayer.ReleaseBattleDelayLock();
+            m_battleDelayer.ReleaseTurnDelayLock();
 
             m_battlePaused = false;
             m_isTimedPause = false;

@@ -53,9 +53,23 @@ namespace Ares {
 			return false;
 		}
 
+		public bool RequestTurnDelayLock(DelayRequestReason reason){
+			if(battle != null){
+				return battle.RequestTurnDelayLock(this, reason);
+			}
+
+			return false;
+		}
+
 		public void ReleaseBattleDelayLock(){
 			if(battle != null){
 				battle.ReleaseProgressDelayLock(this);
+			}
+		}
+
+		public void ReleaseTurnDelayLock(){
+			if(battle != null){
+				battle.ReleaseTurnDelayLock(this);
 			}
 		}
 		
