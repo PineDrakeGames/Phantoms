@@ -126,6 +126,8 @@ public class DataManager : MonoBehaviour
     }
 
     // Variables for drops, the currency.
+    private const string FIRST_DROP_FLAG = "GrabbedFirstDrop";
+
     private int m_currentDrops = 0;
     public static int CurrentDrops
     {
@@ -164,6 +166,8 @@ public class DataManager : MonoBehaviour
         {
             Destroy(this);
         }
+
+        CurrentDropChange.AddListener(FirstDropTutorial);
     }
 
 
@@ -326,6 +330,15 @@ public class DataManager : MonoBehaviour
     public float GetSoundVolume()
     {
         return Settings.MasterVolume * Settings.SoundsVolume;
+    }
+
+    public void FirstDropTutorial(int numDrops)
+    {
+        if (!SaveDataManager.CheckFlag(FIRST_DROP_FLAG) && numDrops > 0)
+        {
+            NotificationManager.SetBottomNotification("You got a <b>drop!</b>\nThere seems to be many of them scattered about. Collecting them will probably be useful!");
+            SaveDataManager.SetFlag(FIRST_DROP_FLAG);
+        }
     }
 
 
