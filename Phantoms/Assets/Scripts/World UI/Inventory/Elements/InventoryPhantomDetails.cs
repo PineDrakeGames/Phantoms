@@ -128,5 +128,6 @@ public class InventoryPhantomDetails : MonoBehaviour
             }
             
         }
+        Canvas.ForceUpdateCanvases();
     }
 }
