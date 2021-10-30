@@ -171,6 +171,8 @@ public class BattlePlayerMenu : MonoBehaviour
         CanUseAbilities = true;
         CanUseItems = true;
         CanUseTactics = true;
+
+        m_currentTurnIndicator.gameObject.SetActive(false);
     }
 
     private void OnDestroy()
@@ -249,9 +251,21 @@ public class BattlePlayerMenu : MonoBehaviour
     // Updated the current turn indicator to show who's turn it is right now
     public void SetCurrentTurnIndicator(Actor actor)
     {
-        if (m_currentTurnIndicator && actor)
+        if (m_currentTurnIndicator)
         {
-            m_currentTurnIndicator.transform.position = actor.gameObject.transform.position;
+            if (actor && actor.HP > 0)
+            {
+                m_currentTurnIndicator.gameObject.SetActive(true);
+                m_currentTurnIndicator.transform.position = actor.gameObject.transform.position;
+            }
+            else
+            {
+                m_currentTurnIndicator.gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            m_currentTurnIndicator.gameObject.SetActive(false);
         }
 
         foreach (KeyValuePair<Actor, HealthIndicator> kvp in ActorToHealthIndicator)
@@ -309,7 +323,7 @@ public class BattlePlayerMenu : MonoBehaviour
         HealthIndicator newTarget = null;
         if (actor != null && ActorToHealthIndicator.ContainsKey(actor))
         {
-           newTarget = ActorToHealthIndicator[actor];
+            newTarget = ActorToHealthIndicator[actor];
         }
         if (m_currentActorTarget != null && m_currentActorTarget != newTarget)
         {
@@ -653,7 +667,7 @@ public class BattlePlayerMenu : MonoBehaviour
         {
             indicator.SetActive(false);
         }
-        foreach(HealthIndicator healthIndicator in ActorToHealthIndicator.Values)
+        foreach (HealthIndicator healthIndicator in ActorToHealthIndicator.Values)
         {
             healthIndicator.SetTargeted(false);
         }
@@ -890,9 +904,9 @@ public class BattlePlayerMenu : MonoBehaviour
                     GameObject targetIndicator = GetTargetIndicator();
                     targetIndicator.transform.position = actor.transform.position + (Vector3.up * TARGET_ARROW_HEIGHT_OFFSET);
                     if (ActorToHealthIndicator.ContainsKey(actor))
-                        {
-                            ActorToHealthIndicator[actor].SetTargeted(true);
-                        }
+                    {
+                        ActorToHealthIndicator[actor].SetTargeted(true);
+                    }
                 }
 
                 OnConfirm.AddListener(delegate
