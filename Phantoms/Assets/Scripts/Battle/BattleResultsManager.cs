@@ -139,6 +139,8 @@ public class BattleResultsManager : MonoBehaviour
                 ShowRunAway();
                 break;
             case Battle.EndReason.EnemyWin:
+                ShowLost();
+                break;
             case Battle.EndReason.WinLoseConditionMet:
             case Battle.EndReason.OutOfTurns:
             default:
@@ -374,6 +376,43 @@ public class BattleResultsManager : MonoBehaviour
         else
         {
             descriptionText = "You toss some drops to bait the Phantom away.\n You lose <b>" + numDropsLost + "</b>drop";
+            if (numDropsLost > 1)
+            {
+                descriptionText += "s";
+            }
+            descriptionText += ".";
+        }
+
+        m_defaultResultsParent.SetActive(true);
+        m_defaultResultsHeaderText.text = headerText;
+        m_defaultResultsDescriptionText.text = descriptionText;
+    }
+
+    public void ShowLost()
+    {
+        m_currentMenu = ResultMenu.DEFAULT;
+
+        m_resultsParent.SetActive(true);
+        m_defaultResultsParent.SetActive(true);
+
+        string headerText = "You Lost..";
+
+        int numDropsLost = Mathf.RoundToInt((float)DataManager.CurrentDrops * 0.5f);
+        if (numDropsLost < 10) { numDropsLost = Mathf.Min(10, DataManager.CurrentDrops); }
+        if (numDropsLost < 0) { numDropsLost = 0; }
+
+        DataManager.CurrentDrops -= numDropsLost;
+
+        string descriptionText;
+
+        if (numDropsLost <= 0)
+        {
+            descriptionText = "You pretend to play dead, and the Phantoms seem to leave you alone...";
+
+        }
+        else
+        {
+            descriptionText = "You try your best to run away, losing a lot of your drops in the process. \n You lose <b>" + numDropsLost + "</b>drop";
             if (numDropsLost > 1)
             {
                 descriptionText += "s";
