@@ -1402,7 +1402,18 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 
+        value: 'AnimatorTrigger(STOP, Bing);
+
+          SetDialoguePanel(false);
+
+          SetContinueMode(false);
+
+          SpawnPhantom(kindred,
+          PhantomSpawn, Kindred, 0, false)->Message(spawn);
+
+          AnimatorAllTrigger(Spawn,Kindred);
+
+          Continue()@2;'
         type: 0
         typeString: 
       conversationID: 3
@@ -1426,7 +1437,7 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 409.3402
+        x: 408.57098
         y: 659.47424
         width: 160
         height: 30
@@ -1473,7 +1484,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: 'SetDialoguePanel(true);
+
+          AnimatorTrigger(Surprise, Bing);
+
+          SetContinueMode(true);'
         type: 0
         typeString: 
       conversationID: 3
@@ -1545,7 +1560,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(Laugh,, Bing);
+        value: AnimatorTrigger(Laugh, Bing);
         type: 0
         typeString: 
       conversationID: 3
@@ -1616,7 +1631,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: AnimatorTrigger(Thinking, Bing);
         type: 0
         typeString: 
       conversationID: 3
@@ -1690,7 +1705,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: AnimatorTrigger(Thinking, Bing);
         type: 0
         typeString: 
       conversationID: 3
@@ -1761,7 +1776,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(STOP, Bing);
+        value: 
         type: 0
         typeString: 
       conversationID: 3
@@ -1832,7 +1847,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: AnimatorTrigger(Surprise, Bing);
         type: 0
         typeString: 
       conversationID: 3
@@ -2547,7 +2562,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Dialogue Text
-        value: Now, this forest can be might dangerous for inexperienced youngsters
+        value: Now, this forest can be mighty dangerous for inexperienced youngsters
           like yourself. Stay on your toes!
         type: 0
         typeString: 
@@ -2781,8 +2796,10 @@ MonoBehaviour:
       - title: Sequence
         value: 'required Camera(original, Player, 1);
 
-          AnimatorTrigger(MouthFlap,
-          Bing);'
+          AnimatorTrigger(Dead,
+          Kindred);
+
+          AnimatorTrigger(MouthFlap, Bing);'
         type: 0
         typeString: 
       conversationID: 3
@@ -3091,8 +3108,8 @@ MonoBehaviour:
         y: 1862.1487
         width: 160
         height: 30
-    canvasScrollPosition: {x: 0, y: 0}
-    canvasZoom: 0.9400002
+    canvasScrollPosition: {x: 0, y: 872.01636}
+    canvasZoom: 1.1500001
   - id: 4
     fields:
     - title: Title
@@ -8316,7 +8333,10 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: 'required Camera(BingTalkAngle, Bing, 0.5);
+
+          AnimatorTrigger(MouthFlap,
+          Bing);'
         type: 0
         typeString: 
       conversationID: 7
@@ -8387,7 +8407,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: AnimatorTrigger(Surprise, Bing);
         type: 0
         typeString: 
       conversationID: 7
@@ -8530,7 +8550,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: AnimatorTrigger(Thinking, Bing);
         type: 0
         typeString: 
       conversationID: 7
@@ -8992,7 +9012,7 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 821
+        x: 820.13043
         y: 700
         width: 160
         height: 30
@@ -9039,7 +9059,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: AnimatorTrigger(Laugh, Bing);
         type: 0
         typeString: 
       conversationID: 7
@@ -9110,7 +9130,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: AnimatorTrigger(Thinking, Bing);
         type: 0
         typeString: 
       conversationID: 7
@@ -9181,7 +9201,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(STOP, Bing);
+        value: 
         type: 0
         typeString: 
       conversationID: 7
@@ -9323,7 +9343,14 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(STOP, Bing);
+        value: 'SetContinueMode(false);
+
+          AnimatorTrigger(STOP, Bing);
+
+          AnimatorTrigger(NoteSpawn,
+          Bing);
+
+          Continue()@1;'
         type: 0
         typeString: 
       conversationID: 7
@@ -9394,7 +9421,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 
+        value: SetContinueMode(true);
         type: 0
         typeString: 
       conversationID: 7
@@ -9595,8 +9622,8 @@ MonoBehaviour:
         typeString: 
       - title: Dialogue Text
         value: Regardless, we'd love to hear what you think! You can hop into our
-          Discord server (link in the main menu!) to tell us what you liked or didn't,
-          and it will help make the game better!
+          Discord server to tell us what you liked or didn't, and it will help make
+          the game better!
         type: 0
         typeString: 
       - title: Parenthetical
@@ -9899,7 +9926,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 
+        value: 'SetContinueMode(false);
+
+          AnimatorTrigger(NoteDespawn, Bing);
+
+          Continue()@1;'
         type: 0
         typeString: 
       conversationID: 7
@@ -9970,7 +10001,9 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: 'SetContinueMode(true);
+
+          AnimatorTrigger(Surprise, Bing);'
         type: 0
         typeString: 
       conversationID: 7
@@ -10183,7 +10216,10 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: 'required Camera(original, Player, 1);
+
+          AnimatorTrigger(MouthFlap,
+          Bing);'
         type: 0
         typeString: 
       conversationID: 7
@@ -10471,8 +10507,8 @@ MonoBehaviour:
         y: 1600
         width: 160
         height: 30
-    canvasScrollPosition: {x: 204.60536, y: 777.8922}
-    canvasZoom: 0.97
+    canvasScrollPosition: {x: 176.52167, y: 789.65216}
+    canvasZoom: 1.1499999
   - id: 8
     fields:
     - title: Title
@@ -11971,7 +12007,7 @@ MonoBehaviour:
       canvasRect:
         serializedVersion: 2
         x: 248
-        y: 346
+        y: 345.08255
         width: 160
         height: 30
     - id: 7
