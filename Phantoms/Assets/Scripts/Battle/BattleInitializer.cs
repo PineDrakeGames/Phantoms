@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Ares;
 using Ares.ActorComponents;
 
@@ -31,28 +32,39 @@ public class BattleInitializer : MonoBehaviour
     [SerializeField]
     private float m_maxDistanceBetweenEnemies = 3f;
 
+    [Header("Camera Positions")]
+    [SerializeField]
+    private Transform m_battleStartCamera = null;
+    [SerializeField]
+    private Transform m_enemyViewCamera = null;
+
+    List<Actor> PlayerActors = null;
+    List<Actor> EnemyActors = null;
+
+    public static UnityEvent BattleInitializationFinished = new UnityEvent();
+
 
     // Start is called before the first frame update
     public void InitializeBattle(List<CombatantInstanceData> playerCombatants, List<CombatantInstanceData> inactivePlayerCombatants, EnemyEncounterData enemies)
     {
         AudioManager.PlayMusic(m_battleMusicLoop, m_battleMusicIntro);
-        
-        List<Actor> PlayerActors = SpawnActorsInLine(true, playerCombatants, m_playerSpawnPoint1.position, m_playerSpawnPoint2.position, m_maxDistanceBetweenPlayers);
+
+        PlayerActors = SpawnActorsInLine(true, playerCombatants, m_playerSpawnPoint1.position, m_playerSpawnPoint2.position, m_maxDistanceBetweenPlayers);
 
         List<Actor> InactivePlayerActors = SpawnActors(true, inactivePlayerCombatants, PlayerActors[PlayerActors.Count - 1].transform.position);
-        foreach(Actor actor in InactivePlayerActors)
+        foreach (Actor actor in InactivePlayerActors)
         {
             actor.gameObject.SetActive(false);
         }
         PlayerActors.AddRange(InactivePlayerActors);
 
         Dictionary<CombatantInstanceData, Actor> Enemies = enemies.GetEnemies();
-        List<Actor> EnemyActors = new List<Actor>();
-        
+        EnemyActors = new List<Actor>();
+
 
         Vector3[] positions = GetSpawnPointsInLine(Enemies.Count, m_enemySpawnPoint1.position, m_enemySpawnPoint2.position, m_maxDistanceBetweenEnemies);
         int index = 0;
-        foreach(CombatantInstanceData combatant in Enemies.Keys)
+        foreach (CombatantInstanceData combatant in Enemies.Keys)
         {
             Actor actorComponent = Enemies[combatant];
             m_battleManager.ActorToData[actorComponent] = combatant;
@@ -63,7 +75,7 @@ public class BattleInitializer : MonoBehaviour
 
         SetInitialRotations(PlayerActors, EnemyActors);
 
-        m_battleManager.StartBattle(PlayerActors.ToArray(), EnemyActors.ToArray());
+        StartCoroutine(BattleStartSequence());
     }
 
     /// Used to spawn actors in a straight line, with a given start and end point to the line, and a max distance between the actors. ///
@@ -103,7 +115,7 @@ public class BattleInitializer : MonoBehaviour
     private List<Actor> SpawnActors(bool isPlayer, List<CombatantInstanceData> combatants, Vector3 spawnPoint)
     {
         Vector3[] spawnPoints = new Vector3[combatants.Count];
-        for(int i = 0; i < spawnPoints.Length; i++)
+        for (int i = 0; i < spawnPoints.Length; i++)
         {
             spawnPoints[i] = spawnPoint;
         }
@@ -233,9 +245,101 @@ public class BattleInitializer : MonoBehaviour
         deathCallback.Effect.SetAsTrigger("Dead");
         deathCallback.Enabled = true;
 
-        foreach(ActorAnimationAbilityElement abilityElement in actorAnimation.AbilityCallbacks)
+        foreach (ActorAnimationAbilityElement abilityElement in actorAnimation.AbilityCallbacks)
         {
             abilityElement.Enabled = true;
         }
     }
+
+    private IEnumerator BattleStartSequence()
+    {
+        BattleCameraManager.Instance.SetCamera(m_battleStartCamera.position, m_battleStartCamera.rotation, 0f);
+        BattleCameraManager.Instance.SetCamera(m_enemyViewCamera.position, m_enemyViewCamera.rotation, 1f);
+        yield return new WaitForSeconds(0.75f); // Wait for cam movement
+        // Give 0.3 seconds to stagger enemy spawn in animations - spreading them out over that time.
+        float timePerPhantom = 0.5f;
+        if (EnemyActors.Count > 1)
+        {
+            timePerPhantom = timePerPhantom / (EnemyActors.Count - 1);
+        }
+
+        Dictionary<string, int> EncounterNames = new Dictionary<string, int>();
+        List<string> keys = new List<string>();
+
+        foreach (Actor enemy in EnemyActors)
+        {
+            foreach (Animator anim in enemy.GetComponentsInChildren<Animator>())
+            {
+                anim.SetTrigger("Spawn");
+            }
+            string name = BattleManager.Instance.ActorToData[enemy].GetDisplayName();
+            if (EncounterNames.ContainsKey(name))
+            {
+                EncounterNames[name] += 1;
+            }
+            else
+            {
+                EncounterNames.Add(name, 1);
+                keys.Add(name);
+            }
+            yield return new WaitForSeconds(timePerPhantom);
+        }
+
+        // Build string.
+        string battleStartText = "You encountered";
+        for (int i = 0; i < keys.Count; i++)
+        {
+            battleStartText += " ";
+            string name = keys[i];
+            int num = EncounterNames[name];
+            if (keys.Count > 1 && i == (keys.Count - 1))
+            {
+                battleStartText += "and ";
+            }
+            if (num > 1)
+            {
+                battleStartText += num.ToString();
+            }
+            else
+            {
+                battleStartText += "a";
+            }
+            battleStartText += " wild " + name;
+
+            if (keys.Count > 2 && i < (keys.Count - 1))
+            {
+                battleStartText += ",";
+            }
+        }
+        battleStartText += "!";
+
+        BattleText.SetText(battleStartText, false);
+
+        foreach (Actor enemy in EnemyActors)
+        {
+            foreach (Animator anim in enemy.GetComponentsInChildren<Animator>())
+            {
+                anim.SetTrigger("Special");
+            }
+            yield return new WaitForSeconds(timePerPhantom);
+        }
+
+        yield return new WaitForSeconds(1.3f); // Give a bit of time for the spawn animations to play
+
+        Vector3 enemyCenter = Vector3.zero;
+        int totalEnemies = 0;
+        foreach (Actor enemy in EnemyActors)
+        {
+            enemyCenter += enemy.transform.position;
+            totalEnemies += 1;
+        }
+        enemyCenter /= totalEnemies;
+        BattleCameraManager.Instance.SetCameraOverShoulder(PlayerActors[0].transform.position, enemyCenter, 1f);
+        yield return new WaitForSeconds(.8f);
+        BattleText.HideText();
+
+        BattleInitializationFinished.Invoke();
+        m_battleManager.StartBattle(PlayerActors.ToArray(), EnemyActors.ToArray());
+    }
+
 }

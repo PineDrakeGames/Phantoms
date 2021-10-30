@@ -145,6 +145,14 @@ public class BattleCameraManager : MonoBehaviour
     // Setting the camera using an explicit position and rotation
     public void SetCamera(Vector3 targetPosition, Quaternion targetRotation, float transitionDuration = DEFAULT_TRANSITION_TIME)
     {
+        if (transitionDuration <= 0)
+        {
+            m_transitioning = false;
+            m_cameraTransform.position = targetPosition;
+            m_cameraTransform.rotation = targetRotation;
+            return;
+        }
+
         if (m_targetposition == targetPosition && m_targetRotation == targetRotation)
         {
             // If already approximately heading to the given position and rotation, just keep goin.
@@ -166,7 +174,7 @@ public class BattleCameraManager : MonoBehaviour
         SetTransitionTime(transitionDuration);
     }
 
-    public void SetCameraOverShoulder(Vector3 player, Vector3[] targets)
+    public void SetCameraOverShoulder(Vector3 player, Vector3[] targets, float transitionDuration = DEFAULT_TRANSITION_TIME)
     {
         Vector3 centeredTarget = Vector3.zero;
         foreach(Vector3 target in targets)
@@ -174,17 +182,17 @@ public class BattleCameraManager : MonoBehaviour
             centeredTarget += target;
         }
         centeredTarget /= targets.Length;
-        SetCameraOverShoulder(player, centeredTarget);
+        SetCameraOverShoulder(player, centeredTarget, transitionDuration);
     }
 
-    public void SetCameraOverShoulder(Vector3 player, Vector3 target)
+    public void SetCameraOverShoulder(Vector3 player, Vector3 target, float transitionDuration = DEFAULT_TRANSITION_TIME)
     {
         Vector3 center = Vector3.Lerp(player, target, 0.5f);
         Vector3 cameraDirection = player - center;
         cameraDirection = Quaternion.Euler(0f, SIDE_ROTATION, UP_ROTATION) * cameraDirection.normalized;
         Vector3 cameraPosition = center + (cameraDirection.normalized * (Vector3.Distance(center, player) + DISTANCE_BEHIND_PLAYER));
 
-        SetCamera(cameraPosition, center);
+        SetCamera(cameraPosition, center, transitionDuration);
     }
 
     ////////////////////////////////

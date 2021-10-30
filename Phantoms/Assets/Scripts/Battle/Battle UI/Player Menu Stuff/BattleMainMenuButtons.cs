@@ -28,6 +28,10 @@ public class BattleMainMenuButtons : MonoBehaviour
     [SerializeField]
     private Color m_disabledColor = Color.gray;
 
+    private void Awake() {
+        SetCurrentButton(m_buttons.Length - 1);
+    }
+
     public void OnButtonSelect(GameObject buttonObject)
     {
         if (buttonObject != null)

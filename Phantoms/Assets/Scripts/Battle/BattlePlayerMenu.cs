@@ -93,6 +93,20 @@ public class BattlePlayerMenu : MonoBehaviour
     public bool CanUseItems = true;
     public bool CanUseTactics = true;
 
+    private bool m_menuInputEnabled = true;
+    public bool MenuInputEnabled
+    {
+        get { return m_menuInputEnabled; }
+        set
+        {
+            m_menuInputEnabled = value;
+            if (m_mainMenuParent.activeSelf)
+            {
+                ReturnToMainMenu();
+            }
+        }
+    }
+
     /////////////////////
     /// Private Enums ///
     /////////////////////
@@ -153,7 +167,17 @@ public class BattlePlayerMenu : MonoBehaviour
     /// Static Instance Stuff ///
     /////////////////////////////
     private static BattlePlayerMenu s_instance = null;
-    public static BattlePlayerMenu Instance { get { return s_instance; } }
+    public static BattlePlayerMenu Instance
+    {
+        get
+        {
+            if (s_instance == null)
+            {
+                s_instance = FindObjectOfType<BattlePlayerMenu>();
+            }
+            return s_instance;
+        }
+    }
 
 
     ///////////////////////
@@ -171,8 +195,13 @@ public class BattlePlayerMenu : MonoBehaviour
         CanUseAbilities = true;
         CanUseItems = true;
         CanUseTactics = true;
+        m_menuInputEnabled = true;
 
         m_currentTurnIndicator.gameObject.SetActive(false);
+
+        m_mainMenuParent.gameObject.SetActive(false);
+        m_subMenuParent.gameObject.SetActive(false);
+        m_partnerMenuParent.gameObject.SetActive(false);
     }
 
     private void OnDestroy()
@@ -574,25 +603,31 @@ public class BattlePlayerMenu : MonoBehaviour
     // Returns to the main menu for the player.
     public void ReturnToMainMenu()
     {
+        // A safety precaution - don't show the menu if the group isn't the players group!
+        if (m_battleManager.CurrentBattle.CurrentActor.Group.Name != "Player")
+        {
+            OnTurnEnd(null);
+            return;
+        }
         SetState(BattleMenuState.MAIN);
 
         ClearSubmenu();
         HideSubmenu();
 
-        m_tacticsButton.interactable = CanUseTactics;
-        m_partnerTacticsButton.interactable = CanUseTactics;
+        m_tacticsButton.interactable = CanUseTactics && m_menuInputEnabled;
+        m_partnerTacticsButton.interactable = CanUseTactics && m_menuInputEnabled;
         if (!CanUseTactics && m_prevState == BattleMenuState.TACTICS)
         {
             m_prevState = BattleMenuState.ABILITIES;
         }
-        m_itemsButton.interactable = CanUseItems;
-        m_partnerItemsButton.interactable = CanUseItems;
+        m_itemsButton.interactable = CanUseItems && m_menuInputEnabled;
+        m_partnerItemsButton.interactable = CanUseItems && m_menuInputEnabled;
         if (!CanUseItems && m_prevState == BattleMenuState.ITEMS)
         {
             m_prevState = BattleMenuState.ABILITIES;
         }
-        m_abilitiesButton.interactable = CanUseAbilities;
-        m_partnerAbilitiesButton.interactable = CanUseAbilities;
+        m_abilitiesButton.interactable = CanUseAbilities && m_menuInputEnabled;
+        m_partnerAbilitiesButton.interactable = CanUseAbilities && m_menuInputEnabled;
         if (!CanUseAbilities && (m_prevState != BattleMenuState.TACTICS || m_prevState != BattleMenuState.ITEMS))
         {
             m_prevState = BattleMenuState.TACTICS;

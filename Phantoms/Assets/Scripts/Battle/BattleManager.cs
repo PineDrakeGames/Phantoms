@@ -140,7 +140,8 @@ public class BattleManager : MonoBehaviour
                 battle.SetParticipation(actor, true);
                 foreach (Animator anim in actor.GetComponentsInChildren<Animator>())
                 {
-                    anim.SetTrigger("Spawn");
+                    //anim.SetTrigger("Spawn");
+                    // Should be done in battle initializer now
                 }
             }
         }
