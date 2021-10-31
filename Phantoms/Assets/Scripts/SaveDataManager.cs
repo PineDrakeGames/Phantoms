@@ -257,7 +257,7 @@ public static class SaveDataManager
             Debug.Log(phantomInstance.Data.DisplayName);
             phantomInstance.InstanceID = savedPhantom.InstanceID; // VERY IMPORTANT - make sure that it gets the same ID so that relics can be re-equipped properly
             phantomInstance.CurrentHP = savedPhantom.CurrentHP;
-            phantomInstance.CurrentMana = savedPhantom.CurrentHP;
+            phantomInstance.CurrentMana = savedPhantom.CurrentMana;
             phantomInstance.Experience = savedPhantom.Experience;
             phantomInstance.LevelUps = new LevelUpStats(savedPhantom.LevelUps);
             phantomInstance.NickName = savedPhantom.NickName;

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Sad Starter Wash Off
   m_EditorClassIdentifier: 
   displayName: Wash Off
-  description: Remove all buffs and debuffs, and cures fire
+  description: Remove all buffs and debuffs, and cures status effects!
   baseDuration: 0
   preparation:
     turns: 0
@@ -74,6 +74,31 @@ MonoBehaviour:
     clearBuffTempOnly: 1
     targetResource: 0
     affliction: {fileID: 11400000, guid: 30b929e4025904ad3a16c59cd432ee42, type: 2}
+    isChildEffect: 0
+    duration: 1
+    normalizedProcessTime: 1
+    chance: 1
+    ignoreDefence: 0
+    power1: -1
+    power2: 0
+    powerFormula: 
+    breaksChainOnMiss: 0
+    special1: 0
+    special2: 0
+    specialFormula: 
+    targetType: 0
+    missOnMinigameFail: 0
+  - action: 5
+    powerType: 0
+    actionType: 4
+    specialType: 0
+    stat: {fileID: 11400000, guid: 1f2819566448247ca973859fdd738a80, type: 2}
+    environmentVariable: {fileID: 0}
+    environmentVariableSetType: 0
+    clearBuffType: 5
+    clearBuffTempOnly: 1
+    targetResource: 0
+    affliction: {fileID: 11400000, guid: d7a06d36ddea9714584d939109be3cd4, type: 2}
     isChildEffect: 0
     duration: 1
     normalizedProcessTime: 1
