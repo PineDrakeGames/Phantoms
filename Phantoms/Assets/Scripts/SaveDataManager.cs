@@ -289,6 +289,9 @@ public static class SaveDataManager
             }
         }
 
+        playerData.SetCurrentStats();
+
+
         // Items
         PlayerInventoryManager.Instance.Items.Clear();
         foreach(SavedItemData savedItem in SavedData.Items)
