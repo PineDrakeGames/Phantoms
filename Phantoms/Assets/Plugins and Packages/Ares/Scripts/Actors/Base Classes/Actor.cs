@@ -336,8 +336,7 @@ namespace Ares
 
             HP += Mathf.Max(0, power);
 
-            AudioManager.PlaySound("BATTLE_HEAL");
-
+            BattleEffectsManager.Instance.SetRestoreIndicator(transform.position, HP - oldHP, true);
 
             return HP - oldHP;
         }
@@ -356,6 +355,9 @@ namespace Ares
             int oldMana = Mana;
 
             Mana += Mathf.Max(0, manaCost);
+
+            BattleEffectsManager.Instance.SetRestoreIndicator(transform.position, Mana - oldMana, false);
+
 
             return Mana - oldMana;
         }

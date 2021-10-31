@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class DamageIndicator : MonoBehaviour
+public class RestoreIndicator : MonoBehaviour
 {
     [SerializeField]
-    private Animator m_damageIndicatorAnimation = null;
+    private Animator m_restoreIndicatorAnimation = null;
     [SerializeField]
-    private TextMeshPro m_damageIndicatorText = null;
+    private TextMeshPro m_restoreIndicatorText = null;
+
+    [SerializeField]
+    private Color m_restoreHealthColor = Color.red;
+    [SerializeField]
+    private Color m_restoreManaColor = Color.blue;
 
     private const float DAMAGE_INDICATOR_DURATION = 1.5f;
     private float m_currentTime = 0f;
@@ -27,22 +32,19 @@ public class DamageIndicator : MonoBehaviour
         }
     }
 
-    public void SetDamageIndicator(Vector3 position, int damage, float modifier = 1f)
+    public void SetRestoreIndicator(Vector3 position, int amount, bool isHealth = true)
     {
         transform.position = position + Vector3.up * 1.5f;
-        m_damageIndicatorText.text = damage.ToString();
-        if (modifier <= 0.5f)
+        m_restoreIndicatorText.text = "+" + amount.ToString();
+        if (isHealth)
         {
-            m_damageIndicatorAnimation.SetTrigger("Weak");
-        }
-        else if (modifier >= 2f)
-        {
-            m_damageIndicatorAnimation.SetTrigger("Strong");
+            m_restoreIndicatorText.color = m_restoreHealthColor;
         }
         else
         {
-            m_damageIndicatorAnimation.SetTrigger("Play");
+            m_restoreIndicatorText.color = m_restoreManaColor;
         }
+        m_restoreIndicatorAnimation.SetTrigger("Play");
 
         Ready = false;
         m_currentTime = DAMAGE_INDICATOR_DURATION;

@@ -149,6 +149,20 @@ MonoBehaviour:
       value: 
       type: 0
       typeString: 
+  - id: 4
+    fields:
+    - title: Name
+      value: StarterName
+      type: 0
+      typeString: 
+    - title: Initial Value
+      value: Friend
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: Description
+      value: 
+      type: 0
+      typeString: 
   conversations:
   - id: 1
     fields:
@@ -1402,7 +1416,18 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 
+        value: 'AnimatorTrigger(STOP, Bing);
+
+          SetDialoguePanel(false);
+
+          SetContinueMode(false);
+
+          SpawnPhantom(kindred,
+          PhantomSpawn, Kindred, 0, false)->Message(spawn);
+
+          AnimatorAllTrigger(Spawn,Kindred);
+
+          Continue()@2;'
         type: 0
         typeString: 
       conversationID: 3
@@ -1426,7 +1451,7 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 409.3402
+        x: 408.57098
         y: 659.47424
         width: 160
         height: 30
@@ -1473,7 +1498,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: 'SetDialoguePanel(true);
+
+          AnimatorTrigger(Surprise, Bing);
+
+          SetContinueMode(true);'
         type: 0
         typeString: 
       conversationID: 3
@@ -1528,7 +1557,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Dialogue Text
-        value: Well, I shant be living! That is sure a cute little Phantom you've
+        value: Well, I shan't be living! That is sure a cute little Phantom you've
           got following you around!
         type: 0
         typeString: 
@@ -1545,7 +1574,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(Laugh,, Bing);
+        value: AnimatorTrigger(Laugh, Bing);
         type: 0
         typeString: 
       conversationID: 3
@@ -1616,7 +1645,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: AnimatorTrigger(Thinking, Bing);
         type: 0
         typeString: 
       conversationID: 3
@@ -1690,7 +1719,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: AnimatorTrigger(Thinking, Bing);
         type: 0
         typeString: 
       conversationID: 3
@@ -1761,7 +1790,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(STOP, Bing);
+        value: 
         type: 0
         typeString: 
       conversationID: 3
@@ -1832,7 +1861,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: AnimatorTrigger(Surprise, Bing);
         type: 0
         typeString: 
       conversationID: 3
@@ -2031,9 +2060,8 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Dialogue Text
-        value: Now if you are new to this realm, you are mostly likely searching
-          for civilization. There is a gate that leads directly to <b>Palm Shade
-          Oasis</b>.
+        value: Now if you are new to this realm, you are most likely searching for
+          civilization. There is a gate that leads directly to <b>Palm Shade Oasis</b>.
         type: 0
         typeString: 
       - title: Parenthetical
@@ -2547,7 +2575,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Dialogue Text
-        value: Now, this forest can be might dangerous for inexperienced youngsters
+        value: Now, this forest can be mighty dangerous for inexperienced youngsters
           like yourself. Stay on your toes!
         type: 0
         typeString: 
@@ -2781,8 +2809,10 @@ MonoBehaviour:
       - title: Sequence
         value: 'required Camera(original, Player, 1);
 
-          AnimatorTrigger(MouthFlap,
-          Bing);'
+          AnimatorTrigger(Dead,
+          Kindred);
+
+          AnimatorTrigger(MouthFlap, Bing);'
         type: 0
         typeString: 
       conversationID: 3
@@ -3091,8 +3121,8 @@ MonoBehaviour:
         y: 1862.1487
         width: 160
         height: 30
-    canvasScrollPosition: {x: 0, y: 0}
-    canvasZoom: 0.9400002
+    canvasScrollPosition: {x: 14.782593, y: 250.43478}
+    canvasZoom: 1.1500001
   - id: 4
     fields:
     - title: Title
@@ -4898,9 +4928,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 'required SetContinueMode(true);
-
-'
+        value: 
         type: 0
         typeString: 
       conversationID: 6
@@ -4914,7 +4942,7 @@ MonoBehaviour:
       - originConversationID: 6
         originDialogueID: 21
         destinationConversationID: 6
-        destinationDialogueID: 22
+        destinationDialogueID: 59
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -4971,7 +4999,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 
+        value: required SetContinueMode(true);
         type: 0
         typeString: 
       conversationID: 6
@@ -4985,7 +5013,7 @@ MonoBehaviour:
       - originConversationID: 6
         originDialogueID: 22
         destinationConversationID: 6
-        destinationDialogueID: 23
+        destinationDialogueID: 58
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -4996,79 +5024,7 @@ MonoBehaviour:
       canvasRect:
         serializedVersion: 2
         x: 591.8057
-        y: 1046.1948
-        width: 160
-        height: 30
-    - id: 23
-      fields:
-      - title: Title
-        value: 
-        type: 0
-        typeString: 
-      - title: Pictures
-        value: '[]'
-        type: 3
-        typeString: CustomFieldType_Files
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-      - title: Actor
-        value: 2
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Conversant
-        value: 1
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Menu Text
-        value: 
-        type: 0
-        typeString: 
-      - title: Dialogue Text
-        value: Yes, I know you don't want to leave without your friend here, but
-          I have a sneaking suspicion you'll find each other again.
-        type: 0
-        typeString: 
-      - title: Parenthetical
-        value: 
-        type: 0
-        typeString: 
-      - title: Audio Files
-        value: '[]'
-        type: 3
-        typeString: CustomFieldType_Files
-      - title: Video File
-        value: 
-        type: 0
-        typeString: 
-      - title: Sequence
-        value: 
-        type: 0
-        typeString: 
-      conversationID: 6
-      isRoot: 0
-      isGroup: 0
-      nodeColor: 
-      delaySimStatus: 0
-      falseConditionAction: Block
-      conditionPriority: 2
-      outgoingLinks:
-      - originConversationID: 6
-        originDialogueID: 23
-        destinationConversationID: 6
-        destinationDialogueID: 45
-        isConnector: 0
-        priority: 2
-      conditionsString: 
-      userScript: 
-      onExecute:
-        m_PersistentCalls:
-          m_Calls: []
-      canvasRect:
-        serializedVersion: 2
-        x: 591.8057
-        y: 1096.1948
+        y: 1045.224
         width: 160
         height: 30
     - id: 24
@@ -5357,77 +5313,6 @@ MonoBehaviour:
       - originConversationID: 6
         originDialogueID: 27
         destinationConversationID: 6
-        destinationDialogueID: 28
-        isConnector: 0
-        priority: 2
-      conditionsString: 
-      userScript: 
-      onExecute:
-        m_PersistentCalls:
-          m_Calls: []
-      canvasRect:
-        serializedVersion: 2
-        x: 282.27536
-        y: 178.33446
-        width: 160
-        height: 30
-    - id: 28
-      fields:
-      - title: Title
-        value: New Dialogue Entry
-        type: 0
-        typeString: 
-      - title: Pictures
-        value: '[]'
-        type: 3
-        typeString: CustomFieldType_Files
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-      - title: Actor
-        value: 2
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Conversant
-        value: 1
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Menu Text
-        value: 
-        type: 0
-        typeString: 
-      - title: Dialogue Text
-        value: ...WAKE UP!
-        type: 0
-        typeString: 
-      - title: Parenthetical
-        value: 
-        type: 0
-        typeString: 
-      - title: Audio Files
-        value: '[]'
-        type: 3
-        typeString: CustomFieldType_Files
-      - title: Video File
-        value: 
-        type: 0
-        typeString: 
-      - title: Sequence
-        value: 
-        type: 0
-        typeString: 
-      conversationID: 6
-      isRoot: 0
-      isGroup: 0
-      nodeColor: 
-      delaySimStatus: 0
-      falseConditionAction: Block
-      conditionPriority: 2
-      outgoingLinks:
-      - originConversationID: 6
-        originDialogueID: 28
-        destinationConversationID: 6
         destinationDialogueID: 29
         isConnector: 0
         priority: 2
@@ -5439,7 +5324,7 @@ MonoBehaviour:
       canvasRect:
         serializedVersion: 2
         x: 282.27536
-        y: 228.33446
+        y: 178.33446
         width: 160
         height: 30
     - id: 29
@@ -5973,8 +5858,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Dialogue Text
-        value: So, you're a bit in the wrong office, if ya catch my drift. But I
-          can still get ya sorted out! Old-school style.
+        value: But I can still get ya sorted out! Old-school style.
         type: 0
         typeString: 
       - title: Parenthetical
@@ -6644,7 +6528,10 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 
+        value: 'MoveTo(Phantom_Offscreen, KindredBall, 6, Ease);
+
+          required
+          SetActive(KindredBall,false)@6;'
         type: 0
         typeString: 
       conversationID: 6
@@ -6876,7 +6763,7 @@ MonoBehaviour:
       - originConversationID: 6
         originDialogueID: 48
         destinationConversationID: 6
-        destinationDialogueID: 54
+        destinationDialogueID: 49
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -7264,78 +7151,6 @@ MonoBehaviour:
         y: 1622.3591
         width: 160
         height: 30
-    - id: 54
-      fields:
-      - title: Title
-        value: New Dialogue Entry
-        type: 0
-        typeString: 
-      - title: Pictures
-        value: '[]'
-        type: 3
-        typeString: CustomFieldType_Files
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-      - title: Actor
-        value: 2
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Conversant
-        value: 1
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Menu Text
-        value: 
-        type: 0
-        typeString: 
-      - title: Dialogue Text
-        value: 'And once ya leave my office, you can manifest a physical form again!
-          All sorts of good things to come. '
-        type: 0
-        typeString: 
-      - title: Parenthetical
-        value: 
-        type: 0
-        typeString: 
-      - title: Audio Files
-        value: '[]'
-        type: 3
-        typeString: CustomFieldType_Files
-      - title: Video File
-        value: 
-        type: 0
-        typeString: 
-      - title: Sequence
-        value: 
-        type: 0
-        typeString: 
-      conversationID: 6
-      isRoot: 0
-      isGroup: 0
-      nodeColor: 
-      delaySimStatus: 0
-      falseConditionAction: Block
-      conditionPriority: 2
-      outgoingLinks:
-      - originConversationID: 6
-        originDialogueID: 54
-        destinationConversationID: 6
-        destinationDialogueID: 49
-        isConnector: 0
-        priority: 2
-      conditionsString: 
-      userScript: 
-      onExecute:
-        m_PersistentCalls:
-          m_Calls: []
-      canvasRect:
-        serializedVersion: 2
-        x: 591.80566
-        y: 1353.5117
-        width: 160
-        height: 30
     - id: 55
       fields:
       - title: Title
@@ -7363,7 +7178,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Dialogue Text
-        value: It seems someone left you a gift...
+        value: It seems someone left you some gifts...
         type: 0
         typeString: 
       - title: Parenthetical
@@ -7559,11 +7374,164 @@ MonoBehaviour:
       canvasRect:
         serializedVersion: 2
         x: 591.701
-        y: 1833.446
+        y: 1834.417
         width: 160
         height: 30
-    canvasScrollPosition: {x: 111.602615, y: 1466.1224}
-    canvasZoom: 1.0899999
+    - id: 58
+      fields:
+      - title: Title
+        value: 
+        type: 0
+        typeString: 
+      - title: Pictures
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Description
+        value: 
+        type: 0
+        typeString: 
+      - title: Actor
+        value: 2
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Conversant
+        value: 1
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Menu Text
+        value: 
+        type: 0
+        typeString: 
+      - title: Dialogue Text
+        value: You see, this here is your Phantom. It was attached to your Soul,
+          and guided you in life. Unfortunately, you'll have to be separated in death.
+        type: 0
+        typeString: 
+      - title: Parenthetical
+        value: 
+        type: 0
+        typeString: 
+      - title: Audio Files
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Video File
+        value: 
+        type: 0
+        typeString: 
+      - title: Sequence
+        value: 
+        type: 0
+        typeString: 
+      conversationID: 6
+      isRoot: 0
+      isGroup: 0
+      nodeColor: 
+      delaySimStatus: 0
+      falseConditionAction: Block
+      conditionPriority: 2
+      outgoingLinks:
+      - originConversationID: 6
+        originDialogueID: 58
+        destinationConversationID: 6
+        destinationDialogueID: 45
+        isConnector: 0
+        priority: 2
+      conditionsString: 
+      userScript: 
+      onExecute:
+        m_PersistentCalls:
+          m_Calls: []
+      canvasRect:
+        serializedVersion: 2
+        x: 594.8985
+        y: 1093.1621
+        width: 160
+        height: 30
+    - id: 59
+      fields:
+      - title: Title
+        value: New Dialogue Entry
+        type: 0
+        typeString: 
+      - title: Pictures
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Description
+        value: 
+        type: 0
+        typeString: 
+      - title: Actor
+        value: 2
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Conversant
+        value: 1
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Menu Text
+        value: 
+        type: 0
+        typeString: 
+      - title: Dialogue Text
+        value: 
+        type: 0
+        typeString: 
+      - title: Parenthetical
+        value: 
+        type: 0
+        typeString: 
+      - title: Audio Files
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Video File
+        value: 
+        type: 0
+        typeString: 
+      - title: Sequence
+        value: 'required SetContinueMode(false);
+
+          SpawnPhantom(kindred,
+          Glow Parent, KindredBall)->Message(spawn);
+
+          MoveTo(PlayerHover,
+          PlayerGlow, 2, Ease);
+
+          MoveTo(KindredHover, KindredBall, 2, Ease);
+
+          Continue()@2;'
+        type: 0
+        typeString: 
+      conversationID: 6
+      isRoot: 0
+      isGroup: 0
+      nodeColor: 
+      delaySimStatus: 0
+      falseConditionAction: Block
+      conditionPriority: 2
+      outgoingLinks:
+      - originConversationID: 6
+        originDialogueID: 59
+        destinationConversationID: 6
+        destinationDialogueID: 22
+        isConnector: 0
+        priority: 2
+      conditionsString: 
+      userScript: 
+      onExecute:
+        m_PersistentCalls:
+          m_Calls: []
+      canvasRect:
+        serializedVersion: 2
+        x: 791.8057
+        y: 1028.6694
+        width: 160
+        height: 30
+    canvasScrollPosition: {x: 0, y: 585.23267}
+    canvasZoom: 0.97
   - id: 7
     fields:
     - title: Title
@@ -8316,7 +8284,10 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: 'required Camera(BingTalkAngle, Bing, 0.5);
+
+          AnimatorTrigger(MouthFlap,
+          Bing);'
         type: 0
         typeString: 
       conversationID: 7
@@ -8387,7 +8358,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: AnimatorTrigger(Surprise, Bing);
         type: 0
         typeString: 
       conversationID: 7
@@ -8442,7 +8413,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Dialogue Text
-        value: Well, suck me into a vaccuum cleaner, that sure was fast! Hand them
+        value: Well, I'll be damned for all eternity, that sure was fast! Hand them
           over, young traveller!
         type: 0
         typeString: 
@@ -8530,7 +8501,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: AnimatorTrigger(Thinking, Bing);
         type: 0
         typeString: 
       conversationID: 7
@@ -8992,7 +8963,7 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 821
+        x: 820.13043
         y: 700
         width: 160
         height: 30
@@ -9039,7 +9010,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: AnimatorTrigger(Laugh, Bing);
         type: 0
         typeString: 
       conversationID: 7
@@ -9110,7 +9081,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: AnimatorTrigger(Thinking, Bing);
         type: 0
         typeString: 
       conversationID: 7
@@ -9181,7 +9152,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(STOP, Bing);
+        value: 
         type: 0
         typeString: 
       conversationID: 7
@@ -9323,7 +9294,14 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(STOP, Bing);
+        value: 'SetContinueMode(false);
+
+          AnimatorTrigger(STOP, Bing);
+
+          AnimatorTrigger(NoteSpawn,
+          Bing);
+
+          Continue()@1;'
         type: 0
         typeString: 
       conversationID: 7
@@ -9394,7 +9372,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 
+        value: SetContinueMode(true);
         type: 0
         typeString: 
       conversationID: 7
@@ -9595,8 +9573,8 @@ MonoBehaviour:
         typeString: 
       - title: Dialogue Text
         value: Regardless, we'd love to hear what you think! You can hop into our
-          Discord server (link in the main menu!) to tell us what you liked or didn't,
-          and it will help make the game better!
+          Discord server to tell us what you liked or didn't, and it will help make
+          the game better!
         type: 0
         typeString: 
       - title: Parenthetical
@@ -9899,7 +9877,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 
+        value: 'SetContinueMode(false);
+
+          AnimatorTrigger(NoteDespawn, Bing);
+
+          Continue()@1;'
         type: 0
         typeString: 
       conversationID: 7
@@ -9970,7 +9952,9 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: 'SetContinueMode(true);
+
+          AnimatorTrigger(Surprise, Bing);'
         type: 0
         typeString: 
       conversationID: 7
@@ -10183,7 +10167,10 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: AnimatorTrigger(MouthFlap, Bing);
+        value: 'required Camera(original, Player, 1);
+
+          AnimatorTrigger(MouthFlap,
+          Bing);'
         type: 0
         typeString: 
       conversationID: 7
@@ -10471,8 +10458,8 @@ MonoBehaviour:
         y: 1600
         width: 160
         height: 30
-    canvasScrollPosition: {x: 0, y: 0}
-    canvasZoom: 0.61000025
+    canvasScrollPosition: {x: 367.82593, y: 104.43454}
+    canvasZoom: 1.1499999
   - id: 8
     fields:
     - title: Title
@@ -11897,8 +11884,8 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 248
-        y: 296
+        x: 244.33026
+        y: 294.16513
         width: 160
         height: 30
     - id: 6
@@ -11928,7 +11915,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Dialogue Text
-        value: <i>It seems they want to come along with you!</i>
+        value: <i>It's a [var=StarterName]!</i>
         type: 0
         typeString: 
       - title: Parenthetical
@@ -11960,7 +11947,7 @@ MonoBehaviour:
       - originConversationID: 11
         originDialogueID: 6
         destinationConversationID: 11
-        destinationDialogueID: 7
+        destinationDialogueID: 8
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -11970,8 +11957,8 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 248
-        y: 346
+        x: 244.33026
+        y: 343.24768
         width: 160
         height: 30
     - id: 7
@@ -12001,7 +11988,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Dialogue Text
-        value: <i>They hop into your cage.</i>
+        value: <i>[var=StarterName] hops into your cage.</i>
         type: 0
         typeString: 
       - title: Parenthetical
@@ -12017,10 +12004,12 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: 'AnimatorTrigger(Dead, Kindred);
+        value: 'SetContinueMode(true);
 
-          Camera(original, Player_Onscreen,
-          1);'
+          AnimatorTrigger(Dead, Kindred);
+
+          Camera(original,
+          Player_Onscreen, 1);'
         type: 0
         typeString: 
       conversationID: 11
@@ -12032,14 +12021,450 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks: []
       conditionsString: 
+      userScript: AddPhantom("Kindred", Variable["StarterName"], 1);
+      onExecute:
+        m_PersistentCalls:
+          m_Calls: []
+      canvasRect:
+        serializedVersion: 2
+        x: 266.34863
+        y: 709.7615
+        width: 160
+        height: 30
+    - id: 8
+      fields:
+      - title: Title
+        value: 
+        type: 0
+        typeString: 
+      - title: Pictures
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Description
+        value: 
+        type: 0
+        typeString: 
+      - title: Actor
+        value: 2
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Conversant
+        value: 1
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Menu Text
+        value: 
+        type: 0
+        typeString: 
+      - title: Dialogue Text
+        value: <i>It seems they want to come along with you.</i>
+        type: 0
+        typeString: 
+      - title: Parenthetical
+        value: 
+        type: 0
+        typeString: 
+      - title: Audio Files
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Video File
+        value: 
+        type: 0
+        typeString: 
+      - title: Sequence
+        value: 
+        type: 0
+        typeString: 
+      conversationID: 11
+      isRoot: 0
+      isGroup: 0
+      nodeColor: 
+      delaySimStatus: 0
+      falseConditionAction: Block
+      conditionPriority: 2
+      outgoingLinks:
+      - originConversationID: 11
+        originDialogueID: 8
+        destinationConversationID: 11
+        destinationDialogueID: 9
+        isConnector: 0
+        priority: 2
+      conditionsString: 
       userScript: 
       onExecute:
         m_PersistentCalls:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 248
-        y: 396
+        x: 244.33026
+        y: 393.24768
+        width: 160
+        height: 30
+    - id: 9
+      fields:
+      - title: Title
+        value: 
+        type: 0
+        typeString: 
+      - title: Pictures
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Description
+        value: 
+        type: 0
+        typeString: 
+      - title: Actor
+        value: 2
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Conversant
+        value: 1
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Menu Text
+        value: 
+        type: 0
+        typeString: 
+      - title: Dialogue Text
+        value: <i>Do you want to give them a name?</i>
+        type: 0
+        typeString: 
+      - title: Parenthetical
+        value: 
+        type: 0
+        typeString: 
+      - title: Audio Files
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Video File
+        value: 
+        type: 0
+        typeString: 
+      - title: Sequence
+        value: 
+        type: 0
+        typeString: 
+      conversationID: 11
+      isRoot: 0
+      isGroup: 0
+      nodeColor: 
+      delaySimStatus: 0
+      falseConditionAction: Block
+      conditionPriority: 2
+      outgoingLinks:
+      - originConversationID: 11
+        originDialogueID: 9
+        destinationConversationID: 11
+        destinationDialogueID: 10
+        isConnector: 0
+        priority: 2
+      - originConversationID: 11
+        originDialogueID: 9
+        destinationConversationID: 11
+        destinationDialogueID: 11
+        isConnector: 0
+        priority: 2
+      conditionsString: 
+      userScript: 
+      onExecute:
+        m_PersistentCalls:
+          m_Calls: []
+      canvasRect:
+        serializedVersion: 2
+        x: 244.33026
+        y: 443.24768
+        width: 160
+        height: 30
+    - id: 10
+      fields:
+      - title: Title
+        value: New Dialogue Entry
+        type: 0
+        typeString: 
+      - title: Pictures
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Description
+        value: 
+        type: 0
+        typeString: 
+      - title: Actor
+        value: 1
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Conversant
+        value: 2
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Menu Text
+        value: 
+        type: 0
+        typeString: 
+      - title: Dialogue Text
+        value: Yes
+        type: 0
+        typeString: 
+      - title: Parenthetical
+        value: 
+        type: 0
+        typeString: 
+      - title: Audio Files
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Video File
+        value: 
+        type: 0
+        typeString: 
+      - title: Sequence
+        value: 
+        type: 0
+        typeString: 
+      conversationID: 11
+      isRoot: 0
+      isGroup: 0
+      nodeColor: 
+      delaySimStatus: 0
+      falseConditionAction: Block
+      conditionPriority: 2
+      outgoingLinks:
+      - originConversationID: 11
+        originDialogueID: 10
+        destinationConversationID: 11
+        destinationDialogueID: 12
+        isConnector: 0
+        priority: 2
+      conditionsString: 
+      userScript: 
+      onExecute:
+        m_PersistentCalls:
+          m_Calls: []
+      canvasRect:
+        serializedVersion: 2
+        x: 92.9541
+        y: 503.33936
+        width: 160
+        height: 30
+    - id: 11
+      fields:
+      - title: Title
+        value: New Dialogue Entry
+        type: 0
+        typeString: 
+      - title: Pictures
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Description
+        value: 
+        type: 0
+        typeString: 
+      - title: Actor
+        value: 1
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Conversant
+        value: 2
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Menu Text
+        value: 
+        type: 0
+        typeString: 
+      - title: Dialogue Text
+        value: No (Keep the name [var=StarterName])
+        type: 0
+        typeString: 
+      - title: Parenthetical
+        value: 
+        type: 0
+        typeString: 
+      - title: Audio Files
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Video File
+        value: 
+        type: 0
+        typeString: 
+      - title: Sequence
+        value: 
+        type: 0
+        typeString: 
+      conversationID: 11
+      isRoot: 0
+      isGroup: 0
+      nodeColor: 
+      delaySimStatus: 0
+      falseConditionAction: Block
+      conditionPriority: 2
+      outgoingLinks:
+      - originConversationID: 11
+        originDialogueID: 11
+        destinationConversationID: 11
+        destinationDialogueID: 7
+        isConnector: 0
+        priority: 2
+      conditionsString: 
+      userScript: 
+      onExecute:
+        m_PersistentCalls:
+          m_Calls: []
+      canvasRect:
+        serializedVersion: 2
+        x: 403.9633
+        y: 511.5963
+        width: 160
+        height: 30
+    - id: 12
+      fields:
+      - title: Title
+        value: New Dialogue Entry
+        type: 0
+        typeString: 
+      - title: Pictures
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Description
+        value: 
+        type: 0
+        typeString: 
+      - title: Actor
+        value: 2
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Conversant
+        value: 1
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Menu Text
+        value: 
+        type: 0
+        typeString: 
+      - title: Dialogue Text
+        value: <i>Type in a name, then press <b>Enter</b>:</i>
+        type: 0
+        typeString: 
+      - title: Parenthetical
+        value: 
+        type: 0
+        typeString: 
+      - title: Audio Files
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Video File
+        value: 
+        type: 0
+        typeString: 
+      - title: Sequence
+        value: 
+        type: 0
+        typeString: 
+      conversationID: 11
+      isRoot: 0
+      isGroup: 0
+      nodeColor: 
+      delaySimStatus: 0
+      falseConditionAction: Block
+      conditionPriority: 2
+      outgoingLinks:
+      - originConversationID: 11
+        originDialogueID: 12
+        destinationConversationID: 11
+        destinationDialogueID: 13
+        isConnector: 0
+        priority: 2
+      conditionsString: 
+      userScript: 
+      onExecute:
+        m_PersistentCalls:
+          m_Calls: []
+      canvasRect:
+        serializedVersion: 2
+        x: 92.9541
+        y: 553.33936
+        width: 160
+        height: 30
+    - id: 13
+      fields:
+      - title: Title
+        value: New Dialogue Entry
+        type: 0
+        typeString: 
+      - title: Pictures
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Description
+        value: 
+        type: 0
+        typeString: 
+      - title: Actor
+        value: 2
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Conversant
+        value: 1
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Menu Text
+        value: 
+        type: 0
+        typeString: 
+      - title: Dialogue Text
+        value: 
+        type: 0
+        typeString: 
+      - title: Parenthetical
+        value: 
+        type: 0
+        typeString: 
+      - title: Audio Files
+        value: '[]'
+        type: 3
+        typeString: CustomFieldType_Files
+      - title: Video File
+        value: 
+        type: 0
+        typeString: 
+      - title: Sequence
+        value: 'SetContinueMode(false);
+
+          TextInput(Text Field UI,Name:,StarterName,20)->Message(nameEntered);
+
+          Continue()@Message(nameEntered);'
+        type: 0
+        typeString: 
+      conversationID: 11
+      isRoot: 0
+      isGroup: 0
+      nodeColor: 
+      delaySimStatus: 0
+      falseConditionAction: Block
+      conditionPriority: 2
+      outgoingLinks:
+      - originConversationID: 11
+        originDialogueID: 13
+        destinationConversationID: 11
+        destinationDialogueID: 7
+        isConnector: 0
+        priority: 2
+      conditionsString: 
+      userScript: 
+      onExecute:
+        m_PersistentCalls:
+          m_Calls: []
+      canvasRect:
+        serializedVersion: 2
+        x: 92.9541
+        y: 603.33936
         width: 160
         height: 30
     canvasScrollPosition: {x: 0, y: 0}

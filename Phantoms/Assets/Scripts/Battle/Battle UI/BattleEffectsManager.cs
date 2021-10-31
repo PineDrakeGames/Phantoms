@@ -11,6 +11,8 @@ public class BattleEffectsManager : MonoBehaviour
     private GameObject m_damageIndicatorPrefab = null;
     [SerializeField]
     private GameObject m_buffIndicatorPrefab = null;
+    [SerializeField]
+    private GameObject m_healIndicatorPrefab = null;
 
     /////////////////////////////
     /// Static Instance Stuff ///
@@ -31,6 +33,7 @@ public class BattleEffectsManager : MonoBehaviour
 
     private List<DamageIndicator> m_damageIndicators = new List<DamageIndicator>();
     private List<BuffIndicator> m_buffIndicators = new List<BuffIndicator>();
+    private List<RestoreIndicator> m_restoreIndicators = new List<RestoreIndicator>();
 
 
     ///////////////////////
@@ -85,6 +88,12 @@ public class BattleEffectsManager : MonoBehaviour
         }
     }
 
+    public void SetRestoreIndicator(Vector3 position, int damage, bool isHealth = true)
+    {
+        GetRestoreIndicator().SetRestoreIndicator(position, damage, isHealth);
+        AudioManager.PlaySound("BATTLE_HEAL");
+    }
+
 
     ////////////////////////////////
     /// Private Helper Functions ///
@@ -116,6 +125,21 @@ public class BattleEffectsManager : MonoBehaviour
         GameObject newIndicatorObject = Instantiate(m_buffIndicatorPrefab);
         BuffIndicator newIndicator = newIndicatorObject.GetComponent<BuffIndicator>();
         m_buffIndicators.Add(newIndicator);
+        return newIndicator;
+    }
+
+    private RestoreIndicator GetRestoreIndicator()
+    {
+        foreach (RestoreIndicator indicator in m_restoreIndicators)
+        {
+            if (indicator.Ready)
+            {
+                return indicator;
+            }
+        }
+        GameObject newIndicatorObject = Instantiate(m_healIndicatorPrefab);
+        RestoreIndicator newIndicator = newIndicatorObject.GetComponent<RestoreIndicator>();
+        m_restoreIndicators.Add(newIndicator);
         return newIndicator;
     }
 }
