@@ -29,6 +29,10 @@ public class OverworldPhantomEnemy : MonoBehaviour
     [SerializeField]
     private float m_turnRate = 360f;
     [SerializeField]
+    private float m_maxTurnRate = 400f;
+    [SerializeField]
+    private float m_turnRateIncreaseTime = 4f;
+    [SerializeField]
     private float m_returnSpeed = 1f;
 
     [Header("Potential Flags")]
@@ -231,7 +235,11 @@ public class OverworldPhantomEnemy : MonoBehaviour
         }
         else
         {
-            float turnRate = m_turnRate * Mathf.Deg2Rad * Time.deltaTime;
+            float chaseTime = Time.time - m_lastStateChangeTime;
+
+            float currentTurnRate = Mathf.Lerp(m_turnRate, m_maxTurnRate, Mathf.Clamp01(chaseTime / m_turnRateIncreaseTime));
+
+            float turnRate = currentTurnRate * Mathf.Deg2Rad * Time.deltaTime;
             m_currentVelocity = Vector3.RotateTowards(m_currentVelocity, direction.normalized, turnRate, 0f);
         }
 

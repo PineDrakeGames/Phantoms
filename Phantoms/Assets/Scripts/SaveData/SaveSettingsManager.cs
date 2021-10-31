@@ -27,14 +27,19 @@ public static class SaveSettingsManager
             Save();
         }
 
-        DataManager.Instance.Settings = JsonUtility.FromJson<SettingsData>(jsonData);
-        Debug.Log(DataManager.Instance.Settings.MasterVolume + ", " + DataManager.Instance.Settings.MusicVolume + ", " + DataManager.Instance.Settings.SoundsVolume + ", " + DataManager.Instance.Settings.LastSaveSlotPlayed);
-        Debug.Log(path);
+        if (Equals(DataManager.Instance.Settings, default(SettingsData)))
+        {
+            DataManager.Instance.Settings = JsonUtility.FromJson<SettingsData>(jsonData);
+        }
+        else
+        {
+            JsonUtility.FromJsonOverwrite(jsonData, DataManager.Instance.Settings);
+        }
     }
 
     public static void Save()
     {
-        string jsonData = JsonUtility.ToJson(DataManager.Instance.Settings, false);
+        string jsonData = JsonUtility.ToJson(DataManager.Instance.Settings, true);
 
         string path = Application.persistentDataPath + SETTINGS_FILE_NAME;
 
