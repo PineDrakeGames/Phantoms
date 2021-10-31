@@ -300,7 +300,7 @@ public class PlayerController : MonoBehaviour, ICharacterController
 
         if (transform.position.y < MinYPosition)
         {
-            PlayerRespawnManager.Instance.RespawnSafe(0);
+            PlayerRespawnManager.Instance.RespawnSafe(-1);
         }
     }
 

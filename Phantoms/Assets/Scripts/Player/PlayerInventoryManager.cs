@@ -79,6 +79,30 @@ public class PlayerInventoryManager : MonoBehaviour
         }
     }
 
+    public int GetItemQuantity(string itemID)
+    {
+        foreach (ItemInstanceData item in Items)
+        {
+            if (item.Data.ItemID == itemID)
+            {
+                return item.Quantity;
+            }
+        }
+        return 0;
+    }
+
+    public int GetItemQuantity(Ares.Item aresItem)
+    {
+        foreach (ItemInstanceData item in Items)
+        {
+            if (item.AresData == aresItem.Data)
+            {
+                return item.Quantity;
+            }
+        }
+        return 0;
+    }
+
     public Ares.Inventory CreateBattleInventory()
     {
         Ares.Inventory battleInventory = new Ares.StackedInventory();

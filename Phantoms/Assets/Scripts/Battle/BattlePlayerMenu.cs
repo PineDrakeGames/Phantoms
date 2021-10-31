@@ -452,7 +452,7 @@ public class BattlePlayerMenu : MonoBehaviour
         BattleSubmenuButton submenuButton = null;
         foreach (Item item in m_actionInput.ValidItems)
         {
-            submenuButton = AddSubmenuButton(item.Data.DisplayName, item.Data.Description, "x" + item.RemainingUses.ToString());
+            submenuButton = AddSubmenuButton(item.Data.DisplayName, item.Data.Description, "x" + PlayerInventoryManager.Instance.GetItemQuantity(item));
             submenuButton.ClickEvent.AddListener(delegate { TargetMenuItem(item); });
         }
 

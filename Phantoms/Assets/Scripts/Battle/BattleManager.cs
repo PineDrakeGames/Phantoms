@@ -49,6 +49,7 @@ public class BattleManager : MonoBehaviour
 
     // Other private variables
     BattleGroup playerGroup = null;
+    public BattleGroup PlayerGroup { get { return playerGroup; } }
     BattleGroup enemyGroup = null;
 
     public Dictionary<Actor, CombatantInstanceData> ActorToData = new Dictionary<Actor, CombatantInstanceData>();

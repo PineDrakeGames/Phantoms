@@ -48,7 +48,7 @@ public class PlayerRespawnManager : MonoBehaviour
     ///////////////////////
     private void Awake()
     {
-        
+
     }
 
     private void Start()
@@ -103,7 +103,7 @@ public class PlayerRespawnManager : MonoBehaviour
         }
 
         RespawnInternal(m_nearRespawnPoint, damageTaken);
-        m_lastNearRespawnTime= Time.time;
+        m_lastNearRespawnTime = Time.time;
     }
 
 
@@ -141,11 +141,14 @@ public class PlayerRespawnManager : MonoBehaviour
         if (damageTaken >= 0)
         {
             DataManager.Instance.GetPlayerBattleInstanceData().Damage(damageTaken);
+            PlayerStateHurt hurtState = new PlayerStateHurt();
+            hurtState.TargetPosition = respawnPoint;
+            m_playerController.SetState(hurtState);
         }
-        PlayerStateHurt hurtState = new PlayerStateHurt();
-        hurtState.TargetPosition = respawnPoint;
-        m_playerController.SetState(hurtState);
-
+        else
+        {
+            m_playerController.Motor.SetPosition(respawnPoint + Vector3.up);
+        }
         m_lastRespawnTime = Time.time;
 
         OnRespawn.Invoke();

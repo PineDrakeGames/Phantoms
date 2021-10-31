@@ -146,6 +146,8 @@ public class SavedGameData
 
 public static class SaveDataManager
 {
+    public static readonly string VERSION_NUMBER = "0.1.0";
+
     public static int CurrentSaveSlot = 0;
 
     public static SavedGameData SavedData = new SavedGameData();

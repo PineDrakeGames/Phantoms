@@ -157,7 +157,7 @@ public class StarterQuizManager : MonoBehaviour
             }
         }
 
-        m_answerButtons[0].ButtonComponent.Select();
+        //m_answerButtons[0].ButtonComponent.Select();
     }
 
     // Called by the answer option buttons

@@ -103,12 +103,7 @@ public class DataManager : MonoBehaviour
     /// Runtime Data ///
     ////////////////////
 
-    private SettingsData m_settings = null;
-    public SettingsData Settings
-    {
-        get { return m_settings; }
-        set { m_settings = value; }
-    }
+    public SettingsData Settings = null;
 
     // Converting the data into dictionaries to more easily access it
     private Dictionary<string, PhantomData> m_phantomIdToData = null;
@@ -192,7 +187,10 @@ public class DataManager : MonoBehaviour
         // Any initialization things
         DontDestroyOnLoad(this.gameObject);
 
-        m_settings = new SettingsData();
+        if (Settings == null)
+        {
+            Settings = new SettingsData();
+        }
 
         if (m_phantomIdToData == null)
         {

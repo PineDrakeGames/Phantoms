@@ -45,6 +45,16 @@ public class BattlePhantomCatchManager : MonoBehaviour
     [SerializeField]
     private int m_holdAmount = 5;
 
+    [Header("Sound effects")]
+    [SerializeField]
+    private SoundEffectData m_addWagerSound;
+    [SerializeField]
+    private SoundEffectData m_subtractWagerSound;
+    [SerializeField]
+    private SoundEffectData m_pulseHeartSound;
+    [SerializeField]
+    private SoundEffectData m_heartCatchSound;
+
     private int m_currentWager = 1;
     public int CurrentWager
     {
@@ -113,10 +123,18 @@ public class BattlePhantomCatchManager : MonoBehaviour
             {
                 if (m_increaseHeld)
                 {
+                    if (CurrentWager < m_playerCurrentHealth - 1)
+                    {
+                        AudioManager.PlaySound(m_addWagerSound);
+                    }
                     CurrentWager += m_holdAmount;
                 }
                 else if (m_decreaseHeld)
                 {
+                    if (CurrentWager > 1)
+                    {
+                        AudioManager.PlaySound(m_subtractWagerSound);
+                    }
                     CurrentWager -= m_holdAmount;
                 }
                 m_holdTime -= m_holdInterval;
@@ -160,10 +178,18 @@ public class BattlePhantomCatchManager : MonoBehaviour
     ////////////////////////////////
     public void AddOne()
     {
+        if (CurrentWager < m_playerCurrentHealth - 1)
+        {
+            AudioManager.PlaySound(m_addWagerSound);
+        }
         CurrentWager += 1;
     }
     public void SubtractOne()
     {
+        if (CurrentWager > 1)
+        {
+            AudioManager.PlaySound(m_subtractWagerSound);
+        }
         CurrentWager -= 1;
     }
 
@@ -356,6 +382,8 @@ public class BattlePhantomCatchManager : MonoBehaviour
             anim.SetTrigger("Special");
         }
 
+        AudioManager.PlaySound(m_heartCatchSound);
+
 
         yield return new WaitForSeconds(RESULTS_WATCH_DURATION);
         yield return StartCoroutine(FadeOutResults());
@@ -417,6 +445,7 @@ public class BattlePhantomCatchManager : MonoBehaviour
         for (int i = 0; i < numPulses; i++)
         {
             m_heartAnimator.SetTrigger("Pulse");
+            AudioManager.PlaySound(m_pulseHeartSound);
             yield return new WaitForSeconds(TIME_BETWEEN_PULSES);
         }
     }

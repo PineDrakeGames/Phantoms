@@ -14,11 +14,13 @@ public class SaveSlot
 {
     public int SlotNumber = 0;
     public string LastSave = null;
+    public string VersionNumber = SaveDataManager.VERSION_NUMBER;
 
     public SaveSlot(int slotNumber)
     {
         SlotNumber = slotNumber;
         LastSave = System.DateTime.Now.ToString("MM/dd/yyyy, hh:mm tt");
+        VersionNumber = SaveDataManager.VERSION_NUMBER;
     }
 }
 

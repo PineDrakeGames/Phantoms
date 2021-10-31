@@ -18,11 +18,11 @@ public class PlayerDamageCollider : MonoBehaviour
 
         if (m_safeRespawn)
         {
-            PlayerRespawnManager.Instance.RespawnSafe(m_damageAmount);
+            PlayerRespawnManager.Instance.RespawnSafe(Mathf.Max(m_damageAmount, 0));
         }
         else
         {
-            PlayerRespawnManager.Instance.RespawnNear(m_damageAmount);
+            PlayerRespawnManager.Instance.RespawnNear(Mathf.Max(m_damageAmount, 0));
         }
     }
 

@@ -76,6 +76,7 @@ public class VolumeSlider : MonoBehaviour, IDragHandler, IEndDragHandler
         }
         AudioManager.UpdateVolume();
         VolumeUpdate.Invoke();
+        SaveSettingsManager.Save();
     }
 
     public void OnDrag(PointerEventData eventData)
