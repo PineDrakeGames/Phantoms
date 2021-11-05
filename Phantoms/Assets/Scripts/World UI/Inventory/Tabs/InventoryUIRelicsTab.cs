@@ -7,11 +7,7 @@ public class InventoryUIRelicsTab : InventoryTab
 {
     [Header("Prefab References")]
     [SerializeField]
-    private GameObject m_relicButtonPrefab = null;
-
-    [Header("Scene References")]
-    [SerializeField]
-    private Transform m_relicButtonParent = null;
+    private RelicsButtonPageList m_relicButtonsList = null;
 
     [Header("Current Relic Selection Things")]
     [SerializeField]
@@ -50,21 +46,12 @@ public class InventoryUIRelicsTab : InventoryTab
 
     public void ResetRelicList()
     {
-        foreach (InventoryRelicButton button in m_relicButtons)
-        {
-            button.gameObject.SetActive(false);
-        }
-        foreach (RelicInstance data in PlayerInventoryManager.Instance.Relics)
-        {
-            InventoryRelicButton relicButton = GetButton();
-            relicButton.Data = data;
-            relicButton.SetupButton();
-        }
+        m_relicButtonsList.SetList(PlayerInventoryManager.Instance.Relics);
     }
 
     public void SelectRelic(InventoryRelicButton data)
     {
-        if (data != null && data != m_currentRelic)
+        if (data != m_currentRelic)
         {
             if (m_currentRelic != null)
             {
@@ -215,34 +202,5 @@ public class InventoryUIRelicsTab : InventoryTab
             UpdateRelicDisplay();
             InventoryUIManager.Instance.SetPartyMembers();
         }
-    }
-
-    ////////////////////////////////
-    /// Private Helper Functions ///
-    ////////////////////////////////
-
-    private InventoryRelicButton GetButton()
-    {
-        InventoryRelicButton returnButton = null;
-
-        foreach (InventoryRelicButton button in m_relicButtons)
-        {
-            if (!button.gameObject.activeSelf)
-            {
-                returnButton = button;
-                button.gameObject.SetActive(true);
-                break;
-            }
-        }
-
-        if (returnButton == null)
-        {
-            GameObject instancedButton = Instantiate(m_relicButtonPrefab, m_relicButtonParent);
-            returnButton = instancedButton.GetComponent<InventoryRelicButton>();
-            returnButton.RelicsInventory = this;
-            m_relicButtons.Add(returnButton);
-        }
-
-        return returnButton;
     }
 }

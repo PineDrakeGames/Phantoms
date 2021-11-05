@@ -49,6 +49,8 @@ public class BattlePlayerMenu : MonoBehaviour
     [SerializeField]
     private GameObject m_content = null;
     [SerializeField]
+    private TMP_Text m_titleText = null;
+    [SerializeField]
     private Button m_backButton = null;
     [SerializeField]
     private GameObject m_buttonPrefab = null;
@@ -412,7 +414,7 @@ public class BattlePlayerMenu : MonoBehaviour
         submenuButton.ClickEvent.AddListener(m_battleManager.TryRun);
         submenuButton.ButtonComponent.interactable = CanRun;
 
-        ShowSubmenu();
+        ShowSubmenu("Choose a Tactic");
     }
 
     // Shows all the abilities available for the current actor
@@ -439,7 +441,7 @@ public class BattlePlayerMenu : MonoBehaviour
             }
         }
 
-        ShowSubmenu();
+        ShowSubmenu("Choose an Ability");
     }
 
     // Shows all the items available for the current actor
@@ -456,7 +458,7 @@ public class BattlePlayerMenu : MonoBehaviour
             submenuButton.ClickEvent.AddListener(delegate { TargetMenuItem(item); });
         }
 
-        ShowSubmenu();
+        ShowSubmenu("Choose an Item");
     }
 
     public void SwitchPhantomsMenu()
@@ -469,7 +471,8 @@ public class BattlePlayerMenu : MonoBehaviour
         {
             if (!m_battleManager.CurrentBattle.ActorInfo[actor].IsParticipating && actor.HP > 0)
             {
-                submenuButton = AddSubmenuButton(actor.DisplayName, "Switch to " + actor.DisplayName, actor.HP.ToString() + "/" + actor.MaxHP.ToString() + " HP");
+                PhantomInstanceData phantomData = m_battleManager.ActorToData[actor] as PhantomInstanceData;
+                submenuButton = AddSubmenuButton(actor.DisplayName, "Switch to " + actor.DisplayName + " <i>(" + phantomData.Data.DisplayName + ", Level " + phantomData.Level + ")</i>", actor.HP.ToString() + "/" + actor.MaxHP.ToString() + " HP  " + actor.Mana.ToString() + "/" + actor.MaxMana.ToString() + " MP");
                 submenuButton.ClickEvent.AddListener(delegate
                 {
                     m_battleManager.SwapPhantoms(actor);
@@ -478,7 +481,7 @@ public class BattlePlayerMenu : MonoBehaviour
             }
         }
 
-        ShowSubmenu();
+        ShowSubmenu("Select a Phantom");
     }
 
     public void CatchPhantomMenu()
@@ -764,11 +767,13 @@ public class BattlePlayerMenu : MonoBehaviour
         return submenuButton;
     }
 
-    private void ShowSubmenu()
+    private void ShowSubmenu(string title)
     {
         m_mainMenuParent.SetActive(false);
         m_partnerMenuParent.SetActive(false);
         m_subMenuParent.SetActive(true);
+
+        m_titleText.text = title;
 
         UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
 
@@ -869,7 +874,7 @@ public class BattlePlayerMenu : MonoBehaviour
                     }
                     submenuButton.SelectEvent.AddListener(delegate { SetArrowIndicator(actor); });
                 }
-                ShowSubmenu();
+                ShowSubmenu("Select a Target");
                 break;
             case BattleInteractorData.TargetType.NumberOfActors:
                 // Add a button for each actor, with the addition of removing the button when used.
@@ -890,7 +895,7 @@ public class BattlePlayerMenu : MonoBehaviour
                     });
                     submenuButton.SelectEvent.AddListener(delegate { SetArrowIndicator(actor); });
                 }
-                ShowSubmenu();
+                ShowSubmenu("Select Targets");
                 break;
             case BattleInteractorData.TargetType.AllActorsInGroup:
                 // TODO

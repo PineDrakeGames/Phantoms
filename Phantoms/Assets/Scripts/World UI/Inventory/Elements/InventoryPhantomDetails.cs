@@ -22,6 +22,10 @@ public class InventoryPhantomDetails : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI m_phantomDescriptionText = null;
     [SerializeField]
+    private TMP_Text m_phantomLevelText = null;
+    [SerializeField]
+    private TMP_Text m_phantomExperienceText = null;
+    [SerializeField]
     private TMP_Text m_phantomHPText = null;
     [SerializeField]
     private TMP_Text m_phantomMPText = null;
@@ -50,6 +54,9 @@ public class InventoryPhantomDetails : MonoBehaviour
         }
     }
 
+    private bool m_active = false;
+    public bool Active { get { return m_active; } }
+
     private void Awake() 
     {
         if (s_instance == null)
@@ -63,11 +70,13 @@ public class InventoryPhantomDetails : MonoBehaviour
     public void ShowDescription()
     {
         m_menuParent.SetActive(true);
+        m_active = true;
     }
 
     public void HideDescription()
     {
         m_menuParent.SetActive(false);
+        m_active = false;
         InventoryUIManager.Instance.DeselectPartyMember();
     }
 
@@ -105,7 +114,8 @@ public class InventoryPhantomDetails : MonoBehaviour
             //description += " - Defense: " + m_currentPartyMember.CurrentStats.Defense + "\n";
             */
             m_phantomDescriptionText.text = description;
-
+            if (m_phantomLevelText) { m_phantomLevelText.text = "Level: " + m_currentPartyMember.Level.ToString(); }
+            if (m_phantomExperienceText) { m_phantomExperienceText.text = "Exp: " + m_currentPartyMember.Experience.ToString() + " / 100"; }
             if (m_phantomHPText) { m_phantomHPText.text = m_currentPartyMember.CurrentHP.ToString() + " / " + m_currentPartyMember.CurrentStats.MaxHP.ToString(); }
             if (m_phantomMPText) { m_phantomMPText.text = m_currentPartyMember.CurrentMana.ToString() + " / " + m_currentPartyMember.CurrentStats.Mana.ToString(); }
             if (m_phantomRPText) { m_phantomRPText.text = (m_currentPartyMember.CurrentStats.Relic - m_currentPartyMember.CurrentRelicPoints).ToString() + " / " + m_currentPartyMember.CurrentStats.Relic.ToString(); }

@@ -15,6 +15,8 @@ public class InventoryUIManager : MonoBehaviour
     private InventoryPartyMember m_currentPartnerMember = null;
     [SerializeField]
     private List<InventoryPartyMember> m_partyMembers = new List<InventoryPartyMember>();
+    [SerializeField]
+    private InventoryPhantomDetails m_phantomDetails = null;
 
     [Header("Sounds")]
     [SerializeField]
@@ -112,31 +114,35 @@ public class InventoryUIManager : MonoBehaviour
     {
         // Check for input to open/close inventory
         // TODO: Don't just check keys, go through some input manager thing...
-        if (Input.GetKeyDown(KeyCode.Tab) && !PauseMenu.Instance.Paused)
+        bool escapeInput = Input.GetKeyDown(KeyCode.Escape);
+        bool tabInput = Input.GetKeyDown(KeyCode.Tab);
+        if ((tabInput || escapeInput) && !PauseMenu.Instance.Paused)
         {
-            if (m_isInventoryOpen && m_isTabOpen)
+            if (m_isInventoryOpen)
             {
-                CloseTab();
+                if (m_isTabOpen)
+                {
+                    CloseTab();
+                    AudioManager.PlaySound("BACK_CLICK");
+                }
+                else if (m_phantomDetails.Active)
+                {
+                    m_phantomDetails.HideDescription();
+                    AudioManager.PlaySound("BACK_CLICK");
+                }
+                else
+                {
+                    CloseInventory();
+                }
             }
-            else
+            else if (tabInput)
             {
-                ToggleInventory();
+                OpenInventory();
             }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (m_isTabOpen)
-            {
-                CloseTab();
-            }
-            else if (m_isInventoryOpen)
-            {
-                CloseInventory();
-            }
-            else
+            else // assume it was escapeInput then
             {
                 PauseMenu.Instance.TogglePause();
+
             }
         }
     }
@@ -177,6 +183,7 @@ public class InventoryUIManager : MonoBehaviour
         m_isInventoryOpen = false;
         m_inventoryParent.SetActive(false);
         m_tabs[m_currentTabIndex].CloseTab();
+
         Time.timeScale = 1f;
         AudioManager.PlaySound(m_closeInventorySound);
         Player.PlayerInputEnabled = true;
@@ -223,6 +230,7 @@ public class InventoryUIManager : MonoBehaviour
         {
             m_tabs[i].CloseTab();
         }
+        if (m_phantomDetails) { m_phantomDetails.HideDescription(); }
         m_currentDisplayMode = InventoryPartyMember.DisplayMode.DEFAULT;
         SetPartyMembers();
     }
@@ -281,6 +289,11 @@ public class InventoryUIManager : MonoBehaviour
             {
                 partyMemberUI.gameObject.SetActive(false);
             }
+        }
+
+        if (m_currentSelectedPartyMember != null)
+        {
+            m_currentSelectedPartyMember.Select();
         }
     }
 
