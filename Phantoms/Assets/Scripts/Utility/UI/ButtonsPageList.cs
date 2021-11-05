@@ -15,7 +15,7 @@ public abstract class ButtonsPageList<T1, T2> : MonoBehaviour
 
     protected int m_numPages = 0;
     protected int m_currentPage = 0;
-    protected int m_itemsPerPage = 0;
+    protected int m_itemsPerPage = 1;
     protected List<T2> m_dataList = new List<T2>();
     protected List<T1> m_buttonList = new List<T1>();
 
